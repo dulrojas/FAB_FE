@@ -1,4 +1,5 @@
-$topnav-background-color: #222;
+@import '../../../../styles/styles.scss';
+
 .sidebar {
     border-radius: 0;
     position: fixed;
@@ -11,7 +12,7 @@ $topnav-background-color: #222;
     border: none;
     border-radius: 0;
     overflow-y: auto;
-    background-color: $topnav-background-color;
+    background-color: $primary-color;
     bottom: 0;
     overflow-x: hidden;
     padding-bottom: 40px;
@@ -24,10 +25,10 @@ $topnav-background-color: #222;
     // border-top: 1px solid rgba(255,255,255,0.3);
     .list-group {
         a.list-group-item {
-            background: $topnav-background-color;
+            background: $primary-color;
             border: 0;
             border-radius: 0;
-            color: #999;
+            color: $txt-2-color;
             text-decoration: none;
 
             .fa {
@@ -36,12 +37,12 @@ $topnav-background-color: #222;
         }
 
         a:hover {
-            background: darken($topnav-background-color, 5%);
+            background: $third-color;
             color: #fff;
         }
 
         a.router-link-active {
-            background: darken($topnav-background-color, 5%);
+            background: $third-color;
             color: #fff;
         }
 
@@ -66,10 +67,10 @@ $topnav-background-color: #222;
             margin-bottom: 0;
 
             a {
-                color: #999;
+                color: $txt-2-color;
                 text-decoration: none;
                 font-weight: 400;
-                background: $topnav-background-color;
+                background: $primary-color;
 
                 span {
                     position: relative;
@@ -88,21 +89,21 @@ $topnav-background-color: #222;
         }
 
         .panel-title:hover {
-            background: darken($topnav-background-color, 5%);
+            background: $third-color;
         }
 
         .panel-collapse {
-            border-radious: 0;
+            border-radius: 0;
             border: none;
 
             .panel-body {
                 .list-group-item {
                     border-radius: 0;
-                    background-color: $topnav-background-color;
+                    background-color: $primary-color;
                     border: 0 solid transparent;
 
                     a {
-                        color: #999;
+                        color: $txt-2-color;
                     }
 
                     a:hover {
@@ -111,7 +112,7 @@ $topnav-background-color: #222;
                 }
 
                 .list-group-item:hover {
-                    background: darken($topnav-background-color, 5%);
+                    background: $third-color;
                 }
             }
         }
@@ -188,19 +189,19 @@ $topnav-background-color: #222;
     cursor: pointer;
     padding: 12px;
     bottom: 0;
-    color: #999;
-    background: #212529;
+    color: $txt-2-color;
+    background: $primary-color;
 
     i {
         font-size: 23px;
     }
 
     &:hover {
-        background: darken($topnav-background-color, 5%);
+        background: $third-color;
         color: #fff;
     }
 
-    border-top: 1px solid #999;
+    border-top: 1px solid $txt-2-color;
     -webkit-transition: all 0.2s ease-in-out;
     -moz-transition: all 0.2s ease-in-out;
     -ms-transition: all 0.2s ease-in-out;

@@ -1,4 +1,5 @@
-$topnav-background-color: #222;
+@import '../../styles/styles.scss';
+
 :host {
     display: block;
 }
@@ -10,9 +11,9 @@ $topnav-background-color: #222;
     right: 0;
     bottom: 0;
     overflow: auto;
-    background: $topnav-background-color;
+    background: $bg-7-color;
     text-align: center;
-    color: #fff;
+    color: $txt-1-color;
     padding: 3em;
 
     .col-lg-4 {
@@ -31,22 +32,22 @@ $topnav-background-color: #222;
         background: 0 0;
         border: none;
         box-shadow: none;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.5);
-        color: #fff;
+        border-bottom: 2px solid $bg-1-color;
+        color: $primary-color;
         border-radius: 0;
     }
 
     .input-underline:focus {
-        border-bottom: 2px solid #fff;
+        border-bottom: 2px solid $primary-color;
         box-shadow: none;
     }
 
     .rounded-btn {
         -webkit-border-radius: 50px;
         border-radius: 50px;
-        color: rgba(255, 255, 255, 0.8);
-        background: $topnav-background-color;
-        border: 2px solid rgba(255, 255, 255, 0.8);
+        color: $txt-2-color;
+        background: $third-color;
+        border: 2px solid $txt-2-color;
         font-size: 18px;
         line-height: 40px;
         padding: 0 25px;
@@ -56,8 +57,7 @@ $topnav-background-color: #222;
     .rounded-btn:focus,
     .rounded-btn:active,
     .rounded-btn:visited {
-        color: rgba(255, 255, 255, 1);
-        border: 2px solid rgba(255, 255, 255, 1);
+        border: 2px solid $bg-1-color;
         outline: none;
     }
 
@@ -68,7 +68,7 @@ $topnav-background-color: #222;
         font-size: 36px;
 
         small {
-            color: rgba(255, 255, 255, 0.7);
+            color: $primary-color;
         }
     }
 
@@ -76,21 +76,21 @@ $topnav-background-color: #222;
         padding: 8px 0;
 
         input::-webkit-input-placeholder {
-            color: rgba(255, 255, 255, 0.6) !important;
+            color: $primary-color !important;
         }
 
         input:-moz-placeholder {
             /* Firefox 18- */
-            color: rgba(255, 255, 255, 0.6) !important;
+            color: $primary-color !important;
         }
 
         input::-moz-placeholder {
             /* Firefox 19+ */
-            color: rgba(255, 255, 255, 0.6) !important;
+            color: $primary-color !important;
         }
 
         input:-ms-input-placeholder {
-            color: rgba(255, 255, 255, 0.6) !important;
+            color: $primary-color !important;
         }
     }
 
@@ -101,6 +101,6 @@ $topnav-background-color: #222;
     .user-avatar {
         -webkit-border-radius: 50%;
         border-radius: 50%;
-        border: 2px solid #fff;
+        border: 2px solid $primary-color;
     }
 }
