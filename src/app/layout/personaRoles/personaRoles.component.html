@@ -1,0 +1,193 @@
+<div [@routerTransition]>
+    <app-page-header [heading]="'Persona y Roles'" [icon]="'fa-table'"></app-page-header>
+    <div class="card mb-3">
+        <div class="card-body custom-card table-responsive">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12 text-end">
+                    <button type="button" class="btn btn-view-bg-1" (click)="openModal(addPersonaRolesModal)">
+                        <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1" (click)="openModal(editPersonaRolesModal)">
+                        <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1" (click)="openModal(deletePersonaRolesModal)">
+                        <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container mt-4">
+                    <table class="table custom-table table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Nombre</th>
+                          <th>Apellido 1</th>
+                          <th>Apellido 2</th>
+                          <th>Telefono</th>
+                          <th>Email</th>
+                          <th>Usuario</th>
+                          <th>Unidad</th>
+                          <th>Es Resp.</th>
+                          <th>Cargo</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let person of peoplePaginated; let i = index">
+                          <td>{{ (page - 1) * pageSize + i + 1 }}</td>
+                          <td>{{ person.name }}</td>
+                          <td>{{ person.job }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  
+                    <div class="d-flex justify-content-center">
+                        <ngb-pagination 
+                            [(page)]="page" 
+                            [pageSize]="pageSize" 
+                            [collectionSize]="totalLength"
+                            [maxSize]="3"
+                            [rotate]="true"
+                            [boundaryLinks]="true">
+                        </ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+<ng-template #addPersonaRolesModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Añadir Persona</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="miFormulario" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col col-xl-7 col-lg-7">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <div class="col col-xl-4 col-lg-4">
+                                    <label for="nombre">Nombre</label>
+                                    <input id="nombre" formControlName="nombre" type="text" class="form-control" />
+                                </div>
+                                <div class="col col-xl-4 col-lg-4">
+                                    <label for="email">Primer Apellido</label>
+                                    <input id="email" formControlName="email" type="email" class="form-control" />
+                                </div>
+                                <div class="col col-xl-4 col-lg-4">
+                                    <label for="email">Segundo Apellido</label>
+                                    <input id="email" formControlName="email" type="email" class="form-control" />
+                                </div>
+        
+                                <div class="col col-xl-6 col-lg-6">
+                                    <label for="email">Numero de documento de identificacion</label>
+                                    <input id="email" formControlName="email" type="email" class="form-control" />
+                                </div>
+                                <div class="col col-xl-6 col-lg-6">
+                                    <label for="email">Tipo de Documento</label>
+                                    <select id="role" formControlName="role" class="form-control">
+                                        <option value="" disabled selected>Selecciona un rol</option>
+                                        <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.name }}</option>
+                                    </select>
+                                </div>
+        
+                                <div class="col col-xl-6 col-lg-6">
+                                    <label for="email">Numero de telefono</label>
+                                    <input id="email" formControlName="email" type="email" class="form-control" />
+                                </div>
+                                <div class="col col-xl-6 col-lg-6">
+                                    <label for="email">Correo electronico</label>
+                                    <input id="email" formControlName="email" type="email" class="form-control" />
+                                </div>
+        
+                                <div class="col col-xl-4 col-lg-4">
+                                    <label for="email">Unidad</label>
+                                    <select id="role" formControlName="role" class="form-control">
+                                        <option value="" disabled selected>Selecciona un rol</option>
+                                        <option *ngFor="let unidad of unidades" [value]="unidad.id">{{ unidad.name }}</option>
+                                    </select>
+                                </div>
+                                <div class="col col-xl-4 col-lg-4">
+                                    <label for="email">Cargo</label>
+                                    <input id="email" formControlName="email" type="email" class="form-control" />
+                                </div>
+                                <div class="col col-xl-4 col-lg-4">
+                                    <input class="form-check-input custom-form-checkbox" type="checkbox" id="responsable" formControlName="responsable">
+                                    <label class="form-check-label custom-form-lable-checkbox" for="responsable">Es responsable de unidad</label>
+                                </div>
+        
+                                <div class="col col-xl-4 col-lg-4">
+                                    <label for="email">Usuario</label>
+                                    <input id="email" formControlName="email" type="email" class="form-control" />
+                                </div>
+                                <div class="col col-xl-4 col-lg-4">
+                                    <label for="email">Contraseña</label>
+                                    <input id="email" formControlName="email" type="email" class="form-control" />
+                                </div>
+                                <div class="col col-xl-4 col-lg-4">
+                                    <label for="email">Logeo por</label>
+                                    <input id="email" formControlName="email" type="email" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-xl-5 col-lg-5">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <img src="" alt="formImg">
+                            <input id="fileInput" type="file" (change)="onFileSelected($event)" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="miFormulario.invalid" (click)="onSubmit(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= EDIT PERSONA MODAL ======= ======= ======= -->
+<ng-template #editPersonaRolesModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Editar Persona</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="card mb-3">
+            <div class="card-body custom-card table-responsive">
+                <p>Contenido del Modal 2.</p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">Cerrar</button>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE PERSONA MODAL ======= ======= ======= -->
+<ng-template #deletePersonaRolesModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Persona</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <p>Contenido del Modal 3.</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">Cerrar</button>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->

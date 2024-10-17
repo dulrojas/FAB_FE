@@ -1,9 +1,50 @@
 <nav [ngClass]="{ sidebarPushRight: isActive, collapsed: collapsed }" class="sidebar">
     <div class="list-group">
-        <a [routerLinkActive]="['router-link-active']" class="list-group-item" routerLink="/dashboard">
-            <i class="fa fa-fw fa-dashboard"></i>&nbsp;
-            <span>{{ 'Dashboard' | translate }}</span>
+        <a [routerLinkActive]="['router-link-active']" routerLink="/dashboard" class="list-group-item">
+            <img [src]="(!collapsed)?('../../../../assets/images/FANFullLogo.png'):('../../../../assets/images/FANLogo.png')" 
+                alt="FAN Logo" style="width: 100%; height: auto;">
         </a>
+        <a [routerLinkActive]="['router-link-active']" routerLink="/dashboard" class="list-group-item">
+            <i class="fa fa-fw fa-dashboard"></i>&nbsp;
+            <span>{{ "Dashboards" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/infGeneral']" class="list-group-item">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
+            <span>{{ "Inf. General" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/planifEstrategica']" class="list-group-item">
+            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>&nbsp;
+            <span>{{ "Planif. Estrategica" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/ejecEstrategica']" class="list-group-item">
+            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>&nbsp;
+            <span>{{ "Ejec. Estrategica" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/actividades']" class="list-group-item">
+            <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;
+            <span>{{ "Actividades" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/logros']" class="list-group-item">
+            <i class="fa fa-certificate" aria-hidden="true"></i>&nbsp;
+            <span>{{ "Logros" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/beneficiarios']" class="list-group-item">
+            <i class="fa fa-users" aria-hidden="true"></i>&nbsp;
+            <span>{{ "Beneficiarios" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/riesgos']" class="list-group-item">
+            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>&nbsp;
+            <span>{{ "Riesgos" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/aprendizajes']" class="list-group-item">
+            <i class="fa fa-book" aria-hidden="true"></i>&nbsp;
+            <span>{{ "Apredizajes" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/personaRoles']" class="list-group-item">
+            <i class="fa fa-users" aria-hidden="true"></i>&nbsp;
+            <span>{{ "Persona y roles" }}</span>
+        </a>
+        <!--
         <a [routerLinkActive]="['router-link-active']" [routerLink]="['/charts']" class="list-group-item">
             <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;
             <span>{{ 'Charts' | translate }}</span>
@@ -64,6 +105,7 @@
             <i class="fa fa-caret-down"></i>&nbsp;
             <span>{{ 'More Themes' | translate }}</span>
         </a>
+        -->
 
         <div class="header-fields">
             <a (click)="rltAndLtr()" class="list-group-item">
