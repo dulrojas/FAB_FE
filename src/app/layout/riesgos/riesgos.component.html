@@ -1,0 +1,253 @@
+<div [@routerTransition]>
+
+  <!-- Encabezado -->
+  <div class="row d-flex justify-content-between align-items-center w-100">
+    <div class="col custom-body-header">
+      <app-bodyHeader></app-bodyHeader>
+    </div>
+  
+    <!-- Información de Riesgos -->
+    <div class="col d-flex justify-content-between">
+      <div class="custom-info-cards m-1 d-flex justify-content-center align-items-center flex-grow-1">
+        Total Property
+      </div>
+      <div class="custom-info-cards m-1 d-flex justify-content-center align-items-center flex-grow-1">
+        Total Property
+      </div>
+      <div class="custom-info-cards m-1 d-flex justify-content-center align-items-center flex-grow-1">
+        Total Property
+      </div>
+      <div class="custom-info-cards m-1 d-flex justify-content-center align-items-center flex-grow-1">
+        Total Property
+      </div>
+    </div>
+  </div>
+
+<!-- Tabla -->
+<div class="card mb-3">
+  <div class="card-body custom-card table-responsive">
+    <!-- Encabezado y Botones -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="title">Gestión de Riesgos</h2>
+
+      <!-- Botones de Acción -->
+      <div class="d-flex">
+        <button class="btn btn-view-bg-1" (click)="openModal(riesgoModal)">
+          <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+        </button>
+        <button class="btn btn-view-bg-1 ms-2" [disabled]="!selectedRiesgo" (click)="openModal(riesgoModal, selectedRiesgo)">
+          <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+        </button>
+        <button class="btn btn-view-bg-1 ms-2" [disabled]="!selectedRiesgo" (click)="onDelete()">
+          <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabla de Riesgo -->
+    <table class="table custom-table table-striped">
+      <thead>
+        <tr>
+          <th><input type="checkbox" /></th>
+          <th>ID</th>
+          <th>CATEGORÍA</th>
+          <th>IDENTIFICACIÓN</th>
+          <th>RIESGO/SUPUESTO/HIPÓTESIS</th>
+          <th>IMPACTO</th>
+          <th>PROBABILIDAD</th>
+          <th>NIVEL DE RIESGO</th>
+          <th>TOMAR MEDIDAS</th>
+          <th>EFECTIVIDAD</th>
+          <th>COMENTARIOS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let riesgo of riesgosPaginados" (click)="selectRiesgo(riesgo)">
+          <td><input type="checkbox" [(ngModel)]="riesgo.seleccionado" /></td>
+          <td>{{ riesgo.id }}</td>
+          <td>{{ riesgo.categoria }}</td>
+          <td>{{ riesgo.identificacion }}</td>
+          <td>{{ riesgo.riesgo }}</td>
+
+          <td>
+            <div class="impacto-button" [ngClass]="{
+              'impacto-alto': riesgo.impacto === 'Alto',
+              'impacto-medio': riesgo.impacto === 'Medio',
+              'impacto-bajo': riesgo.impacto === 'Bajo'}">
+              {{ riesgo.impacto }}
+            </div>
+          </td>
+
+          <td>
+            <div class="probabilidad-shape" [ngClass]="{
+              'probabilidad-alto': riesgo.probabilidad === 'Alto',
+              'probabilidad-medio': riesgo.probabilidad === 'Medio',
+              'probabilidad-bajo': riesgo.probabilidad === 'Bajo'}">  
+            </div>
+          </td>
+
+          <td>
+            <div class="riesgo-circle" [ngClass]="{'riesgo-alto': riesgo.nivelRiesgo === 'Alto', 'riesgo-medio': riesgo.nivelRiesgo === 'Medio', 'riesgo-bajo': riesgo.nivelRiesgo === 'Bajo'}">
+              <span *ngIf="riesgo.nivelRiesgo === 'Alto'" class="symbol">X</span>
+              <span *ngIf="riesgo.nivelRiesgo === 'Medio'" class="symbol">!</span>
+              <span *ngIf="riesgo.nivelRiesgo === 'Bajo'" class="symbol">✓</span>
+            </div>
+          </td>
+          
+          <td>{{ riesgo.tomarMedidas }}</td>
+          <td>{{ riesgo.efectividad }}</td>
+          <td>{{ riesgo.comentarios }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+  <!-- Formulario de Riesgos Ventana Emergente -->
+  <ng-template #riesgoModal let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">{{ selectedRiesgo ? 'Editar' : 'Añadir' }} Riesgo</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="riesgoForm" (ngSubmit)="onSubmit(riesgoForm)">
+        
+        <!-- Primera Fila = ID, Fecha de registro, Persona Registro, Componente -->
+        <div class="row">
+          <div class="col-md-3">
+            <label for="id">ID</label>
+            <input type="text" formControlName="id" class="form-control" />
+          </div>
+          <div class="col-md-3">
+            <label for="fechaRegistro">Fecha de Registro</label>
+            <input type="date" formControlName="fechaRegistro" class="form-control" />
+          </div>
+          <div class="col-md-3">
+            <label for="personaRegistro">Persona Registro</label>
+            <input type="text" formControlName="personaRegistro" class="form-control" />
+          </div>
+          <div class="col-md-3">
+            <label for="componente">Componente</label>
+            <input type="text" formControlName="componente" class="form-control" />
+          </div>
+        </div>
+    
+        <!-- Segunda Fila = Categoría, Título de Riesgo, Fecha de Identificación -->
+        <div class="row mt-3">
+          <div class="col-md-4">
+            <label for="categoria">Categoría</label>
+            <input type="text" formControlName="categoria" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label for="tituloRiesgo">Título de Riesgo</label>
+            <input type="text" formControlName="tituloRiesgo" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label for="fechaIdentificacion">Fecha de Identificación</label>
+            <input type="date" formControlName="fechaIdentificacion" class="form-control" />
+          </div>
+        </div>
+    
+        <!-- Tercera Fila = Riesgo/Supuesto/Hipótesis -->
+        <div class="row mt-3">
+          <div class="col-12">
+            <label for="riesgo">Riesgo/Supuesto/Hipótesis</label>
+            <textarea formControlName="riesgo" class="form-control"></textarea>
+          </div>
+        </div>
+    
+        <!-- Cuarta Fila = Individuales/Instituciones Vinculados, Identificación del Riesgo -->
+        <div class="row mt-3">
+          <div class="col-6">
+            <label for="institucionesVinculadas">Individuales/Instituciones Vinculados</label>
+            <input type="text" formControlName="institucionesVinculadas" class="form-control" />
+          </div>
+          <div class="col-6">
+            <label for="identificacionRiesgo">Identificación del Riesgo</label>
+            <input type="text" formControlName="identificacionRiesgo" class="form-control" />
+          </div>
+        </div>
+    
+        <!-- Quinta Fila = Impacto, Probabilidad, Nivel de Riesgo -->
+        <div class="row mt-3">
+          
+          <div class="col-md-4">
+            <label for="impacto">Impacto</label>
+            <select formControlName="impacto" class="form-control">
+              <option value="Alto">Alto</option>
+              <option value="Medio">Medio</option>
+              <option value="Bajo">Bajo</option>
+            </select>
+          </div>
+          
+          <div class="col-md-4">
+            <label for="probabilidad">Probabilidad</label>
+            <select formControlName="probabilidad" class="form-control">
+              <option value="Alta">Alta</option>
+              <option value="Media">Media</option>
+              <option value="Baja">Baja</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="nivelRiesgo">Nivel de Riesgo</label>
+            <select formControlName="nivelRiesgo" class="form-control">
+              <option value="Alto">Alto</option>
+              <option value="Medio">Medio</option>
+              <option value="Bajo">Bajo</option>
+            </select>
+          </div>
+        </div>
+    
+        <!-- Sexta Fila = Ocurrencia durante la Gestión, Necesidad de Tomar Acciones -->
+        <div class="row mt-3">
+          <hr class="bg-success" />
+          <div class="col-6">
+            <label for="ocurrencia">Ocurrencia durante la Gestión</label>
+            <input type="text" formControlName="ocurrencia" class="form-control" />
+          </div>
+          <div class="col-6">
+            <label for="necesidadAcciones">Necesidad de Tomar Acciones</label>
+            <input type="text" formControlName="necesidadAcciones" class="form-control" />
+          </div>
+        </div>
+    
+        <!-- Septima Fila = Medidas de Respuesta al Riesgo -->
+        <div class="row mt-3">
+          <hr class="bg-success" /> 
+          <div class="col-12">
+            <label for="medidasRespuesta">Medidas de Respuesta al Riesgo</label>
+            <textarea formControlName="medidasRespuesta" class="form-control"></textarea>
+          </div>
+        </div>
+    
+        <!-- Octava Fila = Efectividad de las Medidas, Comentarios Adicionales -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <label for="efectividad">Efectividad de las Medidas</label>
+            <input type="text" formControlName="efectividad" class="form-control" />
+          </div>
+          <div class="col-md-6">
+            <label for="comentarios">Comentarios Adicionales</label>
+            <textarea formControlName="comentarios" class="form-control"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Botones Cancelar y Grabar -->
+    <div class="modal-footer">
+      <div class="d-flex justify-content-center" style="width: 100%;">
+          <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+              <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+          </button>
+          <button type="button" class="btn btn-bg-1" [disabled]="personaRolesForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
+              <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+          </button>
+      </div>
+    </div>
+
+  </ng-template>
+</div>
