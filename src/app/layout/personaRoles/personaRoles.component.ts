@@ -1,7 +1,7 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormsModule, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-personaRoles',
@@ -11,12 +11,12 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class PersonaRolesComponent implements OnInit {
     // ======= ======= VARIABLES SECTION ======= =======
-    people: any[] = [];
+    personasRoles: any[] = [];
     page = 1;
     pageSize = 5;
     totalLength = 0;
     constructor(private modalService: NgbModal) {}
-    miFormulario: FormGroup;
+    personaRolesForm: FormGroup;
 
     roles: Array<{ id: number, name: string }> = [
       { id: 1, name: 'Administrador' },
@@ -33,11 +33,6 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
         this.loadPeople();
-
-        this.miFormulario = new FormGroup({
-          nombre: new FormControl('', [Validators.required, Validators.minLength(3)]),
-          email: new FormControl('', [Validators.required, Validators.email])
-        });
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OPEN MODALS FUN ======= =======
@@ -46,21 +41,22 @@ export class PersonaRolesComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= TABLE PAGINATION ======= =======
-    get peoplePaginated() {
+    get personasRolesTable() {
       const start = (this.page - 1) * this.pageSize;
-      return this.people.slice(start, start + this.pageSize);
+      return this.personasRoles.slice(start, start + this.pageSize);
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= SUBMIT FORM ======= =======
-    onSubmit(): void {
-      if (this.miFormulario.valid) {
-        console.log(this.miFormulario.value);
-      }
+    personaRolesSelected: any = null;
+    // ======= ======= CHECKBOX CHANGED ======= =======
+    checkboxChanged(person: any) {
+      
+      this.personaRolesSelected = person
+      console.log(person);
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET PERSONAS ======= =======
     loadPeople(): void {
-      this.people = [
+      this.personasRoles = [
         { name: 'John Doe', job: 'Developer' },
         { name: 'Jane Doe', job: 'Designer' },
         { name: 'James Smith', job: 'Manager' },
@@ -72,7 +68,14 @@ export class PersonaRolesComponent implements OnInit {
         { name: 'Paul Harris', job: 'Sales' },
         { name: 'Anna Scott', job: 'Product Owner' },
       ];
-      this.totalLength = this.people.length;
+      this.totalLength = this.personasRoles.length;
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= SUBMIT FORM ======= =======
+    onSubmit(): void {
+      if (this.personaRolesForm.valid) {
+        console.log(this.personaRolesForm.value);
+      }
     }
     // ======= ======= ======= ======= =======
 }

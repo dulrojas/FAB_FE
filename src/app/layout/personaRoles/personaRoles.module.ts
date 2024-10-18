@@ -1,10 +1,14 @@
+import { PersonaRolesRoutingModule } from './personaRoles-routing.module';
+import { PersonaRolesComponent } from './personaRoles.component';
+
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { PageHeaderModule } from './../../shared';
-
-import { PersonaRolesRoutingModule } from './personaRoles-routing.module';
-import { PersonaRolesComponent } from './personaRoles.component';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { BodyHeaderComponent } from '../components/bodyHeader/bodyHeader.component';
 
 @NgModule({
     imports: [
@@ -12,8 +16,13 @@ import { NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap'
         PersonaRolesRoutingModule, 
         PageHeaderModule, 
         NgbModalModule, 
-        NgbPaginationModule
+        NgbPaginationModule,
+        FormsModule,
+        ReactiveFormsModule
     ],
-    declarations: [PersonaRolesComponent]
+    declarations: [
+        PersonaRolesComponent,
+        BodyHeaderComponent
+    ]
 })
 export class PersonaRolesModule {}

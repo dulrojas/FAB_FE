@@ -178,6 +178,22 @@ $txt-2-color: #ffffff;
 .custom-card{
     background-color: $bg-7-color;
 }
+.custom-settings{
+    background-color: $bg-1-color;
+}
+.custom-settings-item{
+    background-color: $bg-1-color;
+}
+.custom-body-header{
+    color: $primary-color;
+}
+.custom-info-cards{
+    height: 3rem;
+    border-radius: 10px;
+    background-color: $primary-color;
+    color: $txt-2-color;
+    font-size: 12px;
+}
 // ======= ======= ======= ======= =======
 
 
