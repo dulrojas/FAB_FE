@@ -1,13 +1,20 @@
 <nav [ngClass]="{ sidebarPushRight: isActive, collapsed: collapsed }" class="sidebar">
     <div class="list-group">
+        <!-- ======= ======= ======= BIG ICONS ======= ======= ======= -->
         <a [routerLinkActive]="['router-link-active']" routerLink="/dashboard" class="list-group-item">
             <img [src]="(!collapsed)?('../../../../assets/images/FANFullLogo.png'):('../../../../assets/images/FANLogo.png')" 
                 alt="FAN Logo" style="width: 100%; height: auto;">
         </a>
-        <a [routerLinkActive]="['router-link-active']" routerLink="/dashboard" class="list-group-item">
-            <i class="fa fa-fw fa-dashboard"></i>&nbsp;
+        <a [routerLinkActive]="['router-link-active']" routerLink="/dashboard" class="list-group-item d-flex flex-column align-items-center justify-content-center text-center">
+            <i class="fa fa-pie-chart" aria-hidden="true" [ngStyle]="{'font-size': collapsed ? '1rem' : '50px'}"></i>
             <span>{{ "Dashboards" }}</span>
         </a>
+        <div class="list-group-item d-flex flex-column align-items-center justify-content-center text-center">
+            <i class="fa fa-cog" aria-hidden="true" [ngStyle]="{'font-size': collapsed ? '1rem' : '50px'}"></i>
+            <span>{{ "Project Name" }}</span>
+        </div>
+        <!-- ======= ======= ======= ======= ======= ======= ======= -->
+        <!-- ======= ======= ======= LIST ICONS ======= ======= ======= -->
         <a [routerLinkActive]="['router-link-active']" [routerLink]="['/infGeneral']" class="list-group-item">
             <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
             <span>{{ "Inf. General" }}</span>
@@ -40,10 +47,21 @@
             <i class="fa fa-book" aria-hidden="true"></i>&nbsp;
             <span>{{ "Apredizajes" }}</span>
         </a>
-        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/personaRoles']" class="list-group-item">
-            <i class="fa fa-users" aria-hidden="true"></i>&nbsp;
+        <!-- ======= ======= ======= ======= ======= ======= ======= -->
+        <!-- ======= ======= ======= BIG ICONS ======= ======= ======= -->
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/personaRoles']" class="list-group-item d-flex flex-column align-items-center justify-content-center text-center">
+            <i class="fa fa-users" aria-hidden="true" [ngStyle]="{'font-size': collapsed ? '1rem' : '50px'}"></i>
             <span>{{ "Persona y roles" }}</span>
         </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/clasificadores']" class="list-group-item d-flex flex-column align-items-center justify-content-center text-center">
+            <i class="fa fa-tasks" aria-hidden="true" [ngStyle]="{'font-size': collapsed ? '1rem' : '50px'}"></i>
+            <span>{{ "Clasificadores" }}</span>
+        </a>
+        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/auditoria']" class="list-group-item d-flex flex-column align-items-center justify-content-center text-center">
+            <i class="fa fa-eye" aria-hidden="true" [ngStyle]="{'font-size': collapsed ? '1rem' : '50px'}"></i>
+            <span>{{ "Auditoria" }}</span>
+        </a>
+        <!-- ======= ======= ======= ======= ======= ======= ======= -->
         
         <!-- ======= ======= ======= SETTINGS SECTION ======= ======= ======= -->
         <div class="row custom-settings">

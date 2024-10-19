@@ -117,6 +117,11 @@ $txt-2-color: #ffffff;
     color: $primary-color;
     font-weight: bold;
 }
+.custom-form-separator{
+    width: 95%;
+    height: 0px;
+    border-top: $txt-1-color 1px solid;
+}
 .custom-form-checkbox{
     position: absolute;
     opacity: 0;
@@ -175,6 +180,10 @@ $txt-2-color: #ffffff;
 }
 // ======= ======= ======= ======= =======
 // ======= ======= SOME CUSTOMS ======= =======
+.custom-view-title{
+    color: $primary-color;
+    font-weight: bold;
+}
 .custom-card{
     background-color: $bg-7-color;
 }
