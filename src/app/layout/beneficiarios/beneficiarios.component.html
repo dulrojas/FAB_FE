@@ -1,0 +1,469 @@
+<div [@routerTransition]>
+  <!-- Encabezado principal -->
+  <div class="row d-flex justify-content-between align-items-center w-100">
+    <div class="col-md-6 col custom-body-header">
+        <app-bodyHeader></app-bodyHeader>
+    </div>
+
+    <div class="col-md-6 col d-flex justify-content-between text-center">
+      <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+          Comunidades / Organizaciones
+      </div>
+      <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+       Mujeres beneficiadas
+      </div>
+      <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+        Hombres beneficiados
+      </div>
+      <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+      Aliados
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de Beneficiarios Alcanzados -->
+  <div class="card mb-3" style="margin-top: 20px;">
+    <div class="card-body custom-card table-responsive">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="title" style="color: #4E8646;">Beneficiarias/os Alcanzados</h2>
+        <div class="row">
+          <div class="d-flex col col-xl-12 col-lg-12 text-end">
+            <button class="btn btn-view-bg-1" (click)="openModal(beneficiariesModal)">
+              <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+            </button>
+            <button class="btn btn-view-bg-1 ms-2" [disabled]="!selectedBeneficiarios" 
+              (click)="openModal(beneficiariesModal, selectedBeneficiarios)">
+              <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+            </button>
+            <button class="btn btn-view-bg-1 ms-2" [disabled]="!selectedBeneficiarios" 
+              (click)="onDelete()">
+              <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+            </button>
+          </div>
+        </div>  
+      </div>
+
+      <div class="row">
+        <div class="container mt-4">
+          <table class="table custom-table table-striped">
+              <thead>
+                <tr>
+                    <th></th>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Municipio</th>
+                    <th>Comunidad</th>
+                    <th>Tipo de Organización</th>
+                    <th>Organización</th>
+                    <th>Actividad</th>
+                    <th>Evento</th>
+                    <th>Mujeres</th>
+                    <th>Hombres</th>
+                    <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let beneficiario of beneficiariosTable">
+                    <td>
+                      <input type="checkbox" [(ngModel)]="beneficiario.selected" (change)="checkboxChanged(beneficiario)" id="checkbox-{{ beneficiario.id }}">
+                    </td>
+                    <td>{{ beneficiario.id }}</td>
+                    <td>{{ beneficiario.fecha }}</td>
+                    <td>{{ beneficiario.municipio }}</td>
+                    <td>{{ beneficiario.comunidad }}</td>
+                    <td>{{ beneficiario.tipoOrganizacion }}</td>
+                    <td>{{ beneficiario.organizacion }}</td>
+                    <td>{{ beneficiario.actividad }}</td>
+                    <td>{{ beneficiario.evento }}</td>
+                    <td>{{ beneficiario.mujeres }}</td>
+                    <td>{{ beneficiario.hombres }}</td>
+                    <td>{{ beneficiario.total }}</td>
+                </tr>
+              </tbody>
+          </table>
+
+          <!-- Paginación de la tabla -->
+          <div class="d-flex justify-content-center">
+            <ngb-pagination 
+                  [(page)]="mainPage" 
+                  [pageSize]="mainPageSize" 
+                  [collectionSize]="totalLength"
+                  [maxSize]="3"
+                  [rotate]="true"
+                  [boundaryLinks]="true">
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para añadir o editar Beneficiarios Alcanzados -->
+  <ng-template #beneficiariesModal let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">{{ selectedBeneficiarios ? 'Editar' : 'Añadir' }} Beneficiarios Alcanzados</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmit(beneficiariesForm)">
+        <div class="card mb-3">
+          <div class="card-body custom-card">
+            <div class="row">
+              <div class="col-md-3">
+                <label for="id">ID</label>
+                <input type="text" formControlName="id" class="form-control" disabled />
+              </div>
+              <div class="col-md-3">
+                <label for="eventDate">Fecha de evento</label>
+                <input type="date" formControlName="eventDate" class="form-control" />
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="activity">Pertenece a la actividad</label>
+                <input type="text" formControlName="activity" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label for="event">Evento</label>
+                <input type="text" formControlName="event" class="form-control" />
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-4">
+                <label for="department">Departamento</label>
+                <select formControlName="department" class="form-control">
+                  <option value="" disabled selected>Seleccione un departamento</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="municipality">Municipio</label>
+                <select formControlName="municipality" class="form-control">
+                  <option value="" disabled selected>Seleccione un municipio</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="community">Comunidad</label>
+                <select formControlName="community" class="form-control">
+                  <option value="" disabled selected>Seleccione una comunidad</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="organizationType">Tipo de Organización</label>
+                <select formControlName="organizationType" class="form-control">
+                  <option value="" disabled selected>Seleccione un tipo</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="organizationName">Nombre de la organización</label>
+                <input type="text" formControlName="organizationName" class="form-control" />
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-12">
+                <label for="details">Detalle</label>
+                <textarea formControlName="details" class="form-control"></textarea>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-4">
+                <label for="numWomen">Nro de Mujeres</label>
+                <input type="number" formControlName="numWomen" class="form-control" />
+              </div>
+              <div class="col-md-4">
+                <label for="numMen">Nro de Hombres</label>
+                <input type="number" formControlName="numMen" class="form-control" />
+              </div>
+              <div class="col-md-4">
+                <label for="total">Total</label>
+                <input type="number" formControlName="total" class="form-control" />
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="registeredBy">Persona Registro</label>
+                <input type="text" formControlName="registeredBy" class="form-control" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="d-flex justify-content-center" style="width: 100%;">
+            <button type="button" class="btn btn-secondary" (click)="modal.close('Cerrar')">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="beneficiariesForm.invalid">Grabar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+</div>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+<!-- Modal para añadir o editar Beneficiarios Alcanzados -->
+<ng-template #beneficiariesModal let-modal>
+<div class="modal-header">
+  <h4 class="modal-title">{{ selectedBeneficiary ? 'Editar' : 'Añadir' }} Beneficiarios Alcanzados</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmit(beneficiariesForm)">
+    <div class="card mb-3">
+      <div class="card-body custom-card">
+
+        <!-- ID y Fecha -->
+        <div class="row">
+          <div class="col-md-3">
+            <label for="id">ID</label>
+            <input type="text" formControlName="id" class="form-control" />
+          </div>
+          <div class="col-md-3">
+            <label for="eventDate">Fecha de evento</label>
+            <input type="date" formControlName="eventDate" class="form-control" />
+          </div>
+        </div>
+
+        <!-- Actividad y Evento -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <label for="activity">Pertenece a la actividad</label>
+            <input type="text" formControlName="activity" class="form-control" />
+          </div>
+          <div class="col-md-6">
+            <label for="event">Evento</label>
+            <input type="text" formControlName="event" class="form-control" />
+          </div>
+        </div>
+
+        <!-- Departamento, Municipio y Comunidad -->
+        <div class="row mt-3">
+          <div class="col-md-4">
+            <label for="department">Departamento</label>
+            <select formControlName="department" class="form-control">
+              <option value="" disabled selected>Seleccione un departamento</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="municipality">Municipio</label>
+            <select formControlName="municipality" class="form-control">
+              <option value="" disabled selected>Seleccione un municipio</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="community">Comunidad</label>
+            <select formControlName="community" class="form-control">
+              <option value="" disabled selected>Seleccione una comunidad</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tipo de Organización y Nombre -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <label for="organizationType">Tipo de Organización</label>
+            <select formControlName="organizationType" class="form-control">
+              <option value="" disabled selected>Seleccione un tipo</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="organizationName">Nombre de la organización</label>
+            <input type="text" formControlName="organizationName" class="form-control" />
+          </div>
+        </div>
+
+        <!-- Detalles -->
+        <div class="row mt-3">
+          <div class="col-md-12">
+            <label for="details">Detalle</label>
+            <textarea formControlName="details" class="form-control"></textarea>
+          </div>
+        </div>
+
+        <!-- Cantidad de Mujeres, Hombres y Total -->
+        <div class="row mt-3">
+          <div class="col-md-4">
+            <label for="numWomen">Nro de Mujeres</label>
+            <input type="number" formControlName="numWomen" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label for="numMen">Nro de Hombres</label>
+            <input type="number" formControlName="numMen" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label for="total">Total</label>
+            <input type="number" formControlName="total" class="form-control" />
+          </div>
+        </div>
+
+        <!-- Persona de Registro -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <label for="registeredBy">Persona Registro</label>
+            <input type="text" formControlName="registeredBy" class="form-control" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Botones del modal -->
+<div class="modal-footer">
+  <div class="d-flex justify-content-center" style="width: 100%;">
+    <button type="button" class="btn btn-secondary" (click)="modal.close('Cerrar')">
+      Cancelar
+    </button>
+    <button type="submit" class="btn btn-primary" [disabled]="beneficiariesForm.invalid">
+      Grabar
+    </button>
+  </div>
+</div>
+</ng-template>
+
+
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- Tabla Aliados -->
+<div class="card mb-3" style="margin-top: 20px;">
+  <div class="card-body custom-card table-responsive">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="title" style="color: #4E8646; font-size: 180%;">Aliados</h2>
+      <div class="row">
+        <div class="d-flex col text-end">
+          <button type="button" class="btn btn-view-bg-1" (click)="openAliadoModal(aliadosModal)">
+            <i class="fa fa-plus"></i> Añadir
+          </button>
+          <button type="button" class="btn btn-view-bg-1 ms-2" (click)="openAliadoModal(aliadosModal, selectedAliado)" [disabled]="!selectedAliado">
+            <i class="fa fa-pencil"></i> Editar
+          </button>
+          <button type="button" class="btn btn-view-bg-1 ms-2" (click)="onDeleteAliado()" [disabled]="!selectedAliado">
+            <i class="fa fa-trash"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="container mt-4">
+        <table class="table custom-table table-striped">
+          <thead>
+            <tr>
+              <th></th>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Institución / Organización</th>
+              <th>Nombre del Referente</th>
+              <th>Vínculo con los Resultados</th>
+              <th>Convenio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let aliado of aliadosTable; let i = index">
+              <td>
+                <input type="checkbox" [(ngModel)]="aliado.selected" (change)="checkboxChangedAliado(aliado)" id="checkbox-{{ i }}">
+              </td>
+              <td>{{ aliado.id }}</td>
+              <td>{{ aliado.fecha }}</td>
+              <td>{{ aliado.institucion }}</td>
+              <td>{{ aliado.referente }}</td>
+              <td>{{ aliado.vinculo }}</td>
+              <td>{{ aliado.convenio }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-center">
+          <ngb-pagination [(page)]="mainPage" [pageSize]="mainPageSize" [collectionSize]="totalLengthAliados" [maxSize]="3" [rotate]="true" [boundaryLinks]="true">
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal for Adding/Editing Aliados -->
+<ng-template #aliadosModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{ selectedAliado ? 'Editar' : 'Añadir' }} Aliado</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <div class="modal-body">
+    <form [formGroup]="aliadosForm" (ngSubmit)="onSubmitAliadosForm(aliadosForm)">
+      <div class="card mb-3">
+        <div class="card-body custom-card">
+          <!-- ID and Date Section -->
+          <div class="row">
+            <div class="col-md-3">
+              <label for="id">ID</label>
+              <input type="text" formControlName="id" class="form-control" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="identificationDate">Fecha de identificación</label>
+              <input type="date" formControlName="identificationDate" class="form-control" />
+            </div>
+          </div>
+
+          <!-- Institution/Organization and Referent Name Section -->
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label for="institution">Institución/Organización</label>
+              <select formControlName="institution" class="form-control">
+                <option value="" disabled selected>Seleccione una Institución</option>
+                <!-- Populate dynamically -->
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="referentName">Nombre Referente</label>
+              <input type="text" formControlName="referentName" class="form-control" />
+            </div>
+          </div>
+
+          <!-- Link to Results Section -->
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <label for="resultsLink">Vínculo con los Resultados</label>
+              <textarea formControlName="resultsLink" class="form-control"></textarea>
+            </div>
+          </div>
+
+          <!-- Convenio Section -->
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label for="convenio">Convenio</label>
+              <select formControlName="convenio" class="form-control">
+                <option value="" disabled selected>Seleccione un Convenio</option>
+                <!-- Populate dynamically -->
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="registeredBy">Persona Registro</label>
+              <input type="text" formControlName="registeredBy" class="form-control" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Footer with Buttons -->
+  <div class="modal-footer">
+    <div class="d-flex justify-content-center" style="width: 100%;">
+      <button type="button" class="btn btn-secondary" (click)="modal.close('Cerrar')">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="aliadosForm.invalid">
+        Grabar
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+

@@ -6,29 +6,29 @@
       <app-bodyHeader></app-bodyHeader>
     </div>
   
-    <!-- Información de Riesgos -->
-    <div class="col d-flex justify-content-between">
-      <div class="custom-info-cards m-1 d-flex justify-content-center align-items-center flex-grow-1">
+    <!-- Personal Roles -->
+    <div class="col d-flex justify-content-between text-center">
+      <div class="custom-info-cards col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
         Total Property
       </div>
-      <div class="custom-info-cards m-1 d-flex justify-content-center align-items-center flex-grow-1">
+      <div class="custom-info-cards col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
         Total Property
       </div>
-      <div class="custom-info-cards m-1 d-flex justify-content-center align-items-center flex-grow-1">
+      <div class="custom-info-cards col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
         Total Property
       </div>
-      <div class="custom-info-cards m-1 d-flex justify-content-center align-items-center flex-grow-1">
+      <div class="custom-info-cards col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
         Total Property
       </div>
     </div>
   </div>
 
 <!-- Tabla -->
-<div class="card mb-3">
+<div class="card mb-3" style="margin-top: 20px;">
   <div class="card-body custom-card table-responsive">
     <!-- Encabezado y Botones -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="title">Gestión de Riesgos</h2>
+      <h2 class="title" style="color: #4E8646;">Gestión de Riesgos</h2>
 
       <!-- Botones de Acción -->
       <div class="d-flex">
@@ -48,32 +48,38 @@
     <table class="table custom-table table-striped">
       <thead>
         <tr>
-          <th><input type="checkbox" /></th>
-          <th>ID</th>
+          <th></th>
+          <th style="text-align: center;">ID</th>
           <th>CATEGORÍA</th>
-          <th>IDENTIFICACIÓN</th>
+          <th style="text-align: center;">IDENTIFICACIÓN</th>
           <th>RIESGO/SUPUESTO/HIPÓTESIS</th>
-          <th>IMPACTO</th>
-          <th>PROBABILIDAD</th>
-          <th>NIVEL DE RIESGO</th>
-          <th>TOMAR MEDIDAS</th>
+          <th style="text-align: center;">IMPACTO</th>
+          <th style="text-align: center;">PROBABILIDAD</th>
+          <th style="text-align: center;">NIVEL DE RIESGO</th>
+          <th style="text-align: center;">TOMAR MEDIDAS</th>
           <th>EFECTIVIDAD</th>
           <th>COMENTARIOS</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let riesgo of riesgosPaginados" (click)="selectRiesgo(riesgo)">
-          <td><input type="checkbox" [(ngModel)]="riesgo.seleccionado" /></td>
-          <td>{{ riesgo.id }}</td>
+        <tr *ngFor="let riesgo of riesgosPaginados" (click)="selectRiesgo(riesgo)" >
+
+          <td>
+            <input type="checkbox" [(ngModel)]="riesgo.seleccionado"
+                   (change)="checkboxChanged(riesgo)" />
+          </td>      
+
+          <td style="text-align: center;" >{{ riesgo.id }}</td>
           <td>{{ riesgo.categoria }}</td>
-          <td>{{ riesgo.identificacion }}</td>
+          <td style="text-align: center;">{{ riesgo.identificacion }}</td>
           <td>{{ riesgo.riesgo }}</td>
 
           <td>
             <div class="impacto-button" [ngClass]="{
               'impacto-alto': riesgo.impacto === 'Alto',
               'impacto-medio': riesgo.impacto === 'Medio',
-              'impacto-bajo': riesgo.impacto === 'Bajo'}">
+              'impacto-bajo': riesgo.impacto === 'Bajo'
+            }">
               {{ riesgo.impacto }}
             </div>
           </td>
@@ -94,12 +100,23 @@
             </div>
           </td>
           
-          <td>{{ riesgo.tomarMedidas }}</td>
+          <td style="text-align: center;">{{ riesgo.tomarMedidas }}</td>
           <td>{{ riesgo.efectividad }}</td>
           <td>{{ riesgo.comentarios }}</td>
         </tr>
       </tbody>
     </table>
+    <!-- Botones de tabla -->
+    <div class="d-flex justify-content-center">
+      <ngb-pagination 
+          [(page)]="page" 
+          [pageSize]="pageSize" 
+          [collectionSize]="riesgos.length"
+          [maxSize]="3"
+          [rotate]="true"
+          [boundaryLinks]="true">
+      </ngb-pagination>
+  </div>
   </div>
 </div>
 
@@ -111,9 +128,13 @@
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
 
+
+  
     <div class="modal-body">
       <form [formGroup]="riesgoForm" (ngSubmit)="onSubmit(riesgoForm)">
-        
+        <div class="card mb-3">
+        <div class="card-body custom-card">
+                     
         <!-- Primera Fila = ID, Fecha de registro, Persona Registro, Componente -->
         <div class="row">
           <div class="col-md-3">
@@ -234,6 +255,8 @@
             <textarea formControlName="comentarios" class="form-control"></textarea>
           </div>
         </div>
+      </div>
+  </div>
       </form>
     </div>
     

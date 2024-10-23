@@ -24,7 +24,7 @@
     transition: all 0.2s ease-in-out;
     // border-top: 1px solid rgba(255,255,255,0.3);
     .list-group {
-        a.list-group-item {
+        a.list-group-item, .list-group-item {
             background: $primary-color;
             border: 0;
             border-radius: 0;
