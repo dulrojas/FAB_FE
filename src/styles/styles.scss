@@ -58,7 +58,7 @@ $txt-2-color: #ffffff;
     background: $primary-color;
     border: 2px solid $txt-2-color;
     font-size: 12px;
-    line-height: 40px;
+    line-height: 30px;
     padding: 0 10px;
 }
 .btn-view-bg-2{
@@ -90,7 +90,7 @@ $txt-2-color: #ffffff;
     th, td {
         padding: 10px;
         text-align: left;
-        border: 1px solid $txt-1-color;
+        vertical-align: middle;  // Alineación vertical centrada
     }
     th {
         background-color: $bg-3-color;

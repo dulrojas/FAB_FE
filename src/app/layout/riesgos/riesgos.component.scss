@@ -2,12 +2,15 @@
 
 /* Impacto formas y colores */
 .impacto-button {
-    display: inline-block;
-    padding: 10px 15px;
-    border-radius: 50px;
-    color: white;
-    text-align: center;
-    font-weight: bold;
+  display: flex;
+  justify-content: center;  
+  align-items: center;      
+  width: 80px;            
+  height: 30px;
+  margin: 0 auto;
+  border-radius: 40px;
+  color: white;
+  font-weight: bold;
   }
   .impacto-alto {
     background-color: #c64d27;
@@ -44,7 +47,7 @@
     background-color: #4E8646;
   }
   
-/* Riesgo formas y colores */
+/* Nivel de Riesgo formas y colores */
   .riesgo-circle {
     width: 30px;
     height: 30px;
@@ -61,7 +64,7 @@
   .riesgo-bajo {
     background-color: #4E8646;
   }
-  
+
   .symbol {
     position: absolute;
     text-align: center;
