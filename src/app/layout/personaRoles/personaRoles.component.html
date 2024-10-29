@@ -74,7 +74,7 @@
                                     <input type="checkbox" [(ngModel)]="personaRol.selected"
                                         (change)="checkboxChanged(personaRol)" id="checkbox-{{ i }}" name="checkbox-{{ i }}"/>
                                 </td>
-                                <td>{{ (mainPage - 1) * mainPageSize + i + 1 }}</td>
+                                <td>{{ personaRol.id_persona }}</td>
                                 <td>{{ personaRol.nombres }}</td>
                                 <td>{{ personaRol.apellido_1 }}</td>
                                 <td>{{ personaRol.apellido_2 }}</td>
@@ -121,26 +121,26 @@
                                 <!-- ======= ======= NOMBRE SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="nombres">Nombre</label>
-                                    <input class="form-control" type="text" 
+                                    <input class="form-control" type="text" placeholder="Ingrese el nombre"
                                         id="nombres" name="nombres" [(ngModel)]="nombres" />
                                 </div>
                                 <!-- ======= ======= APELLIDO 1 SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="apellido_1">Primer Apellido</label>
-                                    <input class="form-control" type="text" 
+                                    <input class="form-control" type="text" placeholder="Ingrese el primer apellido"
                                         id="apellido_1" name="apellido_1" [(ngModel)]="apellido_1" />
                                 </div>
                                 <!-- ======= ======= APELLIDO 2 SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="apellido_2">Segundo Apellido</label>
-                                    <input class="form-control" type="text" 
+                                    <input class="form-control" type="text" placeholder="Ingrese el segundo apellido"
                                         id="apellido_2" name="apellido_2" [(ngModel)]="apellido_2" />
                                 </div>
         
                                 <!-- ======= ======= NRO DOCUMENTO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="nro_documento">Numero de documento de identificacion</label>
-                                    <input class="form-control" type="text" 
+                                    <input class="form-control" type="text" placeholder="Ingrese el numero de documento"
                                         id="nro_documento" name="nro_documento" [(ngModel)]="nro_documento" />
                                 </div>
                                 <!-- ======= ======= TIPO DOCUMENTO SECTION ======= ======= -->
@@ -155,13 +155,13 @@
                                 <!-- ======= ======= NRO TELEFONO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="telefono">Numero de telefono</label>
-                                    <input class="form-control" type="text" 
+                                    <input class="form-control" type="text" placeholder="Ingrese el numero de telefono"
                                         id="telefono" name="telefono" [(ngModel)]="telefono" />
                                 </div>
                                 <!-- ======= ======= CORREO ELECTRONICO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="correo">Correo electronico</label>
-                                    <input class="form-control" type="text" 
+                                    <input class="form-control" type="text" placeholder="Ingrese el correo electronico"
                                         id="correo" name="correo" [(ngModel)]="correo" />
                                 </div>
         
@@ -178,7 +178,7 @@
                                 <!-- ======= ======= CARGO SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="cargo">Cargo</label>
-                                    <input class="form-control" type="text" 
+                                    <input class="form-control" type="text" placeholder="Ingrese el cargo del usuario"
                                         id="cargo" name="cargo" [(ngModel)]="cargo" />
                                 </div>
                                 <!-- ======= ======= RESPONSABLE SECTION ======= ======= -->
@@ -192,20 +192,20 @@
                                 <!-- ======= ======= USUARIO SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="usuario">Usuario</label>
-                                    <input class="form-control" type="text" 
+                                    <input class="form-control" type="text" placeholder="Ingrese el nombre de usuario"
                                         id="usuario" name="usuario" [(ngModel)]="usuario" />
                                 </div>
                                 <!-- ======= ======= CONTRASENIA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="contrasenia">Contraseña</label>
-                                    <input class="form-control" type="text" 
+                                    <input class="form-control" type="text" placeholder="Ingrese la contraseña del usuario"
                                         id="contrasenia" name="contrasenia" [(ngModel)]="contrasenia" />
                                 </div>
                                 <!-- ======= ======= LOGEADO SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="logedBy">Logeo por</label>
                                     <input class="form-control" type="text" 
-                                        id="logedBy" name="logedBy" [(ngModel)]="logedBy" />
+                                        id="logedBy" name="logedBy" [(ngModel)]="logedBy" disabled/>
                                 </div>
 
                                 <div class="custom-form-separator mx-auto my-3"></div>

@@ -122,6 +122,11 @@ $txt-2-color: #ffffff;
     height: 0px;
     border-top: $txt-1-color 1px solid;
 }
+select.form-control {
+    -webkit-appearance: auto;
+    -moz-appearance: auto;
+    appearance: auto;
+}
 .custom-form-checkbox{
     position: absolute;
     opacity: 0;

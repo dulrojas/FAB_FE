@@ -1,0 +1,216 @@
+<div [@routerTransition]>
+    <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+    <div class="row">
+        <div class="col col-md-6 custom-body-header">
+            <app-bodyHeader></app-bodyHeader>
+        </div>
+        <div class="col col-md-6">
+            <div class="row">
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro01}} Personas
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro02}} Administrador de Sistema
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro03}} Controladores
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro04}} Responsables de Proyecto
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+    <div class="row">
+        <div class="col col-md-12">
+            <h2 class="custom-view-title">Aprendizajes</h2>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+    <div class="card mb-3">
+        <div class="card-body custom-card table-responsive">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12 text-end">
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initAddAprendizajes(aprendizajesFormModal)"
+                        [disabled]="aprendizajesSelected">
+                        <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initEditAprendizajes(aprendizajesFormModal)"
+                        [disabled]="!aprendizajesSelected">
+                        <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="openModal(deleteAprendizajesModal)"
+                        [disabled]="!aprendizajesSelected">
+                        <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container mt-4">
+                    <table class="table custom-table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>ID</th>
+                                <th>FECHA APRENDIZAJE</th>
+                                <th>AREA DE APRENDIZAJE</th>
+                                <th>TIPO</th>
+                                <th>APRENDIZAJE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let personaRol of personasRolesTable; let i = index">
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="personaRol.selected"
+                                        (change)="checkboxChanged(personaRol)" id="checkbox-{{ i }}" name="checkbox-{{ i }}"/>
+                                </td>
+                                <td>{{ (mainPage - 1) * mainPageSize + i + 1 }}</td>
+                                <td>{{ personaRol.nombres }}</td>
+                                <td>{{ personaRol.apellido_1 }}</td>
+                                <td>{{ personaRol.apellido_2 }}</td>
+                                <td>{{ personaRol.telefono }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                  
+                    <div class="d-flex justify-content-center">
+                        <ngb-pagination 
+                            [(page)]="mainPage" 
+                            [pageSize]="mainPageSize" 
+                            [collectionSize]="totalLength"
+                            [maxSize]="3"
+                            [rotate]="true"
+                            [boundaryLinks]="true">
+                        </ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+</div>
+
+<!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+<ng-template #aprendizajesFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #aprendizajesForm="ngForm" (ngSubmit)="onSubmit(aprendizajesForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-2 col-lg-2 mt-auto">
+                                    <label for="id">Id</label>
+                                    <input class="form-control" type="text" 
+                                        id="id" name="id" [(ngModel)]="id" />
+                                </div>
+                                <!-- ======= ======= FECHA SECTION ======= ======= -->
+                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <label for="fecha_registro">Fecha de resgistro</label>
+                                    <input class="form-control" type="text" 
+                                        id="fecha_registro" name="fecha_registro" [(ngModel)]="fecha_registro" />
+                                </div>
+                                <!-- ======= ======= PERSONA SECTION ======= ======= -->
+                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <label for="persona_registro">Persona registro</label>
+                                    <input class="form-control" type="text" 
+                                        id="persona_registro" name="persona_registro" [(ngModel)]="persona_registro" />
+                                </div>
+                                <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <label for="apellido_2">Componente</label>
+                                    <input class="form-control" type="text" 
+                                        id="apellido_2" name="apellido_2" [(ngModel)]="apellido_2" />
+                                </div>
+                                <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                                <div class="col col-xl-1 col-lg-1 mt-auto">
+                                    <label class="btn-view-bg-3">OG</label>
+                                </div>
+        
+                                <!-- ======= ======= NRO DOCUMENTO SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="nro_documento">Area de aprendizaje</label>
+                                    <input class="form-control" type="text" 
+                                        id="nro_documento" name="nro_documento" [(ngModel)]="nro_documento" />
+                                </div>
+                                <!-- ======= ======= TIPO DOCUMENTO SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="idp_tipo_documento">Tipo de aprendizaje</label>
+                                    <select class="form-control" id="idp_tipo_documento" name="idp_tipo_documento" [(ngModel)]="idp_tipo_documento">
+                                        <option value="" disabled selected>Selecciona un rol</option>
+                                        <option *ngFor="let rol of tipoDoc" [value]="rol.id">{{ rol.name }}</option>
+                                    </select>
+                                </div>
+        
+                                <!-- ======= ======= TITULO APRE SECTION ======= ======= -->
+                                <div class="col col-xl-8 col-lg-8 mt-auto">
+                                    <label for="telefono">Titulo de aprendizaje</label>
+                                    <input class="form-control" type="text" 
+                                        id="telefono" name="telefono" [(ngModel)]="telefono" />
+                                </div>
+                                <!-- ======= ======= FECHA APREN SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="correo">Fecha de aprendizaje</label>
+                                    <input class="form-control" type="text" 
+                                        id="correo" name="correo" [(ngModel)]="correo" />
+                                </div>
+
+                                <!-- ======= ======= PROBLEMA SECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                    <label for="cargo">Problema</label>
+                                    <textarea class="form-control" id="cargo" name="cargo" 
+                                    [(ngModel)]="cargo"></textarea>
+                                </div>
+
+                                <!-- ======= ======= ACCION DESARROLLADA SECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                    <label for="cargo">Accion desarrollada</label>
+                                    <textarea class="form-control" id="cargo" name="cargo" 
+                                    [(ngModel)]="cargo"></textarea>
+                                </div>
+
+                                <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="aprendizajesForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE PERSONA MODAL ======= ======= ======= -->
+<ng-template #deleteAprendizajesModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Persona</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <p>Contenido del Modal 3.</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">Cerrar</button>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->

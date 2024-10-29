@@ -2,6 +2,8 @@ import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core
 import { routerTransition } from '../../router.animations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { servPersonaRoles } from "../../servicios/personaRoles";
+
 @Component({
     selector: 'app-personaRoles',
     templateUrl: './personaRoles.component.html',
@@ -16,8 +18,9 @@ export class PersonaRolesComponent implements OnInit {
     totalLength = 0;
     constructor(
       private modalService: NgbModal,
-      private cdr: ChangeDetectorRef
-    ) {}
+      private cdr: ChangeDetectorRef,
+      private servPersonaRoles: servPersonaRoles
+    ){}
 
     idProyecto: any = 0;
 
@@ -74,7 +77,7 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
-        this.loadPeople();
+        this.getPersonaRoles();
         this.countHeaderData();
     }
     // ======= ======= ======= ======= =======
@@ -92,6 +95,9 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= PERSONA ROLES TABLE PAGINATION ======= =======
     get personasRolesTable() {
+      if (!this.personasRoles) {
+          return [];
+      }
       const start = (this.mainPage - 1) * this.mainPageSize;
       return this.personasRoles.slice(start, start + this.mainPageSize);
     }
@@ -174,150 +180,16 @@ export class PersonaRolesComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET PERSONAS ======= =======
-    loadPeople(): void {
-      this.personasRoles = [
-        {
-          id_persona: 1,
-          nombres: 'John',
-          apellido_1: 'Doe',
-          apellido_2: '',
-          telefono: '123-456-7890',
-          correo: 'john.doe@example.com',
-          usuario: 'jdoe',
-          unidad: 'Desarrollo',
-          responsable: 'Sí',
-          cargo: 'Developer',
-          admi_sistema: true,
-          proyectoRol: 'CON'
+    getPersonaRoles(){
+      this.servPersonaRoles.getPersonaRoles().subscribe(
+        (data) => {
+          this.personasRoles = data[0].dato;
+          this.countHeaderData();
         },
-        {
-          id_persona: 2,
-          nombres: 'Jane',
-          apellido_1: 'Doe',
-          apellido_2: 'Jhonson',
-          telefono: '987-654-3210',
-          correo: 'jane.doe@example.com',
-          usuario: 'jadoe',
-          unidad: 'Diseño',
-          responsable: 'No',
-          cargo: 'Designer',
-          admi_sistema: false,
-          proyectoRol: 'RES'
-        },
-        {
-          id_persona: 3,
-          nombres: 'James',
-          apellido_1: 'Smith',
-          apellido_2: '',
-          telefono: '456-789-1230',
-          correo: 'james.smith@example.com',
-          usuario: 'jsmith',
-          unidad: 'Gerencia',
-          responsable: 'Sí',
-          cargo: 'Manager',
-          admi_sistema: false,
-          proyectoRol: 'ESC'
-        },
-        {
-          id_persona: 4,
-          nombres: 'Emily',
-          apellido_1: 'Davis',
-          apellido_2: '',
-          telefono: '321-654-9870',
-          correo: 'emily.davis@example.com',
-          usuario: 'edavis',
-          unidad: 'Desarrollo',
-          responsable: 'No',
-          cargo: 'Developer',
-          admi_sistema: false,
-          proyectoRol: 'LEC'
-        },
-        {
-          id_persona: 5,
-          nombres: 'Michael',
-          apellido_1: 'Brown',
-          apellido_2: 'Doe',
-          telefono: '654-321-7890',
-          correo: 'michael.brown@example.com',
-          usuario: 'mbrown',
-          unidad: 'Recursos Humanos',
-          responsable: 'Sí',
-          cargo: 'HR',
-          admi_sistema: false,
-          proyectoRol: 'LEC'
-        },
-        {
-          id_persona: 6,
-          nombres: 'Sarah',
-          apellido_1: 'Wilson',
-          apellido_2: '',
-          telefono: '789-456-1230',
-          correo: 'sarah.wilson@example.com',
-          usuario: 'swilson',
-          unidad: 'Marketing',
-          responsable: 'No',
-          cargo: 'Marketing',
-          admi_sistema: false,
-          proyectoRol: 'RES'
-        },
-        {
-          id_persona: 7,
-          nombres: 'David',
-          apellido_1: 'Lee',
-          apellido_2: '',
-          telefono: '012-345-6789',
-          correo: 'david.lee@example.com',
-          usuario: 'dlee',
-          unidad: 'Soporte',
-          responsable: 'Sí',
-          cargo: 'Support',
-          admi_sistema: false,
-          proyectoRol: 'RES'
-        },
-        {
-          id_persona: 8,
-          nombres: 'Laura',
-          apellido_1: 'Moore',
-          apellido_2: '',
-          telefono: '654-987-1230',
-          correo: 'laura.moore@example.com',
-          usuario: 'lmoore',
-          unidad: 'Dirección',
-          responsable: 'Sí',
-          cargo: 'CEO',
-          admi_sistema: false,
-          proyectoRol: 'RES'
-        },
-        {
-          id_persona: 9,
-          nombres: 'Paul',
-          apellido_1: 'Harris',
-          apellido_2: '',
-          telefono: '789-012-3456',
-          correo: 'paul.harris@example.com',
-          usuario: 'pharris',
-          unidad: 'Ventas',
-          responsable: 'No',
-          cargo: 'Sales',
-          admi_sistema: false,
-          proyectoRol: 'ESC'
-        },
-        {
-          id_persona: 10,
-          nombres: 'Anna',
-          apellido_1: 'Scott',
-          apellido_2: '',
-          telefono: '345-678-9012',
-          correo: 'anna.scott@example.com',
-          usuario: 'ascott',
-          unidad: 'Producto',
-          responsable: 'Sí',
-          cargo: 'Product Owner',
-          admi_sistema: true,
-          proyectoRol: 'CON'
+        (error) => {
+          console.error(error);
         }
-      ];
-      this.totalLength = this.personasRoles.length;
+      );
     }
     // ======= ======= ======= ======= =======
     // ======= ======= COUNT HEADER DATA FUCTION ======= =======

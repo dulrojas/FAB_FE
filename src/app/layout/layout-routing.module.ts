@@ -13,7 +13,8 @@ const routes: Routes = [
                 loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule)
             },
             { path: 'riesgos', loadChildren: () => import('./riesgos/riesgos.module').then((m) => m.RiesgosModule) },
-            { path : 'beneficiarios', loadChildren: () => import('./beneficiarios/beneficiarios.module').then((m) => m.BeneficiariosModule) },
+            { path: 'beneficiarios', loadChildren: () => import('./beneficiarios/beneficiarios.module').then((m) => m.BeneficiariosModule) },
+            { path: 'aprendizajes', loadChildren: () => import('./aprendizajes/aprendizajes.module').then((m) => m.AprendizajesModule) },
             { path: 'personaRoles', loadChildren: () => import('./personaRoles/personaRoles.module').then((m) => m.PersonaRolesModule) },
             { path: 'charts', loadChildren: () => import('./charts/charts.module').then((m) => m.ChartsModule) },
             { path: 'tables', loadChildren: () => import('./tables/tables.module').then((m) => m.TablesModule) },
