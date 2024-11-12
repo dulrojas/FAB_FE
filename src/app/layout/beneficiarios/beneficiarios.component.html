@@ -106,229 +106,115 @@
     </div>
 
     <div class="modal-body">
-      <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmit(beneficiariesForm)">
-        <div class="card mb-3">
-          <div class="card-body custom-card">
-            <div class="row">
-              <div class="col-md-3">
-                <label for="id">ID</label>
-                <input type="text" formControlName="id" class="form-control" disabled />
-              </div>
-              <div class="col-md-3">
-                <label for="eventDate">Fecha de evento</label>
-                <input type="date" formControlName="eventDate" class="form-control" />
-              </div>
-            </div>
+      <form #beneficiarioForm="ngForm" (ngSubmit)="onSubmit(beneficiariesForm)">
+        <div class="row">
+          <div class="col col-xl-12 col-lg-12">
+              <div class="card mb-3">
+                <div class="card-body custom-card">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <label for="id">ID</label>
+                      <input type="text" formControlName="id" class="form-control" disabled />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="eventDate">Fecha de evento</label>
+                      <input type="date" formControlName="eventDate" class="form-control" />
+                    </div>
+                 
 
-            <div class="row mt-3">
-              <div class="col-md-6">
-                <label for="activity">Pertenece a la actividad</label>
-                <input type="text" formControlName="activity" class="form-control" />
-              </div>
-              <div class="col-md-6">
-                <label for="event">Evento</label>
-                <input type="text" formControlName="event" class="form-control" />
-              </div>
-            </div>
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <label for="activity">Pertenece a la actividad</label>
+                      <input type="text" formControlName="activity" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="event">Evento</label>
+                      <input type="text" formControlName="event" class="form-control" />
+                    </div>
+                  </div>
 
-            <div class="row mt-3">
-              <div class="col-md-4">
-                <label for="department">Departamento</label>
-                <select formControlName="department" class="form-control">
-                  <option value="" disabled selected>Seleccione un departamento</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label for="municipality">Municipio</label>
-                <select formControlName="municipality" class="form-control">
-                  <option value="" disabled selected>Seleccione un municipio</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label for="community">Comunidad</label>
-                <select formControlName="community" class="form-control">
-                  <option value="" disabled selected>Seleccione una comunidad</option>
-                </select>
-              </div>
-            </div>
+                  <div class="row mt-3">
+                    <div class="col-md-4">
+                      <label for="department">Departamento</label>
+                      <select formControlName="department" class="form-control">
+                        <option value="" disabled selected>Seleccione un departamento</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="municipality">Municipio</label>
+                      <select formControlName="municipality" class="form-control">
+                        <option value="" disabled selected>Seleccione un municipio</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="community">Comunidad</label>
+                      <select formControlName="community" class="form-control">
+                        <option value="" disabled selected>Seleccione una comunidad</option>
+                      </select>
+                    </div>
+                  </div>
 
-            <div class="row mt-3">
-              <div class="col-md-6">
-                <label for="organizationType">Tipo de Organización</label>
-                <select formControlName="organizationType" class="form-control">
-                  <option value="" disabled selected>Seleccione un tipo</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label for="organizationName">Nombre de la organización</label>
-                <input type="text" formControlName="organizationName" class="form-control" />
-              </div>
-            </div>
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <label for="organizationType">Tipo de Organización</label>
+                      <select formControlName="organizationType" class="form-control">
+                        <option value="" disabled selected>Seleccione un tipo</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="organizationName">Nombre de la organización</label>
+                      <input type="text" formControlName="organizationName" class="form-control" />
+                    </div>
+                  </div>
 
-            <div class="row mt-3">
-              <div class="col-md-12">
-                <label for="details">Detalle</label>
-                <textarea formControlName="details" class="form-control"></textarea>
-              </div>
-            </div>
+                  <div class="row mt-3">
+                    <div class="col-md-12">
+                      <label for="details">Detalle</label>
+                      <textarea formControlName="details" class="form-control"></textarea>
+                    </div>
+                  </div>
 
-            <div class="row mt-3">
-              <div class="col-md-4">
-                <label for="numWomen">Nro de Mujeres</label>
-                <input type="number" formControlName="numWomen" class="form-control" />
-              </div>
-              <div class="col-md-4">
-                <label for="numMen">Nro de Hombres</label>
-                <input type="number" formControlName="numMen" class="form-control" />
-              </div>
-              <div class="col-md-4">
-                <label for="total">Total</label>
-                <input type="number" formControlName="total" class="form-control" />
-              </div>
-            </div>
+                  <div class="row mt-3">
+                    <div class="col-md-4">
+                      <label for="numWomen">Nro de Mujeres</label>
+                      <input type="number" formControlName="numWomen" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="numMen">Nro de Hombres</label>
+                      <input type="number" formControlName="numMen" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="total">Total</label>
+                      <input type="number" formControlName="total" class="form-control" />
+                    </div>
+                  </div>
 
-            <div class="row mt-3">
-              <div class="col-md-6">
-                <label for="registeredBy">Persona Registro</label>
-                <input type="text" formControlName="registeredBy" class="form-control" />
+                  <div class="row mt-3">
+                    <div class="col-md-6">
+                      <label for="registeredBy">Persona Registro</label>
+                      <input type="text" formControlName="registeredBy" class="form-control" />
+                    </div>
+                  </div>
+
+                  <!-- Botones Cancelar y Grabar -->
+                  <div class="modal-footer mt-3">
+                    <div class="d-flex justify-content-center" style="width: 100%;">
+                        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                            <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                        </button>
+                        <button type="button" class="btn btn-bg-1" [disabled]="personaRolesForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                        </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <div class="d-flex justify-content-center" style="width: 100%;">
-            <button type="button" class="btn btn-secondary" (click)="modal.close('Cerrar')">Cancelar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="beneficiariesForm.invalid">Grabar</button>
           </div>
         </div>
       </form>
     </div>
   </ng-template>
-</div>
-
-<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-
-<!-- Modal para añadir o editar Beneficiarios Alcanzados -->
-<ng-template #beneficiariesModal let-modal>
-<div class="modal-header">
-  <h4 class="modal-title">{{ selectedBeneficiary ? 'Editar' : 'Añadir' }} Beneficiarios Alcanzados</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-</div>
-
-<div class="modal-body">
-  <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmit(beneficiariesForm)">
-    <div class="card mb-3">
-      <div class="card-body custom-card">
-
-        <!-- ID y Fecha -->
-        <div class="row">
-          <div class="col-md-3">
-            <label for="id">ID</label>
-            <input type="text" formControlName="id" class="form-control" />
-          </div>
-          <div class="col-md-3">
-            <label for="eventDate">Fecha de evento</label>
-            <input type="date" formControlName="eventDate" class="form-control" />
-          </div>
-        </div>
-
-        <!-- Actividad y Evento -->
-        <div class="row mt-3">
-          <div class="col-md-6">
-            <label for="activity">Pertenece a la actividad</label>
-            <input type="text" formControlName="activity" class="form-control" />
-          </div>
-          <div class="col-md-6">
-            <label for="event">Evento</label>
-            <input type="text" formControlName="event" class="form-control" />
-          </div>
-        </div>
-
-        <!-- Departamento, Municipio y Comunidad -->
-        <div class="row mt-3">
-          <div class="col-md-4">
-            <label for="department">Departamento</label>
-            <select formControlName="department" class="form-control">
-              <option value="" disabled selected>Seleccione un departamento</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label for="municipality">Municipio</label>
-            <select formControlName="municipality" class="form-control">
-              <option value="" disabled selected>Seleccione un municipio</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label for="community">Comunidad</label>
-            <select formControlName="community" class="form-control">
-              <option value="" disabled selected>Seleccione una comunidad</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Tipo de Organización y Nombre -->
-        <div class="row mt-3">
-          <div class="col-md-6">
-            <label for="organizationType">Tipo de Organización</label>
-            <select formControlName="organizationType" class="form-control">
-              <option value="" disabled selected>Seleccione un tipo</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="organizationName">Nombre de la organización</label>
-            <input type="text" formControlName="organizationName" class="form-control" />
-          </div>
-        </div>
-
-        <!-- Detalles -->
-        <div class="row mt-3">
-          <div class="col-md-12">
-            <label for="details">Detalle</label>
-            <textarea formControlName="details" class="form-control"></textarea>
-          </div>
-        </div>
-
-        <!-- Cantidad de Mujeres, Hombres y Total -->
-        <div class="row mt-3">
-          <div class="col-md-4">
-            <label for="numWomen">Nro de Mujeres</label>
-            <input type="number" formControlName="numWomen" class="form-control" />
-          </div>
-          <div class="col-md-4">
-            <label for="numMen">Nro de Hombres</label>
-            <input type="number" formControlName="numMen" class="form-control" />
-          </div>
-          <div class="col-md-4">
-            <label for="total">Total</label>
-            <input type="number" formControlName="total" class="form-control" />
-          </div>
-        </div>
-
-        <!-- Persona de Registro -->
-        <div class="row mt-3">
-          <div class="col-md-6">
-            <label for="registeredBy">Persona Registro</label>
-            <input type="text" formControlName="registeredBy" class="form-control" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </form>
-</div>
-
-<!-- Botones del modal -->
-<div class="modal-footer">
-  <div class="d-flex justify-content-center" style="width: 100%;">
-    <button type="button" class="btn btn-secondary" (click)="modal.close('Cerrar')">
-      Cancelar
-    </button>
-    <button type="submit" class="btn btn-primary" [disabled]="beneficiariesForm.invalid">
-      Grabar
-    </button>
-  </div>
-</div>
-</ng-template>
-
 
 
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -388,6 +274,7 @@
     </div>
   </div>
 </div>
+
 <!-- Modal for Adding/Editing Aliados -->
 <ng-template #aliadosModal let-modal>
   <div class="modal-header">
@@ -448,22 +335,22 @@
               <input type="text" formControlName="registeredBy" class="form-control" />
             </div>
           </div>
+
+          <!-- Botones Cancelar y Grabar -->
+          <div class="modal-footer mt-3">
+            <div class="d-flex justify-content-center" style="width: 100%;">
+                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                    <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-bg-1" [disabled]="personaRolesForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                </button>
+            </div>
+          </div>
         </div>
       </div>
     </form>
   </div>
-
-  <!-- Footer with Buttons -->
-  <div class="modal-footer">
-    <div class="d-flex justify-content-center" style="width: 100%;">
-      <button type="button" class="btn btn-secondary" (click)="modal.close('Cerrar')">
-        Cancelar
-      </button>
-      <button type="submit" class="btn btn-primary" [disabled]="aliadosForm.invalid">
-        Grabar
-      </button>
-    </div>
-  </div>
 </ng-template>
 
-
+</div>

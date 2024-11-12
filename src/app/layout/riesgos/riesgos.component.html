@@ -1,51 +1,61 @@
 <div [@routerTransition]>
 
   <!-- Encabezado -->
-  <div class="row d-flex justify-content-between align-items-center w-100">
-    <div class="col custom-body-header">
-      <app-bodyHeader></app-bodyHeader>
-    </div>
-  
-    <!-- Personal Roles -->
-    <div class="col d-flex justify-content-between text-center">
-      <div class="custom-info-cards col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-        Total Property
+  <div class="row col-md-12">   
+      <div class="col col-md-6 align-items-center custom-body-header">
+        <app-bodyHeader></app-bodyHeader>
       </div>
-      <div class="custom-info-cards col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-        Total Property
+    
+      <!-- Tarjetas de Estadísticas -->
+      <div class="col col-md-6 text-center">
+        <div class="row">
+          <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+            {{headerDataNro01}} Riesgo(s) Alto(s)
+          </div>
+          <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+            {{headerDataNro02}} Riesgo(s) Medio(s)
+          </div>
+          <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+            {{headerDataNro03}} Riesgo(s) Bajo(s)
+          </div>
+          <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+            {{headerDataNro04}} A tomar medidas
+          </div>
+        </div>
       </div>
-      <div class="custom-info-cards col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-        Total Property
-      </div>
-      <div class="custom-info-cards col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-        Total Property
-      </div>
-    </div>
   </div>
 
 <!-- Tabla -->
-<div class="card mb-3" style="margin-top: 20px;">
+<div class="card mb-3" style="margin-top: 10px;">
   <div class="card-body custom-card table-responsive">
     <!-- Encabezado y Botones -->
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="title" style="color: #4E8646;">Gestión de Riesgos</h2>
 
       <!-- Botones de Acción -->
-      <div class="d-flex">
-        <button class="btn btn-view-bg-1" (click)="openModal(riesgoModal)">
-          <i class="fa fa-plus" aria-hidden="true"></i> Añadir
-        </button>
-        <button class="btn btn-view-bg-1 ms-2" [disabled]="!selectedRiesgo" (click)="openModal(riesgoModal, selectedRiesgo)">
-          <i class="fa fa-pencil" aria-hidden="true"></i> Editar
-        </button>
-        <button class="btn btn-view-bg-1 ms-2" [disabled]="!selectedRiesgo" (click)="onDelete()">
-          <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
-        </button>
+      <div class="row">
+        <div class="col col-xl-12 col-lg-12 text-end">
+          <button type="button" class="btn btn-view-bg-1" 
+            (click)="initAddRiesgo(riesgoModal)"
+            >
+            <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+          </button>
+          <button type="button" class="btn btn-view-bg-1" 
+          (click)="initEditRiesgo(riesgoModal)"
+          [disabled]="!riesgoSelected">
+            <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+          </button>
+          <button type="button" class="btn btn-view-bg-1" 
+          (click)="initDeleteRiesgo()"
+          [disabled]="!riesgoSelected">
+            <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Tabla de Riesgo -->
-    <table class="table custom-table table-striped">
+    <table class="table custom-table table-striped table-bordered">
       <thead>
         <tr>
           <th></th>
@@ -61,13 +71,17 @@
           <th>COMENTARIOS</th>
         </tr>
       </thead>
+
+      <!-- Cuerpo de la Tabla -->
       <tbody>
-        <tr *ngFor="let riesgo of riesgosPaginados" (click)="selectRiesgo(riesgo)" >
+        <tr *ngFor="let riesgo of riesgosTable; let i = index" >
 
           <td>
-            <input type="checkbox" [(ngModel)]="riesgo.seleccionado"
-                   (change)="checkboxChanged(riesgo)" />
-          </td>      
+            <input type="checkbox" 
+                  [(ngModel)]="riesgo.selected" 
+                  (change)="checkboxChanged(riesgo)"
+                  id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
+          </td>     
 
           <td style="text-align: center;" >{{ riesgo.id }}</td>
           <td>{{ riesgo.categoria }}</td>
@@ -109,20 +123,22 @@
     <!-- Botones de tabla -->
     <div class="d-flex justify-content-center">
       <ngb-pagination 
-          [(page)]="page" 
-          [pageSize]="pageSize" 
-          [collectionSize]="riesgos.length"
-          [maxSize]="3"
-          [rotate]="true"
-          [boundaryLinks]="true">
+      [(page)]="mainPage" 
+      [pageSize]="mainPageSize" 
+      [collectionSize]="totalLength"
+      [maxSize]="3"
+      [rotate]="true"
+      [boundaryLinks]="true">
       </ngb-pagination>
   </div>
   </div>
 </div>
 
 
-  <!-- Formulario de Riesgos Ventana Emergente -->
+  <!-- Modal de Añadir y Editar para Formulario de Riesgos Ventana Emergente -->
   <ng-template #riesgoModal let-modal>
+
+    <!-- Encabezado del Modal-->
     <div class="modal-header">
       <h4 class="modal-title">{{ selectedRiesgo ? 'Editar' : 'Añadir' }} Riesgo</h4>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
@@ -137,7 +153,7 @@
                      
         <!-- Primera Fila = ID, Fecha de registro, Persona Registro, Componente -->
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label for="id">ID</label>
             <input type="text" formControlName="id" class="form-control" />
           </div>
@@ -151,15 +167,25 @@
           </div>
           <div class="col-md-3">
             <label for="componente">Componente</label>
-            <input type="text" formControlName="componente" class="form-control" />
+            <select class="form-control" id="componente" 
+                name="componente" [(ngModel)]="componente">
+                <option value="" disabled selected>Componente</option>
+                <option *ngFor="let componente of componentes" [value]="componente.id">{{ componente.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-1 mt-3">
+            <button type ="button"class="btn-view-bg-3"><i aria-hidden="true"></i> OG</button> 
           </div>
         </div>
     
         <!-- Segunda Fila = Categoría, Título de Riesgo, Fecha de Identificación -->
         <div class="row mt-3">
           <div class="col-md-4">
-            <label for="categoria">Categoría</label>
-            <input type="text" formControlName="categoria" class="form-control" />
+            <label for="idp_categoria">Categoría</label>
+            <select class="form-control" id="idp_categoria" name="idp_categoria" [(ngModel)]="idp_categoria">
+              <option value="" disabled selected>Selecciona una categoria</option>
+              <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.name }}</option>
+          </select>
           </div>
           <div class="col-md-4">
             <label for="tituloRiesgo">Título de Riesgo</label>
@@ -252,15 +278,11 @@
           </div>
           <div class="col-md-6">
             <label for="comentarios">Comentarios Adicionales</label>
-            <textarea formControlName="comentarios" class="form-control"></textarea>
+            <input type="text" formControlName="efectividad" class="form-control" />
           </div>
         </div>
-      </div>
-  </div>
-      </form>
-    </div>
-    
-    <!-- Botones Cancelar y Grabar -->
+
+        <!-- Botones Cancelar y Grabar -->
     <div class="modal-footer">
       <div class="d-flex justify-content-center" style="width: 100%;">
           <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
@@ -270,6 +292,11 @@
               <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
           </button>
       </div>
+    </div>
+
+      </div>
+  </div>
+      </form>
     </div>
 
   </ng-template>

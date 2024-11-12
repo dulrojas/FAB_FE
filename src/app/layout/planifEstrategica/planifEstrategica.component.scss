@@ -1,0 +1,89 @@
+@import '../../../styles/styles.scss';
+
+.btn-añadirElemento {
+  width: 200px;
+  height: 30px;
+  -webkit-border-radius: 15px;
+  border-radius: 12px;
+  color: $txt-2-color;
+  background: $primary-color;
+  border: 1px solid $txt-2-color;
+  padding: 0 10px;
+  margin: 0 4px;
+  font-size: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.btn-añaEliminar{
+  width: 100px;
+  height: 30px;
+  -webkit-border-radius: 50px;
+  border-radius: 12px;
+  color: $txt-2-color;
+  background: $primary-color;
+  border: 1px solid $txt-2-color;
+  margin: 0 4px;
+  font-size: 12px;
+  padding: 0 15px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.btn-SubirBajar{
+  width: 30px;
+  height: 30px;
+  -webkit-border-radius: 15px;
+  border-radius: 12px;
+  color: $txt-2-color;
+  background: $primary-color;
+  border: 1px solid $txt-2-color;
+  margin: 0 4px;
+  font-size: 13px;
+}
+
+.custom-table-planifEstrategica{
+  font-size: 12px;
+  background-color: #ffffff;
+  
+
+  th, td {
+      padding: 10px;
+      text-align: left;
+      vertical-align: middle;
+  }
+  th {
+      background-color: $bg-3-color;
+      font-weight: bold;
+      border: 1px solid black;
+  }
+  tr:hover {
+      background-color: #f9f9f9;
+  }
+  .table-responsive {
+      overflow-x: auto;
+  }
+}  
+
+.btn-view-bg-1{
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+  color: $txt-2-color;
+  background:  #F7B529;
+  border: 2px solid $txt-2-color;
+  font-size: 12px;
+  line-height: 40px;
+  padding: 0 10px;
+}
+.btn-view-bg-4{
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+  color: $txt-2-color;
+  background: #FBD468;
+  border: 2px solid $txt-2-color;
+  font-size: 12px;
+  line-height: 40px;
+  padding: 0 10px;
+}
