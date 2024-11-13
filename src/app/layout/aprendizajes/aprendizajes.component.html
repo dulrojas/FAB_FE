@@ -111,71 +111,75 @@
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
                                     <label for="id">Id</label>
                                     <input class="form-control" type="text" 
-                                        id="id" name="id" [(ngModel)]="id" />
+                                        id="id" name="id" [(ngModel)]="id" disabled/>
                                 </div>
                                 <!-- ======= ======= FECHA SECTION ======= ======= -->
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
                                     <label for="fecha_registro">Fecha de resgistro</label>
                                     <input class="form-control" type="text" 
-                                        id="fecha_registro" name="fecha_registro" [(ngModel)]="fecha_registro" />
+                                        id="fecha_registro" name="fecha_registro" [(ngModel)]="fecha_registro" disabled/>
                                 </div>
                                 <!-- ======= ======= PERSONA SECTION ======= ======= -->
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
                                     <label for="persona_registro">Persona registro</label>
                                     <input class="form-control" type="text" 
-                                        id="persona_registro" name="persona_registro" [(ngModel)]="persona_registro" />
+                                        id="persona_registro" name="persona_registro" [(ngModel)]="persona_registro" disabled/>
                                 </div>
                                 <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
-                                    <label for="apellido_2">Componente</label>
-                                    <input class="form-control" type="text" 
-                                        id="apellido_2" name="apellido_2" [(ngModel)]="apellido_2" />
+                                    <label for="id_proy_elemento">Componente</label>
+                                    <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" [(ngModel)]="id_proy_elemento">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let rol of tipoDoc" [value]="rol.id">{{ rol.name }}</option>
+                                    </select>
                                 </div>
                                 <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                                 <div class="col col-xl-1 col-lg-1 mt-auto">
                                     <label class="btn-view-bg-3">OG</label>
                                 </div>
         
-                                <!-- ======= ======= NRO DOCUMENTO SECTION ======= ======= -->
+                                <!-- ======= ======= AREA DE APRENDIZAJE SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
-                                    <label for="nro_documento">Area de aprendizaje</label>
-                                    <input class="form-control" type="text" 
-                                        id="nro_documento" name="nro_documento" [(ngModel)]="nro_documento" />
+                                    <label for="idp_aprendizaje_area">Area de aprendizaje</label>
+                                    <select class="form-control" id="idp_aprendizaje_area" name="idp_aprendizaje_area" [(ngModel)]="idp_aprendizaje_area">
+                                        <option value="" disabled selected>Selecciona un area</option>
+                                        <option *ngFor="let rol of tipoDoc" [value]="rol.id">{{ rol.name }}</option>
+                                    </select>
                                 </div>
-                                <!-- ======= ======= TIPO DOCUMENTO SECTION ======= ======= -->
+                                <!-- ======= ======= TIPO APRENDIZAJE SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
-                                    <label for="idp_tipo_documento">Tipo de aprendizaje</label>
-                                    <select class="form-control" id="idp_tipo_documento" name="idp_tipo_documento" [(ngModel)]="idp_tipo_documento">
-                                        <option value="" disabled selected>Selecciona un rol</option>
+                                    <label for="idp_apredizaje_tipo">Tipo de aprendizaje</label>
+                                    <select class="form-control" id="idp_apredizaje_tipo" name="idp_apredizaje_tipo" [(ngModel)]="idp_apredizaje_tipo">
+                                        <option value="" disabled selected>Selecciona un tipo</option>
                                         <option *ngFor="let rol of tipoDoc" [value]="rol.id">{{ rol.name }}</option>
                                     </select>
                                 </div>
         
                                 <!-- ======= ======= TITULO APRE SECTION ======= ======= -->
                                 <div class="col col-xl-8 col-lg-8 mt-auto">
-                                    <label for="telefono">Titulo de aprendizaje</label>
+                                    <label for="aprendizaje">Titulo de aprendizaje</label>
                                     <input class="form-control" type="text" 
-                                        id="telefono" name="telefono" [(ngModel)]="telefono" />
+                                        id="aprendizaje" name="aprendizaje" [(ngModel)]="aprendizaje" />
                                 </div>
                                 <!-- ======= ======= FECHA APREN SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="correo">Fecha de aprendizaje</label>
-                                    <input class="form-control" type="text" 
-                                        id="correo" name="correo" [(ngModel)]="correo" />
+                                    <input class="form-control" type="date" 
+                                        id="fecha" name="fecha" [(ngModel)]="fecha" />
                                 </div>
 
                                 <!-- ======= ======= PROBLEMA SECTION ======= ======= -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
-                                    <label for="cargo">Problema</label>
-                                    <textarea class="form-control" id="cargo" name="cargo" 
-                                    [(ngModel)]="cargo"></textarea>
+                                    <label for="problema">Problema</label>
+                                    <textarea class="form-control" id="problema" name="problema" 
+                                        [(ngModel)]="problema"></textarea>
                                 </div>
 
                                 <!-- ======= ======= ACCION DESARROLLADA SECTION ======= ======= -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
-                                    <label for="cargo">Accion desarrollada</label>
-                                    <textarea class="form-control" id="cargo" name="cargo" 
-                                    [(ngModel)]="cargo"></textarea>
+                                    <label for="accion_aprendizaje">Accion desarrollada</label>
+                                    <textarea class="form-control" id="accion_aprendizaje" name="accion_aprendizaje" 
+                                        [(ngModel)]="accion_aprendizaje"></textarea>
                                 </div>
 
                                 <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>

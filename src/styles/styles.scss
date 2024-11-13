@@ -90,7 +90,7 @@ $txt-2-color: #ffffff;
     th, td {
         padding: 10px;
         text-align: left;
-        vertical-align: middle;  // Alineación vertical centrada
+        vertical-align: middle;
     }
     th {
         background-color: $bg-3-color;
@@ -148,8 +148,8 @@ select.form-control {
           transform: translateY(-50%);
           height: 20px;
           width: 20px;
-          border: 2px solid $primary-color; // Borde inicial (color base)
-          background-color: $txt-2-color; // Fondo blanco por defecto
+          border: 2px solid $primary-color;
+          background-color: $txt-2-color;
           transition: background-color 0.2s ease, border-color 0.2s ease;
         }
       }
@@ -173,9 +173,8 @@ select.form-control {
         border-width: 0 2px 2px 0;
       }
   
-      // Hover (cambio de borde)
       & + label:hover:before {
-        border-color: $secondary-color; // Cambia el borde al pasar el mouse
+        border-color: $secondary-color;
       }
 }
 .custom-form-lable-checkbox{
@@ -207,6 +206,12 @@ select.form-control {
     background-color: $primary-color;
     color: $txt-2-color;
     font-size: 12px;
+}
+.custom-checker{
+    color: $primary-color;
+}
+.custom-checker-checked{
+    color: $primary-color;
 }
 // ======= ======= ======= ======= =======
 

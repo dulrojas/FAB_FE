@@ -10,10 +10,10 @@
                     {{headerDataNro01}} Personas
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro02}} Administrador de Sistema
+                    {{headerDataNro02}} Proyectos
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro03}} Controladores
+                    {{headerDataNro03}} Administrador de Sistema
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
                     {{headerDataNro04}} Responsables de Proyecto
@@ -44,7 +44,7 @@
                         <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                     </button>
                     <button type="button" class="btn btn-view-bg-1" 
-                        (click)="openModal(deletePersonaRolesModal)"
+                        (click)="initDeletePersonaRoles(deletePersonaRolesModal)"
                         [disabled]="!personaRolesSelected">
                         <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                     </button>
@@ -82,7 +82,14 @@
                                 <td>{{ personaRol.correo }}</td>
                                 <td>{{ personaRol.usuario }}</td>
                                 <td>{{ personaRol.unidad }}</td>
-                                <td>{{ personaRol.responsable }}</td>
+                                <td>
+                                    <ng-container *ngIf="personaRol.id_persona == personaRol.id_persona_resp; else notEqual">
+                                      <i class="fa fa-check-circle-o mx-auto custom-checker-checked" aria-hidden="true"></i>
+                                    </ng-container>
+                                    <ng-template #notEqual>
+                                      <i class="fa fa-circle-o mx-auto custom-checker" aria-hidden="true"></i>
+                                    </ng-template>
+                                  </td>
                                 <td>{{ personaRol.cargo }}</td>
                             </tr>
                         </tbody>
@@ -148,7 +155,7 @@
                                     <label for="idp_tipo_documento">Tipo de Documento</label>
                                     <select class="form-control" id="idp_tipo_documento" name="idp_tipo_documento" [(ngModel)]="idp_tipo_documento">
                                         <option value="" disabled selected>Selecciona un rol</option>
-                                        <option *ngFor="let rol of tipoDoc" [value]="rol.id">{{ rol.name }}</option>
+                                        <option *ngFor="let tipo of tipoDoc" [value]="tipo.id_subtipo">{{ tipo.descripcion_subtipo }}</option>
                                     </select>
                                 </div>
         
@@ -170,9 +177,9 @@
                                 <!-- ======= ======= UNIDAD SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="unidad">Unidad</label>
-                                    <select class="form-control" id="unidad" name="unidad" [(ngModel)]="unidad">
+                                    <select class="form-control" id="id_inst_unidad" name="id_inst_unidad" [(ngModel)]="id_inst_unidad">
                                         <option value="" disabled selected>Selecciona una unidad</option>
-                                        <option *ngFor="let unidad of unidades" [value]="unidad.id">{{ unidad.name }}</option>
+                                        <option *ngFor="let unidad of unidades" [value]="unidad.id_inst_unidad">{{ unidad.unidad }}</option>
                                     </select>
                                 </div>
                                 <!-- ======= ======= CARGO SECTION ======= ======= -->
@@ -214,7 +221,6 @@
                                 <table class="table custom-table table-striped table-bordered">
                                     <thead>
                                         <tr>
-                                            <th></th>
                                             <th>ID</th>
                                             <th>Proyecto</th>
                                             <th>Rol</th>
@@ -222,16 +228,15 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let proyecto of proyectosTable; let i = index">
+                                            <td>{{ proyecto.id_proyecto }}</td>
+                                            <td>{{ proyecto.proyecto }}</td>
                                             <td>
-                                                <input type="checkbox" [(ngModel)]="proyecto.selected"
-                                                    (change)="proyectosCheckboxChanged(proyecto)" id="checkbox-{{ i }}" name="checkbox-{{ i }}"/>
-                                            </td>
-                                            <td>{{ proyecto.id }}</td>
-                                            <td>{{ proyecto.name }}</td>
-                                            <td>
-                                                <select class="form-control" id="proyecto.proyectoRol" name="proyecto.proyectoRol" [(ngModel)]="proyecto.proyectoRol">
-                                                    <option value="" selected disabled>...</option>
-                                                    <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.name }}</option>
+                                                <select class="form-control" id="rol-{{ i }}" name="rol-{{ i }}" [(ngModel)]="proyecto.rol" 
+                                                    (change)="personaProyectoRolChange($event, proyecto)">
+                                                    <option value="" disabled selected>...</option>
+                                                    <option *ngFor="let rol of roles" [value]="rol.descripcion_subtipo">
+                                                        {{ rol.descripcion_subtipo }}
+                                                    </option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -279,10 +284,20 @@
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
-        <p>Contenido del Modal 3.</p>
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de esta persona?</p>
+        </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">Cerrar</button>
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="editPersona(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
     </div>
 </ng-template>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
