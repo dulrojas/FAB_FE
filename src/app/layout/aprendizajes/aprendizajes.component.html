@@ -63,16 +63,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let personaRol of personasRolesTable; let i = index">
+                            <tr *ngFor="let aprendizaje of aprendizajesTable; let i = index">
                                 <td>
-                                    <input type="checkbox" [(ngModel)]="personaRol.selected"
-                                        (change)="checkboxChanged(personaRol)" id="checkbox-{{ i }}" name="checkbox-{{ i }}"/>
+                                    <input type="checkbox" [(ngModel)]="aprendizaje.selected"
+                                        (change)="checkboxChanged(aprendizaje)" id="checkbox-{{ i }}" name="checkbox-{{ i }}"/>
                                 </td>
-                                <td>{{ (mainPage - 1) * mainPageSize + i + 1 }}</td>
-                                <td>{{ personaRol.nombres }}</td>
-                                <td>{{ personaRol.apellido_1 }}</td>
-                                <td>{{ personaRol.apellido_2 }}</td>
-                                <td>{{ personaRol.telefono }}</td>
+                                <td>{{ aprendizaje.id_proy_aprende }}</td>
+                                <td>{{ aprendizaje.fecha }}</td>
+                                <td>{{ getDescripcionSubtipo(aprendizaje.idp_aprendizaje_area, areasAprendizaje) }}</td>
+                                <td>{{ getDescripcionSubtipo(aprendizaje.idp_aprendizaje_tipo, tiposAprendizaje) }}</td>
+                                <td>{{ aprendizaje.aprendizaje }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -109,9 +109,9 @@
                             <div class="row">
                                 <!-- ======= ======= ID SECTION ======= ======= -->
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
-                                    <label for="id">Id</label>
+                                    <label for="id_proy_aprende">Id</label>
                                     <input class="form-control" type="text" 
-                                        id="id" name="id" [(ngModel)]="id" disabled/>
+                                        id="id_proy_aprende" name="id_proy_aprende" [(ngModel)]="id_proy_aprende" disabled/>
                                 </div>
                                 <!-- ======= ======= FECHA SECTION ======= ======= -->
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
@@ -128,14 +128,17 @@
                                 <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
                                     <label for="id_proy_elemento">Componente</label>
-                                    <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" [(ngModel)]="id_proy_elemento">
+                                    <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" 
+                                        [(ngModel)]="id_proy_elemento" (change)="onSelectionChange()">
                                         <option value="" disabled selected>Selecciona un elemento</option>
-                                        <option *ngFor="let rol of tipoDoc" [value]="rol.id">{{ rol.name }}</option>
+                                        <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
+                                            {{ componente.meto_elemento }}
+                                        </option>
                                     </select>
                                 </div>
                                 <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                                 <div class="col col-xl-1 col-lg-1 mt-auto">
-                                    <label class="btn-view-bg-3">OG</label>
+                                    <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
                                 </div>
         
                                 <!-- ======= ======= AREA DE APRENDIZAJE SECTION ======= ======= -->
@@ -143,15 +146,15 @@
                                     <label for="idp_aprendizaje_area">Area de aprendizaje</label>
                                     <select class="form-control" id="idp_aprendizaje_area" name="idp_aprendizaje_area" [(ngModel)]="idp_aprendizaje_area">
                                         <option value="" disabled selected>Selecciona un area</option>
-                                        <option *ngFor="let rol of tipoDoc" [value]="rol.id">{{ rol.name }}</option>
+                                        <option *ngFor="let area of areasAprendizaje" [value]="area.id_subtipo">{{ area.descripcion_subtipo }}</option>
                                     </select>
                                 </div>
                                 <!-- ======= ======= TIPO APRENDIZAJE SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
-                                    <label for="idp_apredizaje_tipo">Tipo de aprendizaje</label>
-                                    <select class="form-control" id="idp_apredizaje_tipo" name="idp_apredizaje_tipo" [(ngModel)]="idp_apredizaje_tipo">
+                                    <label for="idp_aprendizaje_tipo">Tipo de aprendizaje</label>
+                                    <select class="form-control" id="idp_aprendizaje_tipo" name="idp_aprendizaje_tipo" [(ngModel)]="idp_aprendizaje_tipo">
                                         <option value="" disabled selected>Selecciona un tipo</option>
-                                        <option *ngFor="let rol of tipoDoc" [value]="rol.id">{{ rol.name }}</option>
+                                        <option *ngFor="let tipo of tiposAprendizaje" [value]="tipo.id_subtipo">{{ tipo.descripcion_subtipo }}</option>
                                     </select>
                                 </div>
         
@@ -177,12 +180,46 @@
 
                                 <!-- ======= ======= ACCION DESARROLLADA SECTION ======= ======= -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
-                                    <label for="accion_aprendizaje">Accion desarrollada</label>
-                                    <textarea class="form-control" id="accion_aprendizaje" name="accion_aprendizaje" 
-                                        [(ngModel)]="accion_aprendizaje"></textarea>
+                                    <label for="accion">Accion desarrollada</label>
+                                    <textarea class="form-control" id="accion" name="accion" 
+                                        [(ngModel)]="accion"></textarea>
                                 </div>
 
                                 <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>
+
+                                <!-- ======= ======= PREGUNTAS SECTIONS ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                    <div class="row">
+                                        <div class="col col-xl-12 col-lg-12 text-center">
+                                            <label>Resultados</label>
+                                        </div>
+                                        <div class="col col-xl-6 col-lg-6 custom-pos-qa">
+                                            <div class="row">
+                                                <div class="col col-xl-12 col-lg-12">
+                                                    <label class="d-flex align-items-center justify-content-center">Positivos</label>
+                                                </div>
+                                                <div class="col col-xl-12 col-lg-12" *ngFor="let pregunta of preguntas1; let i = index">
+                                                    <label class="text-left">{{ pregunta }}</label>
+                                                    <input class="form-control" type="text" 
+                                                        id="pregunta1-{{ i }}" name="pregunta1-{{ i }}" [(ngModel)]="respuestas1[i]"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col col-xl-6 col-lg-6 custom-neg-qa">
+                                            <div class="row">
+                                                <div class="col col-xl-12 col-lg-12">
+                                                    <label class="d-flex align-items-center justify-content-center">Negativos</label>
+                                                </div>
+                                                <div class="col col-xl-12 col-lg-12" *ngFor="let pregunta of preguntas2; let i = index">
+                                                    <label class="text-left">{{ pregunta }}</label>
+                                                    <input class="form-control" type="text" 
+                                                        id="pregunta2-{{ i }}" name="pregunta2-{{ i }}" [(ngModel)]="respuestas2[i]"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -204,17 +241,27 @@
     </div>
 </ng-template>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
-<!-- ======= ======= ======= DELETE PERSONA MODAL ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE APRENDIZAJES ======= ======= ======= -->
 <ng-template #deleteAprendizajesModal let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Eliminar Persona</h4>
+        <h4 class="modal-title">Eliminar Aprendizaje</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
-        <p>Contenido del Modal 3.</p>
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de este aprendizaje?</p>
+        </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">Cerrar</button>
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="editAprendizaje(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
     </div>
 </ng-template>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->

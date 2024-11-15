@@ -71,7 +71,6 @@ export class PersonaRolesComponent implements OnInit {
     persona_proyecto_mod_to_add: any[] = [];
     persona_proyecto_mod_to_edit: any[] = [];
     unidades: any[] =[];
-
     // ======= ======= ======= ======= =======
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
@@ -419,10 +418,6 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void{
-
-      console.log(this.persona_proyecto_mod_to_add);
-      console.log(this.persona_proyecto_mod_to_edit);
-
       if(this.modalAction == "add"){
         this.addPersona();
       }

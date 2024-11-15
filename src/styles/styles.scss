@@ -213,6 +213,12 @@ select.form-control {
 .custom-checker-checked{
     color: $primary-color;
 }
+.custom-pos-qa{
+    border-right: solid 1px $txt-2-color;
+}
+.custom-neg-qa{
+    border-left: solid 1px $txt-2-color;
+}
 // ======= ======= ======= ======= =======
 
 

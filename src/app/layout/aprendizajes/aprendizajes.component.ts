@@ -2,6 +2,9 @@ import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core
 import { routerTransition } from '../../router.animations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { servicios } from "../../servicios/servicios";
+import { servAprendizaje } from "../../servicios/aprendizajes";
+
 @Component({
     selector: 'app-aprendizajes',
     templateUrl: './aprendizajes.component.html',
@@ -10,72 +13,130 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AprendizajesComponent implements OnInit {
     // ======= ======= VARIABLES SECTION ======= =======
-    personasRoles: any[] = [];
+    aprendizajes: any[] = [];
     mainPage = 1;
     mainPageSize = 10;
     totalLength = 0;
     constructor(
       private modalService: NgbModal,
+      private servicios: servicios,
+      private servApredizaje: servAprendizaje,
       private cdr: ChangeDetectorRef
-    ) {}
-
-    idProyecto: any = 0;
+    ){}
+    idProyecto: any = 1;
 
     headerDataNro01: any = 0;
     headerDataNro02: any = 0;
     headerDataNro03: any = 0;
     headerDataNro04: any = 0;
-
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
+    modalAction: any = "";
     modalTitle: any = "";
 
-    nombres: any = null;
-    apellido_1: any = null;
-    apellido_2: any = null;
-    idp_tipo_documento: any = "";
-    telefono: any = null;
-    correo: any = null;
-    unidad: any = "";
-    cargo: any = null;
-    responsable: any = null;
-    usuario: any = null;
-    contrasenia: any = null;
-    logedBy: any = null;
+    id_proy_aprende: any = "";
+    id_proyecto: any = "";
+    fecha_registro: any = "";
+    persona_registro: any = "";
+    id_proy_elemento: any = "";
+    idp_aprendizaje_area: any = "";
+    idp_aprendizaje_tipo: any = "";
+    aprendizaje: any = "";
+    fecha: any = "";
+    problema: any = "";
+    accion_aprendizaje: any = "";
+    accion: any = "";
+    id_preguntas_1: any = "";
+    respuestas_1: any = "";
+    id_preguntas_2: any = "";
+    respuestas_2: any = "";
+    id_persona_reg: any = "";
+    fecha_hora_reg: any = "";
 
+    sigla: any = "";
+    color: any = "";
+
+    preguntasObj1: any = [];
+    preguntas1: any = [];
+    respuestas1: any = [];
+    preguntasObj2: any = [];
+    preguntas2: any = [];
+    respuestas2: any = [];
     // ======= ======= VARIABLES SECTION ======= =======
-    tipoDoc: Array<{ id: number, name: string }> = [
-      { id: 1, name: 'Carnet de identidad' },
-      { id: 2, name: 'NIT' },
-      { id: 3, name: 'DNI' },
-      { id: 4, name: 'Pasaporte' }
-    ];
-
-    unidades: Array<{ id: number, name: string }> = [
-      { id: 1, name: 'Unidad 1' },
-      { id: 2, name: 'Unidad 2' },
-      { id: 3, name: 'Unidad 3' }
-    ];
-
-    proyectos: Array<{ id: number, name: string }> = [
-      { id: 1, name: 'Proyecto 1' },
-      { id: 2, name: 'Proyecto 2' },
-      { id: 3, name: 'Proyecto 3' },
-      { id: 4, name: 'Proyecto 4' },
-      { id: 5, name: 'Proyecto 5' }
-    ];
-
-    roles: Array<{ id: number, name: string }> = [
-      { id: 1, name: 'LEC' },
-      { id: 2, name: 'ESC' },
-      { id: 3, name: 'RES' },
-      { id: 4, name: 'CON' }
-    ];
-
+    componentes: any[] = [];
+    areasAprendizaje: any[] = [];
+    tiposAprendizaje: any[] = [];
     // ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
-        this.loadPeople();
-        this.countHeaderData();
+      this.getParametricas()
+      this.getAprendizajes();
+    }
+    // ======= ======= ======= ======= =======
+    getDescripcionSubtipo(idRegistro: any, paramList: any): string{
+      const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
+      return subtipo ? subtipo.descripcion_subtipo : 'Null';
+    }
+    getCurrentDateTime(): string {
+      const date: Date = new Date();
+      
+      const day: string = String(date.getDate()).padStart(2, '0');
+      const month: string = String(date.getMonth() + 1).padStart(2, '0');
+      const year: number = date.getFullYear();
+      
+      const hours: string = String(date.getHours()).padStart(2, '0');
+      const minutes: string = String(date.getMinutes()).padStart(2, '0');
+      const seconds: string = String(date.getSeconds()).padStart(2, '0');
+      
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+    // ======= ======= GET PARAMETRICAS ======= =======
+    getParametricas(){
+      // ======= GET METO ELEMENTOS =======
+      this.servApredizaje.getMetoElementos().subscribe(
+        (data) => {
+          this.componentes = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
+      // ======= GET ROLES =======
+      this.servicios.getParametricaByIdTipo(12).subscribe(
+        (data) => {
+          this.areasAprendizaje = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
+      // ======= GET ROLES =======
+      this.servicios.getParametricaByIdTipo(13).subscribe(
+        (data) => {
+          this.tiposAprendizaje = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
+      // ======= GET PREGUNTAS =======
+      this.servApredizaje.getPreguntas(this.idProyecto).subscribe(
+        (data) => {
+          this.preguntasObj1 = data[0].dato[0];
+          this.preguntasObj1.preguntas = JSON.parse(this.preguntasObj1.preguntas);
+          this.preguntas1 = this.preguntasObj1.preguntas.Positivo;
+          this.preguntasObj2 = data[0].dato[1];
+          this.preguntasObj2.preguntas = JSON.parse(this.preguntasObj2.preguntas);
+          this.preguntas2 = this.preguntasObj2.preguntas.Negativo;
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OPEN MODALS FUN ======= =======
@@ -91,81 +152,152 @@ export class AprendizajesComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= PERSONA ROLES TABLE PAGINATION ======= =======
-    get personasRolesTable() {
+    get aprendizajesTable() {
       const start = (this.mainPage - 1) * this.mainPageSize;
-      return this.personasRoles.slice(start, start + this.mainPageSize);
-    }
-    // ======= ======= ======= ======= =======
-    // ======= ======= PERSONA ROLES TABLE PAGINATION ======= =======
-    get proyectosTable() {
-      return this.proyectos;
+      return this.aprendizajes.slice(start, start + this.mainPageSize);
     }
     // ======= ======= ======= ======= =======
     aprendizajesSelected: any = null;
     // ======= ======= CHECKBOX CHANGED ======= =======
-    checkboxChanged(personaSel: any) {
-      this.personasRoles.forEach(persona =>{
-        if(personaSel.id_persona == persona.id_persona){
-          if(personaSel.selected){
-            this.aprendizajesSelected = personaSel;
+    checkboxChanged(aprendizajeSel: any) {
+      this.aprendizajes.forEach(aprendizaje =>{
+        if(aprendizajeSel.id_proy_aprende == aprendizaje.id_proy_aprende){
+          if(aprendizajeSel.selected){
+            this.aprendizajesSelected = aprendizajeSel;
           }
           else{
             this.aprendizajesSelected = null;
           }
         }
         else{
-          persona.selected = false;
+          aprendizaje.selected = false;
         }
       });
     }
     // ======= ======= ======= ======= =======
+    onSelectionChange() {
+      const selectedComponente = this.componentes.find(comp => comp.id_meto_elemento == this.id_proy_elemento);
+      if (selectedComponente) {
+          this.color = selectedComponente.color;
+          this.sigla = selectedComponente.sigla;
+      }
+    }
     // ======= ======= INIT PERSONA ROLES NGMODEL ======= =======
     initAprendizajesModel(){
       this.modalTitle = "";
 
-      this.nombres = null;
-      this.apellido_1 = null;
-      this.apellido_2 = null;
-      this.idp_tipo_documento = "";
-      this.telefono = null;
-      this.correo = null;
-      this.unidad = "";
-      this.cargo = null;
-      this.responsable = null;
-      this.usuario = null;
-      this.contrasenia = null;
-      this.logedBy = null;
+      this.id_proy_aprende = 0;
+      this.fecha_registro = "";
+      this.persona_registro = "";
+      this.id_proy_elemento = "";
+      this.idp_aprendizaje_area = null;
+      this.idp_aprendizaje_tipo = null;
+      this.aprendizaje = "";
+      this.fecha = null;
+      this.problema = null;
+      this.accion_aprendizaje = null;
+      
+      this.sigla = null;
+      this.color = null;
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= GET PERSONAS ======= =======
+    getAprendizajes(){
+      this.servApredizaje.getApredizajesByIdProy(this.idProyecto).subscribe(
+        (data) => {
+          this.aprendizajes = data[0].dato;
+          this.totalLength = this.aprendizajes.length;
+          this.countHeaderData();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT ADD PERSONA ROLES ======= =======
     initAddAprendizajes(modalScope: TemplateRef<any>){
       this.initAprendizajesModel();
 
+      this.fecha_registro = this.getCurrentDateTime();
+
+      this.modalAction = "add";
       this.modalTitle = this.getModalTitle("add");
 
       this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= EDIT APRENDIZAJE ======= =======
+    addAprendizajes(){
+      const objApredizaje = {
+        p_id_proy_aprende: this.id_proy_aprende,
+        p_id_proyecto: this.id_proyecto,
+        p_aprendizaje: this.aprendizaje,
+        p_problema: this.problema,
+        p_accion_aprendizaje: this.accion_aprendizaje,
+        p_id_preguntas_1: this.id_preguntas_1,
+        p_respuestas_1: this.respuestas_1,
+        p_id_preguntas_2: this.id_preguntas_2,
+        p_respuestas_2: this.respuestas_2,
+        p_id_persona_reg: this.id_persona_reg,
+        p_id_proy_elemento: this.id_proy_elemento,
+        p_idp_aprendizaje_area: this.idp_aprendizaje_area,
+        p_idp_aprendizaje_tipo: this.idp_aprendizaje_tipo,
+        p_fecha: this.fecha,
+        p_fecha_hora_reg: this.fecha_hora_reg
+      };
+
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT EDIT PERSONA ROLES ======= =======
     initEditAprendizajes(modalScope: TemplateRef<any>){
       this.initAprendizajesModel();
 
+      this.modalAction = "edit";
       this.modalTitle = this.getModalTitle("edit");
 
-      this.nombres = this.aprendizajesSelected.nombres;
-      this.apellido_1 = this.aprendizajesSelected.apellido_1;
-      this.apellido_2 = this.aprendizajesSelected.apellido_2;
-      this.idp_tipo_documento = this.aprendizajesSelected.idp_tipo_documento;
-      this.telefono = this.aprendizajesSelected.telefono;
-      this.correo = this.aprendizajesSelected.correo;
-      this.unidad = this.aprendizajesSelected.unidad;
-      this.cargo = this.aprendizajesSelected.cargo;
-      this.responsable = this.aprendizajesSelected.responsable;
-      this.usuario = this.aprendizajesSelected.usuario;
-      this.contrasenia = this.aprendizajesSelected.contrasenia;
-      this.logedBy = this.aprendizajesSelected.logedBy;
+      this.id_proy_aprende = this.aprendizajesSelected.id_proy_aprende;
+      this.id_proyecto = this.aprendizajesSelected.id_proyecto;
+      this.aprendizaje = this.aprendizajesSelected.aprendizaje;
+      this.problema = this.aprendizajesSelected.problema;
+      this.accion = this.aprendizajesSelected.accion;
+      this.id_preguntas_1 = this.aprendizajesSelected.id_preguntas_1;
+      this.respuestas_1 = this.aprendizajesSelected.respuestas_1;
+      this.id_preguntas_2 = this.aprendizajesSelected.id_preguntas_2;
+      this.respuestas_2 = this.aprendizajesSelected.respuestas_2;
+      this.id_persona_reg = this.aprendizajesSelected.id_persona_reg;
+      this.id_proy_elemento = this.aprendizajesSelected.id_proy_elemento;
+      this.idp_aprendizaje_area = this.aprendizajesSelected.idp_aprendizaje_area;
+      this.idp_aprendizaje_tipo = this.aprendizajesSelected.idp_aprendizaje_tipo;
+      this.fecha = this.aprendizajesSelected.fecha;
+      this.fecha_registro = this.aprendizajesSelected.fecha_hora_reg;
+
+      this.sigla = this.aprendizajesSelected.sigla;
+      this.color = this.aprendizajesSelected.color;
 
       this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= EDIT APRENDIZAJE ======= =======
+    editAprendizajes(){
+      const objApredizaje = {
+        p_id_proy_aprende: this.id_proy_aprende,
+        p_id_proyecto: this.id_proyecto,
+        p_aprendizaje: this.aprendizaje,
+        p_problema: this.problema,
+        p_accion_aprendizaje: this.accion_aprendizaje,
+        p_id_preguntas_1: this.id_preguntas_1,
+        p_respuestas_1: this.respuestas_1,
+        p_id_preguntas_2: this.id_preguntas_2,
+        p_respuestas_2: this.respuestas_2,
+        p_id_persona_reg: this.id_persona_reg,
+        p_id_proy_elemento: this.id_proy_elemento,
+        p_idp_aprendizaje_area: this.idp_aprendizaje_area,
+        p_idp_aprendizaje_tipo: this.idp_aprendizaje_tipo,
+        p_fecha: this.fecha,
+        p_fecha_hora_reg: this.fecha_hora_reg
+      };
+
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT DELETE PERSONA ROLES ======= =======
@@ -173,164 +305,17 @@ export class AprendizajesComponent implements OnInit {
       
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= GET PERSONAS ======= =======
-    loadPeople(): void {
-      this.personasRoles = [
-        {
-          id_persona: 1,
-          nombres: 'John',
-          apellido_1: 'Doe',
-          apellido_2: '',
-          telefono: '123-456-7890',
-          correo: 'john.doe@example.com',
-          usuario: 'jdoe',
-          unidad: 'Desarrollo',
-          responsable: 'Sí',
-          cargo: 'Developer',
-          admi_sistema: true,
-          proyectoRol: 'CON'
-        },
-        {
-          id_persona: 2,
-          nombres: 'Jane',
-          apellido_1: 'Doe',
-          apellido_2: 'Jhonson',
-          telefono: '987-654-3210',
-          correo: 'jane.doe@example.com',
-          usuario: 'jadoe',
-          unidad: 'Diseño',
-          responsable: 'No',
-          cargo: 'Designer',
-          admi_sistema: false,
-          proyectoRol: 'RES'
-        },
-        {
-          id_persona: 3,
-          nombres: 'James',
-          apellido_1: 'Smith',
-          apellido_2: '',
-          telefono: '456-789-1230',
-          correo: 'james.smith@example.com',
-          usuario: 'jsmith',
-          unidad: 'Gerencia',
-          responsable: 'Sí',
-          cargo: 'Manager',
-          admi_sistema: false,
-          proyectoRol: 'ESC'
-        },
-        {
-          id_persona: 4,
-          nombres: 'Emily',
-          apellido_1: 'Davis',
-          apellido_2: '',
-          telefono: '321-654-9870',
-          correo: 'emily.davis@example.com',
-          usuario: 'edavis',
-          unidad: 'Desarrollo',
-          responsable: 'No',
-          cargo: 'Developer',
-          admi_sistema: false,
-          proyectoRol: 'LEC'
-        },
-        {
-          id_persona: 5,
-          nombres: 'Michael',
-          apellido_1: 'Brown',
-          apellido_2: 'Doe',
-          telefono: '654-321-7890',
-          correo: 'michael.brown@example.com',
-          usuario: 'mbrown',
-          unidad: 'Recursos Humanos',
-          responsable: 'Sí',
-          cargo: 'HR',
-          admi_sistema: false,
-          proyectoRol: 'LEC'
-        },
-        {
-          id_persona: 6,
-          nombres: 'Sarah',
-          apellido_1: 'Wilson',
-          apellido_2: '',
-          telefono: '789-456-1230',
-          correo: 'sarah.wilson@example.com',
-          usuario: 'swilson',
-          unidad: 'Marketing',
-          responsable: 'No',
-          cargo: 'Marketing',
-          admi_sistema: false,
-          proyectoRol: 'RES'
-        },
-        {
-          id_persona: 7,
-          nombres: 'David',
-          apellido_1: 'Lee',
-          apellido_2: '',
-          telefono: '012-345-6789',
-          correo: 'david.lee@example.com',
-          usuario: 'dlee',
-          unidad: 'Soporte',
-          responsable: 'Sí',
-          cargo: 'Support',
-          admi_sistema: false,
-          proyectoRol: 'RES'
-        },
-        {
-          id_persona: 8,
-          nombres: 'Laura',
-          apellido_1: 'Moore',
-          apellido_2: '',
-          telefono: '654-987-1230',
-          correo: 'laura.moore@example.com',
-          usuario: 'lmoore',
-          unidad: 'Dirección',
-          responsable: 'Sí',
-          cargo: 'CEO',
-          admi_sistema: false,
-          proyectoRol: 'RES'
-        },
-        {
-          id_persona: 9,
-          nombres: 'Paul',
-          apellido_1: 'Harris',
-          apellido_2: '',
-          telefono: '789-012-3456',
-          correo: 'paul.harris@example.com',
-          usuario: 'pharris',
-          unidad: 'Ventas',
-          responsable: 'No',
-          cargo: 'Sales',
-          admi_sistema: false,
-          proyectoRol: 'ESC'
-        },
-        {
-          id_persona: 10,
-          nombres: 'Anna',
-          apellido_1: 'Scott',
-          apellido_2: '',
-          telefono: '345-678-9012',
-          correo: 'anna.scott@example.com',
-          usuario: 'ascott',
-          unidad: 'Producto',
-          responsable: 'Sí',
-          cargo: 'Product Owner',
-          admi_sistema: true,
-          proyectoRol: 'CON'
-        }
-      ];
-      this.totalLength = this.personasRoles.length;
-    }
-    // ======= ======= ======= ======= =======
     // ======= ======= COUNT HEADER DATA FUCTION ======= =======
     countHeaderData(){
-      this.headerDataNro01 = this.personasRoles.length;
-      this.personasRoles.forEach(persona =>{
-        if(persona.admi_sistema){
+      this.headerDataNro01 = this.aprendizajes.length;
+      this.aprendizajes.forEach(aprendizaje =>{
+        if(aprendizaje.admi_sistema){
           this.headerDataNro02 += 1
         }
-        if(persona.proyectoRol == "CON"){
+        if(aprendizaje.proyectoRol == "CON"){
           this.headerDataNro03 += 1
         }
-        if(persona.proyectoRol == "RES"){
+        if(aprendizaje.proyectoRol == "RES"){
           this.headerDataNro04 += 1
         }
       });
@@ -338,6 +323,15 @@ export class AprendizajesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
+      console.log(this.respuestas1);
+      console.log(this.respuestas2);
+
+      if(this.modalAction == "add"){
+        this.addAprendizajes();
+      }
+      else{
+        this.editAprendizajes();
+      }
     }
     // ======= ======= ======= ======= =======
 }
