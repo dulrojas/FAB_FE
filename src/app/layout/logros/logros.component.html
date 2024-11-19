@@ -1,0 +1,240 @@
+<div [@routerTransition]>
+    <!-- ======= ======= ======= LOGROS HEADER SECTION ======= ======= ======= -->
+    <div class="row">
+        <div class="col col-md-6 custom-body-header">
+            <app-bodyHeader></app-bodyHeader>
+        </div>
+        <div class="col col-md-6">
+            <div class="row">
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro01}} Personas
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro02}} Administrador de Sistema
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro03}} Controladores
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro04}} Responsables de Proyecto
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+    <div class="row">
+        <div class="col col-md-12">
+            <h2 class="custom-view-title">Logros Sobresalientes</h2>
+        </div>
+    </div>
+    <!-- ======= ======= ======= LOGROS MODAL ======= ======= ======= -->
+    <div class="card mb-3">
+        <div class="card-body custom-card table-responsive">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12 text-end">
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initAddLogros(logrosFormModal)"
+                        [disabled]="logrosSelected">
+                        <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initEditLogros(logrosFormModal)"
+                        [disabled]="!logrosSelected">
+                        <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="openModal(deleteLogrosModal)"
+                        [disabled]="!logrosSelected">
+                        <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container mt-4">
+                    <div class="col col-lg-12 col-md-12">
+                        <div class="row">
+                            <div class="col col-lg-3 col-md-3 custom-logro-container"
+                                *ngFor="let logro of logros"
+                                [ngClass]="{'custom-logro-container-selected': logro.selected}"
+                                (click)="onLogroClick(logro)">
+                                <div class="row mt-auto">
+                                    <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="logro.ruta_imagen || '../../../assets/images/empty.jpg'" alt="Imagen del logro">
+                                    <div class="col col-xl-2 col-lg-2">
+                                        <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+logro.color}">{{ logro.sigla }}</label>
+                                    </div>
+                                    <div class="col col-xl-10 col-lg-10 d-flex align-items-center justify-content-center">
+                                        {{ logro.logro }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+</div>
+
+<!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+<ng-template #logrosFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #logrosForm="ngForm" (ngSubmit)="onSubmit(logrosForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="id_proy_logro">Id</label>
+                                    <input class="form-control" type="text" 
+                                        id="id_proy_logro" name="id_proy_logro" [(ngModel)]="id_proy_logro" disabled/>
+                                </div>
+
+                                <div class="col col-xl-8 col-lg-8 mt-auto"></div>
+
+                                <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                                <div class="col col-xl-5 col-lg-5 mt-auto">
+                                    <label for="id_proy_elemento">Componente</label>
+                                    <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" 
+                                        [(ngModel)]="id_proy_elemento" (change)="onSelectionChange()">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
+                                            {{ componente.meto_elemento }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                                <div class="col col-xl-1 col-lg-1 mt-auto">
+                                    <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
+                                </div>
+
+                                <!-- ======= ======= FECHA APREN SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="fecha_logro">Fecha del logro</label>
+                                    <input class="form-control" type="date" 
+                                        id="fecha_logro" name="fecha_logro" [(ngModel)]="fecha_logro" />
+                                </div>
+
+                                <!-- ======= ======= LOGRO SECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                    <label for="logro">Logro sobresaliente alcanzado</label>
+                                    <textarea class="form-control" id="logro" name="logro" 
+                                        [(ngModel)]="logro"></textarea>
+                                </div>
+
+                                <!-- ======= ======= DESCRIPCION SECTION ======= ======= -->
+                                <div class="col col-xl-8 col-lg-8">
+                                    <label for="descripcion">Descripcion</label>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" 
+                                        [(ngModel)]="descripcion" style="height: 80%;"></textarea>
+                                </div>
+
+                                <!-- ======= ======= IMAGE SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="accion">Imagen logro</label>
+                                    <img class="custom-img-selector" [src]="ruta_imagen" alt="Imagen de logro" id="imagen" 
+                                        (click)="initSelectImage(selectImageModal)" (error)="onError($event)">
+                                </div>
+                                
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="id_persona_reg">Persona registro</label>
+                                    <input class="form-control" type="text" 
+                                        id="id_persona_reg" name="id_persona_reg" [(ngModel)]="id_persona_reg" disabled/>
+                                </div>
+
+                                <div class="col col-xl-8 col-lg-8 mt-auto"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="logrosForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE APRENDIZAJES ======= ======= ======= -->
+<ng-template #deleteAprendizajesModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Aprendizaje</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de este aprendizaje?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="editAprendizaje(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= SELECT IMAGE MODAL ======= ======= ======= -->
+<ng-template #selectImageModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Iconos de imagenes</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #selectImageForm="ngForm" (ngSubmit)="selectImage()">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <div class="col col-lg-2 col-md-2 custom-icon-selector" *ngFor="let image of images" 
+                                    [ngClass]="{'custom-icon-selected': image.selected}"
+                                    (click)="onImageClick(image)">
+                                    <div class="row">
+                                        <div class="col col-lg-12 col-md-12">
+                                            <img [src]="image.ruta_logros_iconos" alt="iconoLogro" style="width: 100%; height: auto;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="selectImage(); modal.close('Elegir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Elegir
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+ 

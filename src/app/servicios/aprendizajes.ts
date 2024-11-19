@@ -12,7 +12,7 @@ export class servAprendizaje{
   constructor(private http: HttpClient) {}
 
   // ======= ======= ======= GET APRENDIZAJES ======= ======= =======
-  getApredizajesByIdProy(idProy: any): Observable<any> {
+  getAprendizajesByIdProy(idProy: any): Observable<any> {
     const params = {
         "procedure_name": "sp_aprendizaje",
         "body": {
@@ -47,14 +47,14 @@ export class servAprendizaje{
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET METO ELEMENTOS ======= ======= =======
-  getMetoElementos(): Observable<any> {
+  getMetoElementos(idProy: any): Observable<any> {
     const params = {
         "procedure_name": "sp_aprendizaje",
         "body": {
             "params": [
                 {"name": "p_accion", "value": "C3", "type": "string"},
                 {"name": "p_id_proy_aprende", "value": null, "type": "int"},
-                {"name": "p_id_proyecto", "value": null, "type": "int"},
+                {"name": "p_id_proyecto", "value": idProy, "type": "int"},
                 {"name": "p_aprendizaje", "value": null, "type": "string"},
                 {"name": "p_problema", "value": null, "type": "string"},
                 {"name": "p_accion_aprendizaje", "value": null, "type": "string"},
@@ -137,7 +137,7 @@ export class servAprendizaje{
                 {"name": "p_idp_aprendizaje_area", "value": obj.p_idp_aprendizaje_area, "type": "int"},
                 {"name": "p_idp_aprendizaje_tipo", "value": obj.p_idp_aprendizaje_tipo, "type": "int"},
                 {"name": "p_fecha", "value": obj.p_fecha, "type": "string"},
-                {"name": "p_fecha_hora_reg", "value": obj.p_fecha_hora_reg, "type": "string"}
+                {"name": "p_fecha_hora_reg", "value": null, "type": "string"}
             ]
         }
     };

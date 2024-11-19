@@ -219,6 +219,32 @@ select.form-control {
 .custom-neg-qa{
     border-left: solid 1px $txt-2-color;
 }
+#imagen {
+    max-width: 100%; 
+    height: auto;
+    display: block; 
+  }
 // ======= ======= ======= ======= =======
-
-
+.custom-logro-container{
+    border-radius: 2px;
+    border: solid 2px rgba(0,0,0,0);
+    cursor: pointer;
+}
+.custom-logro-container-selected{
+    border-radius: 2px;
+    border: dashed 2px $third-color;
+    cursor: pointer;
+}
+.custom-img-selector{
+    cursor: pointer;
+}
+.custom-icon-selector{
+    border-radius: 2px;
+    border: dashed 2px rgba(0,0,0,0);
+    cursor: pointer;
+}
+.custom-icon-selected{
+    border-radius: 2px;
+    border: dashed 2px $third-color;
+    cursor: pointer;
+}

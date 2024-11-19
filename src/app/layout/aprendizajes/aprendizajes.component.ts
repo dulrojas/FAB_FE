@@ -24,6 +24,7 @@ export class AprendizajesComponent implements OnInit {
       private cdr: ChangeDetectorRef
     ){}
     idProyecto: any = 1;
+    idPersonaReg: any = 1;
 
     headerDataNro01: any = 0;
     headerDataNro02: any = 0;
@@ -68,10 +69,16 @@ export class AprendizajesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
-      this.getParametricas()
+      this.getParametricas();
       this.getAprendizajes();
     }
     // ======= ======= ======= ======= =======
+    jsonToString(json: object): string {
+      return JSON.stringify(json);
+    }
+    stringToJson(jsonString: string): object {
+      return JSON.parse(jsonString);
+    }
     getDescripcionSubtipo(idRegistro: any, paramList: any): string{
       const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
       return subtipo ? subtipo.descripcion_subtipo : 'Null';
@@ -92,7 +99,7 @@ export class AprendizajesComponent implements OnInit {
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
       // ======= GET METO ELEMENTOS =======
-      this.servApredizaje.getMetoElementos().subscribe(
+      this.servApredizaje.getMetoElementos(this.idProyecto).subscribe(
         (data) => {
           this.componentes = data[0].dato;
         },
@@ -188,10 +195,12 @@ export class AprendizajesComponent implements OnInit {
 
       this.id_proy_aprende = 0;
       this.fecha_registro = "";
-      this.persona_registro = "";
+      this.persona_registro = this.idPersonaReg;
       this.id_proy_elemento = "";
       this.idp_aprendizaje_area = null;
       this.idp_aprendizaje_tipo = null;
+      this.id_preguntas_1 = this.preguntasObj1.id_preguntas;
+      this.id_preguntas_2 = this.preguntasObj2.id_preguntas; 
       this.aprendizaje = "";
       this.fecha = null;
       this.problema = null;
@@ -203,7 +212,7 @@ export class AprendizajesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= GET PERSONAS ======= =======
     getAprendizajes(){
-      this.servApredizaje.getApredizajesByIdProy(this.idProyecto).subscribe(
+      this.servApredizaje.getAprendizajesByIdProy(this.idProyecto).subscribe(
         (data) => {
           this.aprendizajes = data[0].dato;
           this.totalLength = this.aprendizajes.length;
@@ -230,22 +239,31 @@ export class AprendizajesComponent implements OnInit {
     // ======= ======= EDIT APRENDIZAJE ======= =======
     addAprendizajes(){
       const objApredizaje = {
-        p_id_proy_aprende: this.id_proy_aprende,
-        p_id_proyecto: this.id_proyecto,
+        p_id_proy_aprende: 0,
+        p_id_proyecto: parseInt(this.idProyecto,10),
         p_aprendizaje: this.aprendizaje,
         p_problema: this.problema,
-        p_accion_aprendizaje: this.accion_aprendizaje,
-        p_id_preguntas_1: this.id_preguntas_1,
-        p_respuestas_1: this.respuestas_1,
-        p_id_preguntas_2: this.id_preguntas_2,
-        p_respuestas_2: this.respuestas_2,
-        p_id_persona_reg: this.id_persona_reg,
-        p_id_proy_elemento: this.id_proy_elemento,
-        p_idp_aprendizaje_area: this.idp_aprendizaje_area,
-        p_idp_aprendizaje_tipo: this.idp_aprendizaje_tipo,
+        p_accion_aprendizaje: this.accion,
+        p_id_preguntas_1: parseInt(this.id_preguntas_1,10),
+        p_respuestas_1: this.jsonToString({"respuestas":this.respuestas1}),
+        p_id_preguntas_2: parseInt(this.id_preguntas_2,10),
+        p_respuestas_2: this.jsonToString({"respuestas":this.respuestas2}),
+        p_id_persona_reg: parseInt(this.idPersonaReg,10),
+        p_id_proy_elemento: parseInt(this.id_proy_elemento,10),
+        p_idp_aprendizaje_area: parseInt(this.idp_aprendizaje_area,10),
+        p_idp_aprendizaje_tipo: parseInt(this.idp_aprendizaje_tipo,10),
         p_fecha: this.fecha,
-        p_fecha_hora_reg: this.fecha_hora_reg
+        p_fecha_hora_reg: null
       };
+
+      this.servApredizaje.addAprendizaje(objApredizaje).subscribe(
+        (data) => {
+          this.getAprendizajes();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
 
     }
     // ======= ======= ======= ======= =======
@@ -262,9 +280,9 @@ export class AprendizajesComponent implements OnInit {
       this.problema = this.aprendizajesSelected.problema;
       this.accion = this.aprendizajesSelected.accion;
       this.id_preguntas_1 = this.aprendizajesSelected.id_preguntas_1;
-      this.respuestas_1 = this.aprendizajesSelected.respuestas_1;
+      this.respuestas1 = this.stringToJson(this.aprendizajesSelected.respuestas_1)["respuestas"];
       this.id_preguntas_2 = this.aprendizajesSelected.id_preguntas_2;
-      this.respuestas_2 = this.aprendizajesSelected.respuestas_2;
+      this.respuestas2 = this.stringToJson(this.aprendizajesSelected.respuestas_2)["respuestas"];
       this.id_persona_reg = this.aprendizajesSelected.id_persona_reg;
       this.id_proy_elemento = this.aprendizajesSelected.id_proy_elemento;
       this.idp_aprendizaje_area = this.aprendizajesSelected.idp_aprendizaje_area;
@@ -287,15 +305,15 @@ export class AprendizajesComponent implements OnInit {
         p_problema: this.problema,
         p_accion_aprendizaje: this.accion_aprendizaje,
         p_id_preguntas_1: this.id_preguntas_1,
-        p_respuestas_1: this.respuestas_1,
+        p_respuestas_1: this.respuestas1,
         p_id_preguntas_2: this.id_preguntas_2,
-        p_respuestas_2: this.respuestas_2,
+        p_respuestas_2: this.respuestas2,
         p_id_persona_reg: this.id_persona_reg,
         p_id_proy_elemento: this.id_proy_elemento,
         p_idp_aprendizaje_area: this.idp_aprendizaje_area,
         p_idp_aprendizaje_tipo: this.idp_aprendizaje_tipo,
         p_fecha: this.fecha,
-        p_fecha_hora_reg: this.fecha_hora_reg
+        p_fecha_hora_reg: null
       };
 
     }
@@ -323,14 +341,11 @@ export class AprendizajesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
-      console.log(this.respuestas1);
-      console.log(this.respuestas2);
-
       if(this.modalAction == "add"){
         this.addAprendizajes();
       }
       else{
-        this.editAprendizajes();
+        //this.editAprendizajes();
       }
     }
     // ======= ======= ======= ======= =======
