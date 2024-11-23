@@ -103,6 +103,11 @@ $txt-2-color: #ffffff;
         overflow-x: auto;
     }
 }
+  
+.custom-toggle-button {
+  margin-left: 10px;
+  cursor: pointer;
+}
 // ======= ======= ======= ======= =======
 // ======= ======= CUSTOM MODAL ======= =======
 .modal-title{
@@ -225,6 +230,136 @@ select.form-control {
     display: block; 
   }
 // ======= ======= ======= ======= =======
+// ======= ======= CUSTOM INF PROYECTO ======= =======
+.container-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, auto);
+    gap: 5px;
+}
+
+.data-project-section{
+    grid-column: 1 / span 4;
+    grid-row: 1;
+}
+
+.custom-buttons-section {
+    grid-column: 5;
+    grid-row: 1 / span 2;
+
+    button{
+        margin-top: 5px;
+
+        font-size: 15px;
+    }
+}
+
+.custom-date-section {
+    grid-column: 1 / span 2;
+    grid-row: 2 / span 1;
+}
+
+.b {
+    grid-column: 3 / span 2;
+    grid-row: 2;
+}
+
+.c {
+    grid-column: 3 / span 3;
+    grid-row: 3 / span 3;
+}
+
+.a {
+    grid-column: 1 / span 2;
+    grid-row: 3 / span 3;
+}
+.custom-info-proy-input{
+    font-size: 12px;
+}
+.custom-info-proy-title{
+    color: $primary-color;
+    font-weight: bold;
+    font-size: 15px;
+}
+.custom-info-proy-sub-title{
+    color: $primary-color;
+    font-weight: bold;
+    font-size: 12px;
+}
+.custom-info-section-separator{
+    border-right: solid 1px $primary-color;
+}
+.custom-info-estado-box{
+    padding: 5px;
+    border-radius: 2px;
+    background-color: $third-color;
+    color: $txt-2-color;
+}
+.custom-date-section-y-separator{
+    border-right: solid 1px $primary-color;
+}
+.custom-date-section-x-separator{
+    border-bottom: solid 1px $primary-color;
+}
+.custom-date-section-col{
+    div{
+        padding: 5px;
+    }
+}
+.custom-date-diference{
+    border-radius: 5px;
+    background-color: $txt-2-color;
+}
+.custom-info-text-box{
+    padding: 5px;
+    border-radius: 2px;
+    background-color: $third-color;
+    color: $txt-2-color;
+}
+.custom-table-info-proy{
+    font-size: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+
+    thead {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    tbody {
+        display: block;
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    td {
+        padding: 5px;
+    }
+}
+.custom-table-info-proy-1{
+    tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+}
+.custom-table-info-proy-2{
+    tbody tr {
+        width: 100%;
+        table-layout: fixed;
+    }
+}
+
+
+// ======= ======= ======= ======= =======
+.custom-text-color-1{
+    color: $primary-color;
+}
+.custom-text-color-3{
+    color: $third-color;
+}
 .custom-logro-container{
     border-radius: 2px;
     border: solid 2px rgba(0,0,0,0);

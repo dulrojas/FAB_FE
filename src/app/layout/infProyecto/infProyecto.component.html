@@ -1,0 +1,303 @@
+<div [@routerTransition]>
+    <!-- ======= ======= ======= LOGROS HEADER SECTION ======= ======= ======= -->
+    <div class="row">
+        <div class="col col-md-6 custom-body-header">
+            <app-bodyHeader></app-bodyHeader>
+        </div>
+        <div class="col col-md-6">
+            <div class="row">
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro01}} Municipios impactados
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro02}} Comunidades
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro03}} Dias para conclucir
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro04}} Periodo vigente
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+    <!-- ======= ======= ======= INF PROYECTOS SCREEN ======= ======= ======= -->
+    <div class="container-grid">
+        <div class="data-project-section">
+            <div class="card">
+                <div class="card-body custom-card py-1">
+                    <div class="row">
+                        <div class="col col-md-12">
+                            <h2 class="custom-info-proy-title my-0">Datos del proyecto</h2>
+                        </div>
+                        <div class="col col-md-6 custom-info-section-separator">
+                            <div class="row">
+                                <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                <div class="col col-lg-6 col-md-6 my-auto">
+                                    <h2 class="custom-info-proy-sub-title">Nombre corto del proyecto</h2>
+                                    <input class="form-control custom-info-proy-input" type="text" 
+                                        id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto"/>
+                                </div>
+                                <div class="col col-lg-6 col-md-6">
+                                    <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                    <h2 class="custom-info-proy-sub-title">Nombre completo del proyecto</h2>
+                                    <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" 
+                                        [(ngModel)]="proyectoScope.descrpcion"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                <div class="col col-lg-3 col-md-3 my-auto pr-0">
+                                    <h2 class="custom-info-proy-sub-title">Responsable de registro</h2>
+                                    <input class="form-control custom-info-proy-input" type="text" 
+                                        id="person_resp" name="person_resp" [(ngModel)]="person_resp"/>
+                                </div>
+                                <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                <div class="col col-lg-3 col-md-3 my-auto pr-0">
+                                    <h2 class="custom-info-proy-sub-title">Unidad ejecutora</h2>
+                                    <select class="form-control custom-info-proy-input" id="unidad" name="unidad" 
+                                        [(ngModel)]="proyectoScope.id_inst_unidad">
+                                        <option value="" disabled selected>Selecciona una unidad</option>
+                                        <option *ngFor="let unidad of unidades" [value]="unidad.id_inst_unidad">
+                                            {{ unidad.unidad }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col col-md-6"> 
+                                    <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                    <h2 class="custom-info-proy-sub-title">Notas adicionales</h2>
+                                    <textarea class="form-control custom-info-proy-input" id="notas" name="notas" 
+                                        [(ngModel)]="proyectoScope.notas"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-md-6">
+                            <div class="row">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="custom-buttons-section">
+            <div class="card">
+                <div class="card-body custom-card py-1">
+                    <div class="row">
+                        <!-- ======= ======= ======= TITLE DATE ======= ======= ======= -->
+                        <h2 class="custom-info-proy-title">Estado de proyecto:</h2>
+
+                        <!-- ======= ======= ======= GRABAR DATE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-1" (click)="selectImage(); modal.close('Elegir')">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                        </button>
+                        <!-- ======= ======= ======= CANCELAR DATE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                            <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                        </button>
+                        <!-- ======= ======= ======= EDITAR DATE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-1" (click)="selectImage(); modal.close('Elegir')">
+                            Editar
+                        </button>
+                        <!-- ======= ======= ======= REPORTE DATE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" (click)="selectImage(); modal.close('Elegir')">
+                            Habilitar reporte
+                        </button>
+                        <!-- ======= ======= ======= EVALUACION DATE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" (click)="selectImage(); modal.close('Elegir')">
+                            Evaluacion
+                        </button>
+                        <!-- ======= ======= ======= CONCLUIR CANCELAR DATE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" (click)="selectImage()" disabled>
+                            Concluir/Cancelar
+                        </button>
+                        <!-- ======= ======= ======= ANADIR DATE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" (click)="selectImage()" disabled>
+                            Añadir
+                        </button>
+                        <!-- ======= ======= ======= ELIMINAR DATE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" (click)="selectImage()" disabled>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="custom-date-section">
+            <div class="card">
+                <div class="card-body custom-card  py-1">
+                    <div class="row">
+                        <div class="col col-md-12">
+                            <h2 class="custom-info-proy-title m-0">Fechas</h2>
+                        </div>
+                        <div class="col col-md-6 custom-date-section-col custom-date-section-y-separator">
+                            <!-- ======= ======= ======= FIRMA CONVENIO DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Firma convenio</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_convenio" name="fecha_convenio" [(ngModel)]="proyectoScope.fecha_convenio" />
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= DESEMBOLSO DATE ======= ======= ======= -->
+                            <div class="row py-0 custom-date-section-x-separator">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">1er desembolso</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_desembolso_1" name="fecha_desembolso_1" [(ngModel)]="proyectoScope.fecha_desembolso_1" />
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= INICIO REAL DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Inicio real de proyecto</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_inicio" name="fecha_inicio" [(ngModel)]="proyectoScope.fecha_inicio" (change)="getProyectDateGaps()"/>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= FIN PLANIFICADO DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Fin planificado de proyecto</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_fin" name="fecha_fin" [(ngModel)]="proyectoScope.fecha_fin" (change)="getProyectDateGaps()"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-md-6 custom-date-section-col">
+                            <!-- ======= ======= ======= REPORTE INDICADORES DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Reporte indicadores</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <select class="form-control custom-info-proy-input" id="idp_periodo_evaluacion" name="idp_periodo_evaluacion" 
+                                        [(ngModel)]="proyectoScope.idp_periodo_evaluacion">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let periodo of periodos" [value]="periodo.id_subtipo">
+                                            {{ periodo.descripcion_subtipo }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= PRIMER REPORTE INDICADORES DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Primer reporte</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_logro" name="fecha_logro" [(ngModel)]="proyectoScope.fecha_logro" />
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title custom-text-color-3" for="">Fin ampliado de proyecto</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_fin_ampliada" name="fecha_fin_ampliada" [(ngModel)]="proyectoScope.fecha_fin_ampliada" (change)="getProyectDateGaps()"/>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-12 custom-date-diference">
+                                    <div class="row">
+                                        <div class="col col-md-4 pr-0">
+                                            <label class="custom-info-proy-sub-title custom-text-color-3">Tiempo avanzado</label>
+                                        </div>
+                                        <div class="col col-md-8 px-0 my-auto">
+                                            <label class="custom-info-proy-sub-title custom-text-color-3">
+                                                <span class="custom-info-text-box">
+                                                    {{ currentDateGap }}
+                                                </span>
+                                                de
+                                                <span class="custom-info-text-box">
+                                                    {{ finalDateGap }}
+                                                </span>
+                                                dias.
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="b">
+            <div class="card">
+                <div class="card-body custom-card  py-1">
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="a">
+            <div class="card">
+                <div class="card-body custom-card  py-1">
+                    <div class="row">
+                        <div class="col col-md-12">
+                            <h2 class="custom-info-proy-title m-0">Alcance Geografico</h2>
+                        </div>
+
+                        <div class="col col-md-6">
+                            <app-navigationDropdown [items]="ubicaciones"></app-navigationDropdown>
+                        </div>
+                        <div class="col col-md-6">
+
+                            <table class="table custom-table table-striped table-bordered custom-table-info-proy custom-table-info-proy-2">
+                                <thead>
+                                  <tr>
+                                    <th>Tipo</th>
+                                    <th></th>
+                                    <th>Lugar</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <ng-container *ngFor="let group of ubicacionesB">
+                                    <ng-container *ngFor="let item of group.items; let i = index">
+                                      <tr>
+                                        <td *ngIf="i == 0" [attr.rowspan]="group.rowspan">
+                                          {{ group.tipo }}
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
+                                                [(ngModel)]="item.selected" (change)="ubiInfCheckboxChanged(item)" />
+                                        </td>
+                                        <td>
+                                            {{ item.nombre }}
+                                        </td>
+                                      </tr>
+                                    </ng-container>
+                                  </ng-container>
+                                </tbody>
+                            </table>
+                              
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c">
+            <div class="card">
+                <div class="card-body custom-card  py-1">
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+</div>

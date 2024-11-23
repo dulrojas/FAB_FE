@@ -12,6 +12,7 @@ const routes: Routes = [
                 path: 'dashboard',
                 loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule)
             },
+            { path: 'infProyecto', loadChildren: () => import('./infProyecto/infProyecto.module').then((m) => m.InfProyectoModule) },
             { path: 'riesgos', loadChildren: () => import('./riesgos/riesgos.module').then((m) => m.RiesgosModule) },
             { path: 'planifEstrategica', loadChildren: () => import('./planifEstrategica/planifEstrategica.module').then((m) => m.PlanifEstrategicaModule) },
             { path: 'beneficiarios', loadChildren: () => import('./beneficiarios/beneficiarios.module').then((m) => m.BeneficiariosModule) },
