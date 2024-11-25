@@ -15,6 +15,7 @@ const routes: Routes = [
             { path: 'infProyecto', loadChildren: () => import('./infProyecto/infProyecto.module').then((m) => m.InfProyectoModule) },
             { path: 'riesgos', loadChildren: () => import('./riesgos/riesgos.module').then((m) => m.RiesgosModule) },
             { path: 'planifEstrategica', loadChildren: () => import('./planifEstrategica/planifEstrategica.module').then((m) => m.PlanifEstrategicaModule) },
+            { path: 'ejecEstrategica', loadChildren: () => import('./ejecEstrategica/ejecEstrategica.module').then((m) => m.EjecEstrategicaModule) },
             { path: 'beneficiarios', loadChildren: () => import('./beneficiarios/beneficiarios.module').then((m) => m.BeneficiariosModule) },
             { path: 'logros', loadChildren: () => import('./logros/logros.module').then((m) => m.LogrosModule) },
             { path: 'aprendizajes', loadChildren: () => import('./aprendizajes/aprendizajes.module').then((m) => m.AprendizajesModule) },
