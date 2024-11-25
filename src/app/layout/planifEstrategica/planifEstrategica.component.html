@@ -1,110 +1,107 @@
 <div [@routerTransition]>
 
-  <!-- Header Section para Encabezado -->
-  <div class="row col-md-12">
-
-    <!-- Encabezado -->
-    <div class="col col-md-6 align-items-center custom-body-header">
-      <app-bodyHeader></app-bodyHeader>
-    </div>
-
-    <!-- Tarjetas de Estadísticas -->
-    <div class="col col-md-6 text-center">
-      <div class="row">
-
-        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-          {{headerDataNro01}} Objetivo General
-        </div>
-
-        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-          {{headerDataNro02}} Objetivo Específico
-        </div>
-
-        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-          {{headerDataNro03}} Resultado
-        </div>
-        
-        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-          {{headerDataNro04}} Indicadores
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Tabla Para añadir -->
-  <div class="card mb-3 mt-2">
-    <div class="card-body custom-card table-responsive">
+      <!-- Sección del Encabezado -->
       <div class="row col-md-12">
-
-          <!-- Añadir elemento section -->
-        <div class="custom-sectiontable col-md-8">
-          <h5 class="text-sm mb-2 custom-body-header">Añadir elemento</h5>
-          <div class="flex flex-wrap gap-2">
-
-            <button
-            class="btn-añadirElemento" 
-            style="background-color: #D45B49;"
-            (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 'OG')"
-            [disabled]="planificacionEstrategicaSelected">
-            Objetivo General / Impact
-          </button>
-
-            <button class="btn-añadirElemento" 
-                    style="background-color: #F58634;"
-                    (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 'OE')">
-              Objetivo Específico / Outcome
-            </button>
-
-            <button class="btn-añadirElemento" 
-                    style="background-color: #F7B529;"
-                    (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 'RE')">
-              Resultado / Output
-            </button>
-
-            <button class="btn-añadirElemento" 
-                    style="background-color: #FBD468;"
-                    (click)="initAddPlanifEstrategica(planifEstrategicaIN, 'IN')">
-              Indicador
-            </button>
-
-          </div>
-        </div>
-
-        <!-- Seleccionado section -->
-        <div class="custom-sectiontable col-md-4">
-          <h5 class="text-sm mb-2 custom-body-header">Seleccionado</h5>
-          <div class="flex justify-end gap-2">
-
-            <button class="btn-añaEliminar" 
-                    [disabled]="!planificacionEstrategicaSelected" 
-                    (click)="initEditPlanifEstrategica(planificacionEstrategicaSelected)">
-              Editar
-            </button>
-
-            <button class="btn-añaEliminar" 
-                    [disabled]="!planificacionEstrategicaSelected" 
-                    (click)="initDeletePlanifEstrategica()">
-              Eliminar
-            </button>
-
-            <button class="btn-SubirBajar" 
-              [disabled]="!planificacionEstrategicaSelected"
-              (click)="moverElemento(planificacionEstrategicaSelected, 'arriba')">↑
-            </button>
-            
-            <button class="btn-SubirBajar"
-              [disabled]="!planificacionEstrategicaSelected"
-              (click)="moverElemento(planificacionEstrategicaSelected, 'abajo')">↓
-            </button>
-
-          </div>
-
-        </div>
+          <!-- Bloque de Encabezado -->
+            <div class="col col-md-6 align-items-center custom-body-header">
+                <!-- Componente personalizado para el encabezado -->
+                  <app-bodyHeader></app-bodyHeader>
+            </div>
+          <!-- Bloque de Tarjetas de Estadísticas -->
+            <div class="col col-md-6 text-center">
+                <!-- Fila para organizar las tarjetas -->
+                  <div class="row">
+                      <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                          {{headerDataNro01}} Objetivo General
+                      </div>
+                      <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                          {{headerDataNro02}} Objetivo Específico
+                      </div>
+                      <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                          {{headerDataNro03}} Resultado
+                      </div>
+                      <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                          {{headerDataNro04}} Indicadores
+                      </div>
+                  </div>
+            </div>
       </div>
-    </div>
-  </div>      
+
+       <!-- Sección de botones para añadir editar y eliminar elementos -->
+        <div class="card mb-3 mt-2">
+          <div class="card-body custom-card table-responsive">
+            <div class="row col-md-12">
+              <!-- Botones para añadir elementos según su tipo -->
+                <div class="custom-sectiontable col-md-8">
+                  <h5 class="text-sm mb-2 custom-body-header">Añadir elemento</h5>
+                    <div class="flex flex-wrap gap-2">
+                      <!-- Botón: Añadir Objetivo General -->
+                        <button
+                          class="btn-añadirElemento" 
+                          style="background-color: #D45B49;"
+                          (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 'OG')"
+                          [disabled]="planificacionEstrategicaSelected">
+                          Objetivo General / Impact
+                        </button>
+                      <!-- Botón: Añadir Objetivo Específico -->  
+                        <button 
+                          class="btn-añadirElemento" 
+                          style="background-color: #F58634;"
+                          (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 'OE')">
+                          Objetivo Específico / Outcome
+                        </button>
+                      <!-- Botón: Añadir Resultado -->
+                        <button 
+                          class="btn-añadirElemento" 
+                          style="background-color: #F7B529;"
+                          (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 'RE')">
+                          Resultado / Output
+                        </button>
+                      <!-- Botón: Añadir Indicador -->
+                        <button 
+                          class="btn-añadirElemento" 
+                          style="background-color: #FBD468;"
+                          (click)="initAddPlanifEstrategica(planifEstrategicaIN, 'IN')">
+                          Indicador
+                        </button>  
+                    </div>
+                </div>
+              <!-- Botones de acciones sobre elementos seleccionados Editar-Eliminar-Arriba-Abajo -->
+                <div class="custom-sectiontable col-md-4">
+                    <h5 class="text-sm mb-2 custom-body-header">Seleccionado</h5>
+                      <div class="flex justify-end gap-2">
+                          <!-- Botón: Editar elemento seleccionado -->
+                            <button 
+                              class="btn-añaEliminar" 
+                              [disabled]="!planificacionEstrategicaSelected" 
+                              (click)="initEditPlanifEstrategica(planificacionEstrategicaSelected)">
+                              Editar
+                            </button>
+                          <!-- Botón: Eliminar elemento seleccionado -->
+                            <button 
+                              class="btn-añaEliminar" 
+                              [disabled]="!planificacionEstrategicaSelected" 
+                              (click)="initDeletePlanifEstrategica()">
+                              Eliminar
+                            </button>
+                          <!-- Botón: Mover elemento hacia arriba -->
+                            <button 
+                              class="btn-SubirBajar" 
+                              [disabled]="!planificacionEstrategicaSelected"
+                              (click)="moverElemento(planificacionEstrategicaSelected, 'arriba')">↑
+                            </button>                     
+                          <!-- Botón: Mover elemento hacia abajo -->
+                            <button 
+                              class="btn-SubirBajar"
+                              [disabled]="!planificacionEstrategicaSelected"
+                              (click)="moverElemento(planificacionEstrategicaSelected, 'abajo')">↓
+                            </button>
+                      </div>
+                </div>
+            </div>
+          </div>
+        </div>      
+   
 
 
 
