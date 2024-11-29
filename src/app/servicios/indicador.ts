@@ -6,7 +6,7 @@ import config from './config';
 @Injectable({
   providedIn: 'root'
 })
-export class IndicadorService {
+export class servIndicador {
   private URL = config.URL;
 
   constructor(private http: HttpClient) {}
@@ -124,6 +124,24 @@ export class IndicadorService {
         "params": [
           {"name": "p_accion", "value": "C3", "type": "string"},
           {"name": "p_id_proy_indicador", "value": idIndicador, "type": "int"}
+        ]
+      }
+    };
+
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= Obtener Indicador por LiBase ======= ======= =======
+  getIndicadorByLiBase(linea_base: string): Observable<any> {
+    const params = {
+      "procedure_name": "sp_indicador",
+      "body": {
+        "params": [
+          {"name": "p_accion", "value": "C3", "type": "string"},
+          {"name": "p_linea_base", "value":linea_base , "type": "string"}
         ]
       }
     };
