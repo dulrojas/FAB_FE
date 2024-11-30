@@ -1,0 +1,184 @@
+<div [@routerTransition]>
+        <!-- Sección del Encabezado -->
+        <div class="row col-md-12">
+            <!-- Bloque de Encabezado -->
+            <div class="col col-md-6 align-items-center custom-body-header">
+                <!-- Componente personalizado para el encabezado -->
+                    <app-bodyHeader></app-bodyHeader>
+            </div>
+            <!-- Bloque de Tarjetas de Estadísticas -->
+            <div class="col col-md-6 text-center">
+                <!-- Fila para organizar las tarjetas -->
+                    <div class="row">
+                        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                            {{headerDataNro01}} Objetivos Especificos
+                        </div>
+                        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                            {{headerDataNro02}} Resultados
+                        </div>
+                        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                            {{headerDataNro03}} Indicadores
+                        </div>
+                        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                            {{headerDataNro04}} Actividades Planificadas
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <!-- ======= ======= ======= ======= ======= ======= ======= -->
+
+        <!-- Sección de Tarjetas de Información -->
+        <div class="row" style="display: flex; justify-content: center;">
+            
+            <div class="col-xl-3 col-lg-3 my-auto mt-4">
+                <!-- MANEJO COMUNITARIO DE FUEGO -->
+                <div class="card">
+                    <img src="../../../../assets/images/Manejo de fuego.jpg" class="card-img-top" alt="Imagen de Manejo Comunitario de Fuego">
+                    <h6 class="card-title">MANEJO COMUNITARIO DE FUEGO</h6>
+                    <p class="card-text">Contribuimos al fortalecimiento de capacidades locales y la gobernanza para el Manejo Integral del Fuego y la
+                        reducción de riesgos de incendios forestales de manera participativa y articulada con (40) comunidades indígenas y campesinas,
+                         (cuatro) gobiernos subnacionales y (seis) áreas protegidas de la Chiquitania, Chaco, Pantanal y la Amazonía Norte de Bolivia.</p>
+                </div>
+                    <!-- MANEJO DEL PROYECTO -->
+                    <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"></div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- ======= ======= ======= Inicio Proyecto  ======= ======= ======= -->
+                                    <div class="col-xl-4 col-lg-4 my-auto ">
+                                        <label class="custom-info-proy-sub-title" for="">Inicio Proyecto</label>
+                                        <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_inicio" name="fecha_inicio" [(ngModel)]="proyectoScope.fecha_inicio" (change)="getProyectDateGaps()"/>
+                                    </div>
+                                    <!-- ======= ======= ======= Fin de Proyecto ======= ======= ======= --> 
+                                    <div class="col-xl-4 col-lg-4 my-auto ">
+                                        <label class="custom-info-proy-sub-title" for="">Fin de Proyecto</label>
+                                        <input class="form-control custom-info-proy-input" type="date" 
+                                            id="fecha_fin" name="fecha_fin" [(ngModel)]="proyectoScope.fecha_fin" (change)="getProyectDateGaps()"/>
+                                    </div>
+                                    <!-- ======= ======= ======= Periodo Actual ======= ======= ======= --> 
+                                    <div class="col-xl-4 col-lg-4 my-auto ">
+                                        <label class="custom-info-proy-sub-title" for="">Periodo Actual</label>
+                                        <input class="form-control custom-info-proy-input" style="background-color: #d67600; color: #ffffff;" type="date" 
+                                            id="fecha_fin" name="fecha_fin" [(ngModel)]="proyectoScope.fecha_fin" (change)="getProyectDateGaps()"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"></div>
+                <!-- PRESUPUESTO DEL PROYECTO -->
+                <div class="card">
+                    <h6 class="card-title">PRESUPUESTO DEL PROYECTO</h6>
+                    <div class="card-body">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+                <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"></div>
+            </div>
+
+            <!-- Línea vertical 
+            <div class="col-auto mt-4">
+                <div style="width: 1px; height: 100%; background-color: #4E8646;"></div>
+            </div>  -->
+
+            <div class="col-xl-9 col-lg-9 d-flex align-items-start">
+                <div class="row">
+                    <!-- PRESUPUESTO DE LA GESTION 2024 -->  
+                    <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                        <div class="card">
+                            <h6 class="card-title">PRESUPUESTO DE LA GESTION 2024</h6>
+                        <div class="card-body">
+                            
+                        </div>
+                        </div>
+                    </div>
+                    <!-- INDICADORES -->
+                    <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                        <div class="card">
+                            <h6 class="card-title">INDICADORES</h6>
+                        <div class="card-body">
+                            
+                        </div>
+                        </div>
+                    </div>
+                    <!-- RIESGOS -->
+                    <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                        <div class="card">
+                            <h6 class="card-title">RIESGOS</h6>
+                            <div class="card-body">
+                                <!-- Impacto
+                                <h6 class="card-title  my-auto" style="transform: rotate(270deg);">Impacto</h6>-->
+                                <div class="d-flex justify-content-center">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td class="bg-warning text-center">0</td>
+                                                <td class="bg-darwar text-center">2</td>
+                                                <td class="bg-danger text-center">1</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bg-warsuc text-white text-center">1</td>
+                                                <td class="bg-warning text-center">0</td>
+                                                <td class="bg-darwar text-center">0</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bg-success text-white text-center">0</td>
+                                                <td class="bg-warsuc text-white text-center">0</td>
+                                                <td class="bg-warning text-center">1</td>
+                                            </tr>                                           
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h6 class="card-title">Probabilidad</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- APRENDIZAJES -->
+                    <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                        <div class="card">
+                            <h6 class="card-title">APRENDIZAJES</h6>
+                        <div class="card-body">
+                            
+                        </div>
+                        </div>
+                    </div>
+                    <!-- ACTIVIDADES -->
+                    <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                        <div class="card">
+                            <h6 class="card-title">ACTIVIDADES</h6>
+                        <div class="card-body">
+                            
+                        </div>
+                        </div>
+                    </div>
+                    <!-- LOGROS -->
+                    <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                        <div class="card">
+                            <h6 class="card-title">LOGROS</h6>
+                        <div class="card-body">
+                            
+                        </div>
+                        </div>
+                    </div>
+                    <!-- BENEFICIARIOS -->
+                    <div class="col-xl-5 col-lg-5 my-auto mt-4">
+                        <div class="card">
+                            <h6 class="card-title">BENEFICIARIOS</h6>
+                        <div class="card-body">
+                            
+                        </div>
+                        </div>
+                    </div>
+                    <!-- SIGUIENTES OBLIGACIONES -->
+                    <div class="col-xl-7 col-lg-7 my-auto mt-4">
+                        <div class="card">
+                            <h6 class="card-title">SIGUIENTES OBLIGACIONES</h6>
+                        <div class="card-body">
+                            
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>

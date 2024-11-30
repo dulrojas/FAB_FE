@@ -1,292 +1,354 @@
 <div [@routerTransition]>
-        <!-- Sección del Encabezado -->
-        <div class="row col-md-12">
-            <!-- Bloque de Encabezado -->
-            <div class="col col-md-6 align-items-center custom-body-header">
-                <!-- Componente personalizado para el encabezado -->
-                    <app-bodyHeader></app-bodyHeader>
-            </div>
-            <!-- Bloque de Tarjetas de Estadísticas -->
-            <div class="col col-md-6 text-center">
-                <!-- Fila para organizar las tarjetas -->
-                    <div class="row">
-                        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                            {{headerDataNro01}} Indicadores
-                        </div>
-                        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                            {{headerDataNro02}} Meta Periodo Cumplida
-                        </div>
-                        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                            {{headerDataNro03}} Sin Avance
-                        </div>
-                        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                            {{headerDataNro04}} Meta Final Cumplida
-                        </div>
-                    </div>
-            </div>
+    <!-- Sección del Encabezado -->
+    <div class="row col-md-12">
+        <!-- Bloque de Encabezado -->
+        <div class="col col-md-6 align-items-center custom-body-header">
+            <!-- Componente personalizado para el encabezado -->
+                <app-bodyHeader></app-bodyHeader>
         </div>
-        <!-- ======= ======= ======= ======= ======= ======= ======= -->
-
-        <div class="card mt-3 mb-3">
-            <div class="card-body custom-card table-responsive">
-                <div class="d-flex justify-content-between align-items-center">
-                    <!-- Titulo de la Tabla -->   
-                    <h2 class="title" style="color: #4E8646;">Ejecución Estratégica</h2>
-                        <!-- Botones Añadir-Editar-Eliminar -->
-                        <div class="row">
-                            <div class="col col-xl-12 col-lg-12 text-end">
-                                <button type="button" 
-                                    class="btn btn-view-bg-1" 
-                                    (click)="initReportEjecEstrategica(ejecEstrategicaFormModal)"
-                                    [disabled]="ejecEstrategicaSelected">
-                                    <i aria-hidden="true"></i> Reportar
-                                </button>
-                            </div>
-                        </div>
-                </div>
+        <!-- Bloque de Tarjetas de Estadísticas -->
+        <div class="col col-md-6 text-center">
+            <!-- Fila para organizar las tarjetas -->
                 <div class="row">
-                    <div class="container mt-2">
-                        <table class="table custom-table table-striped table-bordered">
-                            
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th colspan="2" style="text-align: center;"></th>
-                                    <th colspan="5" style="background-color: #699762; text-align: center;">PERIODO VIGENTE</th>
-                                    <th colspan="3" style="text-align: center;">META FINAL</th>
-                                </tr>
-                                <tr>
-                                    <th></th>
-                                    <th >Cod</th>
-                                    <th >Nombre</th>
-                                    <th style="background-color: #699762; text-align: center;">Reporte a</th>
-                                    <th style="background-color: #88a117; text-align: center;">Progreso</th>
-                                    <th style="background-color: #699762; text-align: center;">Medida</th>
-                                    <th style="background-color: #88a117; text-align: center;">Notas</th>
-                                    <th style="background-color: #699762; text-align: center;">Avance Per.</th>
-                                    <th >Meta Final</th>
-                                    <th >Avance</th>
-                                    <th >Descripcion</th>
-                                </tr>
-                            </thead>
-                            
-                        </table>
-                      
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{headerDataNro01}} Indicadores
+                    </div>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{headerDataNro02}} Meta Periodo Cumplida
+                    </div>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{headerDataNro03}} Sin Avance
+                    </div>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{headerDataNro04}} Meta Final Cumplida
+                    </div>
+                </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+
+    <div class="card mt-3 mb-3">
+        <div class="card-body custom-card table-responsive">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Titulo de la Tabla -->   
+                <h2 class="title" style="color: #4E8646;">Ejecución Estratégica</h2>
+                    <!-- Botones Añadir-Editar-Eliminar -->
+                    <div class="row">
+                        <div class="col col-xl-12 col-lg-12 text-end">
+                            <button type="button" 
+                            class="btn btn-view-bg-1" 
+                            (click)="initReportEjecEstrategica(ejecEstrategicaFormModal)"
+                            [disabled]="!ejecEstrategicaSelected">
+                            <i aria-hidden="true"></i> Reportar
+                        </button>
+                        </div>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="container mt-2">
+                    <table class="table custom-table table-striped table-bordered">
+                        
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th colspan="2" style="text-align: center;"></th>
+                                <th colspan="6" style="background-color: #699762; text-align: center;">PERIODO VIGENTE</th>
+                                <th colspan="3" style="text-align: center;">META FINAL</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th >Cod</th>
+                                <th >Nombre</th>
+                                <th style="background-color: #699762; text-align: center;">Reporte a</th>
+                                <th style="background-color: #88a117; text-align: center;">Progreso</th>
+                                <th style="background-color: #699762; text-align: center;">Medida</th>
+                                <th style="background-color: #88a117; text-align: center;">Notas</th>
+                                <th style="background-color: #699762; text-align: center;">MetaPer</th>
+                                <th style="background-color: #699762; text-align: center;">Avance Per.</th>
+                                <th >Meta Final</th>
+                                <th >Avance</th>
+                                <th >Descripcion</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr *ngFor="let ejecEstrategica of ejecEstrategicaTable">
+                                <td>
+                                    <input type="checkbox" 
+                                        [checked]="ejecEstrategica.selected" 
+                                        (change)="checkboxChanged(ejecEstrategica)" 
+                                        id="checkbox-{{i}}" 
+                                        name="checkbox-{{i}}"/>
+                                </td>
+                                <td>{{ ejecEstrategica.id_proyecto }}</td>
+                                <td>{{ ejecEstrategica.proyecto }}</td>
+                                <td>{{ ejecEstrategica.fecha_convenio }}</td>
+                                <td>{{ ejecEstrategica.progreso }}</td>
+                                <td>{{ ejecEstrategica.medida }}</td>
+                                <td>{{ ejecEstrategica.notas }}</td>
+                                <td>{{ ejecEstrategica.presupuesto_me }}</td>
+                                <td>{{ ejecEstrategica.avance_periodo }}</td>
+                                <td>{{ ejecEstrategica.presupuesto_mn }}</td>
+                                <td>{{ ejecEstrategica.avance }}</td>
+                                <td>{{ ejecEstrategica.descrpcion }}</td>
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                    <div class="d-flex justify-content-center">
+                        <ngb-pagination 
+                            [(page)]="mainPage" 
+                            [pageSize]="mainPageSize" 
+                            [collectionSize]="totalLength"
+                            [maxSize]="3"
+                            [rotate]="true"
+                            [boundaryLinks]="true">
+                        </ngb-pagination>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 </div>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
 <ng-template #ejecEstrategicaFormModal let-modal class="custom-modal">
-    <div class="modal-header">
-        <h4 class="modal-title">Indicador</h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <div class="modal-body">
-        <form #ejecEstrategicaForm="ngForm" (ngSubmit)="onSubmit(ejecEstrategicaForm)">
-            <div class="row">
-                <div class="col col-xl-12 col-lg-12">
-                    <div class="card mb-3">
-                        <div class="card-body custom-card">
-                            <div class="row">
-                                <!-- ======= ======= ID SECTION ======= ======= -->
-                                <div class="col col-xl-3 col-lg-3 mt-auto">
-                                    <label for="id_proy_aprende">Tipo</label>
-                                    <input class="form-control" type="text" 
-                                        id="id_proy_aprende" name="id_proy_aprende" [(ngModel)]="id_proy_aprende" disabled/>
-                                </div>
-                                <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
-                                <div class="col col-xl-1 col-lg-1 mt-auto">
-                                    <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
-                                </div>
-                                <!-- ======= ======= FECHA SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
-                                    <label for="idp_aprendizaje_area">SubTipo</label>
-                                    <select class="form-control" id="idp_aprendizaje_area" name="idp_aprendizaje_area" [(ngModel)]="idp_aprendizaje_area">
-                                        <option value="" disabled selected>Selecciona un area</option>
-                                        <option *ngFor="let area of areasAprendizaje" [value]="area.id_subtipo">{{ area.descripcion_subtipo }}</option>
-                                    </select>
-                                </div>
-                                <div class="col col-xl-1 col-lg-1 mt-auto">
-                                    
-                                </div>
-                                <!-- ======= ======= PERSONA SECTION ======= ======= -->
-                                <div class="col col-xl-3 col-lg-3 mt-auto">
-                                    <label for="persona_registro">codigo</label>
-                                    <input class="form-control" type="text" 
-                                        id="persona_registro" name="persona_registro" [(ngModel)]="persona_registro" disabled/>
-                                </div>
-                                <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
-                                    <label for="id_proy_elemento">Categoria</label>
-                                    <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" 
-                                        [(ngModel)]="id_proy_elemento" (change)="onSelectionChange()">
-                                        <option value="" disabled selected>Selecciona un elemento</option>
-                                        <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
-                                            {{ componente.meto_elemento }}
-                                        </option>
-                                    </select>
-                                </div>
-                              
-                                <!-- ======= ======= AREA DE APRENDIZAJE SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
-                                    <label for="idp_aprendizaje_area">SubCategoria</label>
-                                    <select class="form-control" id="idp_aprendizaje_area" name="idp_aprendizaje_area" [(ngModel)]="idp_aprendizaje_area">
-                                        <option value="" disabled selected>Selecciona un area</option>
-                                        <option *ngFor="let area of areasAprendizaje" [value]="area.id_subtipo">{{ area.descripcion_subtipo }}</option>
-                                    </select>
-                                </div>
-                                <!-- ======= ======= TIPO APRENDIZAJE SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
-                                    <label for="idp_aprendizaje_tipo">Tipo</label>
-                                    <select class="form-control" id="idp_aprendizaje_tipo" name="idp_aprendizaje_tipo" [(ngModel)]="idp_aprendizaje_tipo">
-                                        <option value="" disabled selected>Selecciona un tipo</option>
-                                        <option *ngFor="let tipo of tiposAprendizaje" [value]="tipo.id_subtipo">{{ tipo.descripcion_subtipo }}</option>
-                                    </select>
-                                </div>
-
-                                <!-- ======= ======= PROBLEMA SECTION ======= ======= -->
-                                <div class="col col-xl-12 col-lg-12 mt-auto">
-                                    <label for="problema">Descripcion</label>
-                                    <textarea class="form-control" id="problema" name="problema" 
-                                        [(ngModel)]="problema"></textarea>
-                                </div>
+<div class="modal-header">
+    <h4 class="modal-title">Indicador</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+    <form #ejecEstrategicaForm="ngForm" (ngSubmit)="onSubmit(ejecEstrategicaForm)">
+        <div class="row">
+            <div class="col col-xl-12 col-lg-12">
+                <div class="card mb-3">
+                    <div class="card-body custom-card">
+                        <div class="row">
+                            <!-- ======= ======= Tipo ======= ======= -->
+                            <div class="col col-xl-3 col-lg-3 mt-auto">
+                                <label for="id_proy_aprende">Tipo</label>
+                                <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" 
+                                    [(ngModel)]="id_proy_elemento" (change)="onSelectionChange()">
+                                    <option value="" disabled selected>Selecciona un elemento</option>
+                                    <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
+                                        {{ componente.meto_elemento }}
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                            <div class="col col-xl-1 col-lg-1 mt-auto">
+                                <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
+                            </div>
+                            <!-- ======= ======= sub tipo ======= ======= -->
+                            <div class="col col-xl-4 col-lg-4 mt-auto">
+                                <label for="idp_aprendizaje_area">SubTipo</label>
+                                <select
+                                class="form-control"
+                                [(ngModel)]="idp_categoria"
+                                name="idp_categoria">
+                                <option value="" disabled>Seleccione</option>
+                                <option *ngFor="let categoria of riesgoCategoria" [value]="categoria.id_subtipo">
+                                  {{ categoria.descripcion_subtipo }}
+                                </option>
+                              </select>
+                            </div>
+                            <div class="col col-xl-1 col-lg-1 mt-auto">
                                 
-                                <div class="row">
-                                    <!-- Padre -->
-                                    <div class="col-12 mt-3 mb-3 p-3" style="border: 1px solid white;">Padre
-                                      <div class="row align-items-center">
-                                        <!-- Código -->
-                                        <div class="col-auto">
-                                          <label for="codigo">Código</label>
-                                          <input class="form-control" type="text" id="codigo" name="codigo" [(ngModel)]="codigo" disabled>
+                            </div>
+                            <!-- ======= ======= codigo ======= ======= -->
+                            <div class="col col-xl-3 col-lg-3 mt-auto">
+                                <label for="codigo">codigo</label>
+                                <input class="form-control" type="text" 
+                                    id="codigo" name="codigo" [(ngModel)]="codigo" disabled/>
+                            </div>
+                            <!-- ======= ======= Categoria ======= ======= -->
+                            <div class="col col-xl-4 col-lg-4 mt-auto">
+                                <label>Categoría</label>
+                                <select
+                                class="form-control"
+                                [(ngModel)]="idp_categoria"
+                                name="idp_categoria">
+                                <option value="" disabled>Seleccione</option>
+                                <option *ngFor="let categoria of riesgoCategoria" [value]="categoria.id_subtipo">
+                                  {{ categoria.descripcion_subtipo }}
+                                </option>
+                              </select>
+                            </div>
+                          
+                            <!-- ======= ======= sub categoria ======= ======= -->
+                            <div class="col col-xl-4 col-lg-4 mt-auto">
+                                <label for="idp_aprendizaje_area">SubCategoria</label>
+                                <select
+                                class="form-control"
+                                [(ngModel)]="idp_categoria"
+                                name="idp_categoria">
+                                <option value="" disabled>Seleccione</option>
+                                <option *ngFor="let categoria of ejecESubtipo" [value]="categoria.id_subtipo">
+                                  {{ categoria.descripcion_subtipo }}
+                                </option>
+                              </select>
+                            </div>
+                            <!-- ======= ======= TIPO  ======= ======= -->
+                            <div class="col col-xl-4 col-lg-4 mt-auto">
+                                <label for="idp_aprendizaje_tipo">Tipo</label>
+                                <select
+                                class="form-control"
+                                [(ngModel)]="idp_categoria"
+                                name="idp_categoria">
+                                <option value="" disabled>Seleccione</option>
+                                <option *ngFor="let categoria of ejecETipo" [value]="categoria.id_subtipo">
+                                  {{ categoria.descripcion_subtipo }}
+                                </option>
+                              </select>
+                            </div>
+
+                            <!-- ======= ======= PROBLEMA SECTION ======= ======= -->
+                            <div class="col col-xl-12 col-lg-12 mt-auto">
+                                <label for="problema">Descripcion</label>
+                                <textarea class="form-control" id="problema" name="problema" 
+                                    [(ngModel)]="problema"></textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Padre -->
+                                <div class="col-12 mt-3 mb-3 p-3" style="border: 1px solid white;">Padre
+                                  <div class="row align-items-center">
+                                    <!-- Código -->
+                                    <div class="col-auto">
+                                      <label for="codigo">Código</label>
+                                      <input class="form-control" type="text" id="codigo" name="codigo" [(ngModel)]="codigo" disabled>
+                                    </div>
+                              
+                                    <!-- Tipo -->
+                                    <div class="col-auto">
+                                      <label for="tipo">Tipo</label>
+                                      <input class="form-control" type="text" id="tipo" name="tipo" [(ngModel)]="tipo" disabled>
+                                    </div>
+                              
+                                    <!-- Componente -->
+                                    <div class="col-auto">
+                                        <div class="col col-xl-1 col-lg-1 mt-auto">
+                                            <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
                                         </div>
-                                  
-                                        <!-- Tipo -->
-                                        <div class="col-auto">
-                                          <label for="tipo">Tipo</label>
-                                          <input class="form-control" type="text" id="tipo" name="tipo" [(ngModel)]="tipo" disabled>
-                                        </div>
-                                  
-                                        <!-- Componente -->
-                                        <div class="col-auto">
-                                          <label class="btn-view-bg-3" [ngStyle]="{ 'background-color': '#' + color }">{{ sigla }}</label>
-                                        </div>
-                                  
-                                        <!-- Abuelo -->
-                                        <div class="col-auto">
-                                          <label for="abuelo">Abuelo</label>
-                                          <select class="form-control" id="abuelo" name="abuelo" [(ngModel)]="abuelo">
-                                            <option value="" disabled selected>Selecciona un tipo</option>
-                                            <option *ngFor="let tipo of tiposAprendizaje" [value]="tipo.id_subtipo">{{ tipo.descripcion_subtipo }}</option>
-                                          </select>
-                                        </div>
-                                      </div>
-                                  
-                                      <!-- Descripción -->
-                                      <div class="row mt-3">
-                                        <div class="col">
-                                          <label for="descripcion">Descripción</label>
-                                          <textarea class="form-control" id="descripcion" name="descripcion" [(ngModel)]="descripcion"></textarea>
-                                        </div>
-                                      </div>
+                                    </div>
+                              
+                                    <!-- Abuelo -->
+                                    <div class="col-auto">
+                                      <label for="abuelo">Abuelo</label>
+                                      <select
+                                      class="form-control"
+                                      [(ngModel)]="idp_categoria"
+                                      name="idp_categoria">
+                                      <option value="" disabled>Seleccione</option>
+                                      <option *ngFor="let categoria of riesgoCategoria" [value]="categoria.id_subtipo">
+                                        {{ categoria.descripcion_subtipo }}
+                                      </option>
+                                    </select>
                                     </div>
                                   </div>
+                              
+                                  <!-- Descripción -->
+                                  <div class="row mt-3">
+                                    <div class="col">
+                                      <label for="descripcion">Descripción</label>
+                                      <textarea class="form-control" id="descripcion" name="descripcion" [(ngModel)]="descripcion"></textarea>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
 
 
-                                   <!-- Línea base, Medida y Meta Final -->
-                                        <div class="col-md-2 mb-3">
-                                            <label for="lineaBase">Línea base</label>
-                                            <input class="form-control" type="number" 
-                                                id="lineaBase" name="lineaBase" 
-                                                [(ngModel)]="lineaBase" required>
-                                        </div>
-                            
-                                        <div class="col-md-2 mb-3">
-                                            <label for="medida">Medida</label>
-                                            <input class="form-control" type="text" 
-                                                id="medida" name="medida" 
-                                                [(ngModel)]="medida" required>
-                                        </div>
-                            
-                                        <div class="col-md-2 mb-3">
-                                            <label for="metaFinal">Meta Final</label>
-                                            <input class="form-control" type="number" 
-                                                id="metaFinal" name="metaFinal" 
-                                                [(ngModel)]="metaFinal" required>
-                                        </div>
-                            
-                                        <!-- Medio de verificación -->
-                                        <div class="col-6 mb-3">
-                                            <label for="medioVerificacion">Medio de verificación</label>
-                                            <input class="form-control" type="text" 
-                                                id="medioVerificacion" name="medioVerificacion" 
-                                                [(ngModel)]="medioVerificacion" required>
-                                        </div>
-                            
-                                        <!-- Supuestos/Comentario -->
-                                        <div class="col-12 mb-3">
-                                            <label for="supuestosComentario">Supuestos/Comentario</label>
-                                            <textarea class="form-control" 
-                                                    id="supuestosComentario" name="supuestosComentario" 
-                                                    [(ngModel)]="supuestosComentario" rows="2"></textarea>
-                                        </div>
+                               <!-- Línea base, Medida y Meta Final -->
+                                    <div class="col-md-2 mb-3">
+                                        <label for="lineaBase">Línea base</label>
+                                        <input class="form-control" type="number" 
+                                            id="lineaBase" name="lineaBase" 
+                                            [(ngModel)]="lineaBase" required>
+                                    </div>
+                        
+                                    <div class="col-md-2 mb-3">
+                                        <label for="medida">Medida</label>
+                                        <input class="form-control" type="text" 
+                                            id="medida" name="medida" 
+                                            [(ngModel)]="medida" required>
+                                    </div>
+                        
+                                    <div class="col-md-2 mb-3">
+                                        <label for="metaFinal">Meta Final</label>
+                                        <input class="form-control" type="number" 
+                                            id="metaFinal" name="metaFinal" 
+                                            [(ngModel)]="metaFinal" required>
+                                    </div>
+                        
+                                    <!-- Medio de verificación -->
+                                    <div class="col-6 mb-3">
+                                        <label for="medioVerificacion">Medio de verificación</label>
+                                        <input class="form-control" type="text" 
+                                            id="medioVerificacion" name="medioVerificacion" 
+                                            [(ngModel)]="medioVerificacion" required>
+                                    </div>
+                        
+                                    <!-- Supuestos/Comentario -->
+                                    <div class="col-12 mb-3">
+                                        <label for="supuestosComentario">Supuestos/Comentario</label>
+                                        <textarea class="form-control" 
+                                                id="supuestosComentario" name="supuestosComentario" 
+                                                [(ngModel)]="supuestosComentario" rows="2"></textarea>
+                                    </div>
 
-                                        <div class="col-12 mb-3">
-                                            <!-- Título con línea blanca -->
-                                              <div class="relative mb-1">
-                                                <span class="text-green-700 relative z-10 pl-2">Reporte</span>
-                                                <div class="absolute top-0 left-0 right-0 bottom-0 border-t border-l border-r border-white -ml-1"></div>
-                                                <!-- Contenedor blanco para la tabla -->
-                                                    <div class="bg-white p-2 border border-white">
-                                                        <table class="w-full border-collapse">
-                                                          <thead>
-                                                            <tr class="bg-yellow-300">
-                                                              <th class="col-2 py-0.5 px-2 text-left text-sm font-bold w-8">#</th>
-                                                              <th class="col-2 py-0.5 px-2 text-left text-sm font-bold">Periodo</th>
-                                                              <th class="col-2 py-0.5 px-2 text-left text-sm font-bold">Valor esperado</th>
-                                                              <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Progreso</th>
-                                                              <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Notas</th>
-                                                              <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Evidencia</th>
-                                                            </tr>
-                                                          </thead>
-                                                          <tbody>
-                                                            <tr *ngFor="let row of evaluationData">
-                                                              <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.id }}</td>
-                                                              <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.period }}</td>
-                                                              <td class="py-0.5 px-2 text-sm">{{ row.value }}</td>
-                                                              <td class="py-0.5 px-2 text-sm">{{ row.progress }}</td>
-                                                                <td class="py-0.5 px-2 text-sm">{{ row.notes }}</td>
-                                                                <td class="py-0.5 px-2 text-sm">{{ row.evidence }}</td>
-                                                            </tr>
-                                                          </tbody>
-                                                        </table>
-                                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <!-- Título con línea blanca -->
+                                          <div class="relative mb-1">
+                                            <span class="text-green-700 relative z-10 pl-2">Reporte</span>
+                                            <div class="absolute top-0 left-0 right-0 bottom-0 border-t border-l border-r border-white -ml-1"></div>
+                                            <!-- Contenedor blanco para la tabla -->
+                                                <div class="bg-white p-2 border border-white">
+                                                    <table class="w-full border-collapse">
+                                                      <thead>
+                                                        <tr class="bg-yellow-300">
+                                                          <th class="col-2 py-0.5 px-2 text-left text-sm font-bold w-8">#</th>
+                                                          <th class="col-2 py-0.5 px-2 text-left text-sm font-bold">Periodo</th>
+                                                          <th class="col-2 py-0.5 px-2 text-left text-sm font-bold">Valor esperado</th>
+                                                          <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Progreso</th>
+                                                          <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Notas</th>
+                                                          <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Evidencia</th>
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        <tr *ngFor="let row of evaluationData">
+                                                          <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.id }}</td>
+                                                          <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.period }}</td>
+                                                          <td class="py-0.5 px-2 text-sm">{{ row.value }}</td>
+                                                          <td class="py-0.5 px-2 text-sm">{{ row.progress }}</td>
+                                                            <td class="py-0.5 px-2 text-sm">{{ row.notes }}</td>
+                                                            <td class="py-0.5 px-2 text-sm">{{ row.evidence }}</td>
+                                                        </tr>
+                                                      </tbody>
+                                                    </table>
                                                 </div>
-                                        </div>
-                                    
-                                <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>
+                                            </div>
+                                    </div>
+                                
+                            <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>
 
-                               
-                            </div>
+                           
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <div class="d-flex justify-content-center" style="width: 100%;">
-            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
-            </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="aprendizajesForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
-            </button>
         </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <div class="d-flex justify-content-center" style="width: 100%;">
+        <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+            <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+        </button>
+        <button type="button" class="btn btn-bg-1" [disabled]="aprendizajesForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+        </button>
     </div>
+</div>
 </ng-template>
 
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
