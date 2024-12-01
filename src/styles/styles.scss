@@ -49,6 +49,41 @@ $txt-2-color: #ffffff;
     line-height: 40px;
     padding: 0 25px;
 }
+
+.btn-outline-bg-1{
+    color: $primary-color;
+    border: 2px dashed $primary-color;
+    font-size: 12px;
+}
+.btn-outline-bg-2{
+    color: $secondary-color;
+    border: 2px dashed $secondary-color;
+    font-size: 12px;
+}
+.btn-outline-bg-3{
+    color: $third-color;
+    border: 2px dashed $third-color;
+    font-size: 12px;
+}
+
+.btn-outline-bg-1-selected{
+    color: $txt-2-color;
+    background: $primary-color;
+    border: 2px dashed $txt-2-color;
+    font-size: 12px;
+}
+.btn-outline-bg-2-selected{
+    color: $txt-2-color;
+    background: $secondary-color;
+    border: 2px dashed $txt-2-color;
+    font-size: 12px;
+}
+.btn-outline-bg-3-selected{
+    color: $txt-2-color;
+    background: $third-color;
+    border: 2px dashed $txt-2-color;
+    font-size: 12px;
+}
 // ======= ======= ======= ======= =======
 // ======= ======= BUTTON STYLES ======= =======
 .btn-view-bg-1{
@@ -233,7 +268,7 @@ select.form-control {
 // ======= ======= CUSTOM INF PROYECTO ======= =======
 .container-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr) 150px;
     grid-template-rows: repeat(5, auto);
     gap: 5px;
 }
@@ -250,7 +285,10 @@ select.form-control {
     button{
         margin-top: 5px;
 
-        font-size: 15px;
+        padding-left: 1em;
+        padding-right: 1em;
+
+        font-size: 12px;
     }
 }
 
@@ -264,16 +302,26 @@ select.form-control {
     grid-row: 2;
 }
 
+.custom-location-section {
+    grid-column: 1 / span 2;
+    grid-row: 3 / span 3;
+}
+
 .c {
     grid-column: 3 / span 3;
     grid-row: 3 / span 3;
 }
 
-.a {
-    grid-column: 1 / span 2;
-    grid-row: 3 / span 3;
+.custom-obj-pool{
+    border: solid 3px $primary-color;
+    border-radius: 3px;
+    background-color: $txt-2-color;
 }
+
 .custom-info-proy-input{
+    padding-left: 5px;
+    padding-right: 5px;
+
     font-size: 12px;
 }
 .custom-info-proy-title{
@@ -310,6 +358,26 @@ select.form-control {
     border-radius: 5px;
     background-color: $txt-2-color;
 }
+.custom-btn-info{
+    padding-left: 1em;
+    padding-right: 1em;
+    line-height: 2;
+}
+.custom-obj-container{
+    border-radius: 4px;
+    border: solid 4px rgba(0,0,0,0);
+    cursor: pointer;
+}
+.custom-obj-container-1-selected{
+    border-radius: 4px;
+    border: dashed 4px $primary-color;
+    cursor: pointer;
+}
+.custom-obj-container-2-selected{
+    border-radius: 4px;
+    border: dashed 4px $secondary-color;
+    cursor: pointer;
+}
 .custom-info-text-box{
     padding: 5px;
     border-radius: 2px;
@@ -318,7 +386,6 @@ select.form-control {
 }
 .custom-table-info-proy{
     font-size: 10px;
-    max-height: 300px;
     overflow-y: auto;
 
     thead {
@@ -334,11 +401,21 @@ select.form-control {
         overflow-x: hidden;
     }
 
+    th{
+        padding: 1em;
+    }
+
     td {
         padding: 5px;
     }
 }
 .custom-table-info-proy-1{
+    max-height: 150px;
+
+    tbody {
+        max-height: 150px;
+    }
+
     tbody tr {
         display: table;
         width: 100%;
@@ -346,6 +423,12 @@ select.form-control {
     }
 }
 .custom-table-info-proy-2{
+    max-height: 300px;
+
+    tbody {
+        max-height: 300px;
+    }
+
     tbody tr {
         width: 100%;
         table-layout: fixed;

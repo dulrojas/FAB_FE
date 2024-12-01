@@ -37,13 +37,13 @@
                                 <div class="col col-lg-6 col-md-6 my-auto">
                                     <h2 class="custom-info-proy-sub-title">Nombre corto del proyecto</h2>
                                     <input class="form-control custom-info-proy-input" type="text" 
-                                        id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto"/>
+                                        id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto" [disabled]="!editMode"/>
                                 </div>
                                 <div class="col col-lg-6 col-md-6">
                                     <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
                                     <h2 class="custom-info-proy-sub-title">Nombre completo del proyecto</h2>
                                     <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" 
-                                        [(ngModel)]="proyectoScope.descrpcion"></textarea>
+                                        [(ngModel)]="proyectoScope.descrpcion" [disabled]="!editMode"></textarea>
                                 </div>
                             </div>
                             <div class="row">
@@ -51,13 +51,13 @@
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Responsable de registro</h2>
                                     <input class="form-control custom-info-proy-input" type="text" 
-                                        id="person_resp" name="person_resp" [(ngModel)]="person_resp"/>
+                                        id="person_resp" name="person_resp" [(ngModel)]="person_resp" [disabled]="!editMode"/>
                                 </div>
                                 <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Unidad ejecutora</h2>
                                     <select class="form-control custom-info-proy-input" id="unidad" name="unidad" 
-                                        [(ngModel)]="proyectoScope.id_inst_unidad">
+                                        [(ngModel)]="proyectoScope.id_inst_unidad" [disabled]="!editMode">
                                         <option value="" disabled selected>Selecciona una unidad</option>
                                         <option *ngFor="let unidad of unidades" [value]="unidad.id_inst_unidad">
                                             {{ unidad.unidad }}
@@ -68,13 +68,57 @@
                                     <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
                                     <h2 class="custom-info-proy-sub-title">Notas adicionales</h2>
                                     <textarea class="form-control custom-info-proy-input" id="notas" name="notas" 
-                                        [(ngModel)]="proyectoScope.notas"></textarea>
+                                        [(ngModel)]="proyectoScope.notas" [disabled]="!editMode"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="col col-md-6">
                             <div class="row">
-                                
+                                <div class="col col-md-4">
+                                    <h2 class="custom-info-proy-sub-title my-0">Objetivos FAN a los que contribuye</h2>
+                                </div>
+                                <div class="col col-md-8">
+                                    <h2 class="custom-info-proy-sub-title my-0">Objetivos ODS a los que contribuye</h2>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col col-md-4 custom-obj-pool px-0">
+                                    <div class=""
+                                        *ngFor="let objetivo of objetivosFAN"
+                                        [ngClass]="getObjOptCSSClass(objetivo)"
+                                        (click)="onObjetivoClick(objetivo)">
+                                        <div class="row mt-auto">
+                                            <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="objetivo.objetivo_imagen || '../../../assets/images/empty.jpg'" alt="Imagen del objetivo">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col col-md-8 custom-obj-pool">
+                                    <div class="row">
+
+                                        <div class="col col-md-2 px-0"
+                                            *ngFor="let objetivo of objetivosODS"
+                                            [ngClass]="getObjOptCSSClass(objetivo)"
+                                            (click)="onObjetivoClick(objetivo)">
+                                            <div class="row mt-auto">
+                                                <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="objetivo.objetivo_imagen || '../../../assets/images/empty.jpg'" alt="Imagen del objetivo">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col col-md-12">
+                                    <span class="custom-info-proy-sub-title my-0">Guia</span>
+                                    <!-- ======= ======= ======= PRINCIPAL ======= ======= ======= -->
+                                    <button type="button" class="btn" [class]="getObjBttnCSSClass(1)" (click)="onObjetivoButtonChange(1)" [disabled]="!editMode">
+                                        PRINCIPAL
+                                    </button>
+                                    <!-- ======= ======= ======= SIGNIFICATIVO ======= ======= ======= -->
+                                    <button type="button" class="btn" [class]="getObjBttnCSSClass(2)" (click)="onObjetivoButtonChange(2)" [disabled]="!editMode">
+                                        SIGNIFICATIVO
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -93,11 +137,11 @@
                             <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
                         </button>
                         <!-- ======= ======= ======= CANCELAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                        <button type="button" class="btn btn-bg-3" (click)="disableEditMode()">
                             <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                         </button>
                         <!-- ======= ======= ======= EDITAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-1" (click)="selectImage(); modal.close('Elegir')">
+                        <button type="button" class="btn btn-bg-1" (click)="enableEditMode()">
                             Editar
                         </button>
                         <!-- ======= ======= ======= REPORTE DATE ======= ======= ======= -->
@@ -139,7 +183,7 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_convenio" name="fecha_convenio" [(ngModel)]="proyectoScope.fecha_convenio" />
+                                        id="fecha_convenio" name="fecha_convenio" [(ngModel)]="proyectoScope.fecha_convenio" [disabled]="!editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= DESEMBOLSO DATE ======= ======= ======= -->
@@ -149,7 +193,7 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_desembolso_1" name="fecha_desembolso_1" [(ngModel)]="proyectoScope.fecha_desembolso_1" />
+                                        id="fecha_desembolso_1" name="fecha_desembolso_1" [(ngModel)]="proyectoScope.fecha_desembolso_1" [disabled]="!editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= INICIO REAL DATE ======= ======= ======= -->
@@ -159,7 +203,8 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_inicio" name="fecha_inicio" [(ngModel)]="proyectoScope.fecha_inicio" (change)="getProyectDateGaps()"/>
+                                        id="fecha_inicio" name="fecha_inicio" [(ngModel)]="proyectoScope.fecha_inicio" 
+                                        (change)="getProyectDateGaps()" [disabled]="!editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= FIN PLANIFICADO DATE ======= ======= ======= -->
@@ -169,7 +214,8 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_fin" name="fecha_fin" [(ngModel)]="proyectoScope.fecha_fin" (change)="getProyectDateGaps()"/>
+                                        id="fecha_fin" name="fecha_fin" [(ngModel)]="proyectoScope.fecha_fin" 
+                                        (change)="getProyectDateGaps()" [disabled]="!editMode"/>
                                 </div>
                             </div>
                         </div>
@@ -181,7 +227,7 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <select class="form-control custom-info-proy-input" id="idp_periodo_evaluacion" name="idp_periodo_evaluacion" 
-                                        [(ngModel)]="proyectoScope.idp_periodo_evaluacion">
+                                        [(ngModel)]="proyectoScope.idp_periodo_evaluacion" [disabled]="!editMode">
                                         <option value="" disabled selected>Selecciona un elemento</option>
                                         <option *ngFor="let periodo of periodos" [value]="periodo.id_subtipo">
                                             {{ periodo.descripcion_subtipo }}
@@ -196,7 +242,8 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_logro" name="fecha_logro" [(ngModel)]="proyectoScope.fecha_logro" />
+                                        id="fecha_evaluacion_1" name="fecha_evaluacion_1" 
+                                        [(ngModel)]="proyectoScope.fecha_evaluacion_1" [disabled]="!editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
@@ -206,7 +253,9 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_fin_ampliada" name="fecha_fin_ampliada" [(ngModel)]="proyectoScope.fecha_fin_ampliada" (change)="getProyectDateGaps()"/>
+                                        id="fecha_fin_ampliada" name="fecha_fin_ampliada" 
+                                        [(ngModel)]="proyectoScope.fecha_fin_ampliada" 
+                                        (change)="getProyectDateGaps()" [disabled]="!editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
@@ -240,11 +289,90 @@
             <div class="card">
                 <div class="card-body custom-card  py-1">
                     <div class="row">
+                        <div class="col col-md-12 pl-2 pr-0">
+                            <h2 class="custom-info-proy-title my-0">Presupuesto</h2>
+                        </div>
+                        <div class="col col-md-4 pl-2 pr-0">
+                            <div class="row">
+                                <div class="col col-md-12">
+                                    <label class="custom-info-proy-sub-title" for="">Moneda</label>
+                                    <input class="form-control custom-info-proy-input" type="text" 
+                                        id="moneda_presupuesto" name="moneda_presupuesto" 
+                                        [(ngModel)]="proyectoScope.moneda_presupuesto" [disabled]="!editMode"/>
+                                </div>
+                                <div class="col col-md-12">
+                                    <label class="custom-info-proy-sub-title" for="">Total</label>
+                                    <input class="form-control custom-info-proy-input" type="text" 
+                                        id="presupuesto_me" name="presupuesto_me" 
+                                        [(ngModel)]="proyectoScope.presupuesto_me" [disabled]="!editMode"/>
+                                </div>
+                                <div class="col col-md-12">
+                                    <label class="custom-info-proy-sub-title" for="">Total (Bs)</label>
+                                    <input class="form-control custom-info-proy-input" type="text" 
+                                        id="presupuesto_mn" name="presupuesto_mn" 
+                                        [(ngModel)]="proyectoScope.presupuesto_mn" [disabled]="!editMode"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-md-8 p-0">
+                            <div class="row">
+                                <div class="col col-md-12">
+                                    <label class="custom-info-proy-sub-title" for="">Composicion del Presupuesto</label>
+                                </div>
+                                <div class="col col-md-12 text-end">
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                        (click)="initAddFinanciadores(presupuestoFormModal)"
+                                        [disabled]="((financiadoresSelected)||(!editMode))">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                        (click)="initEditFinanciadores(presupuestoFormModal)"
+                                        [disabled]="((!financiadoresSelected)||(!editMode))">
+                                        <i class="fa fa-caret-up" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                        (click)="initDeleteFinanciadores(deletePresupuestoModal)"
+                                        [disabled]="((!financiadoresSelected)||(!editMode))">
+                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div class="col col-md-12">
+
+                                    <table class="table custom-table table-striped table-bordered custom-table-info-proy custom-table-info-proy-1" style="max-height: 200px;">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>ID</th>
+                                                <th>Financiador</th>
+                                                <th>Tipo</th>
+                                                <th>%</th>
+                                                <th>Monto Bs</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let financiador of financiadores; let i = index">
+                                                <td>
+                                                    <input type="checkbox" [(ngModel)]="financiador.selected"
+                                                        id="checkbox-{{ i }}" name="checkbox-{{ i }}"
+                                                        (change)="finanCheckboxChanged(financiador)" [disabled]="!editMode"/>
+                                                </td>
+                                                <td>{{ financiador.id_proy_finan }}</td>
+                                                <td>{{ getInstitucionName(financiador.id_institucion_fin) }}</td>
+                                                <td>{{ getTipoFinanParam(financiador.idp_tipo_finan) }}</td>
+                                                <td>{{ financiador.porcentaje }}</td>
+                                                <td>{{ financiador.monto }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="a">
+        <div class="custom-location-section">
             <div class="card">
                 <div class="card-body custom-card  py-1">
                     <div class="row">
@@ -253,7 +381,39 @@
                         </div>
 
                         <div class="col col-md-6">
-                            <app-navigationDropdown [items]="ubicaciones"></app-navigationDropdown>
+                            <div class="row">
+                                <div class="col col-md-12 text-end">
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
+                                        (click)="initUbicaGeo(geograficoFormModal)" [disabled]="!editMode">
+                                        <i class="fa fa-tree" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div class="col col-md-12">
+                                    
+                                    <table class="table custom-table table-striped table-bordered custom-table-info-proy custom-table-info-proy-1">
+                                        <thead>
+                                            <tr>
+                                                <th>Tipo</th>
+                                                <th>Lugar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let ubicacion of ubicaciones; let i = index">
+                                                <td>{{ ubicacion.idp_tipo_ubica_geo }}</td>
+                                                <td>{{ ubicacion.nombre }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="col col-md-12">
+                                    <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                    <h2 class="custom-info-proy-sub-title">Otras</h2>
+                                    <textarea class="form-control custom-info-proy-input" id="ubica_geo_otros" name="ubica_geo_otros" 
+                                        [(ngModel)]="proyectoScope.ubica_geo_otros" [disabled]="!editMode"></textarea>
+                                </div>
+                            </div>
+                            
                         </div>
                         <div class="col col-md-6">
 
@@ -274,7 +434,7 @@
                                         </td>
                                         <td>
                                             <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
-                                                [(ngModel)]="item.selected" (change)="ubiInfCheckboxChanged(item)" />
+                                                [(ngModel)]="item.selected" (change)="ubiInfCheckboxChanged(item)" [disabled]="!editMode"/>
                                         </td>
                                         <td>
                                             {{ item.nombre }}
@@ -294,6 +454,64 @@
             <div class="card">
                 <div class="card-body custom-card  py-1">
                     <div class="row">
+                        
+                        <div class="col col-md-12">
+                            <label class="custom-info-proy-sub-title" for="">Obligaciones</label>
+                        </div>
+                        <div class="col col-md-12 text-end">
+                            
+                            <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                (click)="initAddObligaciones(obligacionesFormModal)"
+                                [disabled]="((obligacionesSelected)||(!editMode))">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                            
+                            <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                (click)="initEditObligaciones(obligacionesFormModal)"
+                                [disabled]="((!obligacionesSelected)||(!editMode))">
+                                <i class="fa fa-caret-up" aria-hidden="true"></i>
+                            </button>
+                            
+                            <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                (click)="initDeleteObligaciones(obligacionesFormModal)"
+                                [disabled]="((!obligacionesSelected)||(!editMode))">
+                                <i class="fa fa-minus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="col col-md-12">
+                            <table class="table custom-table table-striped table-bordered custom-table-info-proy custom-table-info-proy-1">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>ID</th>
+                                        <th>Compromiso</th>
+                                        <th>Requisitos y/o documentos</th>
+                                        <th>Fecha obligacion</th>
+                                        <th>Entrega</th>
+                                        <th>Fecha entrega</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let obligacion of obligaciones; let i = index">
+                                        <td>
+                                            <input type="checkbox" [(ngModel)]="obligacion.selected"
+                                                id="checkbox-{{ i }}" name="checkbox-{{ i }}"
+                                                (change)="obligaCheckboxChanged(obligacion)" [disabled]="!editMode"/>
+                                        </td>
+                                        <td>{{ obligacion.id_proy_obliga }}</td>
+                                        <td>{{ obligacion.obligacion }}</td>
+                                        <td>{{ obligacion.descripcion }}</td>
+                                        <td>{{ obligacion.fecha_obligacion }}</td>
+                                        <td>
+                                            {{ obligacion.progreso }}
+                                        </td>
+                                        <td>{{ obligacion.fecha_hora_entrega }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -301,3 +519,257 @@
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
 </div>
+
+<!-- ======= ======= ======= ADD PRESUPUESTO MODAL ======= ======= ======= -->
+<ng-template #presupuestoFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #presupuestoForm="ngForm" (ngSubmit)="onSubmit(presupuestoForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="id_proy_finan">Id</label>
+                                    <input class="form-control" type="text" id="id_proy_finan" name="id_proy_finan" 
+                                        [(ngModel)]="financiadores.id_proy_finan" disabled/>
+                                </div>
+                                <!-- ======= ======= INSTITUCION FIN SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="id_institucion_fin">Institucion Financiadora</label>
+                                    <select class="form-control" id="id_institucion_fin" name="id_institucion_fin" 
+                                        [(ngModel)]="financiadores.id_institucion_fin">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let institucion of instituciones" [value]="institucion.id_institucion">
+                                            {{ institucion.institucion }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- ======= ======= PORCENTAJE SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="porcentaje">Porcentaje</label>
+                                    <input class="form-control" type="number" min="0" max="100" placeholder="Ingrese un porcentaje" 
+                                        id="porcentaje" name="porcentaje" [(ngModel)]="financiadores.porcentaje"
+                                        (change)="onPocentajeChange()"/>
+                                </div>
+                                <!-- ======= ======= MONTO SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="monto">Monto</label>
+                                    <input class="form-control" type="text" id="monto" name="monto" 
+                                        [(ngModel)]="financiadores.monto" disabled/>
+                                </div>
+                                
+                                <!-- ======= ======= TIPO FINAN SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="idp_tipo_finan">Tipo Financiador</label>
+                                    <select class="form-control" id="idp_tipo_finan" name="idp_tipo_finan" 
+                                        [(ngModel)]="financiadores.idp_tipo_finan">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let tipoFinanciador of tipoFinanciadores" [value]="tipoFinanciador.id_subtipo">
+                                            {{ tipoFinanciador.descripcion_subtipo }}
+                                        </option>
+                                    </select>
+                                </div>
+                                
+                                <!-- ======= ======= ORDEN SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="orden">Orden</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese un orden"
+                                        id="orden" name="orden" [(ngModel)]="financiadores.orden"/>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="presupuestoForm.invalid" (click)="financiadoresOnSubmit(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE PRESUPUESTO MODAL ======= ======= ======= -->
+<ng-template #deletePresupuestoModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar financiador</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de este financiador?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="editFinanciadores(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+
+<!-- ======= ======= ======= UBICA GEOGRAFICA MDOAL ======= ======= ======= -->
+<ng-template #geograficoFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #geograficoForm="ngForm" (ngSubmit)="onSubmit(geograficoForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+
+                                <app-navigationDropdown [items]="ubicaciones"></app-navigationDropdown>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="geograficoFormModal.invalid" (click)="onSubmit(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Elegir
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+
+<!-- ======= ======= ======= OBLIGACIONES MDOAL ======= ======= ======= -->
+<ng-template #obligacionesFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #obligacionesForm="ngForm" (ngSubmit)="onSubmit(obligacionesForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="id_proy_obliga">Id</label>
+                                    <input class="form-control" type="text" id="id_proy_obliga" name="id_proy_obliga" 
+                                        [(ngModel)]="obligacionesModel.id_proy_obliga" disabled/>
+                                </div>
+                                <!-- ======= ======= OBLIGACIONES SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <!--label for="id_inst_obligaciones">Obligaciones Institucion</label>
+                                    <input class="form-control" type="text" id="id_inst_obligaciones" name="id_inst_obligaciones" 
+                                        [(ngModel)]="obligacionesModel.id_inst_obligaciones"/-->
+                                </div>
+
+                                <!-- ======= ======= OBLIGACION SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="obligacion">Obligacion</label>
+                                    <input class="form-control" type="text" id="obligacion" name="obligacion" placeholder="Ingresa el requisito"
+                                        [(ngModel)]="obligacionesModel.obligacion"/>
+                                </div>
+                                <!-- ======= ======= DESCRIPCION SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="descripcion">Descripcion</label>
+                                    <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" placeholder="Ingresa una descipcion"
+                                        [(ngModel)]="obligacionesModel.descripcion"></textarea>
+                                </div>
+                                
+                                <!-- ======= ======= FECHA SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="fecha_obligacion">Fecha obligacion</label>
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_obligacion" name="fecha_obligacion" [(ngModel)]="obligacionesModel.fecha_obligacion"/>
+                                </div>
+                                <!-- ======= ======= INSTITUCION EXIGE SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="id_institucion_exige">Institucion exige</label>
+                                    <select class="form-control" id="id_institucion_exige" name="id_institucion_exige" 
+                                        [(ngModel)]="obligacionesModel.id_institucion_exige">
+                                        <option value="" disabled selected>Selecciona una institucion</option>
+                                        <option *ngFor="let institucion of instituciones" [value]="institucion.id_institucion">
+                                            {{ institucion.institucion }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- ======= ======= ESTADO ENTREGA SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="idp_estado_entrega">Estado entrega</label>
+                                    <select class="form-control" id="idp_estado_entrega" name="idp_estado_entrega" 
+                                        [(ngModel)]="obligacionesModel.idp_estado_entrega">
+                                        <option value="" disabled selected>Selecciona un estado</option>
+                                        <option *ngFor="let estadoEntrega of estadosEntrega" [value]="estadoEntrega.id_subtipo">
+                                            {{ estadoEntrega.descripcion_subtipo }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- ======= ======= FECHA HORA ENTREGA SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="fecha_hora_entrega">Fecha hora entrega</label>
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_hora_entrega" name="fecha_hora_entrega" [(ngModel)]="obligacionesModel.fecha_hora_entrega"/>
+                                </div>
+                                <!-- ======= ======= ID PERSONA ENTREGA SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="id_persona_entrega">Persona entrega</label>
+                                    <select class="form-control" id="id_persona_entrega" name="id_persona_entrega" 
+                                        [(ngModel)]="obligacionesModel.id_persona_entrega">
+                                        <option value="" disabled selected>Selecciona una persona</option>
+                                        <option *ngFor="let perPro of personasProyecto" [value]="perPro.id_persona">
+                                            {{ getPersonaName(perPro) }}
+                                        </option>
+                                    </select>
+                                </div>
+                                
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="obligacionesForm.invalid" (click)="obligacionesOnSubmit(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->

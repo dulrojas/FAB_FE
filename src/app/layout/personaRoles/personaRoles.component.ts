@@ -85,7 +85,7 @@ export class PersonaRolesComponent implements OnInit {
       );
       // ======= ======= =======
       // ======= GET ROLES =======
-      this.servicios.getParametricaByIdTipo(13).subscribe(
+      this.servicios.getParametricaByIdTipo(11).subscribe(
         (data) => {
           this.roles = data[0].dato;
         },
@@ -425,15 +425,16 @@ export class PersonaRolesComponent implements OnInit {
         this.editPersona();
 
         this.persona_proyecto_mod_to_add.forEach((personaProyecto) => {
-          personaProyecto.id_persona = 3;
+          personaProyecto.id_persona = this.id_persona;
           this.addPersonaRol(personaProyecto);
         });
 
         this.persona_proyecto_mod_to_edit.forEach((personaProyecto) => {
-          personaProyecto.id_persona = 3;
+          personaProyecto.id_persona = this.id_persona;
           this.addPersonaRol(personaProyecto);
         });
       }
+      //this.getPersonaRoles();
     }
     // ======= ======= ======= ======= =======
 }
