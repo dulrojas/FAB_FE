@@ -1,32 +1,320 @@
 <div [@routerTransition]>
-    <!-- ======= ======= ======= LOGROS HEADER SECTION ======= ======= ======= -->
-    <div class="row">
-        <div class="col col-md-6 custom-body-header">
-            <app-bodyHeader></app-bodyHeader>
+    <!-- Sección del Encabezado -->
+    <div class="row col-md-12">
+        <!-- Bloque de Encabezado -->
+        <div class="col col-md-6 align-items-center custom-body-header">
+            <!-- Componente personalizado para el encabezado -->
+                <app-bodyHeader></app-bodyHeader>
         </div>
-        <div class="col col-md-6">
-            <div class="row">
-                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro01}} Personas
+        <!-- Bloque de Tarjetas de Estadísticas -->
+        <div class="col col-md-6 text-center">
+            <!-- Fila para organizar las tarjetas -->
+                <div class="row">
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{headerDataNro01}} Ejecucion Presupuestaria
+                    </div>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{headerDataNro02}} Ejecucion Periodo
+                    </div>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{headerDataNro03}} Actividades Pendientes
+                    </div>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{headerDataNro04}} Actividades Retrasadas
+                    </div>
                 </div>
-                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro02}} Administrador de Sistema
-                </div>
-                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro03}} Controladores
-                </div>
-                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro04}} Responsables de Proyecto
-                </div>
-            </div>
         </div>
     </div>
-    <!-- ======= ======= ======= ======= ======= ======= ======= -->
-    <div class="row">
-        <div class="col col-md-12">
-            <h2 class="custom-view-title">Activ</h2>
+
+    <div class="row col-xl-12 mb-3 mt-4">
+        <div class="col col-xl-2 col-lg-2 "></div>
+            <div class="row col col-xl-10 col-lg-10 card card-body custom-card">
+                <h2 class="title" style="color: #4E8646;">Ejecucion Financiera</h2>
+                    <div class="row col col-xl-12 col-lg-12 flex-lg-row justify-content-end align-content-end">
+                        <!-- Graficos -->
+                        <div class="row col col-xl-6 col-lg-6">
+                            <div class="row col-lg-6 col-lg-6 d-flex align-items-center text-center">
+                                    <div class="text-lg-start">
+                                        <!-- Presupuesto -->
+                                        <h5 class="text-center">Presupuesto del Periodo</h5>
+                                        <h5 class="presupuesto">Bs 2000,000.00</h5>
+                                        <!-- Ejecutado -->
+                                        <h5 class="text-center">Ejecutado</h5>
+                                        <h5 class="presupuesto" style="background-color: #ffffff; color: #000000;">150,000.00</h5>
+                                    </div>
+                                    <div style="position: relative; height: 150px; width: 150px; margin: auto;">
+                                        <canvas id="doughnutChart"></canvas>
+                                    </div>
+                            </div>
+                            <div class="row col-lg-6 col-lg-6 d-flex align-items-center text-center"> 
+                                    <div class="text-lg-start">
+                                        <h5 class="text-center">Presupuesto de la Gestion 2024</h5>
+                                        <h5 class="presupuesto">Bs 2000,000.00</h5>
+                                        <h5 class="text-center">Ejecutado</h5>
+                                        <h5 class="presupuesto" style="background-color: #ffffff; color: #000000;">150,000.00</h5>
+                                    </div>
+                                    <div style="position: relative; height: 150px; width: 150px; margin: auto;">
+                                        <canvas id="doughnutChart2024"></canvas>
+                                    </div>
+                            </div>
+                        </div> 
+                        <!-- Separador -->
+                        <div class="col-auto">
+                            <div style="width: 1px; height: 100%; background-color: #4E8646;"></div>
+                        </div>
+                        <!-- Tabla Declaraciones -->
+                        <div class="col col-xl-3 col-lg-3">
+                            <h5 class="text-center">Declaraciones de Ejecucion</h5>
+                                <div class=" table-responsive">                                 
+                                    <!-- Tabla Declaraciones -->
+                                    <table class="table custom-table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th style="text-align: center;">#</th>
+                                                <th style="text-align: center;">Declaración</th>
+                                                <th style="text-align: center;">Ejecución</th>                                            
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let row of declaraciones ; let i = index">
+                                                <td>
+                                                    <input type="checkbox" 
+                                                        [(ngModel)]="planifEstrategica.selected" 
+                                                        (change)="checkboxChanged(planifEstrategica)">
+                                                </td>
+                                                <td style="text-align:end;">{{ row.id }}</td>
+                                                <td style="text-align: center;">{{row.documento}}</td>
+                                                <td style="text-align:end;">{{row.ejecucion}}</td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                        </div>
+                        <!-- Separador -->
+                        <div class="col-auto">
+                            <div style="width: 1px; height: 100%; background-color: #4E8646;"></div>
+                        </div>
+                        <!-- Nueva Ejecucion -->
+                    <!-- Nueva Ejecución -->
+                        <div class="col-lg-2">
+                            <h5 class="text-center">Nuevo Ejecutado</h5>
+                            <h5 class="presupuesto mb-3 p-2 w-100" style="background-color: #ffffff; border: 1px solid #ddd;">Bs 250,000.00</h5>
+                            <h5 class="text-center">Motivo</h5>
+                            <h5 class="presupuesto mb-3 p-2 w-100" style="background-color: #ffffff; border: 1px solid #ddd;">Gastos de representación</h5>
+                            <button class="btn btn-success w-100" style="background-color: #4E8646;">Añadir</button>
+                        </div> 
+            </div>  
+        </div>
+    </div>
+
+    <!-- Gantt -->
+    <div class="card mb-3" style="margin-top: 10px;">
+        <div class="card-body custom-card table-responsive">
+        <!-- Encabezado y Botones -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="title" style="color: #4E8646;">Actividades del Proyecto</h2>
+            <!-- Botones de Acción -->
+            <div class="row">
+            <div class="col col-xl-12 col-lg-12 text-end">
+                <button
+                type="button"
+                class="btn btn-view-bg-1"
+                (click)="initAddActividad(actividad)"
+                >
+                <i aria-hidden="true"></i> Añadir
+                </button>
+                <button
+                type="button"
+                class="btn btn-view-bg-1"
+                (click)="initEditActividad(actividad)"
+                [disabled]=""
+                >
+                <i aria-hidden="true"></i> Avance
+                </button>
+            </div>
+            </div>
+        </div>
+        <!-- Contenedor del diagrama de Gantt -->
+        
         </div>
     </div>
     
-</div>
+        <!-- Modal -->
 
+        <ng-template #actividad let-modal class="custom-modal">
+            <div class="modal-header">
+            <h4 class="modal-title">{{ modalTitle }}</h4>
+            <button type="button" class="btn-close" aria-label="Close" 
+                (click)="modal.dismiss('Cross click')">
+            </button>
+            </div>
+            
+            <div class="modal-body">
+            <form #actividadForm="ngForm" (ngSubmit)="onSubmit(actividadForm)">
+                <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                    <div class="card-body custom-card">
+                        <div class="row">
+            
+                        <div class="col-md-3 ">
+                            <label for="codigo">Código</label>
+                            <input class="form-control" type="text" 
+                                id="codigo" name="codigo" 
+                                [(ngModel)]="codigo" readonly>
+                        </div>
+
+                        <div class="col-md-9 ">
+                            <label for="codigo">Actividad</label>
+                            <input class="form-control" type="text" 
+                                id="codigo" name="codigo" 
+                                [(ngModel)]="codigo" readonly>
+                        </div>
+                        
+                        <div class="col-md-5 ">
+                            <label for="codigo">Reprogramado de</label>
+                            <input class="form-control" type="text" 
+                                id="codigo" name="codigo" 
+                                [(ngModel)]="codigo" readonly>
+                        </div>
+            
+                        <!-- Padre y Código -->
+                        <div class="col-md-3">
+                            <label for="padre">Padre</label>
+                            <select class="form-control" 
+                                    id="padre" name="padre" 
+                                    [(ngModel)]="padre"
+                                    [disabled]="tipo === 'OG'">
+                            <option value="">Seleccionar padre</option>
+                            <option *ngFor="let item of planifEstrategica" 
+                                    [value]="item.codigo"
+                                    [disabled]="!validarPadre(tipo, item.codigo)">
+                                {{item.nombre}} ({{item.codigo}})
+                            </option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="codigo">Actividad Resultado/Output</label>
+                            <input class="form-control" type="text" 
+                                id="codigo" name="codigo" 
+                                [(ngModel)]="codigo" readonly>
+                        </div>
+            
+                        <!-- Descripción -->
+                        <div class="col-12">
+                            <label for="descripcion">Descripción</label>
+                            <textarea class="form-control" 
+                                    id="descripcion" name="descripcion" 
+                                    [(ngModel)]="descripcion" rows="3" required></textarea>
+                        </div>
+            
+                        <!-- Fecha de Inicio -->
+                        <div class="col col-xl-4 col-lg-4 mt-auto">
+                            <label for="fechaIdentificacion">Inicio:</label>
+                            <input
+                              type="date"
+                              [(ngModel)]="fechaIdentificacion"
+                              name="fechaIdentificacion"
+                              class="form-control"
+                            />
+                          </div>
+            
+                          <div class="col col-xl-4 col-lg-4 mt-auto">
+                            <label for="fechaIdentificacion">Fin:</label>
+                            <input
+                              type="date"
+                              [(ngModel)]="fechaIdentificacion"
+                              name="fechaIdentificacion"
+                              class="form-control"
+                            />
+                          </div>
+
+                        <div class="col-md-4">
+                            <label for="codigo">Presupuesto</label>
+                            <input class="form-control" type="text" 
+                                id="codigo" name="codigo" 
+                                [(ngModel)]="codigo" readonly>
+                        </div>
+
+                        <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"></div>
+                        
+                        <div class="col-6 mb-3">
+                            <!-- Título con línea blanca -->
+                                <div class="relative mb-1">
+                                    <div class="row">
+                                        <span class="text-green-700 relative z-10 pl-2">Avance</span>
+                                        <div class="col col-xl-4 col-lg-4 mt-auto">
+                                            <label for="codigo">% Avance</label>
+                                            <input class="form-control" type="text" 
+                                                id="codigo" name="codigo" 
+                                                [(ngModel)]="codigo" readonly>
+                                        </div>
+                                        <div class="col col-xl-6 col-lg-6 mt-auto">
+                                            <label for="codigo">Nuevo Ejecutado</label>
+                                            <input class="form-control" type="text" 
+                                                id="codigo" name="codigo" 
+                                                [(ngModel)]="codigo" readonly>
+                                        </div>
+                                        <div class="col col-xl-1 col-lg-1 mt-auto">
+                                        <button type="submit" class="btn btn-bg-1">
+                                            <i aria-hidden="true"></i> +
+                                        </button>
+                                        </div>
+                                    </div>
+                                   
+                                    <span class="text-green-700 relative z-10 pl-2 mt-4">Ejecucion Presupuestaria</span>
+                                        <!-- Contenedor blanco para la tabla -->
+                                            <table class="w-full border-collapse table-bordered mt-2">
+                                                <thead>
+                                                    <tr class="bg-yellow-300 ">
+                                                        <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Declaracion</th>
+                                                        <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Avance</th>
+                                                        <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Ejecucion</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let row of evaluationData">
+                                                        <td class="py-0.5 px-2 text-sm">{{ row.Declaracion }}</td>
+                                                        <td class="py-0.5 px-2 text-sm">{{ row.Avance }}</td>
+                                                        <td class="py-0.5 px-2 text-sm">{{ row.Ejecucion }}</td> 
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                            <!-- Línea vertical -->
+                            <div class="col-auto mt-4">
+                                <div style="width: 1px; height: 100%; background-color: #4E8646;"></div>
+                            </div>  
+
+                            <div class="col col-xl-5 col-lg-5 mt-auto top-0">
+                                <label for="codigo">Factores que impidieron el cumplimiento</label>
+                                <input class="form-control" type="text" 
+                                    id="codigo" name="codigo" 
+                                    [(ngModel)]="codigo" readonly>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="d-flex justify-content-center" style="width: 100%;">
+                              <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                                <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                              </button>
+                              <button type="button" class="btn btn-bg-3" style="background-color: #ff9131;" (click)="modal.close('Cerrar')">
+                                <i aria-hidden="true"></i> Reprogramar
+                              </button>
+                              <button type="submit" class="btn btn-bg-1">
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+                              </button>
+                            </div>
+                          </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </form>
+            </div>
+        </ng-template>
+
+
+</div>

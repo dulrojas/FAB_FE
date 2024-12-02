@@ -6,24 +6,31 @@ import { servicios } from "../../servicios/servicios";
 import { servActividad } from "../../servicios/actividad";
 import { servActAvance } from "../../servicios/actividadAvance";
 
+
+import { Chart } from 'chart.js/auto'; // Importación de Chart.js
+
 @Component({
-    selector: 'app-actividad',
+    selector: 'app-actividades',
     templateUrl: './actividad.component.html',
-    styleUrls: ['../../../styles/styles.scss'],
+    styleUrls: ['./actividad.component.scss'],
     animations: [routerTransition()]
 })
+
 export class ActividadComponent implements OnInit {
-    // ======= ======= VARIABLES SECTION ======= =======
-    actividades: any[] = [];
-    mainPage = 1;
-    mainPageSize = 10;
-    totalLength = 0;
+
+  actividades: any[] = [];
+  tareas: any[] = []; // Array para almacenar las tareas del Gantt
+  links: any[] = [];  // Array para almacenar las relaciones entre tareas
+  mainPage = 1;
+  mainPageSize = 10;
+  totalLength = 0;
     constructor(
       private modalService: NgbModal,
       private servicios: servicios,
       private servActividad: servActividad,
-      private servActAvance: servActAvance
-    ){}
+      private servActAvance: servActAvance,
+        private cdr: ChangeDetectorRef
+    ) {}
     idProyecto: any = 1;
     idPersonaReg: any = 1;
 
@@ -31,16 +38,24 @@ export class ActividadComponent implements OnInit {
     headerDataNro02: any = 0;
     headerDataNro03: any = 0;
     headerDataNro04: any = 0;
+
+    declaraciones: any = [];
+    nuevoEjecutado: any = [];
+    motivo: any = [];
+    
+
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
     modalAction: any = "";
     modalTitle: any = "";
-
-    // ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
       this.getActividad();
+      this.createDoughnutChart();
+      this.createDoughnutChart2024();
+      
     }
+// ======= ======= ======= ======= =======
     // ======= ======= ======= ======= =======
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
@@ -92,6 +107,7 @@ export class ActividadComponent implements OnInit {
           console.error(error);
         }
       );
+
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT ADD PERSONA ROLES ======= =======
@@ -164,4 +180,122 @@ export class ActividadComponent implements OnInit {
       }
     }
     // ======= ======= ======= ======= =======
+
+    // ====== ======= ====== Primer Grafico Ejecucucion financiera ====== ======= ======
+        createDoughnutChart() {
+        const ctx: any = document.getElementById('doughnutChart') as HTMLCanvasElement;
+
+        new Chart(ctx, {
+                type: 'doughnut',
+          data: {
+            labels: ['Gastado', 'Restante'], // Etiquetas
+            datasets: [
+              {
+                label: 'Presupuesto 2024',
+                data: [75, 25], // Porcentajes
+                backgroundColor: ['#BF5F3B', '#E0E0E0'], // Colores de la gráfica
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            cutout: '75%', // Hace el efecto de dona
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (tooltipItem) =>
+                    `${tooltipItem.label}: ${tooltipItem.raw}%`, // Muestra porcentajes
+                },
+              },
+              legend: {
+                display: false, // Oculta la leyenda
+              },
+            },
+          },
+          plugins: [
+            {
+              id: 'centerText', // Identificador del plugin
+              beforeDraw(chart: any) {
+                const width = chart.width;
+                const height = chart.height;
+                const ctx = chart.ctx;
+                ctx.restore();
+      
+                const fontSize = (height / 100).toFixed(2); // Ajusta el tamaño de la fuente
+                ctx.font = `${fontSize}em sans-serif`;
+                ctx.textBaseline = 'middle';
+      
+                const text = '75%'; // Texto al centro (porcentaje)
+                const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                const textY = height / 2;
+      
+                ctx.fillStyle = '#000'; // Color del texto
+                ctx.fillText(text, textX, textY);
+                ctx.save();
+              },
+            },
+          ],
+        });
+      }
+
+    // ====== ======= ====== Segundo Grafico Ejecucucion financiera 2024 ====== ======= ======
+       createDoughnutChart2024() {
+        const ctx: any = document.getElementById('doughnutChart2024') as HTMLCanvasElement;
+      
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Gastado', 'Restante'], // Etiquetas
+            datasets: [
+              {
+                label: 'Presupuesto 2024',
+                data: [75, 25], // Porcentajes
+                backgroundColor: ['#BF5F3B', '#E0E0E0'], // Colores de la gráfica
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            cutout: '75%', // Hace el efecto de dona
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (tooltipItem) =>
+                    `${tooltipItem.label}: ${tooltipItem.raw}%`, // Muestra porcentajes
+                },
+              },
+              legend: {
+                display: false, // Oculta la leyenda
+              },
+            },
+          },
+          plugins: [
+            {
+              id: 'centerText', // Identificador del plugin
+              beforeDraw(chart: any) {
+                const width = chart.width;
+                const height = chart.height;
+                const ctx = chart.ctx;
+                ctx.restore();
+      
+                const fontSize = (height / 100).toFixed(2); // Ajusta el tamaño de la fuente
+                ctx.font = `${fontSize}em sans-serif`;
+                ctx.textBaseline = 'middle';
+      
+                const text = '75%'; // Texto al centro (porcentaje)
+                const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                const textY = height / 2;
+      
+                ctx.fillStyle = '#000'; // Color del texto
+                ctx.fillText(text, textX, textY);
+                ctx.save();
+              },
+            },
+          ],
+        });
+      }
+
+    
 }

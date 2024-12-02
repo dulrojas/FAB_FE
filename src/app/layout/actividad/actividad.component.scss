@@ -1,0 +1,41 @@
+@import '../../../styles/styles.scss';
+
+h5.presupuesto {
+    background-color: #d67600; /* Fondo verde */
+    color: #ffffff; /* Texto blanco */
+    border: 1px solid #000000; /* Borde ligero */
+    border-radius: 10px; /* Bordes redondeados */
+    text-align: center; /* Centrado del texto */
+    padding: 0.5rem; /* Espaciado interno */
+    margin: 0; /* Sin márgenes externos */
+    display: block; /* Ocupa todo el ancho disponible */
+    font-size: 60%; /* Tamaño de texto ajustable */
+    font-weight: bold; /* Texto más destacado */
+    box-sizing: border-box; /* Asegura que padding no desborde el ancho */
+}
+
+    canvas {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    }
+    .text-center {
+    font-size: 1.2rem;
+    color: #4e8646;
+    font-weight: bold;
+    }
+
+    .legend-box {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-right: 10px;
+        border-radius: 2px;
+      }
+
+    .text-lg-start {
+        margin-bottom: 15px;
+    }
+
+      
