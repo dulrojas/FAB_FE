@@ -4,7 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { PlanifEstrategicaRoutingModule } from './planifEstrategica-routing.module';
 import { PlanifEstrategicaComponent } from './planifEstrategica.component';
+
 import { BodyHeaderComponent } from '../components/bodyHeader/bodyHeader.component';
+import { BodyHeaderModule } from '../../shared/modules/bodyHeader/bodyHeader.module';
 
 @NgModule({
   imports: [
@@ -13,11 +15,11 @@ import { BodyHeaderComponent } from '../components/bodyHeader/bodyHeader.compone
     FormsModule,
     ReactiveFormsModule,
     NgbModalModule,
-    NgbPaginationModule
+    NgbPaginationModule,
+    BodyHeaderModule
   ],
   declarations: [
-    PlanifEstrategicaComponent,
-     BodyHeaderComponent
+    PlanifEstrategicaComponent
     ]
 })
 export class PlanifEstrategicaModule {}

@@ -135,7 +135,7 @@
                         <h2 class="custom-info-proy-title">Estado de proyecto:</h2>
 
                         <!-- ======= ======= ======= GRABAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-1" (click)="selectImage(); modal.close('Elegir')">
+                        <button type="button" class="btn btn-bg-1">
                             <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
                         </button>
                         <!-- ======= ======= ======= CANCELAR DATE ======= ======= ======= -->
@@ -147,23 +147,23 @@
                             Editar
                         </button>
                         <!-- ======= ======= ======= REPORTE DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="selectImage(); modal.close('Elegir')">
+                        <button type="button" class="btn btn-bg-2">
                             Habilitar reporte
                         </button>
                         <!-- ======= ======= ======= EVALUACION DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="selectImage(); modal.close('Elegir')">
+                        <button type="button" class="btn btn-bg-2">
                             Evaluacion
                         </button>
                         <!-- ======= ======= ======= CONCLUIR CANCELAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="selectImage()" disabled>
+                        <button type="button" class="btn btn-bg-2" disabled>
                             Concluir/Cancelar
                         </button>
                         <!-- ======= ======= ======= ANADIR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="selectImage()" disabled>
+                        <button type="button" class="btn btn-bg-2" disabled>
                             Añadir
                         </button>
                         <!-- ======= ======= ======= ELIMINAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="selectImage()" disabled>
+                        <button type="button" class="btn btn-bg-2" disabled>
                             Eliminar
                         </button>
                     </div>
@@ -475,7 +475,6 @@
                             </button>
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
-                                (click)="initDeleteObligaciones(obligacionesFormModal)"
                                 [disabled]="((!obligacionesSelected)||(!editMode))">
                                 <i class="fa fa-minus" aria-hidden="true"></i>
                             </button>

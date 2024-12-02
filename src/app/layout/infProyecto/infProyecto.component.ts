@@ -32,7 +32,7 @@ export class InfProyectoComponent implements OnInit {
 
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-    onChildSelectionChange(selectedId: string) {
+    onChildSelectionChange(selectedId: any) {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.getInformacionProyecto();
@@ -539,7 +539,7 @@ export class InfProyectoComponent implements OnInit {
     getFinanciadores(){
       this.servFinanciadores.getFinanciadores(this.idProyecto).subscribe(
         (data) => {
-          this.financiadores = data[0].dato;
+          this.financiadores = (data[0].dato)?(data[0].dato):([]);
           this.financiadoresPorcentaje = 0;
           this.financiadores.forEach(elem => {
             elem.porcentaje = parseFloat(elem.porcentaje.slice(1));
@@ -734,7 +734,7 @@ export class InfProyectoComponent implements OnInit {
     getObligaciones(){
       this.servObligaciones.getObligaciones(this.idProyecto).subscribe(
         (data) => {
-          this.obligaciones = data[0].dato;
+          this.obligaciones = (data[0].dato)?(data[0].dato):([]);
         },
         (error) => {
           console.error(error);

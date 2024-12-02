@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BodyHeaderComponent } from '../components/bodyHeader/bodyHeader.component';
+import { BodyHeaderModule } from '../../shared/modules/bodyHeader/bodyHeader.module';
 
 @NgModule({
     imports: [
@@ -18,11 +19,11 @@ import { BodyHeaderComponent } from '../components/bodyHeader/bodyHeader.compone
         NgbModalModule, 
         NgbPaginationModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        BodyHeaderModule
     ],
     declarations: [
-        ActividadComponent,
-        BodyHeaderComponent
+        ActividadComponent
     ]
 })
 export class ActividadModule {}

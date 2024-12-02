@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule, NgbPaginationModule, NgbModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BodyHeaderComponent } from '../components/bodyHeader/bodyHeader.component';
+import { BodyHeaderModule } from '../../shared/modules/bodyHeader/bodyHeader.module';
 import { NavigationDropdown } from '../components/navigationDropdown/navigationDropdown.component';
 
 @NgModule({
@@ -21,11 +22,11 @@ import { NavigationDropdown } from '../components/navigationDropdown/navigationD
         NgbModule,
         NgbDropdownModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        BodyHeaderModule
     ],
     declarations: [
         InfProyectoComponent,
-        BodyHeaderComponent,
         NavigationDropdown
     ]
 })

@@ -8,6 +8,7 @@ import { BodyHeaderComponent } from '../components/bodyHeader/bodyHeader.compone
 
 import { Dashboard2RoutingModule } from './dashboard2-routing.module';
 import { Dashboard2Component } from './dashboard2.component';
+import { BodyHeaderModule } from '../../shared/modules/bodyHeader/bodyHeader.module';
 
 @NgModule({
   imports: [
@@ -17,11 +18,11 @@ import { Dashboard2Component } from './dashboard2.component';
     NgbModalModule, 
     NgbPaginationModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BodyHeaderModule
   ],
   declarations: [
-    Dashboard2Component,
-    BodyHeaderComponent
+    Dashboard2Component
   ],
 })
 export class Dashboard2Module {}
