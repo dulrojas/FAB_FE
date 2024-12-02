@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit {
                             localStorage.setItem('projects', JSON.stringify(this.proyectos));
                             localStorage.setItem('currentIdProy', (this.proyectos[0].id_proyecto).toString());
         
-                            this.router.navigate(['/dashboard']);
+                            this.router.navigate(['/dashboard2']);
                         },
                         (error) => {
                             console.error(error);
