@@ -1,7 +1,8 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servLogros } from "../../servicios/logros";
 import { servAprendizaje } from "../../servicios/aprendizajes";
@@ -20,6 +21,7 @@ export class LogrosComponent implements OnInit {
     totalLength = 0;
     constructor(
       private modalService: NgbModal,
+      private proyectoService: ProyectoService,
       private servicios: servicios,
       private servLogros: servLogros,
       private servApredizaje: servAprendizaje
@@ -27,9 +29,11 @@ export class LogrosComponent implements OnInit {
 
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-    onChildSelectionChange(selectedId: string) {
+    @Output() selectionChange = new EventEmitter<any>();
+    onChildSelectionChange(selectedId: any) {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+      this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.getLogros();
     }
 

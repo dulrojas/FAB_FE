@@ -61,8 +61,9 @@ export class LoginComponent implements OnInit {
                             localStorage.setItem('userFullName', userData.nombres+" "+userData.apellido_1+((userData.apellido_2)?(" "+userData.apellido_2):("")));
                             localStorage.setItem('projects', JSON.stringify(this.proyectos));
                             localStorage.setItem('currentIdProy', (this.proyectos[0].id_proyecto).toString());
+                            localStorage.setItem('currentProyName', (this.proyectos[0].proyecto).toString());
         
-                            this.router.navigate(['/dashboard2']);
+                            this.router.navigate(['/dashboard']);
                         },
                         (error) => {
                             console.error(error);
