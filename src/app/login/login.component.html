@@ -8,7 +8,9 @@
                 <div class="form-content">
                     <div class="form-group">
                         <input
-                            [placeholder]="'Email' | translate"
+                            [placeholder]="'Usuario'"
+                            [(ngModel)]="user"
+                            name="user"
                             class="form-control input-underline input-lg"
                             type="text"
                         />
@@ -16,17 +18,23 @@
 
                     <div class="form-group">
                         <input
-                            [placeholder]="'Password' | translate"
+                            [placeholder]="'Contraseña'"
+                            [(ngModel)]="password"
+                            name="password"
                             class="form-control input-underline input-lg"
                             type="password"
                         />
                     </div>
+
+                    <div class="form-group" *ngIf="messageShow">
+                        <label for="">
+                            <span class="custom-login-error-message">{{ message }}</span>
+                        </label>
+                    </div>
                 </div>
-                <a (click)="onLoggedin()" [routerLink]="['/dashboard']" class="btn rounded-btn">
-                    {{'Log in' | translate}}
+                <a (click)="onLoggedin()" class="btn rounded-btn">
+                    {{'Ingresar'}}
                 </a>
-                &nbsp;
-                <a [routerLink]="['/signup']" class="btn rounded-btn">{{ 'Register' | translate }}</a>
             </form>
         </div>
     </div>

@@ -22,11 +22,16 @@ export class LogrosComponent implements OnInit {
       private modalService: NgbModal,
       private servicios: servicios,
       private servLogros: servLogros,
-      private servApredizaje: servAprendizaje,
-      private cdr: ChangeDetectorRef
+      private servApredizaje: servAprendizaje
     ){}
-    idProyecto: any = 1;
-    idPersonaReg: any = 1;
+
+    idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+    idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+    onChildSelectionChange(selectedId: string) {
+      this.idProyecto = selectedId;
+      localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+      this.getLogros();
+    }
 
     headerDataNro01: any = 0;
     headerDataNro02: any = 0;
@@ -220,7 +225,7 @@ export class LogrosComponent implements OnInit {
     getLogros(){
       this.servLogros.getLogrosByIdProy(this.idProyecto).subscribe(
         (data) => {
-          this.logros = data[0].dato;
+          this.logros = (data[0].dato)?(data[0].dato):([]);
           this.logros.forEach((logro: any) => {
             logro.selected = false;
           });
