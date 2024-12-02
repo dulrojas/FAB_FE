@@ -192,7 +192,7 @@ export class ActividadComponent implements OnInit {
             datasets: [
               {
                 label: 'Presupuesto 2024',
-                data: [75, 25], // Porcentajes
+                data: [25, 75], // Porcentajes
                 backgroundColor: ['#BF5F3B', '#E0E0E0'], // Colores de la gráfica
                 borderWidth: 0,
               },
@@ -226,7 +226,7 @@ export class ActividadComponent implements OnInit {
                 ctx.font = `${fontSize}em sans-serif`;
                 ctx.textBaseline = 'middle';
       
-                const text = '75%'; // Texto al centro (porcentaje)
+                const text = '25%'; // Texto al centro (porcentaje)
                 const textX = Math.round((width - ctx.measureText(text).width) / 2);
                 const textY = height / 2;
       
