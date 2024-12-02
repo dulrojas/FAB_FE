@@ -8,9 +8,22 @@ import { Component, OnInit } from '@angular/core';
 export class LayoutComponent implements OnInit {
     collapedSideBar: boolean;
 
+    fullUserName: any = null;
+    proyectos: any = null;
+    currentIdProy: any = null;
+
     constructor() {}
 
-    ngOnInit() {}
+    ngOnInit(){
+        this.fullUserName = localStorage.getItem("fullUserName");
+        this.proyectos = JSON.parse(localStorage.getItem("projects"));
+        this.currentIdProy = parseInt(localStorage.getItem("currentIdProy"));
+        this.currentIdProy = (this.currentIdProy)?(this.currentIdProy):(this.proyectos[0].id_proyecto);
+    }
+
+    updateCurrentIdProy(newValue: any){
+        this.currentIdProy = newValue;
+    }
 
     receiveCollapsed($event) {
         this.collapedSideBar = $event;

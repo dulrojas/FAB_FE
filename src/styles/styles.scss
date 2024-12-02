@@ -224,6 +224,10 @@ select.form-control {
 }
 // ======= ======= ======= ======= =======
 // ======= ======= SOME CUSTOMS ======= =======
+.custom-login-error-message{
+    color: $third-color;
+    font-weight: bold;
+}
 .custom-view-title{
     color: $primary-color;
     font-weight: bold;

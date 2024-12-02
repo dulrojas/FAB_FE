@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -17,8 +17,23 @@ export class BodyHeaderComponent implements OnInit {
         });
     }
 
+    fullUserName: any = null;
+    proyectos: any = null;
+    currentIdProy: any = null;
+
+
     ngOnInit() {
         this.pushRightClass = 'push-right';
+
+        this.fullUserName = localStorage.getItem("userFullName");
+        this.proyectos = JSON.parse(localStorage.getItem("projects"));
+        this.currentIdProy = parseInt(localStorage.getItem("currentIdProy"));
+        this.currentIdProy = (this.currentIdProy)?(this.currentIdProy):(this.proyectos[0].id_proyecto);
+    }
+
+    @Output() selectionChange = new EventEmitter<string>();
+    onSelectionChange() {
+        this.selectionChange.emit(this.currentIdProy);
     }
 
     isToggled(): boolean {

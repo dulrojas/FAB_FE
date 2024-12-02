@@ -2,7 +2,9 @@
     <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
     <div class="row">
         <div class="col col-md-6 custom-body-header">
-            <app-bodyHeader></app-bodyHeader>
+            <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader>
         </div>
         <div class="col col-md-6">
             <div class="row">
