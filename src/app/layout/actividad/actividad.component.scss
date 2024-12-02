@@ -38,4 +38,93 @@ h5.presupuesto {
         margin-bottom: 15px;
     }
 
+    .gantt-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 20px;
+        background-color: #f0f0f0;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
       
+      .gantt-sidebar {
+        width: 30%;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      
+      .header {
+        font-size: 20px;
+        font-weight: bold;
+        color: #4caf50;
+        margin-bottom: 20px;
+      }
+      
+      .task {
+        margin-bottom: 15px;
+        background-color: #fafafa;
+        padding: 10px;
+        border-radius: 8px;
+      }
+      
+      .task-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+      }
+      
+      .task-details {
+        font-size: 14px;
+        color: #555;
+      }
+      
+      .progress {
+        font-size: 14px;
+        color: #888;
+      }
+      
+      .gantt-timeline-container {
+        width: 65%;
+        padding-left: 20px;
+      }
+      
+      .timeline {
+        position: relative;
+      }
+      
+      .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+      
+      .month {
+        width: 8%;
+        text-align: center;
+      }
+      
+      .progress-bar-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        position: relative;
+      }
+      
+      .progress-bar {
+        height: 25px;
+        border-radius: 5px;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+      }
+      
+      .progress-bar:hover {
+        filter: brightness(1.2);
+      }  
