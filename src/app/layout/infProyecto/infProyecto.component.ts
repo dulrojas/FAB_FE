@@ -29,7 +29,7 @@ export class InfProyectoComponent implements OnInit {
       private servFinanciadores: servFinanciadores,
       private servUbicaGeografica: servUbicaGeografica
     ){}
-
+    // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
     onChildSelectionChange(selectedId: any) {
@@ -44,6 +44,7 @@ export class InfProyectoComponent implements OnInit {
     headerDataNro02: any = 0;
     headerDataNro03: any = 0;
     headerDataNro04: any = 0;
+    // ======= ======= ======= ======= =======
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
     modalAction: any = "";
     modalTitle: any = "";

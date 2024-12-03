@@ -1,9 +1,10 @@
 // Importacion de modulos y componentes Principales
-import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // Importacion de servicios 
+import { ProyectoService } from '../../services/proyectoData.service';
 import { PlanifEstrategicaService } from '../../servicios/planifEstrategica';
 import { servicios } from "../../servicios/servicios";
 import { servIndicador } from '../../servicios/indicador';
@@ -32,6 +33,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     constructor(
       private modalService: NgbModal,
       private cdr: ChangeDetectorRef,
+      private proyectoService: ProyectoService,
       private ServPlanifEstrategica: PlanifEstrategicaService,
       private servicios: servicios,
       private servApredizaje: servAprendizaje,
@@ -39,15 +41,22 @@ export class PlanifEstrategicaComponent implements OnInit {
       private ServMetoElementos: MetoElementosService,
       private ServInstCategorias: InstCategoriasService      
     ) {}
- 
-        // Variables para los contadores en el encabezado
-        idProyecto: any = 2;
-        idPersonaReg: any = 1;
+        // ======= ======= HEADER SECTION ======= =======
+        idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+        idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+        @Output() selectionChange = new EventEmitter<any>();
+        onChildSelectionChange(selectedId: any) {
+          this.idProyecto = selectedId;
+          localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+          this.proyectoService.seleccionarProyecto(this.idProyecto);
+          this.getPlanifEstrategica();
+        }
 
-        headerDataNro01: number = 0;
-        headerDataNro02: number = 0;
-        headerDataNro03: number = 0;
-        headerDataNro04: number = 0;
+        headerDataNro01: any = 0;
+        headerDataNro02: any = 0;
+        headerDataNro03: any = 0;
+        headerDataNro04: any = 0;
+        // ======= ======= ======= ======= =======
 
         // Variables para modal
         modalAction: any = "";

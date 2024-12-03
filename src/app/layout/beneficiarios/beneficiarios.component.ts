@@ -1,7 +1,9 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { BeneficiariosService } from "../../servicios/Beneficiarios";
 import { AliadosService } from "../../servicios/aliados";
@@ -52,11 +54,23 @@ export class BeneficiariosComponent implements OnInit {
   mainPage = 1;
   mainPageSize = 10;
   totalLength = 0;
+  // ======= ======= HEADER SECTION ======= =======
+  idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+  idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+  @Output() selectionChange = new EventEmitter<any>();
+  onChildSelectionChange(selectedId: any) {
+    this.idProyecto = selectedId;
+    localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+    this.proyectoService.seleccionarProyecto(this.idProyecto);
+    // ======= *ADD A GETTER DOWN HERE* =======
+    // this.getLogros();
+  }
 
   headerDataNro01: any = 0;
-    headerDataNro02: any = 0;
-    headerDataNro03: any = 0;
-    headerDataNro04: any = 0;
+  headerDataNro02: any = 0;
+  headerDataNro03: any = 0;
+  headerDataNro04: any = 0;
+  // ======= ======= ======= ======= =======
 
  // ====== VARIABLES DE PAGINACIÓN ======
  totalLengthBeneficiarios = 0;
@@ -69,10 +83,11 @@ export class BeneficiariosComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
+    private proyectoService: ProyectoService,
     private fb: FormBuilder,
     private beneficiariosService: BeneficiariosService,
     private servicios: servicios,
-private aliadosService: AliadosService,
+    private aliadosService: AliadosService,
     private ubicaGeograficaService: servUbicaGeografica
   ) {}
 

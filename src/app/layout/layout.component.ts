@@ -26,7 +26,6 @@ export class LayoutComponent implements OnInit {
         this.currentProyName = (localStorage.getItem("currentProyName")).toString();
 
         this.proyectoService.proyectoSeleccionado$.subscribe((proyecto) => {
-            console.log("IN");
             let currentProy = this.proyectos.find(proy => proy.id_proyecto == proyecto);
             this.currentProyName = currentProy.proyecto;
             localStorage.setItem('currentProyName', this.currentProyName);

@@ -26,7 +26,8 @@ export class LogrosComponent implements OnInit {
       private servLogros: servLogros,
       private servApredizaje: servAprendizaje
     ){}
-
+    // ======= ======= ======= ======= =======
+    // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
     @Output() selectionChange = new EventEmitter<any>();
@@ -41,6 +42,7 @@ export class LogrosComponent implements OnInit {
     headerDataNro02: any = 0;
     headerDataNro03: any = 0;
     headerDataNro04: any = 0;
+    // ======= ======= ======= ======= =======
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
     modalAction: any = "";
     modalTitle: any = "";

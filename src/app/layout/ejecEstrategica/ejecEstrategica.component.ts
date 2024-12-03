@@ -1,7 +1,8 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servEjecEstrategica } from '../../servicios/ejecEstrategica';
 import { EjecEstrategicaModule } from './ejecEstrategica.module';
@@ -26,19 +27,29 @@ export class EjecEstrategicaComponent implements OnInit {
     totalLength = 0;
 
   constructor(
-     private modalService: NgbModal,
+      private modalService: NgbModal,
+      private proyectoService: ProyectoService,
       private servicios: servicios,
       private servEjecEstrategica: servEjecEstrategica,
       private servApredizaje: servAprendizaje,
       private servProyectos: servProyectos,
       private cdr: ChangeDetectorRef
   ) {}
+  // ======= ======= HEADER SECTION ======= =======
+  idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+  idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+  @Output() selectionChange = new EventEmitter<any>();
+  onChildSelectionChange(selectedId: any) {
+    this.idProyecto = selectedId;
+    localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+    this.proyectoService.seleccionarProyecto(this.idProyecto);
+  }
 
-    idProyecto: any = 1;
-    headerDataNro01: any = 0;
-    headerDataNro02: any = 0;
-    headerDataNro03: any = 0;
-    headerDataNro04: any = 0;
+  headerDataNro01: any = 0;
+  headerDataNro02: any = 0;
+  headerDataNro03: any = 0;
+  headerDataNro04: any = 0;
+  // ======= ======= ======= ======= =======
 
   // ======= ======= NGMODEL VARIABLES SECTION ======= =======
   modalAccion: any = '';
