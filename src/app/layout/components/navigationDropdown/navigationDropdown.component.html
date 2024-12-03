@@ -1,5 +1,4 @@
 <table class="table custom-table table-striped table-bordered custom-table-info-proy custom-table-info-proy-1">
-  <!-- Encabezado: Solo se muestra una vez -->
   <thead>
     <tr>
       <th></th>
@@ -9,16 +8,13 @@
     </tr>
   </thead>
 
-  <!-- Cuerpo -->
   <tbody>
     <ng-container *ngFor="let item of items">
-      <!-- Fila Principal o Hija -->
       <tr [class.parent-row]="!parent" [class.child-row]="parent">
         <td 
           [style.padding-left.px]="item.level * 20" 
           class="custom-toggle-button" 
           (click)="toggleChildren(item)">
-          <!-- Botón dinámico según isOpen -->
           <span *ngIf="item.childrens?.length" class="custom-toggle-button">
             <ng-container *ngIf="item.isOpen; else closedIcon">
               <i class="fa fa-arrow-down custom-text-color-3" aria-hidden="true"></i>
@@ -41,7 +37,6 @@
         <td>{{ item.nombre  }}</td>
       </tr>
 
-      <!-- Hijos: Recursividad -->
       <ng-container *ngIf="item.isOpen">
         <ng-container *ngFor="let child1 of item.childrens">
           <tr [class.child-row]="true">
@@ -70,7 +65,6 @@
             <td>{{ child1.nombre }}</td>
           </tr>
 
-          <!-- Nietos -->
           <ng-container *ngIf="child1.isOpen">
             <ng-container *ngFor="let child2 of child1.childrens">
               <tr [class.child-row]="true">
@@ -99,7 +93,6 @@
                 <td>{{ child2.nombre }}</td>
               </tr>
 
-              <!-- Bisnietos -->
               <ng-container *ngIf="child2.isOpen">
                 <ng-container *ngFor="let child3 of child2.childrens">
                   <tr [class.child-row]="true">
@@ -128,7 +121,6 @@
                     <td>{{ child3.nombre }}</td>
                   </tr>
 
-                  <!-- Tataranietos -->
                   <ng-container *ngIf="child3.isOpen">
                     <ng-container *ngFor="let child4 of child3.childrens">
                       <tr [class.child-row]="true">

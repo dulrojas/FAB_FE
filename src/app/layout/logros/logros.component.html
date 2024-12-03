@@ -24,14 +24,14 @@
         </div>
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
-    <div class="row">
-        <div class="col col-md-12">
-            <h2 class="custom-view-title">Logros Sobresalientes</h2>
-        </div>
-    </div>
     <!-- ======= ======= ======= LOGROS MODAL ======= ======= ======= -->
-    <div class="card mb-3">
+    <div class="card mt-4">
         <div class="card-body custom-card table-responsive">
+            <div class="row">
+                <div class="col col-md-12">
+                    <h2 class="custom-view-title">Logros Sobresalientes</h2>
+                </div>
+            </div>
             <div class="row">
                 <div class="col col-xl-12 col-lg-12 text-end">
                     <button type="button" class="btn btn-view-bg-1" 
@@ -45,6 +45,7 @@
                         <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                     </button>
                     <button type="button" class="btn btn-view-bg-1"
+                        (click)="initDeleteLogros(deleteLogroModal)"
                         [disabled]="!logrosSelected">
                         <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                     </button>
@@ -126,6 +127,7 @@
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
                                     <label for="logro">Logro sobresaliente alcanzado</label>
                                     <textarea class="form-control" id="logro" name="logro" 
+                                        placeholder="Agregar un titulo"
                                         [(ngModel)]="logro"></textarea>
                                 </div>
 
@@ -133,6 +135,7 @@
                                 <div class="col col-xl-8 col-lg-8">
                                     <label for="descripcion">Descripcion</label>
                                     <textarea class="form-control" id="descripcion" name="descripcion" 
+                                        placeholder="Agregar una descripcion"
                                         [(ngModel)]="descripcion" style="height: 80%;"></textarea>
                                 </div>
 
@@ -166,21 +169,21 @@
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
             <button type="button" class="btn btn-bg-1" [disabled]="logrosForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
             </button>
         </div>
     </div>
 </ng-template>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
-<!-- ======= ======= ======= DELETE APRENDIZAJES ======= ======= ======= -->
-<ng-template #deleteAprendizajesModal let-modal>
+<!-- ======= ======= ======= DELETE LOGRO ======= ======= ======= -->
+<ng-template #deleteLogroModal let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Eliminar Aprendizaje</h4>
+        <h4 class="modal-title">Eliminar Logro</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
         <div class="d-flex justify-content-center" style="width: 100%;">
-            <p>Esta seguro de querer eliminar el registro de este aprendizaje?</p>
+            <p>Esta seguro de querer eliminar el registro de este logro?</p>
         </div>
     </div>
     <div class="modal-footer">
@@ -189,7 +192,7 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" (click)="editAprendizaje(); modal.close('Añadir')">
+            <button type="button" class="btn btn-bg-1" (click)="deleteLogros(); modal.close('Añadir')">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
             </button>
         </div>

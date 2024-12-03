@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
+import { servDashboard } from "../../servicios/dashboard";
 import { Chart } from 'chart.js/auto'; // Importación de Chart.js
 
 @Component({
@@ -23,6 +24,7 @@ export class Dashboard2Component implements OnInit {
         private modalService: NgbModal,
         private proyectoService: ProyectoService,
         private servicios: servicios,
+        private servDashboard: servDashboard,
         private cdr: ChangeDetectorRef
     ) {}
     // ======= ======= HEADER SECTION ======= =======
@@ -53,6 +55,19 @@ export class Dashboard2Component implements OnInit {
         this.createDoughnutChart2024() // Grafico Presupuesto 2024
         this.createRadarChart(); // Grafico Indicadores
         this.createLearnDoughnutChart(); // Grafico Aprendizajes
+      this.getDashboardData();
+    }
+
+    getDashboardData(){
+      this.servDashboard.getDashboardData(this.idProyecto, "2024-12-03").subscribe(
+        (data) => {
+          //this.dashboardData = data[0].dato;
+          console.log(data[0].dato[0]);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     }
 
         getCurrentDateDaysGap(iniDate: any){

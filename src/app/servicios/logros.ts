@@ -73,7 +73,7 @@ export class servLogros{
       "procedure_name": "sp_logro",
       "body": {
         "params": [
-          { "name": "p_accion", "value": "A1", "type": "string" },
+          { "name": "p_accion", "value": "M1", "type": "string" },
           { "name": "p_id_proy_logro", "value": obj.p_id_proy_logro, "type": "int" },
           { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },
           { "name": "p_logro", "value": obj.p_logro, "type": "string" },
@@ -83,6 +83,34 @@ export class servLogros{
           { "name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int" },
           { "name": "p_id_proy_elemento", "value": obj.p_id_proy_elemento, "type": "int" },
           { "name": "p_fecha_logro", "value": obj.p_fecha_logro, "type": "string" }
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= DELTE LOGRO ======= ======= =======
+  deleteLogro(idLogro: any): Observable<any> {
+    const params = {
+      "procedure_name": "sp_logro",
+      "body": {
+        "params": [
+          { "name": "p_accion", "value": "D1", "type": "string" },
+          { "name": "p_id_proy_logro", "value": idLogro, "type": "int" },
+          { "name": "p_id_proyecto", "value": null, "type": "int" },
+          { "name": "p_logro", "value": null, "type": "string" },
+          { "name": "p_descripcion", "value": null, "type": "string" },
+          { "name": "p_rut_imagen", "value": null, "type": "string" },
+          { "name": "p_fecha_hora", "value": null, "type": "string" },
+          { "name": "p_id_persona_reg", "value": null, "type": "int" },
+          { "name": "p_id_proy_elemento", "value": null, "type": "int" },
+          { "name": "p_fecha_logro", "value": null, "type": "string" }
         ]
       }
     };

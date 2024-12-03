@@ -30,6 +30,7 @@ export class LogrosComponent implements OnInit {
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+    namePersonaReg: any = localStorage.getItem('userFullName');
     @Output() selectionChange = new EventEmitter<any>();
     onChildSelectionChange(selectedId: any) {
       this.idProyecto = selectedId;
@@ -185,7 +186,7 @@ export class LogrosComponent implements OnInit {
       this.ruta_imagen = this.imageSelectedAux.ruta_logros_iconos;
       this.imageSelected = this.imageSelectedAux;
     }
-    // ======= ======= INIT PERSONA ROLES NGMODEL ======= =======
+    // ======= ======= INIT LOGROS NGMODEL ======= =======
     initLogrosModel(){
       this.modalTitle = "";
 
@@ -196,7 +197,7 @@ export class LogrosComponent implements OnInit {
       this.ruta_imagen = "";
       this.fecha_hora = "";
       this.id_persona_reg = 0;
-      this.id_proy_elemento = 0;
+      this.id_proy_elemento = "";
       this.fecha_logro = "";
       this.ruta_imagen = "../../../assets/images/empty.jpg";
       
@@ -227,7 +228,7 @@ export class LogrosComponent implements OnInit {
       });
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= GET PERSONAS ======= =======
+    // ======= ======= GET LOGROS ======= =======
     getLogros(){
       this.servLogros.getLogrosByIdProy(this.idProyecto).subscribe(
         (data) => {
@@ -247,13 +248,15 @@ export class LogrosComponent implements OnInit {
     initAddLogros(modalScope: TemplateRef<any>){
       this.initLogrosModel();
 
+      this.id_persona_reg = this.namePersonaReg;
+
       this.modalAction = "add";
       this.modalTitle = this.getModalTitle("add");
 
       this.openModal(modalScope);
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= EDIT APRENDIZAJE ======= =======
+    // ======= ======= ADD APRENDIZAJE ======= =======
     addLogros(){
       const objLogro = {
         p_id_proy_aprende: 0,
@@ -263,7 +266,7 @@ export class LogrosComponent implements OnInit {
         p_ruta_imagen: this.ruta_imagen,
         p_fecha_hora: null,
         p_id_persona_reg: this.idPersonaReg,
-        p_id_proy_elemento: this.id_proy_elemento,
+        p_id_proy_elemento: parseInt(this.id_proy_elemento,10),
         p_fecha_logro: this.fecha_logro
       };
 
@@ -300,25 +303,62 @@ export class LogrosComponent implements OnInit {
       this.openModal(modalScope);
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= EDIT APRENDIZAJE ======= =======
+    // ======= ======= EDIT LOGRO ======= =======
     editLogros(){
-      const objApredizaje = {
-        p_id_proy_aprende: 0,
+      const objLogro = {
+        p_id_proy_logro: this.id_proy_logro,
         p_id_proyecto: parseInt(this.idProyecto,10),
-        p_fecha_hora_reg: null
+        p_logro: this.logro,
+        p_descripcion: this.descripcion,
+        p_ruta_imagen: this.ruta_imagen,
+        p_fecha_hora: null,
+        p_id_persona_reg: this.idPersonaReg,
+        p_id_proy_elemento: parseInt(this.id_proy_elemento,10),
+        p_fecha_logro: this.fecha_logro
       };
 
+      this.servLogros.editLogro(objLogro).subscribe(
+        (data) => {
+          this.getLogros();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= INIT DELETE PERSONA ROLES ======= =======
-    initDeleteLogros(){
-      
+    // ======= ======= INIT DELETE LOGRO ======= =======
+    initDeleteLogros(modalScope: TemplateRef<any>){
+      this.initLogrosModel();
+
+      this.id_proy_logro = this.logrosSelected.id_proy_logro;
+
+      this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= DELETE LOGRO ======= =======
+    deleteLogros(){
+      this.servLogros.deleteLogro(this.id_proy_logro).subscribe(
+        (data) => {
+          this.getLogros();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     }
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
+      if(this.logro.length > 50){
+        console.log("Invalido");
+      }
+      else{
+        console.log("Valido");
+      }
+      
       if(this.modalAction == "add"){
-        this.addLogros();
+        //this.addLogros();
       }
       else{
         //this.editLogros();

@@ -72,14 +72,14 @@ export class BeneficiariosComponent implements OnInit {
   headerDataNro04: any = 0;
   // ======= ======= ======= ======= =======
 
- // ====== VARIABLES DE PAGINACIÓN ======
- totalLengthBeneficiarios = 0;
- currentPageBeneficiarios = 1;
- pageSizeBeneficiarios = 10;
+  // ====== VARIABLES DE PAGINACIÓN ======
+  totalLengthBeneficiarios = 0;
+  currentPageBeneficiarios = 1;
+  pageSizeBeneficiarios = 10;
 
- totalLengthAliados = 0;
- currentPageAliados = 1;
- pageSizeAliados = 10;
+  totalLengthAliados = 0;
+  currentPageAliados = 1;
+  pageSizeAliados = 10;
 
   constructor(
     private modalService: NgbModal,
