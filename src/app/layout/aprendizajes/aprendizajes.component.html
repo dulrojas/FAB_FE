@@ -9,16 +9,16 @@
         <div class="col col-md-6">
             <div class="row">
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro01}} Personas
+                    {{headerDataNro01}} Aprendizajes
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro02}} Administrador de Sistema
+                    {{headerDataNro02}} Buenas practicas
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro03}} Controladores
+                    {{headerDataNro03}} Lecciones
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro04}} Responsables de Proyecto
+                    {{headerDataNro04}} Otros
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
                         <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                     </button>
                     <button type="button" class="btn btn-view-bg-1" 
-                        (click)="openModal(deleteAprendizajesModal)"
+                        (click)="initDeleteAprendizajes(deleteAprendizajesModal)"
                         [disabled]="!aprendizajesSelected">
                         <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                     </button>
@@ -110,25 +110,25 @@
                         <div class="card-body custom-card">
                             <div class="row">
                                 <!-- ======= ======= ID SECTION ======= ======= -->
-                                <div class="col col-xl-2 col-lg-2 mt-auto">
+                                <div class="col col-xl-2 col-lg-2 mb-auto">
                                     <label for="id_proy_aprende">Id</label>
-                                    <input class="form-control" type="text" 
-                                        id="id_proy_aprende" name="id_proy_aprende" [(ngModel)]="id_proy_aprende" disabled/>
+                                    <input class="form-control" type="text" id="id_proy_aprende" name="id_proy_aprende" 
+                                        [(ngModel)]="id_proy_aprende" disabled/>
                                 </div>
                                 <!-- ======= ======= FECHA SECTION ======= ======= -->
-                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                <div class="col col-xl-3 col-lg-3 mb-auto">
                                     <label for="fecha_registro">Fecha de resgistro</label>
-                                    <input class="form-control" type="text" 
-                                        id="fecha_registro" name="fecha_registro" [(ngModel)]="fecha_registro" disabled/>
+                                    <input class="form-control" type="text" id="fecha_registro" name="fecha_registro" 
+                                        [(ngModel)]="fecha_registro" disabled/>
                                 </div>
                                 <!-- ======= ======= PERSONA SECTION ======= ======= -->
-                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                <div class="col col-xl-3 col-lg-3 mb-auto">
                                     <label for="persona_registro">Persona registro</label>
-                                    <input class="form-control" type="text" 
-                                        id="persona_registro" name="persona_registro" [(ngModel)]="persona_registro" disabled/>
+                                    <input class="form-control" type="text" id="persona_registro" name="persona_registro" 
+                                        [(ngModel)]="persona_registro" disabled/>
                                 </div>
                                 <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
-                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                <div class="col col-xl-3 col-lg-3 mb-auto">
                                     <label for="id_proy_elemento">Componente</label>
                                     <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" 
                                         [(ngModel)]="id_proy_elemento" (change)="onSelectionChange()">
@@ -137,60 +137,74 @@
                                             {{ componente.meto_elemento }}
                                         </option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valComponente">Debe elegir un componente</span>
                                 </div>
                                 <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
-                                <div class="col col-xl-1 col-lg-1 mt-auto">
+                                <div class="col col-xl-1 col-lg-1 mb-auto">
                                     <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
                                 </div>
         
                                 <!-- ======= ======= AREA DE APRENDIZAJE SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="idp_aprendizaje_area">Area de aprendizaje</label>
-                                    <select class="form-control" id="idp_aprendizaje_area" name="idp_aprendizaje_area" [(ngModel)]="idp_aprendizaje_area">
+                                    <select class="form-control" id="idp_aprendizaje_area" name="idp_aprendizaje_area" 
+                                        [(ngModel)]="idp_aprendizaje_area" (change)="ValidateArea()">
                                         <option value="" disabled selected>Selecciona un area</option>
                                         <option *ngFor="let area of areasAprendizaje" [value]="area.id_subtipo">{{ area.descripcion_subtipo }}</option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valArea">Debe elegir un area</span>
                                 </div>
                                 <!-- ======= ======= TIPO APRENDIZAJE SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="idp_aprendizaje_tipo">Tipo de aprendizaje</label>
-                                    <select class="form-control" id="idp_aprendizaje_tipo" name="idp_aprendizaje_tipo" [(ngModel)]="idp_aprendizaje_tipo">
+                                    <select class="form-control" id="idp_aprendizaje_tipo" name="idp_aprendizaje_tipo" 
+                                        [(ngModel)]="idp_aprendizaje_tipo" (change)="ValidateTipo()">
                                         <option value="" disabled selected>Selecciona un tipo</option>
                                         <option *ngFor="let tipo of tiposAprendizaje" [value]="tipo.id_subtipo">{{ tipo.descripcion_subtipo }}</option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valTipo">Debe elegir un tipo</span>
                                 </div>
         
                                 <!-- ======= ======= TITULO APRE SECTION ======= ======= -->
-                                <div class="col col-xl-8 col-lg-8 mt-auto">
+                                <div class="col col-xl-8 col-lg-8 mb-auto">
                                     <label for="aprendizaje">Titulo de aprendizaje</label>
-                                    <input class="form-control" type="text" 
-                                        id="aprendizaje" name="aprendizaje" [(ngModel)]="aprendizaje" />
+                                    <input class="form-control" type="text" id="aprendizaje" name="aprendizaje" 
+                                        placeholder="Ingresa el titulo del aprendizaje" [(ngModel)]="aprendizaje" 
+                                        (change)="ValidateAprendizaje()"/>
+                                    <span class="custom-alert-message" *ngIf="!valAprendizaje">Debe ingresar un titulo valido, con menos de 50 caracteres</span>
                                 </div>
                                 <!-- ======= ======= FECHA APREN SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="correo">Fecha de aprendizaje</label>
-                                    <input class="form-control" type="date" 
-                                        id="fecha" name="fecha" [(ngModel)]="fecha" />
+                                    <input class="form-control" type="date" id="fecha" name="fecha" 
+                                        [(ngModel)]="fecha" (change)="ValidateFecha()"/>
+                                    <span class="custom-alert-message" *ngIf="!valFecha">Debe elegir una fecha</span>
                                 </div>
 
                                 <!-- ======= ======= PROBLEMA SECTION ======= ======= -->
-                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
                                     <label for="problema">Problema</label>
                                     <textarea class="form-control" id="problema" name="problema" 
-                                        [(ngModel)]="problema"></textarea>
+                                        placeholder="Ingresa el problema del aprendizaje" 
+                                        [(ngModel)]="problema" (change)="ValidateProblema()">
+                                    </textarea>
+                                    <span class="custom-alert-message" *ngIf="!valProblema">Debe ingresar un problema valido, con menos de 255 caracteres</span>
                                 </div>
 
                                 <!-- ======= ======= ACCION DESARROLLADA SECTION ======= ======= -->
-                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
                                     <label for="accion">Accion desarrollada</label>
                                     <textarea class="form-control" id="accion" name="accion" 
-                                        [(ngModel)]="accion"></textarea>
+                                        placeholder="Ingresa la accion del aprendizaje" 
+                                        [(ngModel)]="accion" (change)="ValidateAccion()">
+                                    </textarea>
+                                    <span class="custom-alert-message" *ngIf="!valAccion">Debe ingresar una accion valida, con menos de 255 caracteres</span>
                                 </div>
 
                                 <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>
 
                                 <!-- ======= ======= PREGUNTAS SECTIONS ======= ======= -->
-                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
                                     <div class="row">
                                         <div class="col col-xl-12 col-lg-12 text-center">
                                             <label>Resultados</label>
@@ -202,8 +216,8 @@
                                                 </div>
                                                 <div class="col col-xl-12 col-lg-12" *ngFor="let pregunta of preguntas1; let i = index">
                                                     <label class="text-left">{{ pregunta }}</label>
-                                                    <input class="form-control" type="text" 
-                                                        id="pregunta1-{{ i }}" name="pregunta1-{{ i }}" [(ngModel)]="respuestas1[i]"/>
+                                                    <input class="form-control" type="text" id="pregunta1-{{ i }}" name="pregunta1-{{ i }}" 
+                                                        placeholder="Ingresa tu respuesta" [(ngModel)]="respuestas1[i]"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -214,8 +228,8 @@
                                                 </div>
                                                 <div class="col col-xl-12 col-lg-12" *ngFor="let pregunta of preguntas2; let i = index">
                                                     <label class="text-left">{{ pregunta }}</label>
-                                                    <input class="form-control" type="text" 
-                                                        id="pregunta2-{{ i }}" name="pregunta2-{{ i }}" [(ngModel)]="respuestas2[i]"/>
+                                                    <input class="form-control" type="text" id="pregunta2-{{ i }}" name="pregunta2-{{ i }}" 
+                                                        placeholder="Ingresa tu respuesta" [(ngModel)]="respuestas2[i]"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -236,7 +250,7 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="aprendizajesForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
+            <button type="button" class="btn btn-bg-1" [disabled]="aprendizajesForm.invalid" (click)="onSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
             </button>
         </div>
@@ -260,7 +274,7 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" (click)="editAprendizaje(); modal.close('Añadir')">
+            <button type="button" class="btn btn-bg-1" (click)="deleteAprendizajes()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
             </button>
         </div>

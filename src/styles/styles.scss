@@ -224,6 +224,10 @@ select.form-control {
 }
 // ======= ======= ======= ======= =======
 // ======= ======= SOME CUSTOMS ======= =======
+.custom-alert-message{
+    font-size: 15px;
+    color: #cc2222;
+}
 .custom-login-error-message{
     color: $third-color;
     font-weight: bold;

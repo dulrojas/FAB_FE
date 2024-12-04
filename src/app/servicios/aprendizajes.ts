@@ -150,7 +150,7 @@ export class servAprendizaje{
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
-  // ======= ======= ======= EDIT PERSONA ======= ======= =======
+  // ======= ======= ======= EDIT APRENDIZAJE ======= ======= =======
   editAprendizaje(obj: any): Observable<any> {
     const params = {
         "procedure_name": "sp_aprendizaje",
@@ -172,6 +172,40 @@ export class servAprendizaje{
                 {"name": "p_idp_aprendizaje_tipo", "value": obj.p_idp_aprendizaje_tipo, "type": "int"},
                 {"name": "p_fecha", "value": obj.p_fecha, "type": "string"},
                 {"name": "p_fecha_hora_reg", "value": obj.p_fecha_hora_reg, "type": "string"}
+            ]
+        }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= DELETE APRENDIZAJE ======= ======= =======
+  deleteAprendizaje(idAprende: any): Observable<any> {
+    const params = {
+        "procedure_name": "sp_aprendizaje",
+        "body": {
+            "params": [
+                {"name": "p_accion", "value": "D1", "type": "string"},
+                {"name": "p_id_proy_aprende", "value": idAprende, "type": "int"},
+                {"name": "p_id_proyecto", "value": null, "type": "int"},
+                {"name": "p_aprendizaje", "value": null, "type": "string"},
+                {"name": "p_problema", "value": null, "type": "string"},
+                {"name": "p_accion_aprendizaje", "value": null, "type": "string"},
+                {"name": "p_id_preguntas_1", "value": null, "type": "int"},
+                {"name": "p_respuestas_1", "value": null, "type": "string"},
+                {"name": "p_id_preguntas_2", "value": null, "type": "int"},
+                {"name": "p_respuestas_2", "value": null, "type": "string"},
+                {"name": "p_id_persona_reg", "value": null, "type": "int"},
+                {"name": "p_id_proy_elemento", "value": null, "type": "int"},
+                {"name": "p_idp_aprendizaje_area", "value": null, "type": "int"},
+                {"name": "p_idp_aprendizaje_tipo", "value": null, "type": "int"},
+                {"name": "p_fecha", "value": null, "type": "string"},
+                {"name": "p_fecha_hora_reg", "value": null, "type": "string"}
             ]
         }
     };
