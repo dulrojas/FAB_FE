@@ -30,9 +30,11 @@ export class RiesgosComponent implements OnInit {
     private servRiesgos: ServRiesgos,
     private servicios: servicios,
     ) {}
+    // ======= ======= ======= ======= =======
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+    namePersonaReg: any = localStorage.getItem('userFullName');
     @Output() selectionChange = new EventEmitter<any>();
     onChildSelectionChange(selectedId: any) {
       this.idProyecto = selectedId;
@@ -50,6 +52,7 @@ export class RiesgosComponent implements OnInit {
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
     modalTitle: any = "";
     modalAction: string = '';
+    
 
     id_proy_elemen_padre: any = "";
     idp_categoria: any = "";
@@ -70,9 +73,11 @@ export class RiesgosComponent implements OnInit {
     idp_efectividad: any = "";
     comentarios: any = "";
     fecha_hora_reg: any = "";
-    id_persona_reg: any = "";
+    id_persona_reg: any = 0;
+
     sigla: any = "";
     color: any = "";
+    // ======= ======= ======= ======= =======
     // ======= ======= VARIABLES SECTION ======= =======
     componentes: any[] = [];
     riesgoCategoria: any[] = [];
@@ -209,7 +214,7 @@ export class RiesgosComponent implements OnInit {
     }
   );
   // ======= GET Necesidad =======
-  this.servicios.getParametricaByIdTipo(16).subscribe(
+  this.servicios.getParametricaByIdTipo(19).subscribe(
     (data) => {
       this. riesgoAcciones = data[0].dato;
     },
@@ -226,6 +231,41 @@ export class RiesgosComponent implements OnInit {
       console.error(error);
     }
   );
+  }
+
+  // ======= ======= OPEN MODALS FUN ======= =======
+  openModal(content: TemplateRef<any>) {
+    this.modalService.open(content, { size: 'xl' });
+  }
+
+  // ======= ======= GET MODAL TITLE FUN ======= =======
+  getModalTitle(modalAction: any) {
+      this.modalTitle = (modalAction == "add") ? ("Añadir Riesgo") : this.modalTitle;
+      this.modalTitle = (modalAction == "edit") ? ("Editar Riesgo") : this.modalTitle;
+      return this.modalTitle;
+  }
+
+  // ======= ======= RIESGOS TABLE PAGINATION ======= =======
+  get riesgosTable() {
+    const start = (this.mainPage - 1) * this.mainPageSize;
+      return this.riesgos.slice(start, start + this.mainPageSize);
+  }
+
+  // ======= ======= CHECKBOX CHANGED ======= =======
+  checkboxChanged(riesgoSel: any) {
+    this.riesgos.forEach(riesgo => {
+        if(riesgoSel.id_riesgo == riesgo.id_riesgo) {
+            if(riesgoSel.selected) {
+                this.riesgoSelected = riesgoSel;
+            } 
+            else {
+                this.riesgoSelected = null;
+            }
+        } 
+        else {
+            riesgo.selected = false;
+        }
+    });
   }
 
   // cargar riesgos por proyecto
@@ -275,42 +315,6 @@ onSubmit() {
   }
 }
 
-
-  // ======= ======= OPEN MODALS FUN ======= =======
-  openModal(content: TemplateRef<any>) {
-    this.modalService.open(content, { size: 'xl' });
-  }
-
-  // ======= ======= GET MODAL TITLE FUN ======= =======
-  getModalTitle(modalAction: any) {
-      this.modalTitle = (modalAction == "add") ? ("Añadir Riesgo") : this.modalTitle;
-      this.modalTitle = (modalAction == "edit") ? ("Editar Riesgo") : this.modalTitle;
-      return this.modalTitle;
-  }
-
-  // ======= ======= RIESGOS TABLE PAGINATION ======= =======
-  get riesgosTable() {
-    const start = (this.mainPage - 1) * this.mainPageSize;
-      return this.riesgos.slice(start, start + this.mainPageSize);
-  }
-
-  // ======= ======= CHECKBOX CHANGED ======= =======
-  checkboxChanged(riesgoSel: any) {
-    this.riesgos.forEach(riesgo => {
-        if(riesgoSel.id_riesgo == riesgo.id_riesgo) {
-            if(riesgoSel.selected) {
-                this.riesgoSelected = riesgoSel;
-            } 
-            else {
-                this.riesgoSelected = null;
-            }
-        } 
-        else {
-            riesgo.selected = false;
-        }
-    });
-  }
-
   // ======= ======= INIT RIESGO MODEL ======= =======
  // ======= ======= INIT RIESGO MODEL ======= =======
  initRiesgoModel() {
@@ -339,6 +343,9 @@ onSubmit() {
    // ======= ======= INIT ADD RIESGO ======= =======
    initAddRiesgo(modalScope: TemplateRef<any>) {
     this.initRiesgoModel(); 
+
+    this.id_persona_reg = this.namePersonaReg;
+
     this.modalAction = "add"; 
     this.modalTitle = this.getModalTitle("add");
   

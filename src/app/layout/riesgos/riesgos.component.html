@@ -151,12 +151,8 @@
                   <!-- Primera Fila: ID, Fecha de Registro, Persona Registro, Componente -->
                   <div class="col-xl-2 col-lg-2">
                     <label for="id_riesgo">ID Riesgo</label>
-                    <input
-                      type="text"
-                      id="id_riesgo"
-                      class="form-control"
-                      [(ngModel)]="id_riesgo"
-                      name="id_riesgo"/>
+                      <input class="form-control" type="text" 
+                        id="id_riesgo" name="id_riesgo" [(ngModel)]="id_riesgo" disabled/>
                   </div>
                   <div class="col col-xl-3 col-lg-3 mt-auto">
                     <label for="fecha_hora_reg">Fecha de Registro</label>
@@ -171,34 +167,22 @@
                   </div>
                   <div class="col col-xl-3 col-lg-3 mt-auto">
                     <label for="persona_registro">Persona Registro</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      id="persona_registro"
-                      name="persona_registro"
-                      [(ngModel)]="persona_registro"
-                      readonly/>
+                    <input class="form-control" type="text" 
+                      id="id_persona_reg" name="id_persona_reg" [(ngModel)]="id_persona_reg" disabled/>
                   </div>
+
                   <div class="col col-xl-3 col-lg-3 mt-auto">
                     <label for="id_proy_elemento">Componente</label>
-                    <select
-                      class="form-control"
-                      id="id_proy_elemento"
-                      name="id_proy_elemento"
-                      [(ngModel)]="id_proy_elemento"
-                      (change)="onSelectionChange()"
-                    >
-                      <option value="" disabled selected>Selecciona un elemento</option>
-                      <option
-                        *ngFor="let componente of componentes"
-                        [value]="componente.id_meto_elemento"
-                      >
-                        {{ componente.meto_elemento }}
-                      </option>
-                    </select>
+                    <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" 
+                                        [(ngModel)]="id_proy_elemento" (change)="onSelectionChange()">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
+                                            {{ componente.meto_elemento }}
+                                        </option>
+                                    </select>
                   </div>
                   <div class="col col-xl-1 col-lg-1 mt-auto">
-                    <label class="btn-view-bg-3" [ngStyle]="{ 'background-color': '#' + color }">{{ sigla }}</label>
+                    <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
                   </div>
                 </div>
       
@@ -255,12 +239,12 @@
                   <!-- Individuales/Instituciones Vinculados -->
                   <div class="col col-xl-6 col-lg-6 mt-auto">
                     <label for="vinculados">Individuales/Instituciones Vinculados</label>
-                    <select [(ngModel)]="vinculados" name="vinculados" class="form-control">
-                      <option value="" disabled>Seleccione</option>
-                      <option *ngFor="let vinculado of riegosVinvulados" [value]="vinculado.id_subtipo">
-                        {{ vinculado.descripcion_subtipo }}
-                      </option>
-                    </select>
+                    <input
+                      type="text"
+                      [(ngModel)]="vinculos"
+                      name="vinculo"
+                      class="form-control"
+                    />
                   </div>
       
                   <!-- Identificación del Riesgo -->
