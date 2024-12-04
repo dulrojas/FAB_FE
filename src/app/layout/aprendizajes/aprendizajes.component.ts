@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { routerTransition } from '../../router.animations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
@@ -26,10 +26,15 @@ export class AprendizajesComponent implements OnInit {
 
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+    namePersonaReg: any = localStorage.getItem('userFullName');
     onChildSelectionChange(selectedId: string) {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+
       this.getAprendizajes();
+      this.initAprendizajesModel();
+      this.aprendizajesSelected = null;
+
     }
 
     headerDataNro01: any = 0;
@@ -68,10 +73,67 @@ export class AprendizajesComponent implements OnInit {
     preguntasObj2: any = [];
     preguntas2: any = [];
     respuestas2: any = [];
-    // ======= ======= VARIABLES SECTION ======= =======
+
     componentes: any[] = [];
     areasAprendizaje: any[] = [];
     tiposAprendizaje: any[] = [];
+    // ======= ======= ======= ======= =======
+    // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
+    valComponente: any = true;
+    ValidateComponente(){
+      this.valComponente = true;
+      if(!this.id_proy_elemento){
+        this.valComponente = false;
+      }
+    }
+
+    valArea: any = true;
+    ValidateArea(){
+      this.valArea = true;
+      if(!this.idp_aprendizaje_area){
+        this.valArea = false;
+      }
+    }
+
+    valTipo: any = true;
+    ValidateTipo(){
+      this.valTipo = true;
+      if(!this.idp_aprendizaje_tipo){
+        this.valTipo = false;
+      }
+    }
+
+    valAprendizaje: any = true;
+    ValidateAprendizaje(){
+      this.valAprendizaje = true;
+      if((!this.aprendizaje)||(this.aprendizaje.length >= 50)){
+        this.valAprendizaje = false;
+      }
+    }
+
+    valFecha: any = true;
+    ValidateFecha(){
+      this.valFecha = true;
+      if(!this.fecha){
+        this.valFecha = false;
+      }
+    }
+
+    valProblema: any = true;
+    ValidateProblema(){
+      this.valProblema = true;
+      if((!this.problema)||(this.problema.length >= 255)){
+        this.valProblema = false;
+      }
+    }
+
+    valAccion: any = true;
+    ValidateAccion(){
+      this.valAccion = true;
+      if((!this.accion)||(this.accion.length >= 255)){
+        this.valAccion = false;
+      }
+    }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
@@ -152,9 +214,17 @@ export class AprendizajesComponent implements OnInit {
       // ======= ======= =======
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= OPEN MODALS FUN ======= =======
+    // ======= ======= MODALS FUN ======= =======
+    private modalRef: NgbModalRef | null = null;
     openModal(content: TemplateRef<any>) {
-      this.modalService.open(content, { size: 'xl' });
+      this.modalRef = this.modalService.open(content, { size: 'xl' });
+    }
+
+    closeModal() {
+      if (this.modalRef) {
+        this.modalRef.close(); 
+        this.modalRef = null;
+      }
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET MODAL TITLE FUN ======= =======
@@ -194,6 +264,7 @@ export class AprendizajesComponent implements OnInit {
           this.color = selectedComponente.color;
           this.sigla = selectedComponente.sigla;
       }
+      this.ValidateComponente();
     }
     // ======= ======= INIT PERSONA ROLES NGMODEL ======= =======
     initAprendizajesModel(){
@@ -201,10 +272,10 @@ export class AprendizajesComponent implements OnInit {
 
       this.id_proy_aprende = 0;
       this.fecha_registro = "";
-      this.persona_registro = this.idPersonaReg;
+      this.persona_registro = this.namePersonaReg;
       this.id_proy_elemento = "";
-      this.idp_aprendizaje_area = null;
-      this.idp_aprendizaje_tipo = null;
+      this.idp_aprendizaje_area = "";
+      this.idp_aprendizaje_tipo = "";
       this.id_preguntas_1 = this.preguntasObj1.id_preguntas;
       this.id_preguntas_2 = this.preguntasObj2.id_preguntas; 
       this.aprendizaje = "";
@@ -309,11 +380,11 @@ export class AprendizajesComponent implements OnInit {
         p_id_proyecto: this.id_proyecto,
         p_aprendizaje: this.aprendizaje,
         p_problema: this.problema,
-        p_accion_aprendizaje: this.accion_aprendizaje,
+        p_accion_aprendizaje: this.accion,
         p_id_preguntas_1: this.id_preguntas_1,
-        p_respuestas_1: this.respuestas1,
+        p_respuestas_1: this.jsonToString({"respuestas":this.respuestas1}),
         p_id_preguntas_2: this.id_preguntas_2,
-        p_respuestas_2: this.respuestas2,
+        p_respuestas_2: this.jsonToString({"respuestas":this.respuestas2}),
         p_id_persona_reg: this.id_persona_reg,
         p_id_proy_elemento: this.id_proy_elemento,
         p_idp_aprendizaje_area: this.idp_aprendizaje_area,
@@ -322,24 +393,56 @@ export class AprendizajesComponent implements OnInit {
         p_fecha_hora_reg: null
       };
 
+      this.servApredizaje.editAprendizaje(objApredizaje).subscribe(
+        (data) => {
+          this.getAprendizajes();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT DELETE PERSONA ROLES ======= =======
-    initDeleteAprendizajes(){
-      
+    initDeleteAprendizajes(modalScope: TemplateRef<any>){
+      this.initAprendizajesModel();
+
+      this.id_proy_aprende = this.aprendizajesSelected.id_proy_aprende;
+
+      this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= INIT DELETE PERSONA ROLES ======= =======
+    deleteAprendizajes(){
+
+      this.servApredizaje.deleteAprendizaje(this.id_proy_aprende).subscribe(
+        (data) => {
+          this.closeModal();
+          this.getAprendizajes();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     }
     // ======= ======= ======= ======= =======
     // ======= ======= COUNT HEADER DATA FUCTION ======= =======
     countHeaderData(){
+      this.headerDataNro01 = 0;
+      this.headerDataNro02 = 0;
+      this.headerDataNro03 = 0;
+      this.headerDataNro04 = 0;
+
       this.headerDataNro01 = this.aprendizajes.length;
       this.aprendizajes.forEach(aprendizaje =>{
-        if(aprendizaje.admi_sistema){
+        if(aprendizaje.idp_aprendizaje_tipo == 1){
           this.headerDataNro02 += 1
         }
-        if(aprendizaje.proyectoRol == "CON"){
+        if(aprendizaje.idp_aprendizaje_tipo == 2){
           this.headerDataNro03 += 1
         }
-        if(aprendizaje.proyectoRol == "RES"){
+        if(aprendizaje.idp_aprendizaje_tipo == 3){
           this.headerDataNro04 += 1
         }
       });
@@ -347,11 +450,35 @@ export class AprendizajesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
-      if(this.modalAction == "add"){
-        this.addAprendizajes();
-      }
-      else{
-        //this.editAprendizajes();
+      // ======= VALIDATION SECTION =======
+      let valForm = false;
+
+      this.ValidateComponente();
+      this.ValidateArea();
+      this.ValidateTipo();
+      this.ValidateAprendizaje();
+      this.ValidateFecha();
+      this.ValidateProblema();
+      this.ValidateAccion();
+
+      valForm = 
+        this.valComponente &&
+        this.valArea &&
+        this.valTipo &&
+        this.valAprendizaje &&
+        this.valFecha &&
+        this.valProblema &&
+        this.valAccion;
+
+      // ======= ACTION SECTION =======
+      if(valForm){
+        if(this.modalAction == "add"){
+          this.addAprendizajes();
+        }
+        else{
+          this.editAprendizajes();
+        }
+        this.closeModal();
       }
     }
     // ======= ======= ======= ======= =======

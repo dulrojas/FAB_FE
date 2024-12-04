@@ -22,7 +22,7 @@ export class servDashboard {
           {"name": "p_fecha_gestion","value": dateScope,"type": "string"}
         ]
       }
-  };
+    };
 
     const ip = sessionStorage.getItem('ip') || '';
     const headers = new HttpHeaders({
