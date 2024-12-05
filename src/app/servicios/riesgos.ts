@@ -6,20 +6,37 @@ import config from './config';
 @Injectable({
   providedIn: 'root'
 })
-export class ServRiesgos {
+export class servRiesgos {
   private URL = config.URL;
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todos los riesgos
+  // ======= ======= ======= GET Riesgos ======= ======= =======
   getRiesgos(): Observable<any> {
     const params = {
-      "procedure_name": "sp_proy_riesgos",
+      "procedure_name": "sp_riesgos",
       "body": {
         "params": [
           { "name": "p_accion", "value": "C1", "type": "string" },
           { "name": "p_id_riesgo", "value": null, "type": "int" },
-          { "name": "p_id_proyecto", "value": null, "type": "int" }
+          { "name": "p_id_proyecto", "value": null, "type": "int" },
+          { "name": "p_codigo", "value": null, "type": "string" },
+          { "name": "p_riesgo", "value": null, "type": "string" },
+          { "name": "p_descripcion", "value": null, "type": "string" },
+          { "name": "p_idp_categoria", "value": null, "type": "int" },
+          { "name": "p_vinculados", "value": null, "type": "string" },
+          { "name": "p_idp_identificacion", "value": null, "type": "int" },
+          { "name": "p_impacto", "value": null, "type": "string" },
+          { "name": "p_probabilidad", "value": null, "type": "string" },
+          { "name": "p_nivel", "value": null, "type": "string" },
+          { "name": "p_idp_ocurrencia", "value": null, "type": "int" },
+          { "name": "p_idp_medidas", "value": null, "type": "string" },
+          { "name": "p_idp_efectividad", "value": null, "type": "int" },
+          { "name": "p_comentarios", "value": null, "type": "string" },
+          { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
+          { "name": "p_id_persona_reg", "value": null, "type": "int" },
+          { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
+          { "name": "p_fecha", "value": null, "type": "string" }
         ]
       }
     };
@@ -31,37 +48,36 @@ export class ServRiesgos {
     return this.http.post<any>(this.URL, params, { headers });
   }
 
-
-    // ======= ======= ======= GET METO ELEMENTOS ======= ======= =======
-    //Llama todos los datos
-    getMetoElementos(): Observable<any> {
-      const params = {
-          "procedure_name": "sp_proy_riesgos",
-          "body": {
-              "params": [
-                { "name": "p_accion", "value": "C3", "type": "string" }
-              ]
-          }
-      };
-      const ip = sessionStorage.getItem('ip') || '';
-      const headers = new HttpHeaders({
-        'ip': "127.0.0.1"
-      });
-      return this.http.post<any>(this.URL, params, { headers });
-    }
-
     // Obtener riesgos por proyecto
-    getRiesgosByProyecto(idProyecto: number): Observable<any> {
-      const params = {
-        "procedure_name": "sp_proy_riesgos",
+    getRiesgosByIdProy(idProy: any): Observable<any> {
+      const params ={
+        "procedure_name": "sp_riesgos",
         "body": {
           "params": [
             { "name": "p_accion", "value": "C2", "type": "string" },
             { "name": "p_id_riesgo", "value": null, "type": "int" },
-            { "name": "p_id_proyecto", "value": idProyecto, "type": "int" }
+            { "name": "p_id_proyecto", "value": idProy, "type": "int" },
+            { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
+            { "name": "p_idp_categoria", "value": null, "type": "string" },
+            { "name": "p_codigo", "value": null, "type": "string" },
+            { "name": "p_fecha", "value": null, "type": "string" },
+            { "name": "p_riesgo", "value": null, "type": "string" },
+            { "name": "p_descripcion", "value": null, "type": "string" },
+            { "name": "p_vinculados", "value": null, "type": "string" },
+            { "name": "p_idp_identificacion", "value": null, "type": "string" },
+            { "name": "p_impacto", "value": null, "type": "string" },
+            { "name": "p_probabilidad", "value": null, "type": "string" },
+            { "name": "p_nivel", "value": null, "type": "string" },
+            { "name": "p_idp_ocurrencia", "value": null, "type": "string" },
+            { "name": "p_idp_medidas", "value": null, "type": "string" },
+            { "name": "p_idp_efectividad", "value": null, "type": "int" },
+            { "name": "p_comentarios", "value": null, "type": "string" },
+            { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
+            { "name": "p_id_persona_reg", "value": null, "type": "int" }
           ]
         }
-      };
+      }
+      ;
       const ip = sessionStorage.getItem('ip') || '';
       const headers = new HttpHeaders({
         'ip': "127.0.0.1"
@@ -72,88 +88,112 @@ export class ServRiesgos {
 
   
   // Añadir un nuevo riesgo
-  addRiesgo(riesgo: any): Observable<any> {
+  addRiesgo(obj: any): Observable<any> {
     const params = {
-      "procedure_name": "sp_proy_riesgos",
+      "procedure_name": "sp_riesgos",
       "body": {
         "params": [
           { "name": "p_accion", "value": "A1", "type": "string" },
-          { "name": "p_id_riesgo", "value": riesgo.id_riesgo, "type": "int" },
-          { "name": "p_id_proyecto", "value": riesgo.id_proyecto, "type": "int" },
-          { "name": "p_codigo", "value": riesgo.codigo, "type": "string" },
-          { "name": "p_riesgo", "value": riesgo.riesgo, "type": "string" },
-          { "name": "p_descripcion", "value": riesgo.descripcion, "type": "string" },
-          { "name": "p_idp_categoria", "value": riesgo.idp_categoria, "type": "int" },
-          { "name": "p_vinculados", "value": riesgo.vinculados, "type": "string" },
-          { "name": "p_idp_identificacion", "value": riesgo.idp_identificacion, "type": "int" },
-          { "name": "p_impacto", "value": riesgo.impacto, "type": "string" },
-          { "name": "p_probabilidad", "value": riesgo.probabilidad, "type": "string" },
-          { "name": "p_nivel", "value": riesgo.nivel, "type": "string" },
-          { "name": "p_ocurrencia", "value": riesgo.idp_ocurrencia, "type": "int" },
-          { "name": "p_medidas", "value": riesgo.medidas, "type": "string" },
-          { "name": "p_idp_efectividad", "value": riesgo.idp_efectividad, "type": "int" },
-          { "name": "p_comentarios", "value": riesgo.comentarios, "type": "string" },
-          { "name": "p_fecha_hora_reg", "value": riesgo.fecha_hora_reg, "type": "string" },
-          { "name": "p_id_persona_reg", "value": riesgo.id_persona_reg, "type": "int" },
-          { "name": "p_id_proy_elemen_padre", "value": riesgo.id_proy_elemen_padre, "type": "int" },
-          { "name": "p_fecha", "value": riesgo.fecha, "type": "string" }
+          { "name": "p_id_riesgo", "value": null, "type": "int" },
+          { "name": "p_id_proyecto", "value": obj.id_proyecto, "type": "int" },
+          { "name": "p_id_proy_elemen_padre", "value": obj.id_proy_elemen_padre, "type": "int" },
+          { "name": "p_idp_categoria", "value": obj.idp_categoria, "type": "int" },
+          { "name": "p_codigo", "value": obj.codigo, "type": "string" },
+          { "name": "p_fecha", "value": obj.fecha, "type": "string" },
+          { "name": "p_riesgo", "value": obj.riesgo, "type": "string" },
+          { "name": "p_descripcion", "value": obj.descripcion, "type": "string" },
+          { "name": "p_vinculados", "value": obj.vinculados, "type": "string" },
+          { "name": "p_idp_identificacion", "value": obj.idp_identificacion, "type": "int" },
+          { "name": "p_impacto", "value": obj.impacto, "type": "string" },
+          { "name": "p_probabilidad", "value": obj.probabilidad, "type": "string" },
+          { "name": "p_nivel", "value": obj.nivel, "type": "string" },
+          { "name": "p_idp_ocurrencia", "value": obj.idp_ocurrencia, "type": "int" },
+          { "name": "p_idp_medidas", "value": obj.medidas, "type": "string" },
+          { "name": "p_idp_efectividad", "value": obj.idp_efectividad, "type": "int" },
+          { "name": "p_comentarios", "value": obj.comentarios, "type": "string" },
+          { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
+          { "name": "p_id_persona_reg", "value": obj.id_persona_reg, "type": "int" }
         ]
       }
     };
+    const ip = sessionStorage.getItem('ip') || '';
     const headers = new HttpHeaders({
-      ip: '127.0.0.1',
+      'ip': "127.0.0.1"
     });
+
     return this.http.post<any>(this.URL, params, { headers });
   }
     
-  // Editar un riesgo existente
-  editRiesgo(riesgo: any): Observable<any> {
+  // ======= ======= ======= EDIT RIESGO ======= ======= =======
+  editRiesgo(obj: any): Observable<any> {
     const params = {
-      "procedure_name": "sp_proy_riesgos",
+      "procedure_name": "sp_riesgo",
       "body": {
         "params": [
           { "name": "p_accion", "value": "M1", "type": "string" },
-          { "name": "p_id_riesgo", "value": riesgo.id_riesgo, "type": "int" },
-          { "name": "p_id_proyecto", "value": riesgo.id_proyecto, "type": "int" },
-          { "name": "p_codigo", "value": riesgo.codigo, "type": "string" },
-          { "name": "p_riesgo", "value": riesgo.riesgo, "type": "string" },
-          { "name": "p_descripcion", "value": riesgo.descripcion, "type": "string" },
-          { "name": "p_idp_categoria", "value": riesgo.idp_categoria, "type": "int" },
-          { "name": "p_vinculados", "value": riesgo.vinculados, "type": "string" },
-          { "name": "p_idp_identificacion", "value": riesgo.idp_identificacion, "type": "int" },
-          { "name": "p_impacto", "value": riesgo.impacto, "type": "string" },
-          { "name": "p_probabilidad", "value": riesgo.probabilidad, "type": "string" },
-          { "name": "p_nivel", "value": riesgo.nivel, "type": "string" },
-          { "name": "p_ocurrencia", "value": riesgo.idp_ocurrencia, "type": "int" },
-          { "name": "p_medidas", "value": riesgo.medidas, "type": "string" },
-          { "name": "p_idp_efectividad", "value": riesgo.idp_efectividad, "type": "int" },
-          { "name": "p_comentarios", "value": riesgo.comentarios, "type": "string" },
+          { "name": "p_id_riesgo", "value": obj.id_riesgo, "type": "int" },
+          { "name": "p_id_proyecto", "value": obj.id_proyecto, "type": "int" },
+          { "name": "p_codigo", "value": obj.codigo, "type": "string" },
+          { "name": "p_riesgo", "value": obj.riesgo, "type": "string" },
+          { "name": "p_descripcion", "value": obj.descripcion, "type": "string" },
+          { "name": "p_idp_categoria", "value": obj.idp_categoria, "type": "int" },
+          { "name": "p_vinculados", "value": obj.vinculados, "type": "string" },
+          { "name": "p_idp_identificacion", "value": obj.idp_identificacion, "type": "int" },
+          { "name": "p_impacto", "value": obj.impacto, "type": "string" },
+          { "name": "p_probabilidad", "value": obj.probabilidad, "type": "string" },
+          { "name": "p_nivel", "value": obj.nivel, "type": "string" },
+          { "name": "p_ocurrencia", "value": obj.idp_ocurrencia, "type": "int" },
+          { "name": "p_medidas", "value": obj.medidas, "type": "string" },
+          { "name": "p_idp_efectividad", "value": obj.idp_efectividad, "type": "int" },
+          { "name": "p_comentarios", "value": obj.comentarios, "type": "string" },
           { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
-          { "name": "p_id_persona_reg", "value": riesgo.id_persona_reg, "type": "int" },
-          { "name": "p_id_proy_elemen_padre", "value": riesgo.id_proy_elemen_padre, "type": "int" },
-          { "name": "p_fecha", "value": riesgo.fecha, "type": "string" }
+          { "name": "p_id_persona_reg", "value": obj.id_persona_reg, "type": "int" },
+          { "name": "p_id_proy_elemen_padre", "value": obj.id_proy_elemen_padre, "type": "int" },
+          { "name": "p_fecha", "value": obj.fecha, "type": "string" }
         ]
       }
     };
+    const ip = sessionStorage.getItem('ip') || '';
     const headers = new HttpHeaders({
-      ip: '127.0.0.1',
+      'ip': "127.0.0.1"
     });
+
     return this.http.post<any>(this.URL, params, { headers });
   }
 
   // Eliminar un riesgo existente
   deleteRiesgo(idRiesgo: number): Observable<any> {
     const params = {
-        "procedure_name": "sp_proy_riesgos",
+        "procedure_name": "sp_riesgos",
         "body": {
             "params": [
                 { "name": "p_accion", "value": "D1", "type": "string" },
-                { "name": "p_id_riesgo", "value": idRiesgo, "type": "int" }
+                { "name": "p_id_riesgo", "value": idRiesgo, "type": "int" },
+                { "name": "p_id_proyecto", "value": null, "type": "int" },
+                { "name": "p_codigo", "value": null, "type": "string" },
+                { "name": "p_riesgo", "value": null, "type": "string" },
+                { "name": "p_descripcion", "value": null, "type": "string" },
+                { "name": "p_idp_categoria", "value": null, "type": "int" },
+                { "name": "p_vinculados", "value": null, "type": "string" },
+                { "name": "p_idp_identificacion", "value": null, "type": "int" },
+                { "name": "p_impacto", "value": null, "type": "string" },
+                { "name": "p_probabilidad", "value": null, "type": "string" },
+                { "name": "p_nivel", "value": null, "type": "string" },
+                { "name": "p_ocurrencia", "value": null, "type": "int" },
+                { "name": "p_medidas", "value": null, "type": "string" },
+                { "name": "p_idp_efectividad", "value": null, "type": "int" },
+                { "name": "p_comentarios", "value": null, "type": "string" },
+                { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
+                { "name": "p_id_persona_reg", "value": null, "type": "int" },
+                { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
+                { "name": "p_fecha", "value": null, "type": "string" }
+
             ]
         }
     };
+    const ip = sessionStorage.getItem('ip') || '';
     const headers = new HttpHeaders({
-        'ip': "127.0.0.1" 
+      'ip': "127.0.0.1"
     });
 
     return this.http.post<any>(this.URL, params, { headers });

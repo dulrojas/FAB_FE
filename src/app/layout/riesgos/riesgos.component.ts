@@ -1,10 +1,10 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef} from '@angular/core';
 import { routerTransition } from '../../router.animations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
-import { ProyectoService } from '../../services/proyectoData.service';
-import { ServRiesgos } from "../../servicios/riesgos";
+import { servRiesgos } from "../../servicios/riesgos";
 import { servicios } from "../../servicios/servicios";
+import { servAprendizaje } from "../../servicios/aprendizajes";
 
 @Component({
   selector: 'app-riesgos',
@@ -17,7 +17,7 @@ export class RiesgosComponent implements OnInit {
   
   // Variables
   riesgos: any[] = [];
-  riesgoSelected: any = null;
+  
 
     mainPage = 1;
     mainPageSize = 10;
@@ -26,23 +26,26 @@ export class RiesgosComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private cdr: ChangeDetectorRef,
-    private proyectoService: ProyectoService,
-    private servRiesgos: ServRiesgos,
+    private servRiesgos: servRiesgos,
     private servicios: servicios,
+    private servApredizaje: servAprendizaje
     ) {}
-    // ======= ======= ======= ======= =======
+
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
     namePersonaReg: any = localStorage.getItem('userFullName');
-    @Output() selectionChange = new EventEmitter<any>();
-    onChildSelectionChange(selectedId: any) {
+    // ======= ======= ======= ======= =======
+    onChildSelectionChange(selectedId: string) {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
-      this.proyectoService.seleccionarProyecto(this.idProyecto);
-      this.getRiesgos();
-    }
 
+      this.getRiesgos();
+      this.initRiesgosModel();
+      this.riesgosSelected = null;
+
+    }
+    // ======= ======= ======= ======= =======
     headerDataNro01: any = 0;
     headerDataNro02: any = 0;
     headerDataNro03: any = 0;
@@ -51,16 +54,14 @@ export class RiesgosComponent implements OnInit {
 
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
     modalTitle: any = "";
-    modalAction: string = '';
-    
+    modalAction: any = '';
 
-    id_proy_elemen_padre: any = "";
-    idp_categoria: any = "";
     id_riesgo: any = "";
     id_proyecto: any = "";
+    id_proy_elemen_padre: any = "";
+    idp_categoria: any = "";
     codigo: any = "";
-    tituloRiesgo: any = "";
-    fechaIdentificacion: any = "";
+    fecha: any = "";
     riesgo: any = "";
     descripcion: any = "";
     vinculados: any = "";
@@ -69,20 +70,17 @@ export class RiesgosComponent implements OnInit {
     probabilidad: any = "";
     nivel: any = "";
     idp_ocurrencia: any = "";
-    medidas: any = "";
+    idp_medidas: any = "";
     idp_efectividad: any = "";
     comentarios: any = "";
     fecha_hora_reg: any = "";
-    id_persona_reg: any = 0;
+    id_persona_reg: any = "";
 
     sigla: any = "";
     color: any = "";
-    // ======= ======= ======= ======= =======
-    // ======= ======= VARIABLES SECTION ======= =======
+    // ======= ======= LLAMADOS A SELECCIONADORES ======= =======
     componentes: any[] = [];
     riesgoCategoria: any[] = [];
-    riesgoEfectividad: any[] = [];
-    riegosVinvulados: any[] = [];
     riegosIdentificacion: any[] = [];
     riesgoImpacto: any[] = [];
     riesgoProbabilidad: any[] = [];
@@ -90,19 +88,137 @@ export class RiesgosComponent implements OnInit {
     riegosOcurrencia: any[] = [];
     riesgoAcciones: any[] = [];
     riesgoMedidas: any[] = [];
+      //LLAMADO PARA TABLA
+      riesgoTomarMedidas: any[] = [];
+      riesgoEfectividad: any[] = [];
 
+    // ======= ======= ======= ======= =======
+    // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
+    valComponente: any = true;
+    ValidateComponente(){
+      this.valComponente = true;
+      if(!this.id_proy_elemen_padre){
+        this.valComponente = false;
+      }
+    }
+    valCategoria: any = true;
+    ValidateCategoria(){
+      this.valComponente = true;
+      if(!this.idp_categoria){
+        this.valComponente = false;
+      }
+    }
+    valCodigo: any = true;
+    ValidateCodigo(){
+      this.valCodigo = true;
+      if((!this.codigo)||(this.codigo.length >= 10)){
+        this.valCodigo = false;
+      }
+    }
+    valFecha: any = true;
+    ValidateFecha(){
+      this.valFecha = true;
+      if(!this.fecha){
+        this.valFecha = false;
+      }
+    }
+    valRiesgo: any = true;
+    ValidateRiesgo(){
+      this.valRiesgo = true;
+      if((!this.riesgo)||(this.riesgo.length >= 100)){
+        this.valRiesgo = false;
+      }
+    }
+    valDescripcion: any = true;
+    ValidateDescripcion(){
+      this.valDescripcion = true;
+      if((!this.descripcion)||(this.descripcion.length >= 225)){
+        this.valDescripcion = false;
+      }
+    }
+    valVinculados: any = true;
+    ValidateVinculados(){
+      this.valVinculados = true;
+      if((!this.vinculados)||(this.vinculados.length >= 100)){
+        this.valVinculados = false;
+      }
+    }
+    valIdentificacion: any = true;
+    ValidateIdentificacion(){
+      this.valIdentificacion = true;
+      if(!this.idp_identificacion){
+        this.valIdentificacion = false;
+      }
+    }
+    valImpacto: any = true;
+    ValidateImpacto(){
+      this.valImpacto = true;
+      if((!this.impacto)||(this.impacto.length >= 1)){
+        this.valImpacto = false;
+      }
+    }
+    valProbabilidad: any = true;
+    ValidateProbabilidad(){
+      this.valProbabilidad = true;
+      if((!this.probabilidad)||(this.probabilidad.length >= 1)){
+        this.valProbabilidad = false;
+      }
+    }
+    valNivel: any = true;
+    ValidateNivel(){
+      this.valNivel = true;
+      if((!this.nivel)||(this.nivel.length >= 1)){
+        this.valNivel = false;
+      }
+    }
+    valOcurrencia: any = true;
+    ValidateOcurrencia(){
+      this.valOcurrencia = true;
+      if(!this.idp_ocurrencia){
+        this.valOcurrencia = false;
+      }
+    }
+    valMedidas: any = true;
+    ValidateMedidas(){
+      this.valMedidas = true;
+      if(!this.idp_medidas){
+        this.valMedidas = false;
+      }
+    }
+    valEfectividad: any = true;
+    ValidateEfectividad(){
+      this.valEfectividad = true;
+      if(!this.idp_efectividad){
+        this.valEfectividad = false;
+      }
+    }
+    valComentarios: any = true;
+    ValidateComentarios(){
+      this.valComentarios = true;
+      if((!this.comentarios)||(this.comentarios.length >= 225)){
+        this.valComentarios = false;
+      }
+    }
 
   // ======= ======= INIT VIEW FUN ======= =======
    ngOnInit(): void {
     this.getParametricas();
     this.getRiesgos();
-    this.countHeaderData();
     }
   // ======= ======= ======= ======= =======
+  jsonToString(json: object): string {
+    return JSON.stringify(json);
+  }
+
+  stringToJson(jsonString: string): object {
+    return JSON.parse(jsonString);
+  }
+
   getDescripcionSubtipo(idRegistro: any, paramList: any): string{
     const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
     return subtipo ? subtipo.descripcion_subtipo : 'Null';
   }
+
   getCurrentDateTime(): string {
     const date: Date = new Date();
     
@@ -120,146 +236,118 @@ export class RiesgosComponent implements OnInit {
   // ======= ======= GET PARAMETRICAS ======= =======
   getParametricas(){
     // ======= GET COMPONENTES =======
-    this.servRiesgos.getMetoElementos().subscribe(
-      (data) => {
-        this.componentes = data[0].dato;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  // ======= GET CATEGORIA =======
-  // this.servicios.getParametricaByIdTipo(14).subscribe(
-  //   (data) => {
-  //     this.riesgoCategoria = data[0].dato;
-  //   },
-  //   (error) => {
-  //     console.error(error);
-  //   }
-  // );
-  this.servicios.getParametricaByIdTipo(14).subscribe(
-    (data) => {
-      console.log('Datos de categoría:', data);
-      this.riesgoCategoria = Array.isArray(data[0]?.dato) ? data[0]?.dato : [];
-    },
-    (error) => {
-      console.error('Error al cargar categorías:', error);
-    }
-  );
+      this.servApredizaje.getMetoElementos(this.idProyecto).subscribe(
+          (data) => {
+            this.componentes = data[0].dato;
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+
+    // ======= GET CATEGORÍAS =======  
+      this.servicios.getParametricaByIdTipo(14).subscribe(
+        (data) => {
+          this.riesgoCategoria = Array.isArray(data[0]?.dato) ? data[0]?.dato : [];
+        },
+        (error) => {
+          console.error('Error al cargar categorías:', error);
+        }
+      );
   
-  // ======= ======= =======
-    // ======= GET EECTIVIDAD =======
-    this.servicios.getParametricaByIdTipo(17).subscribe(
-      (data) => {
-        this.riesgoEfectividad = data[0].dato;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  // ======= GET IMPACTO =======
-  this.servRiesgos.getMetoElementos().subscribe(
-    (data) => {
-      this.riesgoImpacto = data[0].dato;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-  // ======= ======= =======
-  // ======= GET PROBABILIDAD =======
-  this.servRiesgos.getMetoElementos().subscribe(
-    (data) => {
-      this.riesgoProbabilidad = data[0].dato;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-  // ======= ======= =======
-  // ======= GET NIVEL DE RIESGOS =======
-  this.servRiesgos.getMetoElementos().subscribe(
-    (data) => {
-      this.riesgoNivel = data[0].dato;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-   // ======= GET Individuales/Instituciones Vinculados =======
-   this.servRiesgos.getMetoElementos().subscribe(
-    (data) => {
-      this.riegosVinvulados = data[0].dato;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-   // ======= GET Identificación del Riesgo =======
-   this.servicios.getParametricaByIdTipo(15).subscribe(
-    (data) => {
-      this. riegosIdentificacion = data[0].dato;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-   // ======= GET Ocurrencia =======
-   this.servicios.getParametricaByIdTipo(16).subscribe(
-    (data) => {
-      this. riegosOcurrencia = data[0].dato;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-  // ======= GET Necesidad =======
-  this.servicios.getParametricaByIdTipo(19).subscribe(
-    (data) => {
-      this. riesgoAcciones = data[0].dato;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-  // ======= GET Efectividad =======
-  this.servicios.getParametricaByIdTipo(17).subscribe(
-    (data) => {
-      this. riesgoMedidas = data[0].dato;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
+    // ======= GET Identificación del Riesgo =======
+      this.servicios.getParametricaByIdTipo(15).subscribe(
+        (data) => {
+          this. riegosIdentificacion = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    
+    // ======= GET Ocurrencia durante la Gestión =======
+      this.servicios.getParametricaByIdTipo(16).subscribe(
+        (data) => {
+          this. riegosOcurrencia = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    // ======= GET Necesidad de Tomar Acciones =======
+      this.servicios.getParametricaByIdTipo(19).subscribe(
+        (data) => {
+          this. riesgoAcciones = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    // ======= GET Efectividad de las Medidas =======
+      this.servicios.getParametricaByIdTipo(17).subscribe(
+        (data) => {
+          this. riesgoMedidas = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
+    //Llamado para tabla
+    // ======= GET Tomar Medidas =======
+      this.servicios.getParametricaByIdTipo(19).subscribe(
+        (data) => {
+          this.riesgoTomarMedidas = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= GET EECTIVIDAD =======
+      this.servicios.getParametricaByIdTipo(17).subscribe(
+        (data) => {
+          this.riesgoEfectividad = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
   }
 
   // ======= ======= OPEN MODALS FUN ======= =======
+  private modalRef: NgbModalRef | null = null;
   openModal(content: TemplateRef<any>) {
-    this.modalService.open(content, { size: 'xl' });
+    this.modalRef = this.modalService.open(content, { size: 'xl' });
   }
 
+  closeModal() {
+    if (this.modalRef) {
+      this.modalRef.close(); 
+      this.modalRef = null;
+    }
+  }
   // ======= ======= GET MODAL TITLE FUN ======= =======
   getModalTitle(modalAction: any) {
       this.modalTitle = (modalAction == "add") ? ("Añadir Riesgo") : this.modalTitle;
       this.modalTitle = (modalAction == "edit") ? ("Editar Riesgo") : this.modalTitle;
       return this.modalTitle;
   }
-
   // ======= ======= RIESGOS TABLE PAGINATION ======= =======
   get riesgosTable() {
     const start = (this.mainPage - 1) * this.mainPageSize;
       return this.riesgos.slice(start, start + this.mainPageSize);
   }
-
+  // ======= ======= ======= ======= =======
+  riesgosSelected: any = null;
   // ======= ======= CHECKBOX CHANGED ======= =======
   checkboxChanged(riesgoSel: any) {
     this.riesgos.forEach(riesgo => {
         if(riesgoSel.id_riesgo == riesgo.id_riesgo) {
             if(riesgoSel.selected) {
-                this.riesgoSelected = riesgoSel;
+                this.riesgosSelected = riesgoSel;
             } 
             else {
-                this.riesgoSelected = null;
+                this.riesgosSelected = null;
             }
         } 
         else {
@@ -267,166 +355,194 @@ export class RiesgosComponent implements OnInit {
         }
     });
   }
+  
 
-  // cargar riesgos por proyecto
-onSubmit() {
-  const nuevoRiesgo = {
-    id_riesgo: this.id_riesgo || null,
-    id_proyecto: this.id_proyecto || null,
-    id_proy_elemen_padre: this.id_proy_elemen_padre || null,
-    idp_categoria: this.idp_categoria || null,
-    codigo: this.codigo || '',
-    fecha: this.fechaIdentificacion || null,
-    riesgo:  this.tituloRiesgo || '',
-    descripcion: this.descripcion || '',
-    vinculados: this.vinculados || '',
-    idp_identificacion: this.idp_identificacion || null,
-    impacto: this.impacto || '',
-    probabilidad: this.probabilidad || '',
-    nivel: this.nivel || '',
-    idp_ocurrencia: this.idp_ocurrencia || null,
-    medidas: this.medidas || '',
-    idp_efectividad: this.idp_efectividad || null,
-    comentarios: this.comentarios || '',
-    id_persona_reg: this.id_persona_reg || null,
-    fecha_hora_reg: this.fecha_hora_reg ||  this.getCurrentDateTime(),
-  };
-
-  if (this.modalAction === 'add') {
-    this.servRiesgos.addRiesgo(nuevoRiesgo).subscribe(
-      (response) => {
-        console.log('Riesgo añadido:', response);
-        this.getRiesgos(); // Recargar la tabla
-      },
-      (error) => {
-        console.error('Error al añadir riesgo:', error);
-      }
-    );
-  } else if (this.modalAction === 'edit') {
-    this.servRiesgos.editRiesgo(nuevoRiesgo).subscribe(
-      (response) => {
-        console.log('Riesgo actualizado:', response);
-        this.getRiesgos(); // Actualizar la tabla
-      },
-      (error) => {
-        console.error('Error al editar riesgo:', error);
-      }
-    );
+  // ======= ======= ON SELECTION CHANGE Color  Componente======= =======
+  onSelectionChange(){
+    const selectedComponente = this.componentes.find(comp => comp.id_meto_elemento == this.id_proy_elemen_padre);
+    if (selectedComponente) {
+        this.color = selectedComponente.color;
+        this.sigla = selectedComponente.sigla;
+    }
+    this.ValidateComponente();
   }
-}
 
-  // ======= ======= INIT RIESGO MODEL ======= =======
  // ======= ======= INIT RIESGO MODEL ======= =======
- initRiesgoModel() {
-  this.modalTitle = "";
+    initRiesgosModel() {
+      this.modalTitle = "";
 
-  this.id_riesgo = "";
-   this.fecha_hora_reg = this.getCurrentDateTime();
-  // this.fecha_hora_reg = "";
-  this.id_persona_reg = "";
-  this.id_proy_elemen_padre = null;
-  this.idp_categoria = null;
-  this.id_proyecto = null;
-  this.fechaIdentificacion = null;
-  this.riesgo = "";
-  this.tituloRiesgo = "";
-  this.descripcion = "";
-  this.vinculados = "";
-  this.idp_identificacion = "";
-  this.idp_ocurrencia = null;
-  this.medidas = "";
-  this.idp_efectividad = null;
-  this.comentarios = "";
+      this.id_riesgo = 0;
+      this.id_proyecto = "";
+      this.id_proy_elemen_padre = "";
+      this.idp_categoria = "";
+      this.codigo = "";
+      this.fecha = null;
+      this.riesgo = "";
+      this.descripcion = "";
+      this.vinculados = "";
+      this.idp_identificacion = "";
+      this.impacto = "";
+      this.probabilidad = "";
+      this.nivel = "";
+      this.idp_ocurrencia = "";
+      this.idp_medidas = "";
+      this.idp_efectividad = "";
+      this.comentarios = "";
+      this.fecha_hora_reg = "";
+      this.id_persona_reg = this.namePersonaReg;
 
-}
+      this.sigla = null;
+      this.color = null;
+
+    }
+
+    // ======= ======= GET RIESGOS ======= =======
+    getRiesgos(){
+      this.servRiesgos.getRiesgosByIdProy(this.idProyecto).subscribe(
+        (data) => {
+          this.riesgos = (data[0].dato)?(data[0].dato):([]);
+          this.totalLength = this.riesgos.length;
+          this.countHeaderData();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+    // ======= ======= ======= ======= =======
 
    // ======= ======= INIT ADD RIESGO ======= =======
-   initAddRiesgo(modalScope: TemplateRef<any>) {
-    this.initRiesgoModel(); 
+    initAddRiesgo(modalScope: TemplateRef<any>) {
+      this.initRiesgosModel();
 
-    this.id_persona_reg = this.namePersonaReg;
+      this.fecha_hora_reg = this.getCurrentDateTime();
 
-    this.modalAction = "add"; 
-    this.modalTitle = this.getModalTitle("add");
-  
-    // Valores predeterminados
-    this.id_proyecto = this.idProyecto || null;
-    this.fecha_hora_reg = this.getCurrentDateTime();
-    this.openModal(modalScope); 
-  }
+      this.modalAction = "add"; 
+      this.modalTitle = this.getModalTitle("add");
+    
+      this.openModal(modalScope); 
+    }
+
+    // ======= ======= ADD RIESGOS ======= =======
+    addRiesgos(){
+      const objRiesgo = {
+        p_id_proy_aprende: 0,
+        p_id_proyecto: this.idProyecto,
+        p_id_proy_elemen_padre:this.id_proy_elemen_padre,
+        p_idp_categoria: this.idp_categoria,
+        p_codigo: this.codigo,
+        p_fecha: this.fecha,
+        p_riesgo: this.riesgo,
+        p_descripcion: this.descripcion,
+        p_vinculados: this.vinculados,
+        p_idp_identificacion: this.idp_identificacion,
+        p_impacto: this.impacto,
+        p_probabilidad: this.probabilidad,
+        p_nivel: this.nivel,
+        p_idp_ocurrencia: this.idp_ocurrencia,
+        p_idp_medidas: this.idp_medidas,
+        p_idp_efectividad: this.idp_efectividad,
+        p_comentarios: this.comentarios,
+        p_fecha_hora_reg: null,
+        p_id_persona_reg: this.idPersonaReg        
+      };
+
+      this.servRiesgos.addRiesgo(objRiesgo).subscribe(
+        (data) => {
+          this.getRiesgos();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
   
   // ======= ======= INIT EDIT RIESGO ======= =======
   initEditRiesgo(modalScope: TemplateRef<any>) {
-    if (!this.riesgoSelected) {
-      console.error('No se ha seleccionado ningún riesgo para editar');
-      return;
-    }
-    this.initRiesgoModel(); 
+    this.initRiesgosModel(); 
     this.modalAction = "edit";
     this.modalTitle = this.getModalTitle("edit");
   
-    // Asignar valores del riesgo seleccionado al formulario
-    this.id_riesgo = this.riesgoSelected.id_riesgo;
-    this.id_proyecto = this.riesgoSelected.id_proyecto;
-    this.id_proy_elemen_padre = this.riesgoSelected.id_proy_elemen_padre;
-    this.idp_categoria = this.riesgoSelected.idp_categoria;
-    this.codigo = this.riesgoSelected.codigo;
-    this.fechaIdentificacion = this.riesgoSelected.fechaIdentificacion;
-    this.riesgo = this.riesgoSelected.riesgo;
-    this.descripcion = this.riesgoSelected.descripcion;
-    this.vinculados = this.riesgoSelected.vinculados;
-    this.idp_identificacion = this.riesgoSelected.idp_identificacion;
-    this.impacto = this.riesgoSelected.impacto;
-    this.probabilidad = this.riesgoSelected.probabilidad;
-    this.nivel = this.riesgoSelected.nivel;
-    this.idp_ocurrencia = this.riesgoSelected.idp_ocurrencia;
-    this.medidas = this.riesgoSelected.medidas;
-    this.idp_efectividad = this.riesgoSelected.idp_efectividad;
-    this.comentarios = this.riesgoSelected.comentarios;
+    this.id_riesgo = this.riesgosSelected.id_riesgo;
+    this.id_proyecto = this.riesgosSelected.id_proyecto;
+    this.id_proy_elemen_padre = this.riesgosSelected.id_proy_elemen_padre;
+    this.idp_categoria = this.riesgosSelected.idp_categoria;
+    this.codigo = this.riesgosSelected.codigo;
+    this.fecha = this.riesgosSelected.fecha;
+    this.riesgo = this.riesgosSelected.riesgo;
+    this.descripcion = this.riesgosSelected.descripcion;
+    this.vinculados = this.riesgosSelected.vinculados;
+    this.idp_identificacion = this.riesgosSelected.idp_identificacion;
+    this.impacto = this.riesgosSelected.impacto;
+    this.probabilidad = this.riesgosSelected.probabilidad;
+    this.nivel = this.riesgosSelected.nivel;
+    this.idp_ocurrencia = this.riesgosSelected.idp_ocurrencia;
+    this.idp_medidas = this.riesgosSelected.idp_medidas;
+    this.idp_efectividad = this.riesgosSelected.idp_efectividad;
+    this.comentarios = this.riesgosSelected.comentarios;
+    this.fecha_hora_reg = this.riesgosSelected.fecha_hora_reg;
+    this.id_persona_reg = this.riesgosSelected.id_persona_reg;
+   
+
+    this.sigla = this.riesgosSelected.sigla;
+    this.color = this.riesgosSelected.color;
   
-    // Corregir la asignación de tituloRiesgo
-    this.tituloRiesgo = this.riesgoSelected.riesgo || '';
     this.openModal(modalScope); 
+  }
+  // ======= ======= EDIT RIESGO ======= =======
+  editRiesgos(){
+    const objRiesgo = {
+      p_id_riesgo: this.id_riesgo,
+      p_id_proyecto: this.id_proyecto,
+      p_id_proy_elemen_padre: this.id_proy_elemen_padre,
+      p_idp_categoria: this.idp_categoria,
+      p_codigo: this.codigo,
+      p_fecha: this.fecha,
+      p_riesgo: this.riesgo,
+      p_descripcion: this.descripcion,
+      p_vinculados: this.vinculados,
+      p_idp_identificacion: this.idp_identificacion,
+      p_impacto: this.impacto,
+      p_probabilidad: this.probabilidad,
+      p_nivel: this.nivel,
+      p_idp_ocurrencia: this.idp_ocurrencia,
+      p_idp_medidas: this.idp_medidas,
+      p_idp_efectividad: this.idp_efectividad,
+      p_comentarios: this.comentarios,
+      p_fecha_hora_reg: null,
+      p_id_persona_reg: this.id_persona_reg        
+    }
+
+    this.servRiesgos.editRiesgo(objRiesgo).subscribe(
+      (data) => {
+        this.getRiesgos();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 
   // ======= ======= INIT DELETE RIESGO ======= =======
-  initDeleteRiesgo(): void {
-    if (!this.riesgoSelected) {
-        console.error('No se ha seleccionado ningún riesgo para eliminar');
-        return;
-    }
+  initDeleteRiesgo(modalScope: TemplateRef<any>) {
+    this.initRiesgosModel();
 
-    const confirmDelete = confirm(`¿Estás seguro de que deseas eliminar el riesgo con ID ${this.riesgoSelected.id_riesgo}?`);
+    this.id_riesgo = this.riesgosSelected.id_riesgo;
 
-    if (confirmDelete) {
-        this.servRiesgos.deleteRiesgo(this.riesgoSelected.id_riesgo).subscribe(
-            (response) => {
-                console.log('Riesgo eliminado:', response);
-                this.getRiesgos(); // Actualiza la tabla después de eliminar
-                this.riesgoSelected = null; // Limpia la selección
-            },
-            (error) => {
-                console.error('Error al eliminar el riesgo:', error);
-            }
-        );
-    }
+    this.openModal(modalScope);
+  }
+  // ======= ======= DELETE RIESGO ======= =======
+  deleteRiesgos(){
+    this.servRiesgos.deleteRiesgo(this.riesgosSelected.id_riesgo).subscribe(
+      (data) => {
+        this.getRiesgos();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 
-  getRiesgos(): void {
-    this.servRiesgos.getRiesgos()
-        .subscribe(
-            (data) => {
-                console.log('Datos recibidos:', data);
-             
-                this.riesgos = Array.isArray(data[0]?.dato) ? data[0].dato : [];
-                this.totalLength = this.riesgos.length; // Actualiza el total de registros
-                this.countHeaderData(); // Recalcula las estadísticas
-            },
-            (error) => {
-                console.error(error);
-            }
-        );
-  }
       mapNivel(value: any): string {
         switch (value) {
           case '1':
@@ -451,23 +567,17 @@ onSubmit() {
     this.riesgos.forEach((riesgo) => {
         const nivel = Number(riesgo.nivel); 
         if (nivel === 3) {
-            this.headerDataNro03 += 1;
+            this.headerDataNro01 += 1;
         } else if (nivel === 2) {
             this.headerDataNro02 += 1;
         } else if (nivel === 1) {
-            this.headerDataNro01 += 1;
-        }
-        if (riesgo.medidas === 'Si') {
+            this.headerDataNro03 += 1;
+        } 
+        if (riesgo.idp_medidas === '1') {
             this.headerDataNro04 += 1;
         }
     });
 
-    console.log('Contadores:', {
-        alto: this.headerDataNro03,
-        medio: this.headerDataNro02,
-        bajo: this.headerDataNro01,
-        medidas: this.headerDataNro04,
-    });
   }
 
     getRiesgosAlto(): number {
@@ -484,6 +594,54 @@ onSubmit() {
 
     getRiesgosMedidas(): number {
       return this.headerDataNro04;
+    }
+
+    onSubmit(): void{
+      // ======= VALIDATION SECTION =======
+      let valForm = false;
+
+      this.ValidateComponente();
+      this.ValidateCategoria();
+      this.ValidateCodigo();
+      this.ValidateFecha();
+      this.ValidateRiesgo();
+      this.ValidateDescripcion();
+      this.ValidateVinculados();
+      this.ValidateIdentificacion();
+      this.ValidateImpacto();
+      this.ValidateProbabilidad();
+      this.ValidateNivel();
+      this.ValidateOcurrencia();
+      this.ValidateMedidas();
+      this.ValidateEfectividad();
+      this.ValidateComentarios();
+
+      valForm = 
+        this.valComponente;
+        this.valCategoria;
+        this.valCodigo;
+        this.valFecha;
+        this.valRiesgo;
+        this.valDescripcion;
+        this.valVinculados;
+        this.valIdentificacion;
+        this.valImpacto;
+        this.valProbabilidad;
+        this.valNivel;
+        this.valOcurrencia;
+        this.valMedidas;
+        this.valEfectividad;
+        this.valComentarios;
+
+      // ======= ACTION SECTION =======
+      if(valForm){
+        if (this.modalAction === 'add') {
+          this.addRiesgos();
+        } else {
+          this.editRiesgos();
+        } 
+        this.closeModal();
+      }
     }
 
 }
