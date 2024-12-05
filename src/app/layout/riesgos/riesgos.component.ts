@@ -18,17 +18,16 @@ export class RiesgosComponent implements OnInit {
   // Variables
   riesgos: any[] = [];
   
-
     mainPage = 1;
     mainPageSize = 10;
     totalLength = 0;
 
   constructor(
     private modalService: NgbModal,
-    private cdr: ChangeDetectorRef,
     private servRiesgos: servRiesgos,
     private servicios: servicios,
-    private servApredizaje: servAprendizaje
+    private servApredizaje: servAprendizaje,
+    private cdr: ChangeDetectorRef
     ) {}
 
     // ======= ======= HEADER SECTION ======= =======
@@ -71,6 +70,7 @@ export class RiesgosComponent implements OnInit {
     nivel: any = "";
     idp_ocurrencia: any = "";
     idp_medidas: any = "";
+    medidas: any = "";
     idp_efectividad: any = "";
     comentarios: any = "";
     fecha_hora_reg: any = "";
@@ -108,13 +108,6 @@ export class RiesgosComponent implements OnInit {
         this.valComponente = false;
       }
     }
-    valCodigo: any = true;
-    ValidateCodigo(){
-      this.valCodigo = true;
-      if((!this.codigo)||(this.codigo.length >= 10)){
-        this.valCodigo = false;
-      }
-    }
     valFecha: any = true;
     ValidateFecha(){
       this.valFecha = true;
@@ -150,11 +143,12 @@ export class RiesgosComponent implements OnInit {
         this.valIdentificacion = false;
       }
     }
-    valImpacto: any = true;
+    /*valImpacto: any = true;
     ValidateImpacto(){
       this.valImpacto = true;
       if((!this.impacto)||(this.impacto.length >= 1)){
         this.valImpacto = false;
+        console.log(this.impacto);
       }
     }
     valProbabilidad: any = true;
@@ -162,6 +156,7 @@ export class RiesgosComponent implements OnInit {
       this.valProbabilidad = true;
       if((!this.probabilidad)||(this.probabilidad.length >= 1)){
         this.valProbabilidad = false;
+        console.log(this.probabilidad);
       }
     }
     valNivel: any = true;
@@ -169,8 +164,9 @@ export class RiesgosComponent implements OnInit {
       this.valNivel = true;
       if((!this.nivel)||(this.nivel.length >= 1)){
         this.valNivel = false;
+        console.log(this.nivel);
       }
-    }
+    }*/
     valOcurrencia: any = true;
     ValidateOcurrencia(){
       this.valOcurrencia = true;
@@ -183,6 +179,13 @@ export class RiesgosComponent implements OnInit {
       this.valMedidas = true;
       if(!this.idp_medidas){
         this.valMedidas = false;
+      }
+    }
+    valMedida: any = true;
+    ValidateMedida(){
+      this.valMedida = true;
+      if(!this.medidas){
+        this.valMedida = false;
       }
     }
     valEfectividad: any = true;
@@ -248,10 +251,10 @@ export class RiesgosComponent implements OnInit {
     // ======= GET CATEGORÍAS =======  
       this.servicios.getParametricaByIdTipo(14).subscribe(
         (data) => {
-          this.riesgoCategoria = Array.isArray(data[0]?.dato) ? data[0]?.dato : [];
+          this.riesgoCategoria = data[0].dato;
         },
         (error) => {
-          console.error('Error al cargar categorías:', error);
+          console.error(error);
         }
       );
   
@@ -319,7 +322,6 @@ export class RiesgosComponent implements OnInit {
   openModal(content: TemplateRef<any>) {
     this.modalRef = this.modalService.open(content, { size: 'xl' });
   }
-
   closeModal() {
     if (this.modalRef) {
       this.modalRef.close(); 
@@ -356,7 +358,6 @@ export class RiesgosComponent implements OnInit {
     });
   }
   
-
   // ======= ======= ON SELECTION CHANGE Color  Componente======= =======
   onSelectionChange(){
     const selectedComponente = this.componentes.find(comp => comp.id_meto_elemento == this.id_proy_elemen_padre);
@@ -375,19 +376,20 @@ export class RiesgosComponent implements OnInit {
       this.id_proyecto = "";
       this.id_proy_elemen_padre = "";
       this.idp_categoria = "";
-      this.codigo = "";
+      this.codigo = null;
       this.fecha = null;
-      this.riesgo = "";
-      this.descripcion = "";
-      this.vinculados = "";
+      this.riesgo = null;
+      this.descripcion = null;
+      this.vinculados = null;
       this.idp_identificacion = "";
-      this.impacto = "";
-      this.probabilidad = "";
-      this.nivel = "";
+      this.impacto = null;
+      this.probabilidad = null;
+      this.nivel = null;
       this.idp_ocurrencia = "";
       this.idp_medidas = "";
+      this.medidas = null;
       this.idp_efectividad = "";
-      this.comentarios = "";
+      this.comentarios = null;
       this.fecha_hora_reg = "";
       this.id_persona_reg = this.namePersonaReg;
 
@@ -441,6 +443,7 @@ export class RiesgosComponent implements OnInit {
         p_nivel: this.nivel,
         p_idp_ocurrencia: this.idp_ocurrencia,
         p_idp_medidas: this.idp_medidas,
+        p_medidas: this.medidas,
         p_idp_efectividad: this.idp_efectividad,
         p_comentarios: this.comentarios,
         p_fecha_hora_reg: null,
@@ -478,6 +481,7 @@ export class RiesgosComponent implements OnInit {
     this.nivel = this.riesgosSelected.nivel;
     this.idp_ocurrencia = this.riesgosSelected.idp_ocurrencia;
     this.idp_medidas = this.riesgosSelected.idp_medidas;
+    this.medidas = this.riesgosSelected.medidas;
     this.idp_efectividad = this.riesgosSelected.idp_efectividad;
     this.comentarios = this.riesgosSelected.comentarios;
     this.fecha_hora_reg = this.riesgosSelected.fecha_hora_reg;
@@ -507,6 +511,7 @@ export class RiesgosComponent implements OnInit {
       p_nivel: this.nivel,
       p_idp_ocurrencia: this.idp_ocurrencia,
       p_idp_medidas: this.idp_medidas,
+      p_medidas: this.medidas,
       p_idp_efectividad: this.idp_efectividad,
       p_comentarios: this.comentarios,
       p_fecha_hora_reg: null,
@@ -535,6 +540,7 @@ export class RiesgosComponent implements OnInit {
   deleteRiesgos(){
     this.servRiesgos.deleteRiesgo(this.riesgosSelected.id_riesgo).subscribe(
       (data) => {
+        this.closeModal();
         this.getRiesgos();
       },
       (error) => {
@@ -573,7 +579,7 @@ export class RiesgosComponent implements OnInit {
         } else if (nivel === 1) {
             this.headerDataNro03 += 1;
         } 
-        if (riesgo.idp_medidas === '1') {
+        if (riesgo.idp_medidas === 1) {
             this.headerDataNro04 += 1;
         }
     });
@@ -602,35 +608,35 @@ export class RiesgosComponent implements OnInit {
 
       this.ValidateComponente();
       this.ValidateCategoria();
-      this.ValidateCodigo();
       this.ValidateFecha();
       this.ValidateRiesgo();
       this.ValidateDescripcion();
       this.ValidateVinculados();
       this.ValidateIdentificacion();
-      this.ValidateImpacto();
+      /*this.ValidateImpacto();
       this.ValidateProbabilidad();
-      this.ValidateNivel();
+      this.ValidateNivel();*/
       this.ValidateOcurrencia();
       this.ValidateMedidas();
+      this.ValidateMedida();
       this.ValidateEfectividad();
       this.ValidateComentarios();
 
       valForm = 
-        this.valComponente;
-        this.valCategoria;
-        this.valCodigo;
-        this.valFecha;
-        this.valRiesgo;
-        this.valDescripcion;
-        this.valVinculados;
-        this.valIdentificacion;
-        this.valImpacto;
-        this.valProbabilidad;
-        this.valNivel;
-        this.valOcurrencia;
-        this.valMedidas;
-        this.valEfectividad;
+        this.valComponente &&
+        this.valCategoria &&
+        this.valFecha &&
+        this.valRiesgo &&
+        this.valDescripcion &&
+        this.valVinculados &&
+        this.valIdentificacion &&
+        /*this.valImpacto &&
+        this.valProbabilidad &&
+        this.valNivel &&*/
+        this.valOcurrencia &&
+        this.valMedidas &&
+        this.valMedida &&
+        this.valEfectividad &&
         this.valComentarios;
 
       // ======= ACTION SECTION =======
