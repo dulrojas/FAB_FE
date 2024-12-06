@@ -103,9 +103,9 @@ export class RiesgosComponent implements OnInit {
     }
     valCategoria: any = true;
     ValidateCategoria(){
-      this.valComponente = true;
+      this.valCategoria = true;
       if(!this.idp_categoria){
-        this.valComponente = false;
+        this.valCategoria = false;
       }
     }
     valFecha: any = true;
@@ -651,4 +651,3 @@ export class RiesgosComponent implements OnInit {
     }
 
 }
-

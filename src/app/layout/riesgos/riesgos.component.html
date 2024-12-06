@@ -355,7 +355,17 @@
                   <span class="custom-alert-message" *ngIf="!valComentarios">Debe ingresar Comentarios Adicionales</span>
                 </div>
 
-                 
+                <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+                <div class="modal-footer">
+                  <div class="d-flex justify-content-center" style="width: 100%;">
+                    <button type="button" class="btn btn-bg-3" (click)="closeModal('Cerrar')">
+                      <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+                    </button>
+                    <button type="button" class="btn btn-bg-1" [disabled]="riesgosForm.invalid" (click)="onSubmit()">
+                      <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
             </div>
@@ -363,18 +373,6 @@
       </div>
     </form>
   </div>
-  <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-  <div class="modal-footer">
-    <div class="d-flex justify-content-center" style="width: 100%;">
-      <button type="button" class="btn btn-bg-3" (click)="closeModal('Cerrar')">
-        <i class="fa fa-times" aria-hidden="true"></i> Cerrar
-      </button>
-      <button type="button" class="btn btn-bg-1" [disabled]="riesgosForm.invalid" (click)="onSubmit()">
-        <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
-      </button>
-    </div>
-  </div>
-
 </ng-template>
 
 <!-- ======= ======= ======= DELETE RIESGOS ======= ======= ======= -->
