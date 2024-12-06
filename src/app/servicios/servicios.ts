@@ -63,4 +63,14 @@ export class servicios{
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= UPLOAD FILE ======= ======= =======
+  uploadFile(formData: FormData): Observable<any> {
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+    return this.http.post<any>(this.URL, formData, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
 }

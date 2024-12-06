@@ -31,6 +31,7 @@ export class AprendizajesComponent implements OnInit {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
 
+      this.getParametricas();
       this.getAprendizajes();
       this.initAprendizajesModel();
       this.aprendizajesSelected = null;
@@ -199,13 +200,19 @@ export class AprendizajesComponent implements OnInit {
       // ======= GET PREGUNTAS =======
       this.servApredizaje.getPreguntas(this.idProyecto).subscribe(
         (data) => {
-          this.preguntasObj1 = data[0].dato[0];
-          this.preguntasObj1.preguntas = JSON.parse(this.preguntasObj1.preguntas);
-          this.preguntas1 = this.preguntasObj1.preguntas.Positivo;
-          this.preguntasObj2 = data[0].dato[1];
-          this.preguntasObj2.preguntas = JSON.parse(this.preguntasObj2.preguntas);
-          this.preguntas2 = this.preguntasObj2.preguntas.Negativo;
-          this.cdr.detectChanges();
+          if(data[0].dato){
+            this.preguntasObj1 = data[0].dato[0];
+            this.preguntasObj1.preguntas = JSON.parse(this.preguntasObj1.preguntas);
+            this.preguntas1 = this.preguntasObj1.preguntas.Positivo;
+            this.preguntasObj2 = data[0].dato[1];
+            this.preguntasObj2.preguntas = JSON.parse(this.preguntasObj2.preguntas);
+            this.preguntas2 = this.preguntasObj2.preguntas.Negativo;
+            this.cdr.detectChanges();
+          }
+          else{
+            this.preguntas1 = null;
+            this.preguntas2 = null;
+          }
         },
         (error) => {
           console.error(error);
@@ -277,14 +284,25 @@ export class AprendizajesComponent implements OnInit {
       this.idp_aprendizaje_area = "";
       this.idp_aprendizaje_tipo = "";
       this.id_preguntas_1 = this.preguntasObj1.id_preguntas;
+      this.respuestas1 = [];
       this.id_preguntas_2 = this.preguntasObj2.id_preguntas; 
+      this.respuestas2 = [];
       this.aprendizaje = "";
       this.fecha = null;
       this.problema = null;
-      this.accion_aprendizaje = null;
+      this.accion = null;
       
       this.sigla = null;
       this.color = null;
+
+      this.valComponente = true;
+      this.valArea = true;
+      this.valTipo = true;
+      this.valAprendizaje = true;
+      this.valFecha = true;
+      this.valProblema = true;
+      this.valAccion = true;
+
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET PERSONAS ======= =======

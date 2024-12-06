@@ -1,12 +1,14 @@
 import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servPersona } from "../../servicios/persona";
 import { servPersonaRoles } from "../../servicios/personaRoles";
 import { servProyectos } from "../../servicios/proyectos";
+
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-personaRoles',
@@ -36,7 +38,9 @@ export class PersonaRolesComponent implements OnInit {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
+
       this.getPersonaRoles();
+      this.countHeaderData();
     }
 
     headerDataNro01: any = 0;
@@ -65,7 +69,111 @@ export class PersonaRolesComponent implements OnInit {
     contrasenia: any = null;
     logedBy: any = null;
     admi_sistema: any = null;
+
+    imageSrc: any = null;
+
+    // ======= ======= VALIDATION SECTION ======= =======
+    valNombres: any = true;
+    ValidateNombres() {
+      this.valNombres = true;
+      const regex = /^[A-Za-zÁÉÍÓÚáéíóú\s]+$/;
+      if (!(this.nombres) || this.nombres.length >= 50 || !regex.test(this.nombres)) {
+        this.valNombres = false;
+      }
+    }
     
+    valApellido1: any = true;
+    ValidateApellido1() {
+      this.valApellido1 = true;
+      const regex = /^[A-Za-zÁÉÍÓÚáéíóú\s]+$/;
+      if ((!this.apellido_1) || this.apellido_1.length >= 50 || !regex.test(this.apellido_1)) {
+        this.valApellido1 = false;
+      }
+    }
+    
+    valApellido2: any = true;
+    ValidateApellido2() {
+      this.valApellido2 = true;
+      const regex = /^[A-Za-zÁÉÍÓÚáéíóú\s]+$/;
+      if ((!this.apellido_2) || this.apellido_2.length >= 50 || !regex.test(this.apellido_2)) {
+        this.valApellido2 = false;
+      }
+    }
+
+    valTipoDocumento: any = true;
+    ValidateTipoDocumento() {
+      this.valTipoDocumento = true;
+      if (!this.idp_tipo_documento) {
+        this.valTipoDocumento = false;
+      }
+    }
+
+    valNroDocumento: any = true;
+    ValidateNroDocumento() {
+      this.valNroDocumento = true;
+      if ((!this.nro_documento)||(this.nro_documento.length >= 20)) {
+        this.valNroDocumento = false;
+      }
+    }
+    
+    valTelefono: any = true;
+    ValidateTelefono() {
+      this.valTelefono = true;
+      const regex = /^[0-9+]+$/;
+      if ((!this.telefono) || this.telefono.length >= 15 || !regex.test(this.telefono)) {
+        this.valTelefono = false;
+      }
+    }
+    
+    valCorreo: any = true;
+    ValidateCorreo() {
+      this.valCorreo = true;
+      const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if ((!this.correo) || this.correo.length >= 100 || !regex.test(this.correo)) {
+        this.valCorreo = false;
+      }
+    }
+
+    valUnidad: any = true;
+    ValidateUnidad() {
+      this.valUnidad = true;
+      if (!this.id_inst_unidad) {
+        this.valUnidad = false;
+      }
+    }
+
+    valCargo: any = true;
+    ValidateCargo() {
+      this.valCargo = true;
+      if ((!this.cargo)||(this.cargo.length >= 100)) {
+        this.valCargo = false;
+      }
+    }
+
+    valUsuario: any = true;
+    ValidateUsuario() {
+      this.valUsuario = true;
+      if ((!this.usuario)||(this.usuario.length >= 15)) {
+        this.valUsuario = false;
+      }
+    }
+
+    valContrasenia: any = true;
+    ValidateContrasenia() {
+      this.valContrasenia = true;
+      if ((!this.contrasenia)||(this.contrasenia.length >= 200)) {
+        this.valContrasenia = false;
+      }
+    }
+
+    valImageSrc: any = true;
+    ValidateImageSrc() {
+      this.valImageSrc = true;
+      if (!this.imageSrc) {
+        this.valImageSrc = false;
+      }
+    }
+    // ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
@@ -128,9 +236,34 @@ export class PersonaRolesComponent implements OnInit {
       // ======= ======= =======
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= OPEN MODALS FUN ======= =======
+    // ======= ======= IMAGE LOADER FUNCTION ======= =======
+    fileData: any;
+    onFileSelected(event: Event): void {
+      const input = event.target as HTMLInputElement;
+  
+      if (input.files && input.files.length > 0) {
+        this.fileData = input.files[0];
+        const reader = new FileReader();
+  
+        reader.onload = () => {
+          this.imageSrc = reader.result as string;
+        };
+  
+        reader.readAsDataURL(this.fileData);
+      }
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= MODALS FUN ======= =======
+    private modalRef: NgbModalRef | null = null;
     openModal(content: TemplateRef<any>) {
-      this.modalService.open(content, { size: 'xl' });
+      this.modalRef = this.modalService.open(content, { size: 'xl' });
+    }
+
+    closeModal() {
+      if (this.modalRef) {
+        this.modalRef.close(); 
+        this.modalRef = null;
+      }
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET MODAL TITLE FUN ======= =======
@@ -223,7 +356,7 @@ export class PersonaRolesComponent implements OnInit {
       this.nro_documento = null;
       this.telefono = null;
       this.correo = null;
-      this.id_inst_unidad = null;
+      this.id_inst_unidad = "";
       this.cargo = null;
       this.responsable = null;
       this.usuario = null;
@@ -231,6 +364,22 @@ export class PersonaRolesComponent implements OnInit {
       this.logedBy = null;
 
       this.admi_sistema = null;
+
+      this.imageSrc = null;
+
+      this.valNombres = true;
+      this.valApellido1 = true;
+      this.valApellido2 = true;
+      this.valTipoDocumento = true;
+      this.valNroDocumento = true;
+      this.valTelefono = true;
+      this.valCorreo = true;
+      this.valUnidad = true;
+      this.valCargo = true;
+      this.valUsuario = true;
+      this.valContrasenia = true;
+      this.valImageSrc = true;
+
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET PERSONAS ======= =======
@@ -263,7 +412,7 @@ export class PersonaRolesComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= ADD PERSONAS ======= =======
-    addPersona(){
+    addPersona() {
       const objPersona = {
         p_id_persona: null,
         p_nombres: this.nombres,
@@ -280,42 +429,56 @@ export class PersonaRolesComponent implements OnInit {
         p_idp_estado: 1,
         p_idp_tipo_red_social: null,
         p_firebase: null,
-        p_id_tipo_institucion: null,
-        p_id_inst_unidad: null,
+        p_id_tipo_institucion: 1,
+        p_id_inst_unidad: this.id_inst_unidad,
         p_cargo: this.cargo,
         p_admi_sistema: this.admi_sistema
       };
-      
+    
       this.servPersona.addPersona(objPersona).subscribe(
         (data) => {
-          this.persona_proyecto_mod_to_add.forEach((personaProyecto) => {
-            personaProyecto.id_persona = data[0].dato[0].id_persona;
-            this.addPersonaRol(personaProyecto);
+          const idPersona = data[0].dato[0].id_persona;
+
+          // ======= ADD PERSONA PROYECTO =======
+          this.uploadImage(idPersona, this.fileData);
+          // ======= ======= =======
+          // ======= ADD PERSONA PROYECTO =======
+          const requests = this.persona_proyecto_mod_to_add.map((personaProyecto) => {
+            const objPersonaRol = {
+              p_id_persona_proyecto: null,
+              p_id_persona: idPersona,
+              p_id_institucion: null,
+              p_id_proyecto: personaProyecto.id_proyecto,
+              p_rol: personaProyecto.rol
+            };
+            return this.servPersonaRoles.addPersonaRol(objPersonaRol);
           });
+          // ======= ======= =======
+    
+          if (requests.length === 0) {
+            this.onAllServicesComplete();
+            this.personaRolesSelected = null;
+          }
+          else{
+            forkJoin(requests).subscribe(
+              () => {
+                this.onAllServicesComplete();
+              },
+              (error) => {
+                console.error(error);
+              }
+            );
+          }
         },
         (error) => {
           console.error(error);
         }
       );
     }
-    // ======= ======= ======= ======= =======
-    // ======= ======= ADD PERSONAS ======= =======
-    addPersonaRol(proyectoRolScope: any){
-      const objPersonaRol = {
-        p_id_persona_proyecto: null,
-        p_id_persona: proyectoRolScope.id_persona,
-        p_id_institucion: null,
-        p_id_proyecto: proyectoRolScope.id_proyecto,
-        p_rol: proyectoRolScope.rol
-      };
-      
-      this.servPersonaRoles.addPersonaRol(objPersonaRol).subscribe(
-        (data) => {
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
+    
+    onAllServicesComplete() {
+      this.getPersonaRoles();
+      this.countHeaderData();
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT EDIT PERSONA ROLES ======= =======
@@ -352,7 +515,7 @@ export class PersonaRolesComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= EDIT PERSONAS ======= =======
-    editPersona(){
+    editPersona() {
       const objPersona = {
         p_id_persona: this.id_persona,
         p_nombres: this.nombres,
@@ -369,34 +532,57 @@ export class PersonaRolesComponent implements OnInit {
         p_idp_estado: this.idp_estado,
         p_idp_tipo_red_social: null,
         p_firebase: null,
-        p_id_tipo_institucion: null,
-        p_id_inst_unidad: null,
+        p_id_tipo_institucion: 1,
+        p_id_inst_unidad: this.id_inst_unidad,
         p_cargo: this.cargo,
         p_admi_sistema: this.admi_sistema
       };
-      console.log(objPersona);
+    
       this.servPersona.editPersona(objPersona).subscribe(
         (data) => {
-          console.log(data);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    }
-    // ======= ======= ======= ======= =======
-    // ======= ======= EDIT PERSONAS ======= =======
-    editPersonaRol(proyectoRolScope: any){
-      const objPersonaRol = {
-        p_id_persona_proyecto: proyectoRolScope.id_persona_proyecto,
-        p_id_persona: proyectoRolScope.id_persona,
-        p_id_proyecto: proyectoRolScope.id_proyecto,
-        p_rol: proyectoRolScope.rol
-      };
 
-      this.servPersonaRoles.editPersonaRol(objPersonaRol).subscribe(
-        (data) => {
-          console.log(data);
+          // ======= ADD PERSONA PROYECTO =======
+          this.uploadImage(this.id_persona, this.fileData);
+          // ======= ======= =======
+          // ======= ADD PERSONA PROYECTO =======
+          const requestsAdd = this.persona_proyecto_mod_to_add.map((personaProyecto) => {
+            const objPersonaRol = {
+              p_id_persona_proyecto: null,
+              p_id_persona: personaProyecto.id_persona,
+              p_id_institucion: 1,
+              p_id_proyecto: personaProyecto.id_proyecto,
+              p_rol: personaProyecto.rol
+            };
+            return this.servPersonaRoles.addPersonaRol(objPersonaRol);
+          });
+          // ======= ======= =======
+          // ======= EDIT PERSONA PROYECTO =======
+          const requestsEdit = this.persona_proyecto_mod_to_edit.map((personaProyecto) => {
+            const objPersonaRol = {
+              p_id_persona_proyecto: personaProyecto.id_persona_proyecto,
+              p_id_persona: personaProyecto.id_persona,
+              p_id_proyecto: personaProyecto.id_proyecto,
+              p_rol: personaProyecto.rol
+            };
+            return this.servPersonaRoles.editPersonaRol(objPersonaRol);
+          });
+          // ======= ======= =======
+          const requests = requestsAdd.concat(requestsEdit);
+
+          if (requests.length == 0) {
+            this.onAllServicesComplete();
+            this.personaRolesSelected = null;
+          }
+          else{
+            forkJoin(requests).subscribe(
+              () => {
+                this.onAllServicesComplete();
+              },
+              (error) => {
+                console.error(error);
+              }
+            );
+          }
         },
         (error) => {
           console.error(error);
@@ -429,23 +615,68 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void{
-      if(this.modalAction == "add"){
-        this.addPersona();
-      }
-      else{
-        this.editPersona();
+      // ======= VALIDATION SECTION =======
+      let valForm = false;
 
-        this.persona_proyecto_mod_to_add.forEach((personaProyecto) => {
-          personaProyecto.id_persona = this.id_persona;
-          this.addPersonaRol(personaProyecto);
-        });
+      this.ValidateNombres();
+      this.ValidateApellido1();
+      this.ValidateApellido2();
+      this.ValidateTipoDocumento();
+      this.ValidateNroDocumento();
+      this.ValidateTelefono();
+      this.ValidateCorreo();
+      this.ValidateUnidad();
+      this.ValidateCargo();
+      this.ValidateUsuario();
+      this.ValidateContrasenia();
+      this.ValidateImageSrc();
 
-        this.persona_proyecto_mod_to_edit.forEach((personaProyecto) => {
-          personaProyecto.id_persona = this.id_persona;
-          this.addPersonaRol(personaProyecto);
-        });
+      valForm = 
+        this.valNombres &&
+        this.valApellido1 &&
+        this.valApellido2 &&
+        this.valTipoDocumento &&
+        this.valNroDocumento &&
+        this.valTelefono &&
+        this.valCorreo &&
+        this.valUnidad &&
+        this.valCargo &&
+        this.valUsuario &&
+        this.valContrasenia &&
+        this.valImageSrc;
+
+      // ======= SUBMIT SECTION =======
+      if(valForm){
+        if(this.modalAction == "add"){
+          this.addPersona();
+        }
+        else{
+          this.editPersona();
+        }
+        this.closeModal();
       }
-      //this.getPersonaRoles();
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= UPLOAD IMAGE FUN ======= =======
+    uploadImage(idRegistro: any, file: any){
+      console.log("======= IN =======");
+      // =======  =======
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('nombre_tabla', "persona");
+      formData.append('campo_tabla', "ruta_foto");
+      formData.append('id_en_tabla', idRegistro);
+      formData.append('nombre_registro', "test");
+  
+      // ======= SEND TO SERVICE =======
+      this.servicios.uploadFile(formData).subscribe(
+        (response) => {
+          console.log('Archivo subido correctamente:', response);
+        },
+        (error) => {
+          console.error('Error al subir el archivo:', error);
+        }
+      );
     }
     // ======= ======= ======= ======= =======
 }

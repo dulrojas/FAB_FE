@@ -129,47 +129,75 @@
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="nombres">Nombre</label>
                                     <input class="form-control" type="text" placeholder="Ingrese el nombre"
-                                        id="nombres" name="nombres" [(ngModel)]="nombres" />
+                                        id="nombres" name="nombres" 
+                                        [(ngModel)]="nombres" (change)="ValidateNombres()" />
+                                    <span class="custom-alert-message" *ngIf="!valNombres">
+                                        Debe ingresar un nombre valido, con menos de 50 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= APELLIDO 1 SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="apellido_1">Primer Apellido</label>
                                     <input class="form-control" type="text" placeholder="Ingrese el primer apellido"
-                                        id="apellido_1" name="apellido_1" [(ngModel)]="apellido_1" />
+                                        id="apellido_1" name="apellido_1" 
+                                        [(ngModel)]="apellido_1" (change)="ValidateApellido1()" />
+                                    <span class="custom-alert-message" *ngIf="!valApellido1">
+                                        Debe ingresar un apellido valido, con menos de 50 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= APELLIDO 2 SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="apellido_2">Segundo Apellido</label>
                                     <input class="form-control" type="text" placeholder="Ingrese el segundo apellido"
-                                        id="apellido_2" name="apellido_2" [(ngModel)]="apellido_2" />
+                                        id="apellido_2" name="apellido_2" 
+                                        [(ngModel)]="apellido_2" (change)="ValidateApellido2()" />
+                                    <span class="custom-alert-message" *ngIf="!valApellido2">
+                                        Debe ingresar un apellido valido, con menos de 50 caracteres
+                                    </span>
                                 </div>
         
                                 <!-- ======= ======= NRO DOCUMENTO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="nro_documento">Numero de documento de identificacion</label>
                                     <input class="form-control" type="text" placeholder="Ingrese el numero de documento"
-                                        id="nro_documento" name="nro_documento" [(ngModel)]="nro_documento" />
+                                        id="nro_documento" name="nro_documento" 
+                                        [(ngModel)]="nro_documento" (change)="ValidateNroDocumento()" />
+                                    <span class="custom-alert-message" *ngIf="!valNroDocumento">
+                                        Debe ingresar un numero de documento valido, con menos de 20 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= TIPO DOCUMENTO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="idp_tipo_documento">Tipo de Documento</label>
-                                    <select class="form-control" id="idp_tipo_documento" name="idp_tipo_documento" [(ngModel)]="idp_tipo_documento">
+                                    <select class="form-control" id="idp_tipo_documento" name="idp_tipo_documento" 
+                                        [(ngModel)]="idp_tipo_documento" (change)="ValidateTipoDocumento()">
                                         <option value="" disabled selected>Selecciona un rol</option>
                                         <option *ngFor="let tipo of tipoDoc" [value]="tipo.id_subtipo">{{ tipo.descripcion_subtipo }}</option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valTipoDocumento">
+                                        Debe seleccionar un tipo de documento.
+                                    </span>
                                 </div>
         
                                 <!-- ======= ======= NRO TELEFONO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="telefono">Numero de telefono</label>
                                     <input class="form-control" type="text" placeholder="Ingrese el numero de telefono"
-                                        id="telefono" name="telefono" [(ngModel)]="telefono" />
+                                        id="telefono" name="telefono" 
+                                        [(ngModel)]="telefono" (change)="ValidateTelefono()" />
+                                    <span class="custom-alert-message" *ngIf="!valTelefono">
+                                        Debe ingresar un telefono valido, con menos de 15 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= CORREO ELECTRONICO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="correo">Correo electronico</label>
                                     <input class="form-control" type="text" placeholder="Ingrese el correo electronico"
-                                        id="correo" name="correo" [(ngModel)]="correo" />
+                                        id="correo" name="correo" 
+                                        [(ngModel)]="correo" (change)="ValidateCorreo()" />
+                                    <span class="custom-alert-message" *ngIf="!valCorreo">
+                                        Debe ingresar un correo valido, con menos de 100 caracteres
+                                    </span>
                                 </div>
         
                                 <div class="custom-form-separator mx-auto my-3"></div>
@@ -177,16 +205,24 @@
                                 <!-- ======= ======= UNIDAD SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="unidad">Unidad</label>
-                                    <select class="form-control" id="id_inst_unidad" name="id_inst_unidad" [(ngModel)]="id_inst_unidad">
+                                    <select class="form-control" id="id_inst_unidad" name="id_inst_unidad" 
+                                        [(ngModel)]="id_inst_unidad" (change)="ValidateUnidad()">
                                         <option value="" disabled selected>Selecciona una unidad</option>
                                         <option *ngFor="let unidad of unidades" [value]="unidad.id_inst_unidad">{{ unidad.unidad }}</option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valUnidad">
+                                        Debe seleccionar una unidad.
+                                    </span>
                                 </div>
                                 <!-- ======= ======= CARGO SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="cargo">Cargo</label>
                                     <input class="form-control" type="text" placeholder="Ingrese el cargo del usuario"
-                                        id="cargo" name="cargo" [(ngModel)]="cargo" />
+                                        id="cargo" name="cargo" 
+                                        [(ngModel)]="cargo" (change)="ValidateCargo()" />
+                                    <span class="custom-alert-message" *ngIf="!valCargo">
+                                        Debe ingresar un cargo valido, con menos de 100 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= RESPONSABLE SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
@@ -200,13 +236,21 @@
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="usuario">Usuario</label>
                                     <input class="form-control" type="text" placeholder="Ingrese el nombre de usuario"
-                                        id="usuario" name="usuario" [(ngModel)]="usuario" />
+                                        id="usuario" name="usuario" 
+                                        [(ngModel)]="usuario" (change)="ValidateUsuario()" />
+                                    <span class="custom-alert-message" *ngIf="!valUsuario">
+                                        Debe ingresar un usuario valido, con menos de 15 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= CONTRASENIA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="contrasenia">Contraseña</label>
                                     <input class="form-control" type="text" placeholder="Ingrese la contraseña del usuario"
-                                        id="contrasenia" name="contrasenia" [(ngModel)]="contrasenia" />
+                                        id="contrasenia" name="contrasenia" 
+                                        [(ngModel)]="contrasenia" (change)="ValidateContrasenia()" />
+                                    <span class="custom-alert-message" *ngIf="!valContrasenia">
+                                        Debe ingresar una contraseña valida, con menos de 200 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= LOGEADO SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
@@ -247,20 +291,22 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="col col-xl-5 col-lg-5">
-                    <!-- ======= ======= IMAGE SECTION ======= ======= -->
+                    <!-- ======= IMAGE SECTION ======= -->
                     <div class="card mb-3">
                         <div class="card-body custom-card">
-                            <img src="../../../assets/images/empty.jpg" alt="formImg" style="width: 100%;">
+                            <img [src]="imageSrc || '../../../assets/images/empty.jpg'" alt="formImg" style="width: 100%;">
                             <input type="file" id="fileImg" (change)="onFileSelected($event)" class="form-control" />
                         </div>
                     </div>
-                    <!-- ======= ======= ADMINISTRA SECTION ======= ======= -->
+                    <!-- ======= ADMINISTRA SECTION ======= -->
                     <div class="col col-xl-4 col-lg-4 mx-auto">
                         <input class="form-check-input custom-form-checkbox" type="checkbox" id="admi_sistema" name="admi_sistema" [(ngModel)]="admi_sistema">
                         <label class="form-check-label custom-form-lable-checkbox" for="admi_sistema">Administra Sistema</label>
                     </div>
                 </div>
+                
             </div>
         </form>
     </div>
@@ -270,8 +316,8 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="personaRolesForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+            <button type="button" class="btn btn-bg-1" [disabled]="personaRolesForm.invalid" (click)="onSubmit()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
             </button>
         </div>
     </div>
