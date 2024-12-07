@@ -10,6 +10,7 @@ import { AliadosService } from "../../servicios/aliados";
 
 
 import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
+
 interface Beneficiario {
   id: number;
   fecha: string;
@@ -46,6 +47,7 @@ export class BeneficiariosComponent implements OnInit {
   municipios: any[] = [];
   comunidades: any[] = [];
   tiposOrganizacion: any[] = [];
+  actividades: any[] = [];
   organizaciones: any[] = [];
   organizacionTipo: any[] = [];
   aliadosTable: any[] = [];
@@ -57,6 +59,7 @@ export class BeneficiariosComponent implements OnInit {
   // ======= ======= HEADER SECTION ======= =======
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
   idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+  namePersonaReg: any = localStorage.getItem('userFullName');
   @Output() selectionChange = new EventEmitter<any>();
   onChildSelectionChange(selectedId: any) {
     this.idProyecto = selectedId;
@@ -86,6 +89,7 @@ export class BeneficiariosComponent implements OnInit {
     private proyectoService: ProyectoService,
     private fb: FormBuilder,
     private beneficiariosService: BeneficiariosService,
+    
     private servicios: servicios,
     private aliadosService: AliadosService,
     private ubicaGeograficaService: servUbicaGeografica
@@ -94,7 +98,7 @@ export class BeneficiariosComponent implements OnInit {
   ngOnInit(): void {
     this.loadBeneficiarios();
     this.initForm();
-    
+    this.getActividades();
     this.loadDepartamentos();
     this.loadTiposOrganizacion();
     this.initAliadosForm();
@@ -103,7 +107,18 @@ export class BeneficiariosComponent implements OnInit {
     this.countHeaderData();
 
   }
-
+//obtenr actividades
+getActividades(): void {
+  this.beneficiariosService.getActividades().subscribe(
+    (response) => {
+      if (response[0]?.res === 'OK') {
+        this.actividades = response[0].dato;
+        console.log('Actividades cargadas:', this.actividades);
+      }
+    },
+    (error) => console.error('Error al cargar actividades:', error)
+  );
+}
   private initForm(): void {
     this.beneficiariesForm = this.fb.group({
       id: [{ value: '', disabled: true }],
@@ -152,7 +167,7 @@ private initAliadosForm(): void {
 }
 
   loadDepartamentos(): void {
-    this.ubicaGeograficaService.getUbicaciones(2, 1).subscribe(
+    this.ubicaGeograficaService.getUbicaciones(2, 1, 1).subscribe(
       (response) => {
         if (response[0]?.res === 'OK') {
           this.departamentos = response[0].dato;
@@ -163,10 +178,11 @@ private initAliadosForm(): void {
     );
   }
   
-  onDepartamentoChange(departmentId: number): void {
+  onDepartamentoChange(p_orden_departamento: number): void {
+    console.log('Departamento seleccionado en el select dadadad: ', p_orden_departamento);
     this.municipios = [];
     this.comunidades = [];
-    this.ubicaGeograficaService.getUbicaciones(3, 1).subscribe(
+    this.ubicaGeograficaService.getUbicaciones(4, 1,p_orden_departamento).subscribe(
       (response) => {
         if (response[0]?.res === 'OK') {
           this.municipios = response[0].dato;
@@ -177,8 +193,9 @@ private initAliadosForm(): void {
     );
   }
 
-  onMunicipioChange(municipioId: number): void {
-    this.ubicaGeograficaService.getUbicaciones(4, 1).subscribe(
+  onMunicipioChange(p_orden_monucipio: number): void {
+    console.log('Municipio seleccionado en el select:', p_orden_monucipio);
+    this.ubicaGeograficaService.getUbicaciones(5, 1,p_orden_monucipio).subscribe(
       (response) => {
         if (response[0]?.res === 'OK') {
           this.comunidades = response[0].dato;
@@ -188,6 +205,8 @@ private initAliadosForm(): void {
       (error) => console.error('Error al cargar comunidades:', error)
     );
   }
+
+
 
   loadTiposOrganizacion(): void {
     this.servicios.getParametricaByIdTipo(18).subscribe(
@@ -227,7 +246,7 @@ private initAliadosForm(): void {
             comunidad: item.comunidad || 'Sin comunidad',
             tipoOrganizacion: item.organizacion_tipo || 'Sin tipo',
             organizacion: item.organizacion || 'Sin organización',
-            actividad: item.actividad || 1,
+            actividad: item.actividad || 'Sin actividad',
             evento: item.titulo_evento || 'Sin evento',
             details: item.evento_detalle || 'Sin detalles',
             mujeres: item.mujeres || 0,
@@ -298,14 +317,14 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
       const formValue = this.beneficiariesForm.getRawValue();
       const beneficiarioData = {
           id: formValue.id || null,
-          id_proyecto: 1,
+          id_proyecto: parseInt(this.idProyecto,10),
           fecha: formValue.fecha || null,
           department: formValue.department || null,
           municipio: formValue.municipio || null,
-          comunidad: formValue.comunidades || null,
+          comunidad: formValue.comunidad || null,
           tipoOrganizacion: formValue.tipoOrganizacion || null,
           organizacion: formValue.organizacion || null,
-          actividad: formValue.actividad || '',
+          actividad: formValue.actividad || null,
           evento: formValue.evento || '',
           mujeres: formValue.mujeres || 0,
           hombres: formValue.hombres || 0,
@@ -321,6 +340,9 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
       } else {
           this.addBeneficiario(beneficiarioData);
       }
+
+
+      this.loadBeneficiarios();
   }
   
   // Método para editar beneficiario
@@ -447,7 +469,7 @@ onSubmitAliadosForm(): void {
   const aliadoData = this.aliadosForm.getRawValue();
   const aliadoPayload = {
     id: aliadoData.id || null,
-    id_proyecto:1,
+    id_proyecto:this.idProyecto,
     fecha: aliadoData.identificationDate || null,
     tipoOrganizacion: aliadoData.tipoOrganizacion || null,
     institucion: aliadoData.institution || null,

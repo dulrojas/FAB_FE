@@ -76,6 +76,9 @@ export class RiesgosComponent implements OnInit {
     fecha_hora_reg: any = "";
     id_persona_reg: any = "";
 
+    fecha_registro: any = "";
+    persona_registro: any = "";
+
     sigla: any = "";
     color: any = "";
     // ======= ======= LLAMADOS A SELECCIONADORES ======= =======
@@ -390,8 +393,8 @@ export class RiesgosComponent implements OnInit {
       this.medidas = null;
       this.idp_efectividad = "";
       this.comentarios = null;
-      this.fecha_hora_reg = "";
-      this.id_persona_reg = this.namePersonaReg;
+      this.persona_registro = this.namePersonaReg;
+      this.fecha_registro = "";
 
       this.sigla = null;
       this.color = null;
@@ -417,7 +420,7 @@ export class RiesgosComponent implements OnInit {
     initAddRiesgo(modalScope: TemplateRef<any>) {
       this.initRiesgosModel();
 
-      this.fecha_hora_reg = this.getCurrentDateTime();
+      this.fecha_registro = this.getCurrentDateTime();
 
       this.modalAction = "add"; 
       this.modalTitle = this.getModalTitle("add");
@@ -447,7 +450,7 @@ export class RiesgosComponent implements OnInit {
         p_idp_efectividad: this.idp_efectividad,
         p_comentarios: this.comentarios,
         p_fecha_hora_reg: null,
-        p_id_persona_reg: this.idPersonaReg        
+        p_id_persona_reg: parseInt(this.idPersonaReg,10)       
       };
 
       this.servRiesgos.addRiesgo(objRiesgo).subscribe(
@@ -484,10 +487,9 @@ export class RiesgosComponent implements OnInit {
     this.medidas = this.riesgosSelected.medidas;
     this.idp_efectividad = this.riesgosSelected.idp_efectividad;
     this.comentarios = this.riesgosSelected.comentarios;
-    this.fecha_hora_reg = this.riesgosSelected.fecha_hora_reg;
+    this.fecha_registro = this.riesgosSelected.fecha_hora_reg;
     this.id_persona_reg = this.riesgosSelected.id_persona_reg;
    
-
     this.sigla = this.riesgosSelected.sigla;
     this.color = this.riesgosSelected.color;
   
@@ -515,7 +517,7 @@ export class RiesgosComponent implements OnInit {
       p_idp_efectividad: this.idp_efectividad,
       p_comentarios: this.comentarios,
       p_fecha_hora_reg: null,
-      p_id_persona_reg: this.id_persona_reg        
+      p_id_persona_reg: this.id_persona_reg         
     }
 
     this.servRiesgos.editRiesgo(objRiesgo).subscribe(

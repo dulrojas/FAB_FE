@@ -32,7 +32,7 @@ export class AliadosService {
         "body": {
           "params": [
             { "name": "p_accion", "value": "A1", "type": "string" },
-            { "name": "p_id_proy_aliado", "value":16, "type": "int" },
+            { "name": "p_id_proy_aliado", "value":null, "type": "int" },
             { "name": "p_id_proyecto", "value": aliadoData.id_proyecto || null, "type": "int" },
             { "name": "p_id_organizacion", "value": aliadoData.institucion || null, "type": "int" },
             { "name": "p_referente", "value": aliadoData.referente || null, "type": "string" },

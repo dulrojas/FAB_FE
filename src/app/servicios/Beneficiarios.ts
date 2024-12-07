@@ -66,7 +66,7 @@ addBeneficiario(data: any): Observable<any> {
     "body": {
       "params": [
         { "name": "p_accion", "value": "A1", "type": "string" },
-        { "name": "p_id_proy_beneficiario", "value": 18, "type": "int" },
+        { "name": "p_id_proy_beneficiario", "value": null, "type": "int" },
         { "name": "p_id_proyecto", "value": data.id_proyecto || null, "type": "int" },
         { "name": "p_idp_organizacion_tipo", "value": data.tipoOrganizacion || null, "type": "int" }, 
         { "name": "p_id_organizacion", "value":null, "type": "int" },
@@ -130,4 +130,20 @@ editBeneficiario(data: any): Observable<any> {
 
   return this.http.post<any>(this.URL, params, { headers });
 }
+
+// ============== obtener las actividades 
+getActividades(): Observable<any> {
+  const params = 
+    {
+      "procedure_name": "sp_proy_actividad",
+      "body": {
+        "params": [
+          { "name": "p_accion", "value": "C1", "type": "string" }
+      
+        ]
+      }
+    };
+    const headers = new HttpHeaders({ 'ip': "127.0.0.1" });
+    return this.http.post<any>(this.URL, params, { headers });
+    }
 }

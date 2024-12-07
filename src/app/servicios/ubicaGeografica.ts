@@ -39,8 +39,35 @@ export class servUbicaGeografica{
 
     return this.http.post<any>(this.URL, params, { headers });
   }
-  // ======= ======= ======= ======= ======= ======= =======
-  getUbicaciones(nivel: number, rama: number): Observable<any> {
+  // ======= ======= ======= traer departamentos ======= ======= ======= =======
+  getUbicaciones(nivel: number, rama: number,ubica_geo_padre: number): Observable<any> {
+    const params ={
+      "procedure_name": "sp_prot_geografiaca_ubi",
+      "body": {
+        "params": [
+    
+          { "name": "p_accion", "value": "C1", "type": "string" },
+          { "name": "p_id_ubica_geo", "value": null, "type": "int" },
+          { "name": "p_idp_tipo_ubica_geo", "value": null, "type": "string" },
+          { "name": "p_id_ubica_geo_padre", "value": ubica_geo_padre, "type": "int" },
+          { "name": "p_codigo", "value": null, "type": "string" },
+          { "name": "p_orden", "value": null, "type": "int" },
+          { "name": "p_latitud", "value": null, "type": "string" },
+          { "name": "p_longitud", "value": null, "type": "string" },
+          { "name": "p_nivel", "value": nivel, "type": "int" },
+          { "name": "p_idp_estado", "value": null, "type": "int" },
+          { "name": "p_rama", "value": rama, "type": "int" }
+        ]
+      }
+    };
+    const headers = new HttpHeaders({ 'ip': '127.0.0.1' });
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+
+
+
+  // ======= ======= ======= traer provincias ======= ======= ======= =======
+  getUbicacionesProvincias(nivel: number, rama: number): Observable<any> {
     const params ={
       "procedure_name": "sp_prot_geografiaca_ubi",
       "body": {
