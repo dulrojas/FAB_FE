@@ -110,6 +110,7 @@
                                             {{ componente.meto_elemento }}
                                         </option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valElemento">Debe seleccionar un elemento.</span>
                                 </div>
                                 <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                                 <div class="col col-xl-1 col-lg-1 mt-auto">
@@ -120,7 +121,9 @@
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="fecha_logro">Fecha del logro</label>
                                     <input class="form-control" type="date" 
-                                        id="fecha_logro" name="fecha_logro" [(ngModel)]="fecha_logro" />
+                                        id="fecha_logro" name="fecha_logro" 
+                                        [(ngModel)]="fecha_logro" (change)="ValidateFechaLogro()" />
+                                    <span class="custom-alert-message" *ngIf="!valFechaLogro">Debe seleccionar una fecha.</span>
                                 </div>
 
                                 <!-- ======= ======= LOGRO SECTION ======= ======= -->
@@ -128,7 +131,9 @@
                                     <label for="logro">Logro sobresaliente alcanzado</label>
                                     <textarea class="form-control" id="logro" name="logro" 
                                         placeholder="Agregar un titulo"
-                                        [(ngModel)]="logro"></textarea>
+                                        [(ngModel)]="logro" (change)="ValidateLogro()">
+                                    </textarea>
+                                    <span class="custom-alert-message" *ngIf="!valLogro">Debe ingresar el titulo del logro, con menos de 50 caracteres.</span>
                                 </div>
 
                                 <!-- ======= ======= DESCRIPCION SECTION ======= ======= -->
@@ -136,7 +141,9 @@
                                     <label for="descripcion">Descripcion</label>
                                     <textarea class="form-control" id="descripcion" name="descripcion" 
                                         placeholder="Agregar una descripcion"
-                                        [(ngModel)]="descripcion" style="height: 80%;"></textarea>
+                                        [(ngModel)]="descripcion" (cahnge)="ValidateDescripcion()" style="height: 80%;">
+                                    </textarea>
+                                    <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la descripcion del logro, con menos de 255 caracteres.</span>
                                 </div>
 
                                 <!-- ======= ======= IMAGE SECTION ======= ======= -->
@@ -144,6 +151,7 @@
                                     <label for="accion">Imagen logro</label>
                                     <img class="custom-img-selector" [src]="ruta_imagen" alt="Imagen de logro" id="imagen" 
                                         (click)="initSelectImage(selectImageModal)" (error)="onError($event)">
+                                    <span class="custom-alert-message" *ngIf="!valImagen">Debe seleccionar una imagen.</span>
                                 </div>
                                 
                                 <!-- ======= ======= ID SECTION ======= ======= -->
@@ -168,7 +176,7 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="logrosForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
+            <button type="button" class="btn btn-bg-1" [disabled]="logrosForm.invalid" (click)="onSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
             </button>
         </div>
@@ -234,7 +242,7 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" (click)="selectImage(); modal.close('Elegir')">
+            <button type="button" class="btn btn-bg-1" (click)="selectImage()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Elegir
             </button>
         </div>

@@ -436,6 +436,7 @@ export class AprendizajesComponent implements OnInit {
 
       this.servApredizaje.deleteAprendizaje(this.id_proy_aprende).subscribe(
         (data) => {
+          this.aprendizajesSelected = null;
           this.closeModal();
           this.getAprendizajes();
         },

@@ -1,11 +1,12 @@
 import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servLogros } from "../../servicios/logros";
 import { servAprendizaje } from "../../servicios/aprendizajes";
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-logros',
@@ -50,42 +51,83 @@ export class LogrosComponent implements OnInit {
 
     id_proy_logro: any = 0;
     id_proyecto: any = 0;
+    id_proy_elemento: any = 0;
+    fecha_logro: any = "";
     logro: any = "";
     descripcion: any = "";
     ruta_imagen: any = "";
     fecha_hora: any = "";
     id_persona_reg: any = 0;
-    id_proy_elemento: any = 0;
-    fecha_logro: any = "";
 
     sigla: any = "";
     color: any = "";
     // ======= ======= VARIABLES SECTION ======= =======
     componentes: any[] = [];
     images: any[] = [
-      {"id_institucion": 1, "ruta_logros_iconos": "../../../assets/images/logroImage001.png"},
-      {"id_institucion": 2, "ruta_logros_iconos": "../../../assets/images/logroImage002.png"},
-      {"id_institucion": 3, "ruta_logros_iconos": "../../../assets/images/logroImage003.png"},
-      {"id_institucion": 4, "ruta_logros_iconos": "../../../assets/images/logroImage004.png"},
-      {"id_institucion": 5, "ruta_logros_iconos": "../../../assets/images/logroImage005.png"},
-      {"id_institucion": 6, "ruta_logros_iconos": "../../../assets/images/logroImage006.png"},
-      {"id_institucion": 7, "ruta_logros_iconos": "../../../assets/images/logroImage007.png"},
-      {"id_institucion": 8, "ruta_logros_iconos": "../../../assets/images/logroImage008.png"},
-      {"id_institucion": 9, "ruta_logros_iconos": "../../../assets/images/logroImage009.png"},
-      {"id_institucion": 10, "ruta_logros_iconos": "../../../assets/images/logroImage010.png"},
-      {"id_institucion": 11, "ruta_logros_iconos": "../../../assets/images/logroImage011.png"},
-      {"id_institucion": 12, "ruta_logros_iconos": "../../../assets/images/logroImage012.png"},
-      {"id_institucion": 13, "ruta_logros_iconos": "../../../assets/images/logroImage013.png"},
-      {"id_institucion": 14, "ruta_logros_iconos": "../../../assets/images/logroImage014.png"},
-      {"id_institucion": 15, "ruta_logros_iconos": "../../../assets/images/logroImage015.png"},
-      {"id_institucion": 16, "ruta_logros_iconos": "../../../assets/images/logroImage016.png"},
-      {"id_institucion": 17, "ruta_logros_iconos": "../../../assets/images/logroImage017.png"},
-      {"id_institucion": 18, "ruta_logros_iconos": "../../../assets/images/logroImage018.png"},
-      {"id_institucion": 19, "ruta_logros_iconos": "../../../assets/images/logroImage019.png"},
-      {"id_institucion": 20, "ruta_logros_iconos": "../../../assets/images/logroImage020.png"},
-      {"id_institucion": 21, "ruta_logros_iconos": "../../../assets/images/logroImage021.png"}
+      { "id_institucion": 1, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage001.png` },
+      { "id_institucion": 2, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage002.png` },
+      { "id_institucion": 3, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage003.png` },
+      { "id_institucion": 4, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage004.png` },
+      { "id_institucion": 5, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage005.png` },
+      { "id_institucion": 6, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage006.png` },
+      { "id_institucion": 7, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage007.png` },
+      { "id_institucion": 8, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage008.png` },
+      { "id_institucion": 9, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage009.png` },
+      { "id_institucion": 10, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage010.png` },
+      { "id_institucion": 11, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage011.png` },
+      { "id_institucion": 12, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage012.png` },
+      { "id_institucion": 13, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage013.png` },
+      { "id_institucion": 14, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage014.png` },
+      { "id_institucion": 15, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage015.png` },
+      { "id_institucion": 16, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage016.png` },
+      { "id_institucion": 17, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage017.png` },
+      { "id_institucion": 18, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage018.png` },
+      { "id_institucion": 19, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage019.png` },
+      { "id_institucion": 20, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage020.png` },
+      { "id_institucion": 21, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage021.png` }
     ];
     // ======= ======= ======= ======= =======
+    // ======= ======= VALIDATION VARIABLES SECTION ======= =======
+    valElemento: any = true;
+    ValidateElemento() {
+      this.valElemento = true;
+      if (!this.id_proy_elemento) {
+        this.valElemento = false;
+      }
+    }
+
+    valFechaLogro: any = true;
+    ValidateFechaLogro() {
+      this.valFechaLogro = true;
+      if (!this.fecha_logro) {
+        this.valFechaLogro = false;
+      }
+    }
+
+    valLogro: any = true;
+    ValidateLogro() {
+      this.valLogro = true;
+      if ((!this.logro)||(this.logro.length >= 50)) {
+        this.valLogro = false;
+      }
+    }
+
+    valDescripcion: any = true;
+    ValidateDescripcion() {
+      this.valDescripcion = true;
+      if ((!this.descripcion)||(this.descripcion.length >= 255)) {
+        this.valDescripcion = false;
+      }
+    }
+
+    valImagen: any = true;
+    ValidateImagen() {
+      this.valImagen = true;
+      if (this.ruta_imagen == `${environment.assetsPath}images/empty.jpg`) {
+        this.valImagen = false;
+      }
+    }
+
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
@@ -123,9 +165,19 @@ export class LogrosComponent implements OnInit {
       // ======= ======= =======
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= OPEN MODALS FUN ======= =======
+    // ======= ======= MODALS FUN ======= =======
+    private modalRefs: NgbModalRef[] = [];
+    
     openModal(content: TemplateRef<any>) {
-      this.modalService.open(content, { size: 'xl' });
+      const modalRef = this.modalService.open(content, { size: 'xl' });
+      this.modalRefs.push(modalRef);
+    }
+
+    closeModal() {
+      if (this.modalRefs.length > 0) {
+        const modalRef = this.modalRefs.pop();
+        modalRef?.close();
+      }
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET MODAL TITLE FUN ======= =======
@@ -160,6 +212,7 @@ export class LogrosComponent implements OnInit {
           this.color = selectedComponente.color;
           this.sigla = selectedComponente.sigla;
       }
+      this.ValidateElemento();
     }
     imageSelected: any = null;
     imageSelectedAux: any = null;
@@ -185,6 +238,8 @@ export class LogrosComponent implements OnInit {
     selectImage(){
       this.ruta_imagen = this.imageSelectedAux.ruta_logros_iconos;
       this.imageSelected = this.imageSelectedAux;
+      this.ValidateImagen();
+      this.closeModal();
     }
     // ======= ======= INIT LOGROS NGMODEL ======= =======
     initLogrosModel(){
@@ -199,7 +254,7 @@ export class LogrosComponent implements OnInit {
       this.id_persona_reg = 0;
       this.id_proy_elemento = "";
       this.fecha_logro = "";
-      this.ruta_imagen = "../../../assets/images/empty.jpg";
+      this.ruta_imagen = `${environment.assetsPath}images/empty.jpg`;
       
       this.sigla = "";
       this.color = "ffffff";
@@ -319,6 +374,7 @@ export class LogrosComponent implements OnInit {
 
       this.servLogros.editLogro(objLogro).subscribe(
         (data) => {
+          this.logrosSelected = null;
           this.getLogros();
         },
         (error) => {
@@ -340,6 +396,7 @@ export class LogrosComponent implements OnInit {
     deleteLogros(){
       this.servLogros.deleteLogro(this.id_proy_logro).subscribe(
         (data) => {
+          this.logrosSelected = null;
           this.getLogros();
         },
         (error) => {
@@ -350,18 +407,31 @@ export class LogrosComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
-      if(this.logro.length > 50){
-        console.log("Invalido");
-      }
-      else{
-        console.log("Valido");
-      }
-      
-      if(this.modalAction == "add"){
-        //this.addLogros();
-      }
-      else{
-        //this.editLogros();
+      // ======= VALIDATION SECTION =======
+      let valForm = false;
+
+      this.ValidateElemento();
+      this.ValidateFechaLogro();
+      this.ValidateLogro();
+      this.ValidateDescripcion();
+      this.ValidateImagen();
+
+      valForm = 
+        this.valElemento &&
+        this.valFechaLogro &&
+        this.valLogro &&
+        this.valDescripcion &&
+        this.valImagen;
+
+      // ======= FUNCTION SECTION =======
+      if(valForm){
+        if(this.modalAction == "add"){
+          this.addLogros();
+        }
+        else{
+          this.editLogros();
+        }
+        this.closeModal();
       }
     }
     // ======= ======= ======= ======= =======

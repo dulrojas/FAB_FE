@@ -9,6 +9,7 @@ import { servObligaciones } from "../../servicios/obligaciones";
 import { servFinanciadores } from "../../servicios/financiadores";
 import { servUbicaGeografica } from "../../servicios/ubicaGeografica";
 import { servPersonaRoles } from "../../servicios/personaRoles";
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-infProyecto',
@@ -69,93 +70,94 @@ export class InfProyectoComponent implements OnInit {
     ubicaciones: any[] = [];
     ubicacionesB: any[] = [];
     ubicacionesBAux: any[] = [];
-
+    
     objetivosFAN: any[] = [
       {
-        "id":1,
-        "objetivo_imagen":"../../../assets/images/objFan1.png"
+        id: 1,
+        objetivo_imagen: `${environment.assetsPath}images/objFan1.png`
       },
       {
-        "id":2,
-        "objetivo_imagen":"../../../assets/images/objFan2.png"
+        id: 2,
+        objetivo_imagen: `${environment.assetsPath}images/objFan2.png`
       },
       {
-        "id":3,
-        "objetivo_imagen":"../../../assets/images/objFan3.png"
+        id: 3,
+        objetivo_imagen: `${environment.assetsPath}images/objFan3.png`
       },
       {
-        "id":4,
-        "objetivo_imagen":"../../../assets/images/objFan4.png"
+        id: 4,
+        objetivo_imagen: `${environment.assetsPath}images/objFan4.png`
       }
     ];
+    
     objetivosODS: any[] = [
       {
-        "id":1,
-        "objetivo_imagen":"../../../assets/images/objOnu01.png"
+        id: 1,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu01.png`
       },
       {
-        "id":2,
-        "objetivo_imagen":"../../../assets/images/objOnu02.png"
+        id: 2,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu02.png`
       },
       {
-        "id":3,
-        "objetivo_imagen":"../../../assets/images/objOnu03.png"
+        id: 3,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu03.png`
       },
       {
-        "id":4,
-        "objetivo_imagen":"../../../assets/images/objOnu04.png"
+        id: 4,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu04.png`
       },
       {
-        "id":5,
-        "objetivo_imagen":"../../../assets/images/objOnu05.png"
+        id: 5,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu05.png`
       },
       {
-        "id":6,
-        "objetivo_imagen":"../../../assets/images/objOnu06.png"
+        id: 6,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu06.png`
       },
       {
-        "id":7,
-        "objetivo_imagen":"../../../assets/images/objOnu07.png"
+        id: 7,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu07.png`
       },
       {
-        "id":8,
-        "objetivo_imagen":"../../../assets/images/objOnu08.png"
+        id: 8,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu08.png`
       },
       {
-        "id":9,
-        "objetivo_imagen":"../../../assets/images/objOnu09.png"
+        id: 9,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu09.png`
       },
       {
-        "id":10,
-        "objetivo_imagen":"../../../assets/images/objOnu10.png"
+        id: 10,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu10.png`
       },
       {
-        "id":11,
-        "objetivo_imagen":"../../../assets/images/objOnu11.png"
+        id: 11,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu11.png`
       },
       {
-        "id":12,
-        "objetivo_imagen":"../../../assets/images/objOnu12.png"
+        id: 12,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu12.png`
       },
       {
-        "id":13,
-        "objetivo_imagen":"../../../assets/images/objOnu13.png"
+        id: 13,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu13.png`
       },
       {
-        "id":14,
-        "objetivo_imagen":"../../../assets/images/objOnu14.png"
+        id: 14,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu14.png`
       },
       {
-        "id":15,
-        "objetivo_imagen":"../../../assets/images/objOnu15.png"
+        id: 15,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu15.png`
       },
       {
-        "id":16,
-        "objetivo_imagen":"../../../assets/images/objOnu16.png"
+        id: 16,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu16.png`
       },
       {
-        "id":17,
-        "objetivo_imagen":"../../../assets/images/objOnu17.png"
+        id: 17,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu17.png`
       }
     ];
 

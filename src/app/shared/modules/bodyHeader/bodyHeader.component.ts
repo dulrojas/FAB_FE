@@ -2,12 +2,16 @@ import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
+import { environment } from '../../../../environments/environment';
+
 @Component({
     selector: 'app-bodyHeader',
     templateUrl: './bodyHeader.component.html'
 })
 export class BodyHeaderComponent implements OnInit {
     public pushRightClass: string;
+    userImg: any;
+    projectImg: any;
 
     constructor(private translate: TranslateService, public router: Router) {
         this.router.events.subscribe((val) => {
@@ -28,6 +32,9 @@ export class BodyHeaderComponent implements OnInit {
         this.proyectos = JSON.parse(localStorage.getItem("projects"));
         this.currentIdProy = parseInt(localStorage.getItem("currentIdProy"));
         this.currentIdProy = (this.currentIdProy)?(this.currentIdProy):(this.proyectos[0].id_proyecto);
+
+        this.userImg = `${environment.assetsPath}images/exam.jpeg`;
+        this.projectImg = `${environment.assetsPath}images/exam2.jpg`;
     }
 
     @Output() selectionChange = new EventEmitter<any>();
