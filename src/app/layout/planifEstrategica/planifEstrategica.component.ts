@@ -1,16 +1,15 @@
 // Importacion de modulos y componentes Principales
-import { Component, OnInit, TemplateRef, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef} from '@angular/core';
 import { routerTransition } from '../../router.animations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 // Importacion de servicios 
-import { ProyectoService } from '../../services/proyectoData.service';
+
 import { PlanifEstrategicaService } from '../../servicios/planifEstrategica';
 import { servicios } from "../../servicios/servicios";
-import { servIndicador } from '../../servicios/indicador';
-import { MetoElementosService } from '../../servicios/metoElementos';
 import { servAprendizaje } from "../../servicios/aprendizajes";
-import {InstCategoriasService } from '../../servicios/instCategoria';
+import { servIndicador } from '../../servicios/indicador';
+
 
 // Estructura del Decorador del Componente 
 @Component({
@@ -21,35 +20,33 @@ import {InstCategoriasService } from '../../servicios/instCategoria';
 })
 
 export class PlanifEstrategicaComponent implements OnInit {
-  
     // Variables de datos principales
     planifEstrategica: any[] = [];
-    planificacionEstrategicaSelected: any = null;
     // Variables de paginación
     mainPage = 1;
     mainPageSize = 10;
     totalLength = 0;
-
     constructor(
       private modalService: NgbModal,
       private cdr: ChangeDetectorRef,
-      private proyectoService: ProyectoService,
       private ServPlanifEstrategica: PlanifEstrategicaService,
       private servicios: servicios,
       private servApredizaje: servAprendizaje,
       private servIndicador: servIndicador,
-      private ServMetoElementos: MetoElementosService,
-      private ServInstCategorias: InstCategoriasService      
     ) {}
+
         // ======= ======= HEADER SECTION ======= =======
         idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
         idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-        @Output() selectionChange = new EventEmitter<any>();
-        onChildSelectionChange(selectedId: any) {
+        namePersonaReg: any = localStorage.getItem('userFullName');
+        onChildSelectionChange(selectedId: string) {
           this.idProyecto = selectedId;
           localStorage.setItem('currentIdProy', (this.idProyecto).toString());
-          this.proyectoService.seleccionarProyecto(this.idProyecto);
+    
+          this.getParametricas();
           this.getPlanifEstrategica();
+          this.initPlanifEstrategicaModel();
+          this.planifEstrategicaSelected = null
         }
 
         headerDataNro01: any = 0;
@@ -58,80 +55,99 @@ export class PlanifEstrategicaComponent implements OnInit {
         headerDataNro04: any = 0;
         // ======= ======= ======= ======= =======
 
-        // Variables para modal
+        // ======= ======= NGMODEL VARIABLES SECTION ======= =======
         modalAction: any = "";
         modalTitle: any = '';
 
-          //Variables Generales
+          //Variables PROY_ELEMENTO "Planificación Estratégica"
           id_proy_elemento: any = "";
-          id_proyecto: any = "";
-          id_meto_elemento: any = "";
-          id_proy_elemento_padre: any = "";
-          proyecto: any = "";
           elemento: any = "";
+          nivel: any = "";
+          idp_estado: any = "";
+          peso: any = "";
+
+          // Variables PROY_INDICADOR 
+          id_proy_indicador: any = "";
+          id_proyecto: any = "";
+          id_proy_elem_padre: any = "";
           codigo: any = "";
+          indicador: any = "";
           descripcion: any = "";
           comentario: any = "";
-          nivel: any = "";
           orden: any = "";
-          idp_estado: any = "";
-          tipoCategoria: any = "";
-          lineaBase: any = null;
-          medidas: any = null;
-          metaFinal: any = null;
-          medioVerificacion: any = null;
-          sigla: any = "";
-          color: any = "";
-          meto_elemento: any = "";
-          fecha_inicio: any = "";
-          fecha_fin: any = "";
-          fecha_fin_ampliada: any = "";
-          fecha_fin_real: any = "";
+          linea_base: any = "";
           medida: any = "";
           meta_final: any = "";
-          medio_verificacion: any = "";
-          valor_esperado: any = "";	
-          valor_reportado: any = "";
-          fecha_hora_reporte: any = "";
-          supuestosComentario: any = "";
+          medio_verifica: any = "";
+          id_estado: any = "";
+          inst_categoria_1: any = "";
+          inst_categoria_2: any = "";
+          inst_categoria_3: any = "";
+
+          sigla: any = "";
+          color: any = "";
           // Variables de Selección
           componentes: any[] = [];
-          padre: any[] = [];
-          categoria: any[] = [];
-          subcategoria: any[] = [];
-          tipo: string = '';
+          planifCategoria: any[] = [];
+          planifSubCategoria: any[] = [];
+          planifTipoCategoria: any[] = [];
 
-          planifELineaBase: any[] = [];
+            //LLAMADO PARA TABLA
+            planifEstrategicaTipo: any[] = [];
+    
 
-        // Nuevas variables para la funcionalidad
-        selectedItem: any = null;
-        periodData: any[] = [];
-        projecData: any = null;
-        tiposElemento: { [key: string]: { nombre: string } } = {
-            'OG': { nombre: 'Objetivo General' },
-            'OE': { nombre: 'Objetivo Específico' },
-            'RE': { nombre: 'Resultado Esperado' },
-            'IN': { nombre: 'Indicador' }
-        };
-        planifCategoria: any[] = [];
-        planifSubCategoria: any[] = [];
-        planifTipoCategoria: any[] = [];
+
+    // ======= ======= ======= ======= ======= ======= =======
+    // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
+        valComponente: any = true;
+        ValidateComponente(){
+          this.valComponente = true;
+          if(!this.id_proy_elem_padre){
+            this.valComponente = false;
+          }
+        }
+        valCategoria: any = true;
+        ValidateCategoria(){
+          this.valCategoria = true;
+          if(!this.inst_categoria_1){
+            this.valCategoria = false;
+          }
+        }
+        valSubCategoria: any = true;
+        ValidateSubCategoria(){
+          this.valSubCategoria = true;
+          if(!this.inst_categoria_2){
+            this.valCategoria = false;
+          }
+        }
+        valTipoCategoria: any = true;
+        ValidateTipoCategoria(){
+          this.valTipoCategoria = true;
+          if(!this.inst_categoria_3){
+            this.valCategoria = false;
+          }
+        }
 
        
-    // INIT VIEW FUN - Inicialización de datos al cargar el componente
+    // ======= ======= INIT VIEW FUN ======= =======
         ngOnInit(): void {
-          this.getPlanifEstrategica(); // Obtiene datos del servicio
           this.getParametricas(); // Obtiene datos de las paramétricas
-          this.getIndicador(); // Obtiene datos de los indicadores
-          this.getMetoElementos(); // Obtiene datos de los meto elementos
-          this.getCategorias(); // Obtiene datos de las categorías
-          this.countHeaderData(); // Calcula conteo de tipos
+          this.getPlanifEstrategica(); // Obtiene datos del servicio
         }
-    // ======= ======= ======= ======= =======
+    // ======= ======= ======= ======= =======  ======= ======= =======  =======
+        jsonToString(json: object): string {
+          return JSON.stringify(json);
+        }
+      
+        stringToJson(jsonString: string): object {
+          return JSON.parse(jsonString);
+        }
+      
         getDescripcionSubtipo(idRegistro: any, paramList: any): string{
           const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
           return subtipo ? subtipo.descripcion_subtipo : 'Null';
         }
+      
         getCurrentDateTime(): string {
           const date: Date = new Date();
           
@@ -145,6 +161,7 @@ export class PlanifEstrategicaComponent implements OnInit {
           
           return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
 
         // ======= ======= GET PARAMETRICAS ======= =======
         getParametricas(){
@@ -157,454 +174,488 @@ export class PlanifEstrategicaComponent implements OnInit {
               console.error(error);
             }
           );
+
           // ======= ======= =======
+          this.servicios.getParametricaByIdTipo(12).subscribe(
+            (data) => {
+              this.planifCategoria = data[0].dato;
+            },
+            (error) => {
+              console.error(error);
+            }
+          );
+
           this.servicios.getParametricaByIdTipo(14).subscribe(
             (data) => {
-              console.log('Datos de categoría:', data);
-              this.planifCategoria = Array.isArray(data[0]?.dato) ? data[0]?.dato : [];
+              this.planifSubCategoria = data[0].dato;
             },
             (error) => {
-              console.error('Error al cargar categorías:', error);
+              console.error(error);
             }
           );
-          this.servicios.getParametricaByIdTipo(15).subscribe(
+
+          this.servicios.getParametricaByIdTipo(18).subscribe(
             (data) => {
-              console.log('Datos de categoría:', data);
-              this.planifSubCategoria = Array.isArray(data[0]?.dato) ? data[0]?.dato : [];
+              this.planifTipoCategoria = data[0].dato;
             },
             (error) => {
-              console.error('Error al cargar categorías:', error);
-            }
-          );
-          this.servicios.getParametricaByIdTipo(16).subscribe(
-            (data) => {
-              console.log('Datos de categoría:', data);
-              this.planifTipoCategoria = Array.isArray(data[0]?.dato) ? data[0]?.dato : [];
-            },
-            (error) => {
-              console.error('Error al cargar categorías:', error);
+              console.error(error);
             }
           );
 
-        }
-
-        // Método para obtener categorías
-        getCategorias() {
-          this.ServInstCategorias.getCategoriaById(this.idProyecto).subscribe(
-            (data) => {
-              this.categoria = data;
-            },
-            (error) => {
-              console.error('Error al cargar categorías:', error);
-            }
-          );
-        }
-        
-
-
-    // ======= ======= GET INDICADOR ======= =======
-    getIndicador(){
-      this.servIndicador.getIndicadorByLiBase(this.lineaBase).subscribe(
-        (data) => {
-          console.log(data);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    }
-
-    // ======= ======= GET METO ELEMENTOS ======= =======
-    getMetoElementos(){
-      this.ServMetoElementos.getAllMetoElementos().subscribe(
-        (data) => {
-          console.log(data);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    } 
-        
-
-//OPEN MODALS FUN Modal de añadir/editar
-openModal(content: TemplateRef<any>, action: string) {
-  this.getModalTitle(action);
-  this.modalService.open(content, { size: 'xl' });
-}
-
-//GET MODAL TITLE FUN Define el título del modal según la acción
-getModalTitle(modalAction: any) {
-  this.modalTitle = (modalAction == "add") ? ("Añadir Planificación Estratégica") : this.modalTitle;
-  this.modalTitle = (modalAction == "Indica") ? ("Indicador de Planificación Estratégica") : this.modalTitle;
-  this.modalTitle = (modalAction == "edit") ? ("Editar Planificación Estratégica") : this.modalTitle;
-  return this.modalTitle;
-}
-
-// ======= ======= ======= ======= =======
-onSelectionChange(){
-  const selectedComponente = this.componentes.find(comp => comp.id_meto_elemento == this.id_proy_elemento);
-  if (selectedComponente) {
-      this.color = selectedComponente.color;
-      this.sigla = selectedComponente.sigla;
-  }
-}
-
- // Método para obtener nivel según tipo
- obtenerNivel(tipo: string): number {
-  const niveles = { 'OG': 1, 'OE': 2, 'RE': 3, 'IN': 4 };
-  return niveles[tipo] || 1;
-}
-
-// Método para actualizar códigos recursivamente
-actualizarCodigos(elemento: any, codigoPadre: string = ''): void {
-  const hijos = elemento.children || [];
-  let codigoBase = codigoPadre ? codigoPadre : `${elemento.orden}.0.0.0`;
-
-  hijos.forEach((hijo: any, index: number) => {
-      const partesCodigo = codigoBase.split('.');
-      
-      switch (hijo.tipo) {
-          case 'OG':
-              hijo.codigo = `${index + 1}.0.0.0`;
-              break;
-          case 'OE':
-              hijo.codigo = `${partesCodigo[0]}.${index + 1}.0.0`;
-              break;
-          case 'RE':
-              hijo.codigo = `${partesCodigo[0]}.${partesCodigo[1]}.${index + 1}.0`;
-              break;
-          case 'IN':
-              hijo.codigo = `${partesCodigo[0]}.${partesCodigo[1]}.${partesCodigo[2]}.${index + 1}`;
-              break;
+        } 
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======        
+      private modalRef: NgbModalRef | null = null;
+      openModal(content: TemplateRef<any>) {
+        this.modalRef = this.modalService.open(content, { size: 'xl' });
       }
-
-      this.actualizarCodigos(hijo, hijo.codigo);
-  });
-}
-
-
-// Función para mover elementos
-moverElemento(elemento: any, direccion: 'arriba' | 'abajo'): void {
-  const nivelActual = this.obtenerNivel(elemento.codigo);
-  const partesCodigo = elemento.codigo.split('.');
-  
-  // Para OG, solo permitir cambio de número
-  if (elemento.tipo === 'OG') {
-    const objetivosGenerales = this.planifEstrategica
-      .filter(e => e.tipo === 'OG')
-      .sort((a, b) => parseInt(a.codigo) - parseInt(b.codigo));
+      closeModal() {
+        if (this.modalRef) {
+          this.modalRef.close(); 
+          this.modalRef = null;
+        }
+      }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    // ======= ======= GET MODAL TITLE FUN ======= =======
+      getModalTitle(modalAction: any) {
+        this.modalTitle = (modalAction == "add") ? ("Añadir Planificación Estratégica") : (this.modalTitle);
+        this.modalTitle = (modalAction == "edit") ? ("Editar Planificación Estratégica") : (this.modalTitle);
+        return this.modalTitle;
+      }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+      get planifEstrategicaTable() {
+        const start = (this.mainPage - 1) * this.mainPageSize;
+        return this.planifEstrategica.slice(start, start + this.mainPageSize);
+      }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    planifEstrategicaSelected: any = null;
     
-    const indiceActual = objetivosGenerales.findIndex(og => og.codigo === elemento.codigo);
-    if (direccion === 'arriba' && indiceActual > 0) {
-      this.intercambiarElementos(elemento, objetivosGenerales[indiceActual - 1]);
-    } else if (direccion === 'abajo' && indiceActual < objetivosGenerales.length - 1) {
-      this.intercambiarElementos(elemento, objetivosGenerales[indiceActual + 1]);
+    // ======= ======= CHECKBOX CHANGED ======= =======
+      checkboxChanged(planifEstrategicaSel: any) {
+        this.planifEstrategica.forEach(planifEstrategica => {
+          if (planifEstrategicaSel.id_proy_indicador == planifEstrategica.id_proy_indicador) {
+            if (planifEstrategicaSel.selected) {
+              this.planifEstrategicaSelected = planifEstrategicaSel;
+            } else {
+              this.planifEstrategicaSelected = null;
+            }
+          } else {
+            planifEstrategica.selected = false;
+          }
+        });
+      }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+      onSelectionChange() {
+        const selectedComponente = this.componentes.find(comp => comp.id_meto_elemento == this.id_proy_elem_padre);
+        if (selectedComponente) {
+            this.color = selectedComponente.color;
+            this.sigla = selectedComponente.sigla;
+        }
+        this.ValidateComponente();
+      }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    elementosMap = {
+      1: { sigla: 'OG', color: '#D45B49' }, // Objetivo General
+      2: { sigla: 'OE', color: '#F58634' }, // Objetivo Específico
+      3: { sigla: 'RE', color: '#F7B529' }, // Resultado Estratégico
+      4: { sigla: 'IN', color: '#FBD468' }  // Indicador
+    };
+    
+    // Método para obtener la sigla
+    getSigla(id_proy_elem_padre: number): string {
+      return this.elementosMap[id_proy_elem_padre]?.sigla || '';
     }
+    
+    // Método para obtener el color
+    getColor(id_proy_elem_padre: number): string {
+      return this.elementosMap[id_proy_elem_padre]?.color || '#000000'; // Negro por defecto
+    }
+    
+    // Método para calcular el margen dinámico (espaciado)
+    getMargin(id_proy_elem_padre: number): string {
+      switch (id_proy_elem_padre) {
+        case 1: return '0';      // Sin margen adicional
+        case 2: return '10px';   // Espaciado medio
+        case 3: return '20px';   // Espaciado más amplio
+        case 4: return '30px';   // Espaciado al final
+        default: return '0';     // Por defecto, sin margen
+      }
+    }
+    
+
+
+
+
+    
+    tipo: string = '';
+    selectedParentCodigo: string = '';
+    
+    onParentChange() {
+      if (!this.tipo) {
+        console.error("No se ha seleccionado un tipo válido.");
+        return;
+      }
+    
+      const id_proy_elem_padre = this.getIdProyElemPadre(this.tipo);
+    
+      if (this.selectedParentCodigo) {
+        // Solo si hay un padre seleccionado, genera el código
+        this.codigo = this.generateCodigo(id_proy_elem_padre, this.planifEstrategica, this.selectedParentCodigo);
+      } else {
+        // Si no se ha seleccionado un padre (por ejemplo, para Objetivo General), genera un código base
+        this.codigo = this.generateCodigo(id_proy_elem_padre, this.planifEstrategica);
+      }
+      console.log("Código generado: ", this.codigo);  // Verificar que el código se genera correctamente
+    }
+    
+    generateCodigo(id_proy_elem_padre: number, planifEstrategica: any[], selectedParentCodigo: string = ""): string {
+      if (id_proy_elem_padre === 1) {
+        // Generar código para Objetivo General
+        const maxCode = Math.max(...planifEstrategica
+          .filter(el => el.codigo.startsWith("1."))
+          .map(el => parseInt(el.codigo.split(".")[0], 10)), 0);
+        return `${maxCode + 1}.0.0.0`;
+      }
+    
+      // Si es Objetivo Específico (2), buscar en los existentes
+      if (id_proy_elem_padre === 2 && selectedParentCodigo) {
+        const parentCode = selectedParentCodigo.split(".")[0]; // Extraer el primer dígito del padre
+        const maxSpecificCode = Math.max(...planifEstrategica
+          .filter(el => el.codigo.startsWith(`${parentCode}.`))
+          .map(el => parseInt(el.codigo.split(".")[1], 10)), 0);
+        return `${parentCode}.${maxSpecificCode + 1}.0.0`;
+      }
+    
+      // Similar para otros tipos
+      if (id_proy_elem_padre === 3 && selectedParentCodigo) {
+        const parentParts = selectedParentCodigo.split(".");
+        const maxResultCode = Math.max(...planifEstrategica
+          .filter(el => el.codigo.startsWith(`${parentParts[0]}.${parentParts[1]}.`))
+          .map(el => parseInt(el.codigo.split(".")[2], 10)), 0);
+        return `${parentParts[0]}.${parentParts[1]}.${maxResultCode + 1}.0`;
+      }
+    
+      if (id_proy_elem_padre === 4 && selectedParentCodigo) {
+        const parentParts = selectedParentCodigo.split(".");
+        const maxIndicatorCode = Math.max(...planifEstrategica
+          .filter(el => el.codigo.startsWith(`${parentParts[0]}.${parentParts[1]}.${parentParts[2]}.`))
+          .map(el => parseInt(el.codigo.split(".")[3], 10)), 0);
+        return `${parentParts[0]}.${parentParts[1]}.${parentParts[2]}.${maxIndicatorCode + 1}`;
+      }
+    
+      return ""; // Retorna vacío si no es un tipo válido
+    }
+    
+    getIdProyElemPadre(tipo: string): number {
+      switch (tipo) {
+        case 'OG': return 1; // Objetivo General
+        case 'OE': return 2; // Objetivo Específico
+        case 'RE': return 3; // Resultado Estratégico
+        case 'IN': return 4; // Indicador
+        default: return 0; // Caso desconocido
+      }
+    }
+    
+    validarPadre(tipo: string, parentCodigo: string): boolean {
+      const id_proy_elem_padre = this.getIdProyElemPadre(tipo);
+    
+      // OG no necesita padres
+      if (id_proy_elem_padre === 1) {
+        return false;
+      }
+    
+      // Valida que el padre sea adecuado para el tipo seleccionado
+      const parentParts = parentCodigo.split(".");
+      switch (id_proy_elem_padre) {
+        case 2: // OE necesita un OG (1)
+          return parentParts[1] === "0" && parentParts[2] === "0" && parentParts[3] === "0";
+        case 3: // RE necesita un OE (2)
+          return parentParts[2] === "0" && parentParts[3] === "0";
+        case 4: // IN necesita cualquier otro tipo válido como padre
+          return true;
+        default:
+          return false;
+      }
+    }
+
+
+
+// Función para mover un elemento dentro de planifEstrategica sin modificar los códigos
+moverElemento(elemento: any, direccion: string): void {
+  const index = this.planifEstrategica.indexOf(elemento);
+
+  if (index === -1) {
+    console.error("Elemento no encontrado");
     return;
   }
 
-  // Para otros elementos, buscar elementos del mismo tipo bajo el mismo padre
-  const hermanos = this.planifEstrategica.filter(e => {
-    const partesHermano = e.codigo.split('.');
-    return e.tipo === elemento.tipo && 
-           partesHermano.slice(0, nivelActual).join('.') === partesCodigo.slice(0, nivelActual).join('.');
-  }).sort((a, b) => {
-    const numA = parseInt(a.codigo.split('.')[nivelActual]);
-    const numB = parseInt(b.codigo.split('.')[nivelActual]);
-    return numA - numB;
-  });
-
-  const indiceActual = hermanos.findIndex(h => h.codigo === elemento.codigo);
-  if (direccion === 'arriba' && indiceActual > 0) {
-    this.intercambiarElementos(elemento, hermanos[indiceActual - 1]);
-  } else if (direccion === 'abajo' && indiceActual < hermanos.length - 1) {
-    this.intercambiarElementos(elemento, hermanos[indiceActual + 1]);
+  // Validar si el elemento pertenece al OG (padre 1) y solo puede moverse dentro de él
+  if (!this.perteneceAOg(elemento)) {
+    console.error("Este elemento no pertenece al OG y no puede ser movido.");
+    return;
   }
-}
 
-private intercambiarElementos(elemento1: any, elemento2: any): void {
-  const codigo1 = elemento1.codigo;
-  const codigo2 = elemento2.codigo;
-  
-  // Intercambiar códigos
-  elemento1.codigo = codigo2;
-  elemento2.codigo = codigo1;
-  
-  // Actualizar códigos de los hijos
-  this.actualizarCodigosHijos(elemento1);
-  this.actualizarCodigosHijos(elemento2);
-  
-  this.ordenarElementos();
-  this.cdr.detectChanges();
-}
+  // Determinar la nueva posición basada en la dirección
+  let newIndex = direccion === 'arriba' ? index - 1 : index + 1;
 
-private actualizarCodigosHijos(elemento: any): void {
-  const hijos = this.planifEstrategica.filter(e => 
-    e.codigo.startsWith(elemento.codigo.slice(0, -2))
-  );
-
-  hijos.forEach(hijo => {
-    if (hijo.id_planificacion_estrategica !== elemento.id_planificacion_estrategica) {
-      const partesHijo = hijo.codigo.split('.');
-      const partesElemento = elemento.codigo.split('.');
-      
-      // Actualizar solo las partes relevantes según el nivel
-      switch (hijo.tipo) {
-        case 'OE':
-          partesHijo[0] = partesElemento[0];
-          break;
-        case 'RE':
-          partesHijo[0] = partesElemento[0];
-          partesHijo[1] = partesElemento[1];
-          break;
-        case 'IN':
-          partesHijo[0] = partesElemento[0];
-          partesHijo[1] = partesElemento[1];
-          partesHijo[2] = partesElemento[2];
-          break;
-      }
-      
-      hijo.codigo = partesHijo.join('.');
-    }
-  });
-}
-
-
-// Planificación Estratégica TABLE PAGINATION
-get planifEstrategicaTable() {
-  if (!this.planifEstrategica) {
-    return [];
+  // Validar si el nuevo índice está dentro de los límites del array
+  if (newIndex < 0 || newIndex >= this.planifEstrategica.length) {
+    console.log("No se puede mover más allá de los límites");
+    return;
   }
-  const start = (this.mainPage - 1) * this.mainPageSize;
-  return this.planifEstrategica.slice(start, start + this.mainPageSize);
+
+  // Cambiar el orden de los elementos dentro de planifEstrategica
+  const temp = this.planifEstrategica[index];
+  this.planifEstrategica[index] = this.planifEstrategica[newIndex];
+  this.planifEstrategica[newIndex] = temp;
+
+  console.log("Elemento movido correctamente");
 }
 
-get planificacionEstrategicaTable() {
-  return this.planifEstrategica;
+// Función para verificar si un elemento pertenece al OG (padre 1)
+perteneceAOg(elemento: any): boolean {
+  return elemento.codigo.startsWith('1.');
 }
 
-
-
-// CHECKBOX CHANGED
-checkboxChanged(planificacionEstrategicaSel: any) {
-  this.planifEstrategica.forEach(planificacionEstrategica => {
-    if (planificacionEstrategicaSel.id_planificacion_estrategica == planificacionEstrategica.id_planificacion_estrategica) {
-      if (planificacionEstrategicaSel.selected) {
-        this.planificacionEstrategicaSelected = planificacionEstrategicaSel;
-      } else {
-        this.planificacionEstrategicaSelected = null;
-      }
-    } else {
-      planificacionEstrategica.selected = false;
-    }
-  });
-}
-
-// INIT Planificación Estratégica NGMODEL
-
-initPlanifEstrategicaModel() {
-  this.id_proy_elemento = "";
-  this.id_proyecto = "";
-  this.id_meto_elemento = "";
-  this.id_proy_elemento_padre = "";
-  this.proyecto = "";
-  this.elemento = "";
-  this.codigo = "";
-  this.descripcion = "";
-  this.comentario = "";
-  this.nivel = "";
-  this.orden = "";
-  this.idp_estado = "";
-  this.tipoCategoria = "";
-  this.lineaBase = "";
-  this.medidas = "";
-  this.metaFinal = "";
-  this.medioVerificacion = "";
-  this.sigla = "";
-  this.color = "ffffff";
-
-  this.meto_elemento = "";
-  this.fecha_inicio = "";
-  this.fecha_fin = "";
-  this.fecha_fin_ampliada = "";
-  this.fecha_fin_real = "";
-  this.medida = "";
-  this.meta_final = "";
-  this.medio_verificacion = "";
-  this.valor_esperado = "";	
-  this.valor_reportado = "";
-  this.fecha_hora_reporte = "";
-}
-
-// Inicializar modal de añadir
-initAddPlanifEstrategica(modalRef: TemplateRef<any>, tipoSeleccionado: string): void {
-  this.planificacionEstrategicaSelected = {
-    tipo: '',
-    codigo: '',
-    nombre: '',
-    descripcion: '',
-    lineaBase: '',
-    metaFinal: '',
-    medioVerificacion: '',
-    supuestosComentario: ''
-  };
-  // Si es OG, generar código automáticamente
-  if (tipoSeleccionado === 'OG') {
-    const nextOGNumber = this.getNextOGNumber();
-    this.codigo = `${nextOGNumber}.0.0.0`;
-  } else {
-    // Para otros tipos, mostrar padres disponibles
-    this.obtenerPadresDisponibles(tipoSeleccionado);
-  }
-  
-  this.modalService.open(modalRef, { size: 'xl', backdrop: 'static' });
-}
-
-private getNextOGNumber(): number {
-  const ogElements = this.planifEstrategica.filter(e => e.tipo === 'OG');
-  return ogElements.length > 0 
-    ? Math.max(...ogElements.map(og => parseInt(og.codigo.split('.')[0]))) + 1 
-    : 1;
-}
-
-obtenerPadresDisponibles(tipo: string): any[] {
-  switch (tipo) {
-    case 'OE':
-      return this.planifEstrategica.filter(e => e.tipo === 'OG');
-    case 'RE':
-      return this.planifEstrategica.filter(e => e.tipo === 'OE' || e.tipo === 'OG');
-    case 'IN':
-      return this.planifEstrategica.filter(e => e.tipo === 'RE' || e.tipo === 'OE' || e.tipo === 'OG');
-    default:
-      return [];
-  }
-}
-
-
-private ordenarElementos(): void {
-  this.planifEstrategica.sort((a, b) => {
-    const codigoA = a.codigo.split('.').map(Number);
-    const codigoB = b.codigo.split('.').map(Number);
     
-    for (let i = 0; i < 4; i++) {
-      if (codigoA[i] !== codigoB[i]) {
-        return codigoA[i] - codigoB[i];
+
+        
+        
+
+    // ======= ======= INIT PLANIFICACION ESTRATEGICA NGMODEL ======= =======
+      initPlanifEstrategicaModel() {
+        this.modalTitle = "";
+
+        this.id_proy_indicador = 0;
+        this.id_proyecto = "";
+        this.id_proy_elem_padre = "";
+        this.codigo = "";
+        this.indicador = "";
+        this.descripcion = "";
+        this.comentario = "";
+        this.orden = "";
+        this.linea_base = "";
+        this.medida = "";
+        this.meta_final = "";
+        this.medio_verifica = "";
+        this.id_estado = "";
+        this.inst_categoria_1 = "";
+        this.inst_categoria_2 = "";
+        this.inst_categoria_3 = "";
+
+        this.sigla = null;
+        this.color = null;
+
+        this.valComponente = true;
+      
       }
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    // ======= ======= GET INDICADORES ======= =======
+      getPlanifEstrategica() {
+        this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(
+          (data: any) => {
+            this.planifEstrategica = (data[0].dato)?(data[0].dato):([]);
+            this.totalLength = this.planifEstrategica.length;
+            this.countHeaderData();
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      }
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    initAddPlanifEstrategica(modalScope: TemplateRef<any>){
+      this.initPlanifEstrategicaModel();
+
+      this.modalAction = "add";
+      this.modalTitle = this.getModalTitle("add");
+
+      this.openModal(modalScope);
     }
-    return 0;
-  });
-}
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
 
+    addIndicador(){
+      const objIndicador = {
+        p_id_proy_indicador: 0,
+        p_id_proyecto: parseInt(this.idProyecto,10),
+        p_id_proy_elem_padre: this.id_proy_elem_padre,
+        p_codigo: this.codigo,
+        p_indicador: this.indicador,
+        p_descripcion: this.descripcion,
+        p_comentario: this.comentario,
+        p_orden: this.orden,
+        p_linea_base: this.linea_base,
+        p_medida: this.medida,
+        p_meta_final: this.meta_final,
+        p_medio_verifica: this.medio_verifica,
+        p_id_estado: this.id_estado,
+        p_inst_categoria_1: this.inst_categoria_1,
+        p_inst_categoria_2: this.inst_categoria_2,
+        p_inst_categoria_3: this.inst_categoria_3
+      };
+      this.servIndicador.addIndicador(objIndicador).subscribe(
+        (data) => {
+          this.getPlanifEstrategica();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    initEditPlanifEstrategica(planifEstrategicaOGOERE: TemplateRef<any>, planifEstrategicaIN: TemplateRef<any>){
+      if (!this.planifEstrategicaSelected) {
+        console.error("No hay un elemento seleccionado para editar.");
+        return;
+      }
+      this.initPlanifEstrategicaModel ();
 
-// Inicializar modal de edición
-initEditPlanifEstrategica(modalRef: TemplateRef<any>): void {
-  if (!this.planificacionEstrategicaSelected) return;
-  
-  this.limpiarModal();
-  this.modalTitle = 'Editar ' + this.tiposElemento[this.planificacionEstrategicaSelected.tipo]?.nombre;
-  
-  // Solo permitir editar nombre, descripción y supuestos
-  this.elemento = this.planificacionEstrategicaSelected.nombre;
-  this.descripcion = this.planificacionEstrategicaSelected.descripcion || '';
-  this.supuestosComentario = this.planificacionEstrategicaSelected.supuestosComentario || '';
-  
-  this.modalService.open(modalRef, { size: 'xl' });
-}
+      this.modalAction = "edit";
+      this.modalTitle = this.getModalTitle("edit");
 
-private limpiarModal(): void {
-  this.initPlanifEstrategicaModel();
-  this.padre = null;
-  this.categoria = null;
-  this.subcategoria = null;
-  this.tipo = '';
-  this.modalTitle = '';
-  this.modalAction = '';
-  this.selectedItem = null;
-  this.planificacionEstrategicaSelected = null;
-}
+      this.id_proy_indicador = this.planifEstrategicaSelected.id_proy_indicador;
+      this.id_proyecto = this.planifEstrategicaSelected.id_proyecto;
+      this.id_proy_elem_padre = this.planifEstrategicaSelected.id_proy_elem_padre;
+      this.codigo = this.planifEstrategicaSelected.codigo;
+      this.indicador = this.planifEstrategicaSelected.indicador;
+      this.descripcion = this.planifEstrategicaSelected.descripcion;
+      this.comentario = this.planifEstrategicaSelected.comentario;
+      this.orden = this.planifEstrategicaSelected.orden;
+      this.linea_base = this.planifEstrategicaSelected.linea_base;
+      this.medida = this.planifEstrategicaSelected.medida;
+      this.meta_final = this.planifEstrategicaSelected.meta_final;
+      this.medio_verifica = this.planifEstrategicaSelected.medio_verifica;
+      this.id_estado = this.planifEstrategicaSelected.id_estado;
+      this.inst_categoria_1 = this.planifEstrategicaSelected.inst_categoria_1;
+      this.inst_categoria_2 = this.planifEstrategicaSelected.inst_categoria_2;
+      this.inst_categoria_3 = this.planifEstrategicaSelected.inst_categoria_3;
 
+      this.sigla = this.planifEstrategicaSelected.sigla;
+      this.color = this.planifEstrategicaSelected.color;
 
-// INIT DELETE Planificación Estratégica
-initDeletePlanifEstrategica() {
-
-}
-
-getButtonStyle(tipo: string) {
-  switch (tipo) {
-    case 'OG':
-      return { margin: '0 auto', padding: '5px', position: 'relative', left: '0px' };
-    case 'OE':
-      return { margin: '0 auto', padding: '5px', position: 'relative', left: '10px' };
-    case 'RE':
-      return { margin: '0 auto', padding: '5px', position: 'relative', left: '20px' };
-    case 'IN':
-      return { margin: '0 auto', padding: '5px', position: 'relative', left: '30px' };
-    default:
-      return { margin: '0 auto', padding: '5px' };
+      // Abrir el modal correspondiente
+        switch (this.id_proy_elem_padre) {
+          case 1: // Objetivo General
+          case 2: // Objetivo Específico
+          case 3: // Resultado Estratégico
+            this.openModal(planifEstrategicaOGOERE);
+            break;
+          case 4: // Indicador
+            this.openModal(planifEstrategicaIN);
+            break;
+          default:
+            console.error("Tipo de elemento desconocido.");
   }
-}
+    }
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    editIndicador(){
+      const objIndicador = {
+        p_id_proy_indicador: this.id_proy_indicador,
+        p_id_proyecto: this.id_proyecto,
+        p_id_proy_elem_padre: this.id_proy_elem_padre,
+        p_codigo: this.codigo,
+        p_indicador: this.indicador,
+        p_descripcion: this.descripcion,
+        p_comentario: this.comentario,
+        p_orden: this.orden,
+        p_linea_base: this.linea_base,
+        p_medida: this.medida,
+        p_meta_final: this.meta_final,
+        p_medio_verifica: this.medio_verifica,
+        p_id_estado: this.id_estado,
+        p_inst_categoria_1: this.inst_categoria_1,
+        p_inst_categoria_2: this.inst_categoria_2,
+        p_inst_categoria_3: this.inst_categoria_3
+      };
+      this.servIndicador.editIndicador(objIndicador).subscribe(
+        (data) => {
+          this.getPlanifEstrategica();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    initDeletePlanifEstrategica(modalScope: TemplateRef<any>){
+      this.initPlanifEstrategicaModel();
 
+      this.id_proy_indicador = this.planifEstrategicaSelected.id_proy_indicador;
+     
+      this.openModal(modalScope);
+    }
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    deleteIndicador(){
+      this.servIndicador.deleteIndicador(this.id_proy_indicador).subscribe(
+        (data) => {
+          this.closeModal();
+          this.getPlanifEstrategica();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
 
-// GET Planificación Estratégica
-getPlanifEstrategica() {
-  this.ServPlanifEstrategica.getAllPlanifElements().subscribe(
-    (data: any) => {
-    this.planifEstrategica = data[0].dato;
-    this.countHeaderData();
-  });
-  (error) => {
-    console.log(error);
-  }
-}
 
 // COUNT HEADER DATA
 countHeaderData(): void {
-  this.headerDataNro01 = this.planifEstrategica.filter(e => e.tipo === 'OG').length;
-  this.headerDataNro02 = this.planifEstrategica.filter(e => e.tipo === 'OE').length;
-  this.headerDataNro03 = this.planifEstrategica.filter(e => e.tipo === 'RE').length;
-  this.headerDataNro04 = this.planifEstrategica.filter(e => e.tipo === 'IN').length;
-}
+  // Inicializamos los contadores
+  this.headerDataNro01 = 0;
+  this.headerDataNro02 = 0;
+  this.headerDataNro03 = 0;
+  this.headerDataNro04 = 0;
 
-// Función para guardar nuevo elemento o editar existente
-guardarElemento() {
-  const nuevoElemento = {
-    id_planificacion_estrategica: this.planificacionEstrategicaSelected?.id_planificacion_estrategica || this.generarNuevoId(),
-    tipo: this.tipo,
-    codigo: this.codigo,
-    nombre: this.elemento,
-    descripcion: this.descripcion,
-    lineaBase: this.lineaBase,
-    metaFinal: this.metaFinal,
-    medioVerificacion: this.medioVerificacion,
-    supuestosComentario: this.supuestosComentario,
-    selected: false
-  };
-
-  if (this.planificacionEstrategicaSelected) {
-    // Actualizar elemento existente
-    const index = this.planifEstrategica.findIndex(
-      e => e.id_planificacion_estrategica === this.planificacionEstrategicaSelected.id_planificacion_estrategica
-    );
-    if (index !== -1) {
-      this.planifEstrategica[index] = { ...this.planifEstrategica[index], ...nuevoElemento };
+  // Recorremos solo una vez el arreglo y actualizamos los contadores
+  this.planifEstrategica.forEach(e => {
+    switch (e.tipo) {
+      case 'OG':
+        this.headerDataNro01++;
+        break;
+      case 'OE':
+        this.headerDataNro02++;
+        break;
+      case 'RE':
+        this.headerDataNro03++;
+        break;
+      case 'IN':
+        this.headerDataNro04++;
+        break;
     }
-  } else {
-    // Agregar nuevo elemento
-    this.planifEstrategica.push(nuevoElemento);
-  }
-
-  this.ordenarElementos();
-  this.modalService.dismissAll();
-  this.countHeaderData();
+  });
 }
 
-private generarNuevoId(): number {
-  return Math.max(...this.planifEstrategica.map(e => e.id_planificacion_estrategica), 0) + 1;
-}
-// Función para cerrar el modal sin guardar
-cancelar(): void {
-  this.modalService.dismissAll();
-}
+
+// ======= ======= SUBMIT FORM ======= =======
+    onSubmit(): void {
+      // ======= VALIDATION SECTION =======
+      let valForm = false;
+
+      this.ValidateComponente();
+      this.ValidateCategoria();
+      this.ValidateSubCategoria();
+      this.ValidateTipoCategoria();
+
+      valForm = 
+        this.valComponente &&
+        this.valCategoria &&
+        this.valSubCategoria &&
+        this.valTipoCategoria;
+       
+
+      // ======= ACTION SECTION =======
+      if(valForm){
+        if(this.modalAction == "add"){
+          this.addIndicador();
+        }
+        else{
+          this.editIndicador();
+        }
+        this.closeModal();
+      }
+    }
+    // ======= ======= ======= ======= =======
+
 
 }

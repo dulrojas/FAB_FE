@@ -16,7 +16,7 @@
   text-overflow: ellipsis;
 }
 
-.btn-añaEliminar{
+.btn-Editdelete{
   width: 100px;
   height: 30px;
   -webkit-border-radius: 50px;
@@ -67,23 +67,16 @@
   }
 }  
 
-.btn-view-bg-1{
-  -webkit-border-radius: 50px;
-  border-radius: 50px;
-  color: $txt-2-color;
-  background:  #F7B529;
-  border: 2px solid $txt-2-color;
-  font-size: 12px;
-  line-height: 40px;
-  padding: 0 10px;
+
+.dynamic-button {
+  width: auto; /* Permite que el tamaño del botón dependa de su contenido */
+  max-width: 100%; /* Evita que se desborde */
+  text-align: center; /* Centra el texto dentro del botón */
+  padding: 5px 10px; /* Espaciado interno */
+  border: none; /* Opcional: Estiliza el borde si lo deseas */
+  border-radius: 15px; /* Opcional: Bordes redondeados */
+  overflow-wrap: break-word; /* Divide palabras largas si es necesario */
 }
-.btn-view-bg-4{
-  -webkit-border-radius: 50px;
-  border-radius: 50px;
-  color: $txt-2-color;
-  background: #FBD468;
-  border: 2px solid $txt-2-color;
-  font-size: 12px;
-  line-height: 40px;
-  padding: 0 10px;
-}
+
+
+

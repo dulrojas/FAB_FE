@@ -39,6 +39,7 @@ export class RiesgosComponent implements OnInit {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
 
+      this.getParametricas();
       this.getRiesgos();
       this.initRiesgosModel();
       this.riesgosSelected = null;
@@ -128,7 +129,7 @@ export class RiesgosComponent implements OnInit {
     valDescripcion: any = true;
     ValidateDescripcion(){
       this.valDescripcion = true;
-      if((!this.descripcion)||(this.descripcion.length >= 225)){
+      if((!this.descripcion)||(this.descripcion.length >= 500)){
         this.valDescripcion = false;
       }
     }
@@ -187,7 +188,7 @@ export class RiesgosComponent implements OnInit {
     valMedida: any = true;
     ValidateMedida(){
       this.valMedida = true;
-      if(!this.medidas){
+      if((!this.medidas)||(this.comentarios.length >= 500)){
         this.valMedida = false;
       }
     }
@@ -201,7 +202,7 @@ export class RiesgosComponent implements OnInit {
     valComentarios: any = true;
     ValidateComentarios(){
       this.valComentarios = true;
-      if((!this.comentarios)||(this.comentarios.length >= 225)){
+      if((!this.comentarios)||(this.comentarios.length >= 500)){
         this.valComentarios = false;
       }
     }
