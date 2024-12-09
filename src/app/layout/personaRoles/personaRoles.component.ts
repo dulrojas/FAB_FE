@@ -454,6 +454,13 @@ export class PersonaRolesComponent implements OnInit {
             return this.servPersonaRoles.addPersonaRol(objPersonaRol);
           });
           // ======= ======= =======
+          // ======= IS RESPONSABLE =======
+          if(this.responsable){
+            let unidadObj = this.unidades.find(unidad => unidad.id_inst_unidad == this.id_inst_unidad);
+            unidadObj.id_persona_resp = idPersona;
+            this.editUnidad(unidadObj);
+          }
+          // ======= ======= =======
     
           if (requests.length === 0) {
             this.onAllServicesComplete();
@@ -480,6 +487,21 @@ export class PersonaRolesComponent implements OnInit {
       this.getPersonaRoles();
       this.countHeaderData();
     }
+    // ======= IS RESPONSABLE FUN =======
+    isRespOfUnit(idToAsk){
+      const isResp = this.unidades.some(unidad => unidad.id_persona_resp == idToAsk);
+      return isResp;
+    }
+    editUnidad(obj: any){
+      this.servicios.editUnidades(obj).subscribe(
+        (data) => {
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+    // ======= ======= =======
     // ======= ======= ======= ======= =======
     // ======= ======= INIT EDIT PERSONA ROLES ======= =======
     initEditPersonaRoles(modalScope: TemplateRef<any>){
@@ -548,7 +570,7 @@ export class PersonaRolesComponent implements OnInit {
           const requestsAdd = this.persona_proyecto_mod_to_add.map((personaProyecto) => {
             const objPersonaRol = {
               p_id_persona_proyecto: null,
-              p_id_persona: personaProyecto.id_persona,
+              p_id_persona: this.id_persona,
               p_id_institucion: 1,
               p_id_proyecto: personaProyecto.id_proyecto,
               p_rol: personaProyecto.rol
@@ -556,25 +578,13 @@ export class PersonaRolesComponent implements OnInit {
             return this.servPersonaRoles.addPersonaRol(objPersonaRol);
           });
           // ======= ======= =======
-          // ======= EDIT PERSONA PROYECTO =======
-          const requestsEdit = this.persona_proyecto_mod_to_edit.map((personaProyecto) => {
-            const objPersonaRol = {
-              p_id_persona_proyecto: personaProyecto.id_persona_proyecto,
-              p_id_persona: personaProyecto.id_persona,
-              p_id_proyecto: personaProyecto.id_proyecto,
-              p_rol: personaProyecto.rol
-            };
-            return this.servPersonaRoles.editPersonaRol(objPersonaRol);
-          });
-          // ======= ======= =======
-          const requests = requestsAdd.concat(requestsEdit);
 
-          if (requests.length == 0) {
+          if (requestsAdd.length == 0) {
             this.onAllServicesComplete();
             this.personaRolesSelected = null;
           }
           else{
-            forkJoin(requests).subscribe(
+            forkJoin(requestsAdd).subscribe(
               () => {
                 this.onAllServicesComplete();
               },
@@ -583,6 +593,42 @@ export class PersonaRolesComponent implements OnInit {
               }
             );
           }
+          // ======= EDIT PERSONA PROYECTO =======
+          const requestsEdit = this.persona_proyecto_mod_to_edit.map((personaProyecto) => {
+            const objPersonaRol = {
+              p_id_persona_proyecto: personaProyecto.id_persona_proyecto,
+              p_id_persona: this.id_persona,
+              p_id_institucion: 1,
+              p_id_proyecto: personaProyecto.id_proyecto,
+              p_rol: personaProyecto.rol
+            };
+            return this.servPersonaRoles.editPersonaRol(objPersonaRol);
+          });
+          // ======= ======= =======
+
+          if (requestsEdit.length == 0) {
+            this.onAllServicesComplete();
+            this.personaRolesSelected = null;
+          }
+          else{
+            forkJoin(requestsEdit).subscribe(
+              (responses) => {
+                this.onAllServicesComplete();
+              },
+              (error) => {
+                console.error(error);
+              }
+            );
+          }
+          
+          // ======= IS RESPONSABLE =======
+          if(this.responsable){
+            let unidadObj = this.unidades.find(unidad => unidad.id_inst_unidad == this.id_inst_unidad);
+            unidadObj.id_persona_resp = parseInt(this.id_persona,10);
+            this.editUnidad(unidadObj);
+          }
+          // ======= ======= =======
+
         },
         (error) => {
           console.error(error);
@@ -659,7 +705,6 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= UPLOAD IMAGE FUN ======= =======
     uploadImage(idRegistro: any, file: any){
-      console.log("======= IN =======");
       // =======  =======
       const formData = new FormData();
       formData.append('file', file);

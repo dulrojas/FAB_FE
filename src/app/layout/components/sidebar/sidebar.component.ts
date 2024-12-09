@@ -2,6 +2,8 @@ import { Component, EventEmitter, OnInit, Input, Output } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
+import { environment } from '../../../../environments/environment';
+
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
@@ -12,6 +14,7 @@ export class SidebarComponent implements OnInit {
     collapsed: boolean;
     showMenu: string;
     pushRightClass: string;
+    logoImg: any;
 
     @Input() currentProyName!: any;
 
@@ -30,6 +33,7 @@ export class SidebarComponent implements OnInit {
         this.collapsed = false;
         this.showMenu = '';
         this.pushRightClass = 'push-right';
+        this.logoImg = (!this.collapsed)?(`${environment.assetsPath}images/FANFullLogo.png`):(`${environment.assetsPath}images/FANLogo.png`);
     }
 
     eventCalled() {
@@ -47,6 +51,7 @@ export class SidebarComponent implements OnInit {
     toggleCollapsed() {
         this.collapsed = !this.collapsed;
         this.collapsedEvent.emit(this.collapsed);
+        this.logoImg = (!this.collapsed)?(`${environment.assetsPath}images/FANFullLogo.png`):(`${environment.assetsPath}images/FANLogo.png`);
     }
 
     isToggled(): boolean {

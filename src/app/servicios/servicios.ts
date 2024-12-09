@@ -8,6 +8,7 @@ import config from './config';
 })
 export class servicios{
   private URL = config.URL;
+  private URLUpload = config.URLUploadFile;
 
   constructor(private http: HttpClient) {}
 
@@ -41,7 +42,7 @@ export class servicios{
   // ======= ======= ======= GET UNIDADES ======= ======= =======
   getUnidades(): Observable<any> {
     const params = {
-      "procedure_name": "sp_ins_unidades",
+      "procedure_name": "sp_inst_unidades",
       "body": {
         "params": [
           {"name": "p_accion","value": "C1","type": "string"},
@@ -50,8 +51,33 @@ export class servicios{
           {"name": "p_unidad","value": null,"type": "string"},
           {"name": "p_descripcion","value": null,"type": "string"},
           {"name": "p_id_persona_resp","value": null,"type": "int"},
-          {"name": "p_id_estado","value": null,"type": "int"},
+          {"name": "p_idp_estado","value": null,"type": "int"},
           {"name": "p_orden","value": null,"type": "int"}
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= EDIT UNIDADES ======= ======= =======
+  editUnidades(obj: any): Observable<any> {
+    const params = {
+      "procedure_name": "sp_inst_unidades",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "M1","type": "string"},
+          {"name": "p_id_inst_unidad","value": obj.id_inst_unidad,"type": "int"},
+          {"name": "p_id_institucion","value": obj.id_institucion,"type": "int"},
+          {"name": "p_unidad","value": obj.unidad,"type": "string"},
+          {"name": "p_descripcion","value": obj.descripcion,"type": "string"},
+          {"name": "p_id_persona_resp","value": obj.id_persona_resp,"type": "int"},
+          {"name": "p_idp_estado","value": obj.idp_estado,"type": "int"},
+          {"name": "p_orden","value": obj.orden,"type": "int"}
         ]
       }
     };
@@ -70,7 +96,7 @@ export class servicios{
     const headers = new HttpHeaders({
       'ip': "127.0.0.1"
     });
-    return this.http.post<any>(this.URL, formData, { headers });
+    return this.http.post<any>(this.URLUpload, formData, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
 }

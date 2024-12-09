@@ -83,7 +83,7 @@
                                 <td>{{ personaRol.usuario }}</td>
                                 <td>{{ personaRol.unidad }}</td>
                                 <td>
-                                    <ng-container *ngIf="personaRol.id_persona == personaRol.id_persona_resp; else notEqual">
+                                    <ng-container *ngIf="isRespOfUnit(personaRol.id_persona); else notEqual">
                                       <i class="fa fa-check-circle-o mx-auto custom-checker-checked" aria-hidden="true"></i>
                                     </ng-container>
                                     <ng-template #notEqual>
