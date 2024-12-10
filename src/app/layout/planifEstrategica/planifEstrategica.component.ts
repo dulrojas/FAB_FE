@@ -254,6 +254,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.ValidateComponente();
       }
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
+      // Tipo botones de la tabla de planifEstrategica
     elementosMap = {
       1: { sigla: 'OG', color: '#D45B49' }, // Objetivo General
       2: { sigla: 'OE', color: '#F58634' }, // Objetivo Específico
@@ -268,7 +269,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     
     // Método para obtener el color
     getColor(id_proy_elem_padre: number): string {
-      return this.elementosMap[id_proy_elem_padre]?.color || '#000000'; // Negro por defecto
+      const color = this.elementosMap[id_proy_elem_padre]?.color;
+      return color ? color : '#000000'; 
     }
     
     // Método para calcular el margen dinámico (espaciado)
@@ -282,144 +284,90 @@ export class PlanifEstrategicaComponent implements OnInit {
       }
     }
     
+    getElementoNombre(id_proy_elem_padre: number): string {
+      const elemento = this.componentes.find(comp => comp.id_meto_elemento === id_proy_elem_padre);
+      return elemento ? elemento.meto_elemento : '';
+    }
 
-
-
-
-    
+   // ======= ======= ======= ======= ======= ======= =======  ======= ======= 
+    // ======= ======= JERARQUIA DE PADRE ======= =======
+    validParents: any[] = [];
     tipo: string = '';
-    selectedParentCodigo: string = '';
-    
-    onParentChange() {
-      if (!this.tipo) {
-        console.error("No se ha seleccionado un tipo válido.");
-        return;
+
+
+    // Filtrar padres válidos en función del tipo del elemento a crear
+      getValidParents(tipo: string): any[] {
+        switch (tipo) {
+          case 'OG': // Objetivo General no tiene padres válidos (es la raíz)
+            return [];
+
+          case 'OE': // Objetivo Específico solo puede tener como padre un OG
+            return this.planifEstrategica.filter(el => el.id_proy_elem_padre === 1);
+
+          case 'RE': // Resultado Estratégico puede tener como padre un OG o un OE
+            return this.planifEstrategica.filter(el => el.id_proy_elem_padre === 1 || el.id_proy_elem_padre === 2);
+
+          case 'IN': // Indicador puede tener como padre un OG, OE o RE
+            return this.planifEstrategica.filter(el => 
+              el.id_proy_elem_padre === 1 || 
+              el.id_proy_elem_padre === 2 || 
+              el.id_proy_elem_padre === 3
+            );
+
+          default:
+            return [];
+        }
       }
-    
-      const id_proy_elem_padre = this.getIdProyElemPadre(this.tipo);
-    
-      if (this.selectedParentCodigo) {
-        // Solo si hay un padre seleccionado, genera el código
-        this.codigo = this.generateCodigo(id_proy_elem_padre, this.planifEstrategica, this.selectedParentCodigo);
-      } else {
-        // Si no se ha seleccionado un padre (por ejemplo, para Objetivo General), genera un código base
-        this.codigo = this.generateCodigo(id_proy_elem_padre, this.planifEstrategica);
+
+      // Validar si un padre seleccionado es válido para el tipo actual
+      validarPadre(tipo: string, parentCodigo: string): boolean {
+        const validParents = this.getValidParents(tipo);
+        return validParents.some(parent => parent.codigo === parentCodigo);
       }
-      console.log("Código generado: ", this.codigo);  // Verificar que el código se genera correctamente
-    }
-    
-    generateCodigo(id_proy_elem_padre: number, planifEstrategica: any[], selectedParentCodigo: string = ""): string {
-      if (id_proy_elem_padre === 1) {
-        // Generar código para Objetivo General
-        const maxCode = Math.max(...planifEstrategica
-          .filter(el => el.codigo.startsWith("1."))
-          .map(el => parseInt(el.codigo.split(".")[0], 10)), 0);
-        return `${maxCode + 1}.0.0.0`;
-      }
-    
-      // Si es Objetivo Específico (2), buscar en los existentes
-      if (id_proy_elem_padre === 2 && selectedParentCodigo) {
-        const parentCode = selectedParentCodigo.split(".")[0]; // Extraer el primer dígito del padre
-        const maxSpecificCode = Math.max(...planifEstrategica
-          .filter(el => el.codigo.startsWith(`${parentCode}.`))
-          .map(el => parseInt(el.codigo.split(".")[1], 10)), 0);
-        return `${parentCode}.${maxSpecificCode + 1}.0.0`;
-      }
-    
-      // Similar para otros tipos
-      if (id_proy_elem_padre === 3 && selectedParentCodigo) {
-        const parentParts = selectedParentCodigo.split(".");
-        const maxResultCode = Math.max(...planifEstrategica
-          .filter(el => el.codigo.startsWith(`${parentParts[0]}.${parentParts[1]}.`))
-          .map(el => parseInt(el.codigo.split(".")[2], 10)), 0);
-        return `${parentParts[0]}.${parentParts[1]}.${maxResultCode + 1}.0`;
-      }
-    
-      if (id_proy_elem_padre === 4 && selectedParentCodigo) {
-        const parentParts = selectedParentCodigo.split(".");
-        const maxIndicatorCode = Math.max(...planifEstrategica
-          .filter(el => el.codigo.startsWith(`${parentParts[0]}.${parentParts[1]}.${parentParts[2]}.`))
-          .map(el => parseInt(el.codigo.split(".")[3], 10)), 0);
-        return `${parentParts[0]}.${parentParts[1]}.${parentParts[2]}.${maxIndicatorCode + 1}`;
-      }
-    
-      return ""; // Retorna vacío si no es un tipo válido
-    }
-    
-    getIdProyElemPadre(tipo: string): number {
-      switch (tipo) {
-        case 'OG': return 1; // Objetivo General
-        case 'OE': return 2; // Objetivo Específico
-        case 'RE': return 3; // Resultado Estratégico
-        case 'IN': return 4; // Indicador
-        default: return 0; // Caso desconocido
-      }
-    }
-    
-    validarPadre(tipo: string, parentCodigo: string): boolean {
-      const id_proy_elem_padre = this.getIdProyElemPadre(tipo);
-    
-      // OG no necesita padres
-      if (id_proy_elem_padre === 1) {
-        return false;
-      }
-    
-      // Valida que el padre sea adecuado para el tipo seleccionado
-      const parentParts = parentCodigo.split(".");
-      switch (id_proy_elem_padre) {
-        case 2: // OE necesita un OG (1)
-          return parentParts[1] === "0" && parentParts[2] === "0" && parentParts[3] === "0";
-        case 3: // RE necesita un OE (2)
-          return parentParts[2] === "0" && parentParts[3] === "0";
-        case 4: // IN necesita cualquier otro tipo válido como padre
-          return true;
-        default:
-          return false;
-      }
-    }
 
+      // Método para manejar cambios en el tipo y filtrar padres válidos
+      onParentChange(): void {
+        if (!this.tipo) {
+          console.error("No se ha definido un tipo para validar el padre.");
+          return;
+        }
 
-
-// Función para mover un elemento dentro de planifEstrategica sin modificar los códigos
-moverElemento(elemento: any, direccion: string): void {
-  const index = this.planifEstrategica.indexOf(elemento);
-
-  if (index === -1) {
-    console.error("Elemento no encontrado");
-    return;
-  }
-
-  // Validar si el elemento pertenece al OG (padre 1) y solo puede moverse dentro de él
-  if (!this.perteneceAOg(elemento)) {
-    console.error("Este elemento no pertenece al OG y no puede ser movido.");
-    return;
-  }
-
-  // Determinar la nueva posición basada en la dirección
-  let newIndex = direccion === 'arriba' ? index - 1 : index + 1;
-
-  // Validar si el nuevo índice está dentro de los límites del array
-  if (newIndex < 0 || newIndex >= this.planifEstrategica.length) {
-    console.log("No se puede mover más allá de los límites");
-    return;
-  }
-
-  // Cambiar el orden de los elementos dentro de planifEstrategica
-  const temp = this.planifEstrategica[index];
-  this.planifEstrategica[index] = this.planifEstrategica[newIndex];
-  this.planifEstrategica[newIndex] = temp;
-
-  console.log("Elemento movido correctamente");
-}
-
-// Función para verificar si un elemento pertenece al OG (padre 1)
-perteneceAOg(elemento: any): boolean {
-  return elemento.codigo.startsWith('1.');
-}
-
-    
-
+        // Actualizar lista de padres válidos
+        this.validParents = this.getValidParents(this.tipo);
         
+      }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    // ======= ======= GENERAR CÓDIGO ======= ======= 
+    // Método para obtener el último código de "OG" y generar el siguiente código.
+      generateCodigoOG(): string {
+        // Obtener los elementos con id_proy_elem_padre === 1 (OG).
+        const ogElements = this.planifEstrategica.filter(el => el.id_proy_elem_padre === 1);
+
+        // Buscar el código más alto de los OG.
+        const lastOG = ogElements.reduce((max, el) => {
+          const currentCode = el.codigo.split('.').map(Number);
+          if (currentCode[0] > max[0]) {
+            return currentCode;
+          }
+          return max;
+        }, [0, 0, 0, 0]); // [1, 0, 0, 0] es el valor predeterminado
+
+        // Incrementar el primer dígito del código.
+        lastOG[0]++;
+
+        // Formatear el nuevo código en el formato "X.0.0.0".
+        return `${lastOG[0]}.0.0.0`;
+      }
+
+
+    // ======= ======= MOVER ELEMENTO ======= =======
+    moverElemento(elemento: any, direccion: string): void {
+      
+    }
+    
+    
+    
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======      
         
 
     // ======= ======= INIT PLANIFICACION ESTRATEGICA NGMODEL ======= =======
@@ -447,6 +395,9 @@ perteneceAOg(elemento: any): boolean {
         this.color = null;
 
         this.valComponente = true;
+        this.valCategoria = true;
+        this.valSubCategoria = true;
+        this.valTipoCategoria = true;
       
       }
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
@@ -464,11 +415,25 @@ perteneceAOg(elemento: any): boolean {
         );
       }
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
-    initAddPlanifEstrategica(modalScope: TemplateRef<any>){
+    initAddPlanifEstrategica(modalScope: TemplateRef<any>, id_proy_elem_padre?: number): void{
       this.initPlanifEstrategicaModel();
 
       this.modalAction = "add";
       this.modalTitle = this.getModalTitle("add");
+
+      // Si se pasa un ID, establece el elemento automáticamente
+      if (id_proy_elem_padre) {
+        this.id_proy_elem_padre = id_proy_elem_padre;
+        this.color = this.getColor(id_proy_elem_padre);
+        this.sigla = this.getSigla(id_proy_elem_padre);
+        this.tipo = this.getSigla(id_proy_elem_padre); // Obtener sigla del tipo
+        this.validParents = this.getValidParents(this.tipo);
+    
+        // Si el tipo es OG, generar el código automáticamente
+        if (this.tipo === 'OG') {
+          this.codigo = this.generateCodigoOG(); // Generar el código para OG
+        }
+      }
 
       this.openModal(modalScope);
     }

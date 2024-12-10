@@ -39,7 +39,7 @@
                     <button
                       class="btn-añadirElemento" 
                       style="background-color: #D45B49;"
-                      (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE)"
+                      (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE,1)"
                       [disabled]="planifEstrategicaSelected">
                       Objetivo General / Impact
                     </button>
@@ -47,21 +47,21 @@
                     <button 
                       class="btn-añadirElemento" 
                       style="background-color: #F58634;"
-                      (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE)">
+                      (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE,2)">
                       Objetivo Específico / Outcome
                     </button>
                   <!-- Botón: Añadir Resultado -->
                     <button 
                       class="btn-añadirElemento" 
                       style="background-color: #F7B529;"
-                      (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE)">
+                      (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE,3)">
                       Resultado / Output
                     </button>
                   <!-- Botón: Añadir Indicador -->
                     <button 
                       class="btn-añadirElemento" 
                       style="background-color: #FBD468;"
-                      (click)="initAddPlanifEstrategica(planifEstrategicaIN)">
+                      (click)="initAddPlanifEstrategica(planifEstrategicaIN,4)">
                       Indicador
                     </button>  
                 </div>
@@ -81,7 +81,7 @@
                         <button 
                           class="btn-Editdelete" 
                           [disabled]="!planifEstrategicaSelected" 
-                          (click)="initDeletePlanifEstrategica(planifEstrategicaSelected)">
+                          (click)="initDeletePlanifEstrategica(deleteIndicadorModal)">
                           Eliminar
                         </button>
                       <!-- Botón: Mover elemento hacia arriba -->
@@ -139,7 +139,7 @@
               <button
                 class="dynamic-button mb-auto "
                 [style.backgroundColor]="getColor(planifEstrategica.id_proy_elem_padre)"
-                [style.color]="'#000000'"
+                [style.color]="'#ffffff'"
                 [style.marginLeft]="getMargin(planifEstrategica.id_proy_elem_padre)"
               >
                 {{ getSigla(planifEstrategica.id_proy_elem_padre) }}
@@ -190,22 +190,22 @@
 
                             <div class="col col-xl-3 col-lg-3 mt-auto">
                               <label for="id_proy_elem_padre">Elemento</label>
-                              <select class="form-control" id="id_proy_elem_padre" name="id_proy_elem_padre" 
-                                [(ngModel)]="id_proy_elem_padre" (change)="onSelectionChange()">
-                                <option value="" disabled selected>Selecciona un elemento</option>
-                                <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
-                                    {{ componente.meto_elemento }}
-                                </option>
-                              </select>
-                              <span class="custom-alert-message" *ngIf="!valComponente">Debe elegir un componente</span>
+                              <input 
+                                type="text" 
+                                class="form-control" 
+                                id="id_proy_elem_padre" 
+                                [value]="getElementoNombre(id_proy_elem_padre)" 
+                                readonly>
                             </div>
-                          <div class="col col-xl-1 col-lg-1 mt-auto">
-                            <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
-                          </div>
+                            <div class="col col-xl-1 col-lg-1 mt-auto">
+                              <label class="btn-view-bg-3" [ngStyle]="{'background-color': color}">{{ sigla }}</label>
+                            </div>
+                            
 
                           <div class="col col-xl-2 col-lg-2 mt-auto">
                           </div>
 
+                          <!-- Selección de Padre -->
                           <div class="col col-xl-3 col-lg-3 mt-auto">
                             <label for="padre">Padre</label>
                             <select 
@@ -213,18 +213,17 @@
                               id="padre" 
                               name="padre" 
                               [(ngModel)]="selectedParentCodigo" 
-                              (change)="onParentChange()" 
-                              [disabled]="tipo === 'OG'">
+                              [disabled]="tipo === 'OG'" 
+                              (change)="onParentChange()">
                               <option value="">Seleccionar padre</option>
                               <option 
-                                *ngFor="let item of planifEstrategica" 
-                                [value]="item.codigo" 
-                                [ngClass]="{'disabled-option': !validarPadre(tipo, item.codigo)}">
-                                {{item.nombre}} ({{item.codigo}})
+                                *ngFor="let parent of validParents" 
+                                [value]="parent.codigo">
+                                {{ parent.nombre }} ({{ parent.codigo }})
                               </option>
                             </select>
                           </div>
-                          
+
                           <!-- Código -->
                           <div class="col col-xl-3 col-lg-3 mt-auto">
                             <label for="codigo">Código</label>
@@ -234,10 +233,10 @@
                               id="codigo" 
                               name="codigo" 
                               [(ngModel)]="codigo" 
-                              readonly>
+                              [readonly]="false"> 
                           </div>
                           
-                            
+
                             <div class="col col-xl-12 col-lg-12 mt-auto">
                               <label for="indicador">Nombre de elemento</label>
                               <textarea class="form-control" 
@@ -298,18 +297,15 @@
                 <!-- Elemento y Tipo -->
                 <div class="col col-xl-3 col-lg-3 mt-auto">
                   <label for="id_proy_elem_padre">Elemento</label>
-                  <select class="form-control" id="id_proy_elem_padre" name="id_proy_elem_padre" 
-                    [(ngModel)]="id_proy_elem_padre" (change)="onSelectionChange()">
-                    <option value="" disabled selected>Selecciona un elemento</option>
-                    <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
-                        {{ componente.meto_elemento }}
-                    </option>
-                  </select>
-                  <span class="custom-alert-message" *ngIf="!valComponente">Debe elegir un componente</span>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="id_proy_elem_padre" 
+                    [value]="getElementoNombre(id_proy_elem_padre)" 
+                    readonly>
                 </div>
-
                 <div class="col col-xl-1 col-lg-1 mt-auto">
-                  <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
+                  <label class="btn-view-bg-3" [ngStyle]="{'background-color': color}">{{ sigla }}</label>
                 </div>
 
                 <div class="col col-xl-2 col-lg-2 mt-auto">
@@ -323,14 +319,13 @@
                     id="padre" 
                     name="padre" 
                     [(ngModel)]="selectedParentCodigo" 
-                    (change)="onParentChange()" 
-                    [disabled]="tipo === 'OG'">
+                    [disabled]="tipo === 'OG'" 
+                    (change)="onParentChange()">
                     <option value="">Seleccionar padre</option>
                     <option 
-                      *ngFor="let item of planifEstrategica" 
-                      [value]="item.codigo" 
-                      [disabled]="!validarPadre(tipo, item.codigo)">
-                      {{item.nombre}} ({{item.codigo}})
+                      *ngFor="let parent of validParents" 
+                      [value]="parent.codigo">
+                      {{ parent.nombre }} ({{ parent.codigo }})
                     </option>
                   </select>
                 </div>
@@ -486,3 +481,29 @@
     </form>
   </div>
 </ng-template>
+
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
+<ng-template #deleteIndicadorModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Eliminar Aprendizaje</h4>
+  </div>
+  <div class="modal-body">
+      <div class="d-flex justify-content-center" style="width: 100%;">
+          <p>Esta seguro de querer eliminar el registro de Planificacion Estrategica?</p>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <div class="d-flex justify-content-center" style="width: 100%;">
+          <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+          <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+              <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+          </button>
+          <button type="button" class="btn btn-bg-1" (click)="deleteIndicador()">
+              <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+          </button>
+      </div>
+  </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+
