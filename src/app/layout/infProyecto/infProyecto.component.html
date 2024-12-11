@@ -135,15 +135,18 @@
                         <h2 class="custom-info-proy-title">Estado de proyecto:</h2>
 
                         <!-- ======= ======= ======= GRABAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-1">
+                        <button type="button" class="btn btn-bg-1" 
+                            [disabled]="!editMode" (click)="editInfProyecto()">
                             <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
                         </button>
                         <!-- ======= ======= ======= CANCELAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-3" (click)="disableEditMode()">
+                        <button type="button" class="btn btn-bg-3" 
+                            [disabled]="!editMode" (click)="disableEditMode()">
                             <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                         </button>
                         <!-- ======= ======= ======= EDITAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-1" (click)="enableEditMode()">
+                        <button type="button" class="btn btn-bg-1" 
+                            [disabled]="editMode" (click)="enableEditMode()">
                             Editar
                         </button>
                         <!-- ======= ======= ======= REPORTE DATE ======= ======= ======= -->
@@ -185,7 +188,8 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_convenio" name="fecha_convenio" [(ngModel)]="proyectoScope.fecha_convenio" [disabled]="!editMode"/>
+                                        id="fecha_convenio" name="fecha_convenio" 
+                                        [(ngModel)]="proyectoScope.fecha_convenio" [disabled]="!editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= DESEMBOLSO DATE ======= ======= ======= -->
@@ -340,7 +344,7 @@
                                 </div>
                                 <div class="col col-md-12">
 
-                                    <table class="table custom-table table-striped table-bordered custom-table-info-proy custom-table-info-proy-1" style="max-height: 200px;">
+                                    <table class="table custom-table table-striped table-bordered custom-table-info-proy-3" style="max-height: 200px;">
                                         <thead>
                                             <tr>
                                                 <th></th>
@@ -481,11 +485,11 @@
                         </div>
                         
                         <div class="col col-md-12">
-                            <table class="table custom-table table-striped table-bordered custom-table-info-proy custom-table-info-proy-1">
+                            <table class="table custom-table table-striped table-bordered custom-table-info-proy-3">
                                 <thead>
                                     <tr>
-                                        <th></th>
-                                        <th>ID</th>
+                                        <th class="custom-fit-head"></th>
+                                        <th class="custom-fit-head">ID</th>
                                         <th>Compromiso</th>
                                         <th>Requisitos y/o documentos</th>
                                         <th>Fecha obligacion</th>
@@ -495,12 +499,12 @@
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let obligacion of obligaciones; let i = index">
-                                        <td>
+                                        <td class="custom-fit-col">
                                             <input type="checkbox" [(ngModel)]="obligacion.selected"
                                                 id="checkbox-{{ i }}" name="checkbox-{{ i }}"
                                                 (change)="obligaCheckboxChanged(obligacion)" [disabled]="!editMode"/>
                                         </td>
-                                        <td>{{ obligacion.id_proy_obliga }}</td>
+                                        <td class="custom-fit-col">{{ obligacion.id_proy_obliga }}</td>
                                         <td>{{ obligacion.obligacion }}</td>
                                         <td>{{ obligacion.descripcion }}</td>
                                         <td>{{ obligacion.fecha_obligacion }}</td>
@@ -535,54 +539,58 @@
                         <div class="card-body custom-card">
                             <div class="row">
                                 <!-- ======= ======= ID SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="id_proy_finan">Id</label>
                                     <input class="form-control" type="text" id="id_proy_finan" name="id_proy_finan" 
                                         [(ngModel)]="financiadores.id_proy_finan" disabled/>
                                 </div>
                                 <!-- ======= ======= INSTITUCION FIN SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="id_institucion_fin">Institucion Financiadora</label>
                                     <select class="form-control" id="id_institucion_fin" name="id_institucion_fin" 
-                                        [(ngModel)]="financiadores.id_institucion_fin">
+                                        [(ngModel)]="financiadores.id_institucion_fin" (change)="ValidateIdInstitucionFin()">
                                         <option value="" disabled selected>Selecciona un elemento</option>
                                         <option *ngFor="let institucion of instituciones" [value]="institucion.id_institucion">
                                             {{ institucion.institucion }}
                                         </option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valIdInstitucionFin">Debe seleccionar una institucion financiadora.</span>
                                 </div>
 
                                 <!-- ======= ======= PORCENTAJE SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="porcentaje">Porcentaje</label>
                                     <input class="form-control" type="number" min="0" max="100" placeholder="Ingrese un porcentaje" 
                                         id="porcentaje" name="porcentaje" [(ngModel)]="financiadores.porcentaje"
                                         (change)="onPocentajeChange()"/>
+                                    <span class="custom-alert-message" *ngIf="!valPorcentaje">Debe ingresar un porcentaje valido.</span>
                                 </div>
                                 <!-- ======= ======= MONTO SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="monto">Monto</label>
                                     <input class="form-control" type="text" id="monto" name="monto" 
                                         [(ngModel)]="financiadores.monto" disabled/>
                                 </div>
                                 
                                 <!-- ======= ======= TIPO FINAN SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="idp_tipo_finan">Tipo Financiador</label>
                                     <select class="form-control" id="idp_tipo_finan" name="idp_tipo_finan" 
-                                        [(ngModel)]="financiadores.idp_tipo_finan">
+                                        [(ngModel)]="financiadores.idp_tipo_finan" (change)="ValidateIdTipoFinan()">
                                         <option value="" disabled selected>Selecciona un elemento</option>
                                         <option *ngFor="let tipoFinanciador of tipoFinanciadores" [value]="tipoFinanciador.id_subtipo">
                                             {{ tipoFinanciador.descripcion_subtipo }}
                                         </option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valIdTipoFinan">Debe seleccionar un tipo de financiador.</span>
                                 </div>
                                 
                                 <!-- ======= ======= ORDEN SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="orden">Orden</label>
-                                    <input class="form-control" type="text" placeholder="Ingrese un orden"
-                                        id="orden" name="orden" [(ngModel)]="financiadores.orden"/>
+                                    <input class="form-control" type="number" min="1" placeholder="Ingrese un orden"
+                                        id="orden" name="orden" [(ngModel)]="financiadores.orden" (change)="ValidateOrden()"/>
+                                    <span class="custom-alert-message" *ngIf="!valOrden">Debe ingresar un orden valido.</span>
                                 </div>
 
                             </div>
@@ -598,7 +606,8 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="presupuestoForm.invalid" (click)="financiadoresOnSubmit(); modal.close('Añadir')">
+            <button type="button" class="btn btn-bg-1" [disabled]="presupuestoForm.invalid" 
+                (click)="financiadoresOnSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
             </button>
         </div>
@@ -622,7 +631,7 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" (click)="editFinanciadores(); modal.close('Añadir')">
+            <button type="button" class="btn btn-bg-1" (click)="editFinanciadores();">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
             </button>
         </div>
@@ -681,76 +690,80 @@
                         <div class="card-body custom-card">
                             <div class="row">
                                 <!-- ======= ======= ID SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="id_proy_obliga">Id</label>
                                     <input class="form-control" type="text" id="id_proy_obliga" name="id_proy_obliga" 
                                         [(ngModel)]="obligacionesModel.id_proy_obliga" disabled/>
                                 </div>
                                 <!-- ======= ======= OBLIGACIONES SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <!--label for="id_inst_obligaciones">Obligaciones Institucion</label>
                                     <input class="form-control" type="text" id="id_inst_obligaciones" name="id_inst_obligaciones" 
                                         [(ngModel)]="obligacionesModel.id_inst_obligaciones"/-->
                                 </div>
 
                                 <!-- ======= ======= OBLIGACION SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="obligacion">Obligacion</label>
                                     <input class="form-control" type="text" id="obligacion" name="obligacion" placeholder="Ingresa el requisito"
-                                        [(ngModel)]="obligacionesModel.obligacion"/>
+                                        [(ngModel)]="obligacionesModel.obligacion" (change)="ValidateObligacion()"/>
+                                    <span class="custom-alert-message" *ngIf="!valObligacion">Debe ingresar una obligacion valida, con menos de 100 caracteres.</span>
                                 </div>
                                 <!-- ======= ======= DESCRIPCION SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="descripcion">Descripcion</label>
                                     <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" placeholder="Ingresa una descipcion"
-                                        [(ngModel)]="obligacionesModel.descripcion"></textarea>
+                                        [(ngModel)]="obligacionesModel.descripcion" (change)="ValidateDescripcion()"></textarea>
+                                    <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una descripcion valida, con menos de 250 caracteres.</span>
                                 </div>
                                 
                                 <!-- ======= ======= FECHA SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="fecha_obligacion">Fecha obligacion</label>
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_obligacion" name="fecha_obligacion" [(ngModel)]="obligacionesModel.fecha_obligacion"/>
+                                        id="fecha_obligacion" name="fecha_obligacion" 
+                                        [(ngModel)]="obligacionesModel.fecha_obligacion" (change)="ValidateFechaObligacion()"/>
+                                    <span class="custom-alert-message" *ngIf="!valFechaObligacion">Debe seleccionar una fecha de obligacion.</span>
                                 </div>
                                 <!-- ======= ======= INSTITUCION EXIGE SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="id_institucion_exige">Institucion exige</label>
                                     <select class="form-control" id="id_institucion_exige" name="id_institucion_exige" 
-                                        [(ngModel)]="obligacionesModel.id_institucion_exige">
+                                        [(ngModel)]="obligacionesModel.id_institucion_exige" (change)="ValidateIdInstitucionExige()">
                                         <option value="" disabled selected>Selecciona una institucion</option>
                                         <option *ngFor="let institucion of instituciones" [value]="institucion.id_institucion">
                                             {{ institucion.institucion }}
                                         </option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valIdInstitucionExige">Debe seleccionar una institucion.</span>
                                 </div>
 
                                 <!-- ======= ======= ESTADO ENTREGA SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="idp_estado_entrega">Estado entrega</label>
                                     <select class="form-control" id="idp_estado_entrega" name="idp_estado_entrega" 
-                                        [(ngModel)]="obligacionesModel.idp_estado_entrega">
+                                        [(ngModel)]="obligacionesModel.idp_estado_entrega" (change)="ValidateIdpEstadoEntrega()">
                                         <option value="" disabled selected>Selecciona un estado</option>
                                         <option *ngFor="let estadoEntrega of estadosEntrega" [value]="estadoEntrega.id_subtipo">
                                             {{ estadoEntrega.descripcion_subtipo }}
                                         </option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valIdpEstadoEntrega">Debe seleccionar un estado de entrega.</span>
                                 </div>
                                 <!-- ======= ======= FECHA HORA ENTREGA SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="fecha_hora_entrega">Fecha hora entrega</label>
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_hora_entrega" name="fecha_hora_entrega" [(ngModel)]="obligacionesModel.fecha_hora_entrega"/>
+                                        id="fecha_hora_entrega" name="fecha_hora_entrega" 
+                                        [(ngModel)]="obligacionesModel.fecha_hora_entrega" (change)="ValidateFechaHoraEntrega()"/>
+                                    <span class="custom-alert-message" *ngIf="!valFechaHoraEntrega">Debe seleccionar una fecha y hora de entrega.</span>
                                 </div>
                                 <!-- ======= ======= ID PERSONA ENTREGA SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="id_persona_entrega">Persona entrega</label>
-                                    <select class="form-control" id="id_persona_entrega" name="id_persona_entrega" 
-                                        [(ngModel)]="obligacionesModel.id_persona_entrega">
-                                        <option value="" disabled selected>Selecciona una persona</option>
-                                        <option *ngFor="let perPro of personasProyecto" [value]="perPro.id_persona">
-                                            {{ getPersonaName(perPro) }}
-                                        </option>
-                                    </select>
+                                    <input class="form-control custom-info-proy-input" type="text" 
+                                        id="id_persona_entrega" name="id_persona_entrega" 
+                                        [(ngModel)]="obligacionesModel.id_persona_entrega" disabled>
                                 </div>
                                 
 
@@ -767,7 +780,7 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="obligacionesForm.invalid" (click)="obligacionesOnSubmit(); modal.close('Añadir')">
+            <button type="button" class="btn btn-bg-1" [disabled]="obligacionesForm.invalid" (click)="obligacionesOnSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
             </button>
         </div>

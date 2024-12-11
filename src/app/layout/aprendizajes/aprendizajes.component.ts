@@ -2,6 +2,7 @@ import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
+import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
 import {servInstCategorias} from '../../servicios/instCategoria';
@@ -20,6 +21,7 @@ export class AprendizajesComponent implements OnInit {
     totalLength = 0;
     constructor(
       private modalService: NgbModal,
+      private proyectoService: ProyectoService,
       private servicios: servicios,
       private servApredizaje: servAprendizaje,
       private servInstCategorias: servInstCategorias,
@@ -32,6 +34,7 @@ export class AprendizajesComponent implements OnInit {
     onChildSelectionChange(selectedId: string) {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+      this.proyectoService.seleccionarProyecto(this.idProyecto);
 
       this.getParametricas();
       this.getAprendizajes();
@@ -125,7 +128,7 @@ export class AprendizajesComponent implements OnInit {
     valProblema: any = true;
     ValidateProblema(){
       this.valProblema = true;
-      if((!this.problema)||(this.problema.length >= 255)){
+      if((!this.problema)||(this.problema.length >= 500)){
         this.valProblema = false;
       }
     }
@@ -133,7 +136,7 @@ export class AprendizajesComponent implements OnInit {
     valAccion: any = true;
     ValidateAccion(){
       this.valAccion = true;
-      if((!this.accion)||(this.accion.length >= 255)){
+      if((!this.accion)||(this.accion.length >= 500)){
         this.valAccion = false;
       }
     }

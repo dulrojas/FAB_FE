@@ -33,6 +33,7 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+    namePersonaReg: any = localStorage.getItem('userFullName');
     @Output() selectionChange = new EventEmitter<any>();
     onChildSelectionChange(selectedId: any) {
       this.idProyecto = selectedId;
@@ -526,7 +527,7 @@ export class PersonaRolesComponent implements OnInit {
       this.correo = this.personaRolesSelected.correo;
       this.id_inst_unidad = this.personaRolesSelected.id_inst_unidad;
       this.cargo = this.personaRolesSelected.cargo;
-      this.responsable = this.personaRolesSelected.responsable;
+      this.responsable = this.isRespOfUnit(this.personaRolesSelected.id_persona);
       this.usuario = this.personaRolesSelected.usuario;
       this.contrasenia = this.personaRolesSelected.contrasenia;
       this.logedBy = this.personaRolesSelected.logedBy;

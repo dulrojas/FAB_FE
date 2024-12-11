@@ -188,7 +188,7 @@
                                         placeholder="Ingresa el problema del aprendizaje" 
                                         [(ngModel)]="problema" (change)="ValidateProblema()">
                                     </textarea>
-                                    <span class="custom-alert-message" *ngIf="!valProblema">Debe ingresar un problema valido, con menos de 255 caracteres</span>
+                                    <span class="custom-alert-message" *ngIf="!valProblema">Debe ingresar un problema valido, con menos de 500 caracteres</span>
                                 </div>
 
                                 <!-- ======= ======= ACCION DESARROLLADA SECTION ======= ======= -->
@@ -198,7 +198,7 @@
                                         placeholder="Ingresa la accion del aprendizaje" 
                                         [(ngModel)]="accion" (change)="ValidateAccion()">
                                     </textarea>
-                                    <span class="custom-alert-message" *ngIf="!valAccion">Debe ingresar una accion valida, con menos de 255 caracteres</span>
+                                    <span class="custom-alert-message" *ngIf="!valAccion">Debe ingresar una accion valida, con menos de 500 caracteres</span>
                                 </div>
 
                                 <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>
@@ -251,7 +251,7 @@
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
             <button type="button" class="btn btn-bg-1" [disabled]="aprendizajesForm.invalid" (click)="onSubmit()">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
             </button>
         </div>
     </div>

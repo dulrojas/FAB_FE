@@ -60,7 +60,7 @@
                                 [ngClass]="{'custom-logro-container-selected': logro.selected}"
                                 (click)="onLogroClick(logro)">
                                 <div class="row mt-auto">
-                                    <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="logro.ruta_imagen || '../../../assets/images/empty.jpg'" alt="Imagen del logro">
+                                    <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="(logro.ruta_imagen) || '../../../assets/images/empty.jpg'" alt="Imagen del logro">
                                     <div class="col col-xl-2 col-lg-2">
                                         <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+logro.color}">{{ logro.sigla }}</label>
                                     </div>
@@ -141,7 +141,7 @@
                                     <label for="descripcion">Descripcion</label>
                                     <textarea class="form-control" id="descripcion" name="descripcion" 
                                         placeholder="Agregar una descripcion"
-                                        [(ngModel)]="descripcion" (cahnge)="ValidateDescripcion()" style="height: 80%;">
+                                        [(ngModel)]="descripcion" (change)="ValidateDescripcion()" style="height: 80%;">
                                     </textarea>
                                     <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la descripcion del logro, con menos de 255 caracteres.</span>
                                 </div>

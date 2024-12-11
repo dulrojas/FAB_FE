@@ -1,15 +1,19 @@
 import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { routerTransition } from '../../router.animations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
+import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servProyectos } from "../../servicios/proyectos";
 import { servInstituciones } from "../../servicios/instituciones";
+import { servProyObjetivos } from "../../servicios/proyObjetivos";
 import { servObligaciones } from "../../servicios/obligaciones";
 import { servFinanciadores } from "../../servicios/financiadores";
 import { servUbicaGeografica } from "../../servicios/ubicaGeografica";
 import { servPersonaRoles } from "../../servicios/personaRoles";
 import { environment } from '../../../environments/environment';
+
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-infProyecto',
@@ -22,9 +26,11 @@ export class InfProyectoComponent implements OnInit {
     informacionProyecto: any[] = [];
     constructor(
       private modalService: NgbModal,
+      private proyectoService: ProyectoService,
       private servicios: servicios,
       private servProyectos: servProyectos,
       private servInstituciones: servInstituciones,
+      private servProyObjetivos: servProyObjetivos,
       private servObligaciones: servObligaciones,
       private servPersonaRoles: servPersonaRoles,
       private servFinanciadores: servFinanciadores,
@@ -33,9 +39,11 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+    namePersonaReg: any = localStorage.getItem('userFullName');
     onChildSelectionChange(selectedId: any) {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+      this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.getInformacionProyecto();
       this.getFinanciadores();
       this.getObligaciones();
@@ -70,165 +78,124 @@ export class InfProyectoComponent implements OnInit {
     ubicaciones: any[] = [];
     ubicacionesB: any[] = [];
     ubicacionesBAux: any[] = [];
-    
-    objetivosFAN: any[] = [
+
+    instObjetivos: any[] = [
       {
-        id: 1,
-        objetivo_imagen: `${environment.assetsPath}images/objFan1.png`
+        id_inst_objetivos: 1,
+        objetivo_imagen: `${environment.assetsPath}images/objFan1.png`,
+        idp_tipo_objetivo: 2
       },
       {
-        id: 2,
-        objetivo_imagen: `${environment.assetsPath}images/objFan2.png`
+        id_inst_objetivos: 2,
+        objetivo_imagen: `${environment.assetsPath}images/objFan2.png`,
+        idp_tipo_objetivo: 2
       },
       {
-        id: 3,
-        objetivo_imagen: `${environment.assetsPath}images/objFan3.png`
+        id_inst_objetivos: 3,
+        objetivo_imagen: `${environment.assetsPath}images/objFan3.png`,
+        idp_tipo_objetivo: 2
       },
       {
-        id: 4,
-        objetivo_imagen: `${environment.assetsPath}images/objFan4.png`
+        id_inst_objetivos: 4,
+        objetivo_imagen: `${environment.assetsPath}images/objFan4.png`,
+        idp_tipo_objetivo: 2
+      },
+      {
+        id_inst_objetivos: 5,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu01.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 6,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu02.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 7,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu03.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 8,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu04.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 9,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu05.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 10,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu06.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 11,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu07.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 12,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu08.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 13,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu09.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 14,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu10.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 15,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu11.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 16,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu12.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 17,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu13.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 18,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu14.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 19,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu15.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 20,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu16.png`,
+        idp_tipo_objetivo: 1
+      },
+      {
+        id_inst_objetivos: 21,
+        objetivo_imagen: `${environment.assetsPath}images/objOnu17.png`,
+        idp_tipo_objetivo: 1
       }
     ];
+    proyObjetivos: any[] = [];
     
-    objetivosODS: any[] = [
-      {
-        id: 1,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu01.png`
-      },
-      {
-        id: 2,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu02.png`
-      },
-      {
-        id: 3,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu03.png`
-      },
-      {
-        id: 4,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu04.png`
-      },
-      {
-        id: 5,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu05.png`
-      },
-      {
-        id: 6,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu06.png`
-      },
-      {
-        id: 7,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu07.png`
-      },
-      {
-        id: 8,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu08.png`
-      },
-      {
-        id: 9,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu09.png`
-      },
-      {
-        id: 10,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu10.png`
-      },
-      {
-        id: 11,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu11.png`
-      },
-      {
-        id: 12,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu12.png`
-      },
-      {
-        id: 13,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu13.png`
-      },
-      {
-        id: 14,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu14.png`
-      },
-      {
-        id: 15,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu15.png`
-      },
-      {
-        id: 16,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu16.png`
-      },
-      {
-        id: 17,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu17.png`
-      }
-    ];
+    objetivosFAN: any[];
+    objetivosODS: any[];
 
-    toggleChildren(item: any) {
-      item.isOpen = !item.isOpen;
-    }
-
-    buildUbicacionesFamily(lista: any[]): any[] {
-      const resultado: any[] = [];
-      const mapa = new Map<number, any>();
-    
-      lista.forEach(item => {
-        mapa.set(item.id_ubica_geo, { ...item, childrens: [] });
-      });
-    
-      lista.forEach(item => {
-        const padreId = item.id_ubica_geo_padre;
-        const rama = item.rama;
-    
-        if (padreId && mapa.has(padreId)) {
-          const padre = mapa.get(padreId);
-          if (padre && padre.rama === rama) {
-            padre.childrens?.push(mapa.get(item.id_ubica_geo)!);
-          }
-        } 
-        else {
-          resultado.push(mapa.get(item.id_ubica_geo)!);
-        }
-      });
-    
-      return resultado;
-    }
-    
-    getUbiBranch(ubiList: any[], branch: any): any[] {
-      return ubiList.filter(ubi => ubi.rama == branch);
-    }
-
-    getGroupedData() {
-      const grouped: { [key: string]: any[] } = {};
-      
-      this.ubicacionesB.forEach((item) => {
-        if (!grouped[item.idp_tipo_ubica_geo]) {
-          grouped[item.idp_tipo_ubica_geo] = [];
-        }
-        grouped[item.idp_tipo_ubica_geo].push(item);
-      });
-    
-      this.ubicacionesB = Object.entries(grouped).map(([tipo, items]) => ({
-        tipo,
-        items,
-        rowspan: items.length,
-      }));
-    }
-
-    ubiInfCheckboxChanged(item: any) {
-      if (item.selected) {
-        if (!this.ubicacionesBAux.some((ubi) => ubi.id_ubica_geo === item.id_ubica_geo)) {
-          this.ubicacionesBAux.push(item);
-        }
-      } 
-      else {
-        this.ubicacionesBAux = this.ubicacionesBAux.filter(
-          (ubi) => ubi.id_ubica_geo !== item.id_ubica_geo
-        );
-      }
-    }
-    
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
       this.getInformacionProyecto();
+      this.getProyObjetivos();
       this.getFinanciadores();
       this.getObligaciones();
     }
@@ -285,6 +252,27 @@ export class InfProyectoComponent implements OnInit {
       this.servicios.getUnidades().subscribe(
         (data) => {
           this.unidades = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
+      // ======= GET OBJETIVOS =======
+      this.servProyObjetivos.getProyObjetivosByIdProy(this.idProyecto).subscribe(
+        (data) => {
+          this.proyObjetivos = (data[0].dato)?(data[0].dato):([]);
+          this.instObjetivos.forEach((instObjetivo)=>{
+            let proyObjetivoRes = this.proyObjetivos.find(
+              (proyObjetivo) => proyObjetivo.id_inst_objetivos == instObjetivo.id_inst_objetivos
+            );
+            if(proyObjetivoRes){
+              instObjetivo.selected = (proyObjetivoRes.idp_valor_objetivo == 1)?(2):(1);
+            }
+          });
+
+          this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 2);
+          this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 1);
         },
         (error) => {
           console.error(error);
@@ -352,8 +340,18 @@ export class InfProyectoComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OPEN MODALS FUN ======= =======
+    private modalRefs: NgbModalRef[] = [];
+    
     openModal(content: TemplateRef<any>) {
-      this.modalService.open(content, { size: 'lg' });
+      const modalRef = this.modalService.open(content, { size: 'xl' });
+      this.modalRefs.push(modalRef);
+    }
+
+    closeModal() {
+      if (this.modalRefs.length > 0) {
+        const modalRef = this.modalRefs.pop();
+        modalRef?.close();
+      }
     }
     // ======= ======= ======= ======= =======
     // ======= ======= FUNCTION INFO PROYECTO NGMODEL ======= =======
@@ -380,7 +378,7 @@ export class InfProyectoComponent implements OnInit {
       });
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= GET PERSONAS ======= =======
+    // ======= ======= GET PROYECTO ======= =======
     getInformacionProyecto(){
       this.servProyectos.getInfoProyectoByIdPro(this.idProyecto).subscribe(
         (data) => {
@@ -390,6 +388,8 @@ export class InfProyectoComponent implements OnInit {
           this.person_resp = this.proyectoScope.nombres +" "+ this.proyectoScope.apellido_1 +" "+ this.proyectoScope.apellido_2;
           this.proyectoScope.presupuesto_me = (this.proyectoScope.presupuesto_me).slice(1);
           this.proyectoScope.presupuesto_mn = (this.proyectoScope.presupuesto_mn).slice(1);
+
+          this.objetivosFAN
 
           this.getProyectDateGaps();
 
@@ -401,46 +401,62 @@ export class InfProyectoComponent implements OnInit {
       );
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= INIT ADD PERSONA ROLES ======= =======
-    initAddInformacionProyecto(modalScope: TemplateRef<any>){
-
-      this.modalAction = "add";
-
-      this.openModal(modalScope);
-    }
-    // ======= ======= ======= ======= =======
-    // ======= ======= EDIT APRENDIZAJE ======= =======
-    addInformacionProyecto(){
-      const objLogro = {
-        p_id_proy_aprende: 0,
-      };
-    }
-    // ======= ======= ======= ======= =======
-    // ======= ======= INIT EDIT PERSONA ROLES ======= =======
-    initEditInformacionProyecto(modalScope: TemplateRef<any>){
-
-      this.modalAction = "edit";
-
-
-      this.openModal(modalScope);
-    }
-    // ======= ======= ======= ======= =======
-    // ======= ======= EDIT APRENDIZAJE ======= =======
-    editInformacionProyecto(){
-      const objApredizaje = {
-        p_id_proy_aprende: 0,
-        p_id_proyecto: parseInt(this.idProyecto,10),
-        p_fecha_hora_reg: null
-      };
-
-    }
-    // ======= ======= ======= ======= =======
-    // ======= ======= INIT DELETE PERSONA ROLES ======= =======
-    initDeleteInformacionProyecto(){
+    // ======= ======= EDIT PROYECTO ======= =======
+    editInfProyecto(){
+      // ======= PROJECT SECTION =======
+      this.proyectoScope.presupuesto_me = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_me);
+      this.proyectoScope.presupuesto_mn = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn);
+      this.servProyectos.editProyecto(this.proyectoScope).subscribe(
+        (data) => {
+          // ======= OBJETIVOS SECTION =======
+          let allObjetivos: any = [...this.objetivosFAN, ...this.objetivosODS];
+          let addRequests = [];
       
+          // Petición de eliminación
+          let deleteRequest = this.servProyObjetivos.deleteProyObjetivos(this.proyectoScope.id_proyecto);
+      
+          // Agregar peticiones de adición a addRequests
+          allObjetivos.forEach((objetivo) => {
+            if (objetivo.selected) {
+              let objetivoObj = {
+                p_id_proy_objetivos: null,
+                p_id_proyecto: this.idProyecto,
+                p_idp_inst_objetivos: objetivo.id_inst_objetivos,
+                p_idp_valor_objetivo: objetivo.selected === 1 ? 2 : 1
+              };
+              addRequests.push(this.servProyObjetivos.addProyObjetivos(objetivoObj));
+            }
+          });
+      
+          // Usamos forkJoin para esperar a que todas las solicitudes se completen
+          forkJoin([deleteRequest, ...addRequests]).subscribe(
+            ([deleteResult, ...addResults]) => {
+              console.log('Eliminación y adiciones completadas', deleteResult, addResults);
+              this.disableEditMode();  // Ejecuta disableEditMode después de todas las peticiones
+            },
+            (error) => {
+              console.error('Error en las peticiones:', error);
+            }
+          );
+        },
+        (error) => {
+          console.error('Error en la edición del proyecto:', error);
+        }
+      );
+      // ======= ======= =======
+      // ======= OBJETIVOS SECTION =======
+      this.servProyObjetivos.deleteProyObjetivos(this.idProyecto).subscribe(
+        (data) => {
+          
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
     }
     // ======= ======= ======= ======= =======
-
+    // ======= ======= OBJETIVOS FUNCTIONS ======= =======
     objetivoButtonValue = 0;
     onObjetivoButtonChange(btnValue: any){
       if(btnValue != this.objetivoButtonValue){
@@ -474,12 +490,23 @@ export class InfProyectoComponent implements OnInit {
         objetivo.selected = this.objetivoButtonValue;
       }
     }
-
+    getProyObjetivos(){
+      this.servProyObjetivos.getProyObjetivosByIdProy(this.idProyecto).subscribe(
+        (data) => {
+          this.proyObjetivos = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= FINANCIADORES FUNCTIONS ======= =======
     financiadoresPorcentaje: any = 0;
 
     financiadores: any = [];
     financiadoresSelected: any = null;
-    // ======= ======= FINANCIADORES FUNCTIONS ======= =======
+
     finanCheckboxChanged(financiadorSel: any){
       this.financiadores.forEach(financiador =>{
         if(financiadorSel.id_proy_finan == financiador.id_proy_finan){
@@ -523,6 +550,41 @@ export class InfProyectoComponent implements OnInit {
       }
       this.financiadores.monto = (this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn))*(parseFloat(this.financiadores.porcentaje)/100);
       this.financiadores.monto = this.parseAmountFloatToStr(this.financiadores.monto);
+    
+      this.ValidatePorcentaje();
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= VALIDATE FINANCIADORES ======= =======
+    valIdInstitucionFin = true;
+    ValidateIdInstitucionFin(){
+      this.valIdInstitucionFin = true;
+      if (!this.financiadores.id_institucion_fin) {
+        this.valIdInstitucionFin = false;
+      }
+    }
+
+    valPorcentaje = true;
+    ValidatePorcentaje(){
+      this.valPorcentaje = true;
+      if (!this.financiadores.porcentaje) {
+        this.valPorcentaje = false;
+      }
+    }
+    
+    valIdTipoFinan = true;
+    ValidateIdTipoFinan(){
+      this.valIdTipoFinan = true;
+      if (!this.financiadores.idp_tipo_finan) {
+        this.valIdTipoFinan = false;
+      }
+    }
+    
+    valOrden = true;
+    ValidateOrden(){
+      this.valOrden = true;
+      if (!this.financiadores.orden) {
+        this.valOrden = false;
+      }
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT FINANCIADORES NGMODEL ======= =======
@@ -537,8 +599,14 @@ export class InfProyectoComponent implements OnInit {
       this.financiadores.idp_tipo_finan = "";
       this.financiadores.idp_estado = 1;
       this.financiadores.orden = null;
+
+      this.valIdInstitucionFin = true;
+      this.valPorcentaje = true;
+      this.valIdTipoFinan = true;
+      this.valOrden = true;
     }
     // ======= ======= ======= ======= =======
+    // ======= ======= GET FINANCIADORES ======= =======
     getFinanciadores(){
       this.servFinanciadores.getFinanciadores(this.idProyecto).subscribe(
         (data) => {
@@ -555,6 +623,7 @@ export class InfProyectoComponent implements OnInit {
         }
       );
     }
+    // ======= ======= ======= ======= =======
     // ======= ======= INIT ADD FINANCIADORES ======= =======
     initAddFinanciadores(modalScope: TemplateRef<any>){
       this.initFinanciadoresModel();
@@ -673,15 +742,97 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     financiadoresOnSubmit(): void {
-      if(this.modalAction == "add"){
-        this.addFinanciadores();
-      }
-      else{
-        this.editFinanciadores();
+      // ======= VALIDATION SECTION =======
+      let valForm = false;
+      
+      this.ValidateIdInstitucionFin();
+      this.ValidatePorcentaje();
+      this.ValidateIdTipoFinan();
+      this.ValidateOrden();
+      
+      valForm = 
+        this.valIdInstitucionFin &&
+        this.valPorcentaje &&
+        this.valIdTipoFinan &&
+        this.valOrden;
+
+      if(valForm){
+        if(this.modalAction == "add"){
+          this.addFinanciadores();
+        }
+        else{
+          this.editFinanciadores();
+        }
+        this.closeModal();
       }
     }
     // ======= ======= ======= ======= =======
 
+    // ======= ======= UBICACIONES FUN ======= =======
+    toggleChildren(item: any) {
+      item.isOpen = !item.isOpen;
+    }
+
+    buildUbicacionesFamily(lista: any[]): any[] {
+      const resultado: any[] = [];
+      const mapa = new Map<number, any>();
+    
+      lista.forEach(item => {
+        mapa.set(item.id_ubica_geo, { ...item, childrens: [] });
+      });
+    
+      lista.forEach(item => {
+        const padreId = item.id_ubica_geo_padre;
+        const rama = item.rama;
+    
+        if (padreId && mapa.has(padreId)) {
+          const padre = mapa.get(padreId);
+          if (padre && padre.rama === rama) {
+            padre.childrens?.push(mapa.get(item.id_ubica_geo)!);
+          }
+        } 
+        else {
+          resultado.push(mapa.get(item.id_ubica_geo)!);
+        }
+      });
+    
+      return resultado;
+    }
+    
+    getUbiBranch(ubiList: any[], branch: any): any[] {
+      return ubiList.filter(ubi => ubi.rama == branch);
+    }
+
+    getGroupedData() {
+      const grouped: { [key: string]: any[] } = {};
+      
+      this.ubicacionesB.forEach((item) => {
+        if (!grouped[item.idp_tipo_ubica_geo]) {
+          grouped[item.idp_tipo_ubica_geo] = [];
+        }
+        grouped[item.idp_tipo_ubica_geo].push(item);
+      });
+    
+      this.ubicacionesB = Object.entries(grouped).map(([tipo, items]) => ({
+        tipo,
+        items,
+        rowspan: items.length,
+      }));
+    }
+
+    ubiInfCheckboxChanged(item: any) {
+      if (item.selected) {
+        if (!this.ubicacionesBAux.some((ubi) => ubi.id_ubica_geo === item.id_ubica_geo)) {
+          this.ubicacionesBAux.push(item);
+        }
+      } 
+      else {
+        this.ubicacionesBAux = this.ubicacionesBAux.filter(
+          (ubi) => ubi.id_ubica_geo !== item.id_ubica_geo
+        );
+      }
+    }
+    // ======= ======= ======= ======= =======
     // ======= ======= INIT ADD PERSONA ROLES ======= =======
     initUbicaGeo(modalScope: TemplateRef<any>){
 
@@ -695,6 +846,55 @@ export class InfProyectoComponent implements OnInit {
     obligaciones: any = [];
     obligacionesSelected: any = null;
     obligacionesModel: any = {};
+    // ======= ======= VALIDATE OBLIGACIONES ======= =======
+    valObligacion = true;
+    ValidateObligacion() {
+      this.valObligacion = true;
+      if ((!this.obligacionesModel.obligacion)||(this.obligacionesModel.obligacion.length >= 100)) {
+        this.valObligacion = false;
+      }
+    }
+    
+    valDescripcion = true;
+    ValidateDescripcion() {
+      this.valDescripcion = true;
+      if ((!this.obligacionesModel.descripcion)||(this.obligacionesModel.descripcion.length >= 250)) {
+        this.valDescripcion = false;
+      }
+    }
+    
+    valFechaObligacion = true;
+    ValidateFechaObligacion() {
+      this.valFechaObligacion = true;
+      if (!this.obligacionesModel.fecha_obligacion) {
+        this.valFechaObligacion = false;
+      }
+    }
+    
+    valIdInstitucionExige = true;
+    ValidateIdInstitucionExige() {
+      this.valIdInstitucionExige = true;
+      if (!this.obligacionesModel.id_institucion_exige) {
+        this.valIdInstitucionExige = false;
+      }
+    }
+    
+    valIdpEstadoEntrega = true;
+    ValidateIdpEstadoEntrega() {
+      this.valIdpEstadoEntrega = true;
+      if (!this.obligacionesModel.idp_estado_entrega) {
+        this.valIdpEstadoEntrega = false;
+      }
+    }
+    
+    valFechaHoraEntrega = true;
+    ValidateFechaHoraEntrega() {
+      this.valFechaHoraEntrega = true;
+      if (!this.obligacionesModel.fecha_hora_entrega) {
+        this.valFechaHoraEntrega = false;
+      }
+    }
+    // ======= ======= ======= ======= =======
     // ======= ======= INIT OBLIGACIONES NGMODEL ======= =======
     obligaCheckboxChanged(obligacionesSel: any){
       this.obligaciones.forEach(obligacion =>{
@@ -725,12 +925,19 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.obligacion = null;
       this.obligacionesModel.descripcion = null;
       this.obligacionesModel.fecha_obligacion = null;
-      this.obligacionesModel.ruta_plantilla = "";
       this.obligacionesModel.id_institucion_exige = "";
       this.obligacionesModel.idp_estado_entrega = "";
-      this.obligacionesModel.ruta_documente = "";
       this.obligacionesModel.fecha_hora_entrega = null;
-      this.obligacionesModel.id_persona_entrega = "";
+      this.obligacionesModel.ruta_plantilla = "";
+      this.obligacionesModel.ruta_documente = "";
+      this.obligacionesModel.id_persona_entrega = this.namePersonaReg;
+
+      this.valObligacion = true;
+      this.valDescripcion = true;
+      this.valFechaObligacion = true;
+      this.valIdInstitucionExige = true;
+      this.valIdpEstadoEntrega = true;
+      this.valFechaHoraEntrega = true;
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET OBLIGACIONES ======= =======
@@ -782,7 +989,6 @@ export class InfProyectoComponent implements OnInit {
 
     }
     // ======= ======= ======= ======= =======
-    
     // ======= ======= INIT ADD OBLIGACIONES ======= =======
     initEditObligaciones(modalScope: TemplateRef<any>){
       this.initObligacionesModel();
@@ -835,11 +1041,33 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     obligacionesOnSubmit(): void {
-      if(this.modalAction == "add"){
-        this.addObligaciones();
-      }
-      else{
-        this.editObligaciones();
+      // ======= VALIDATION SECTION =======
+      let valForm = false;
+
+      this.ValidateObligacion();
+      this.ValidateDescripcion();
+      this.ValidateFechaObligacion();
+      this.ValidateIdInstitucionExige();
+      this.ValidateIdpEstadoEntrega();
+      this.ValidateFechaHoraEntrega();
+
+      valForm = 
+        this.valObligacion &&
+        this.valDescripcion &&
+        this.valFechaObligacion &&
+        this.valIdInstitucionExige &&
+        this.valIdpEstadoEntrega &&
+        this.valFechaHoraEntrega;
+
+      // ======= SUBMIT SECTION =======
+      if(valForm){
+        if(this.modalAction == "add"){
+          this.addObligaciones();
+        }
+        else{
+          this.editObligaciones();
+        }
+        this.closeModal();
       }
     }
     // ======= ======= ======= ======= =======
