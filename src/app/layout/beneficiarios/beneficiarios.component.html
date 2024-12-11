@@ -124,7 +124,7 @@
             <div class="col col-xl-2 col-lg-2 mt-auto">
               <label for="id">Id</label>
               <input class="form-control" type="text" 
-                  id="id" name="id" [(ngModel)]="id" disabled formControlName="id" class="form-control"/>
+                  id="id" name="id" disabled formControlName="id" class="form-control"/>
             </div>
             <div class="col col-xl-6 col-lg-6 mt-auto">
             </div>
@@ -176,7 +176,7 @@
           </div>
           <div class="col col-xl-2 col-lg-2 mt-auto" style=" font-size: 1.5em; font-weight: bold;">
             <div class="d-flex justify-content-center" style="width: 100%;">
-              <button type="button" class="btn btn-bg-3" (click)="openModal(listaBeneficiariesModal)">
+              <button type="button" class="btn btn-bg-3" (click)="openModal()">
                 <i class="" aria-hidden="true"></i> +
             </button>
             </div> 
@@ -201,17 +201,17 @@
             <textarea formControlName="details" class="form-control"></textarea>
           </div>
           <!-- Mujeres, Hombres y Total -->
-          <div class="col col-xl-3 col-lg-3 mt-auto">
+                   <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="mujeres">Nro de Mujeres</label>
-            <input type="number" formControlName="mujeres" class="form-control" />
+            <input type="number" formControlName="mujeres" class="form-control" min="0" />
           </div>
           <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="hombres">Nro de Hombres</label>
-            <input type="number" formControlName="hombres" class="form-control" />
+            <input type="number" formControlName="hombres" class="form-control" min="0" />
           </div>
           <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="total">Total</label>
-            <input type="number" formControlName="total" class="form-control" />
+            <input type="number" formControlName="total" class="form-control" min="0" />
           </div>
           <div class="col col-xl-3 col-lg-3 mt-auto" style=" font-size: 1.5em; font-weight: bold;">
             <div class="d-flex justify-content-center" style="width: 100%;">
@@ -224,8 +224,9 @@
           <!-- Persona Registro -->
           <div class="col col-xl-6 col-lg-6 mt-auto">
             <label for="registeredBy">Persona Registro</label>
-            <input type="text" formControlName="registeredBy" class="form-control" />
+            <input type="text" id="registeredBy" formControlName="registeredBy" class="form-control" readonly />
           </div>
+         
         </div>
 
           <!-- Botones Cancelar y Guardar -->
@@ -276,7 +277,7 @@
                     <td>{{ beneficiario.id }}</td>
                     <td>{{ beneficiario.comunidad }}</td>
                     <td>{{ beneficiario.docIden }}</td>
-                    <td>{{ beneficiario.nombre }}</td>
+                    <td>{{ beneficiario.id_person_reg }}</td>
                     <td>{{ beneficiario.rangoEdad }}</td>
                     <td>{{ beneficiario.sexo }}</td>
                   </tr>
@@ -317,7 +318,8 @@
         [disabled]="!selectedAliados">
         <i class="fa fa-pencil"></i> Editar
       </button>
-      <button type="button" class="btn btn-view-bg-1 ms-2" [disabled]="!selectedAliados" (click)="onDeleteAliado()">
+      <button type="button" class="btn btn-view-bg-1 ms-2" 
+      [disabled]="!selectedAliados" (click)="onDeleteAliado()">
         <i class="fa fa-trash"></i> Eliminar
       </button>
       
@@ -362,6 +364,17 @@
     </div>
   </div>
 </div>
+ <!-- Paginación -->
+ <div class="d-flex justify-content-center">
+  <ngb-pagination 
+      [(page)]="mainPage" 
+      [pageSize]="mainPageSize" 
+      [collectionSize]="totalLength"
+      [maxSize]="3"
+      [rotate]="true"
+      [boundaryLinks]="true">
+  </ngb-pagination>
+</div>
 </div>
 </div>
 
@@ -401,7 +414,7 @@
         </div>
         <div class="col col-xl-2 col-lg-2 mt-auto" style=" font-size: 1.5em; font-weight: bold;">
           <div class="d-flex justify-content-center" style="width: 100%;">
-            <button type="button" class="btn btn-bg-3" (click)="openModal(listaBeneficiariesModal)">
+            <button type="button" class="btn btn-bg-3" (click)="openModal()">
               <i class="" aria-hidden="true"></i> +
           </button>
           </div> 
@@ -425,9 +438,9 @@
             </option>
           </select>
         </div>
-        <div class="col-md-6">
-          <label for="registeredBy">Persona Registro</label>
-          <input type="text" formControlName="registeredBy" class="form-control" />
+        <div class="col col-xl-6 col-lg-6 mt-auto">
+          <label for="registeredByAliado">Persona Registro</label>
+          <input type="text" id="registeredByAliado" formControlName="registeredByAliado" class="form-control" readonly />
         </div>
 
         <div class="modal-footer">
@@ -446,6 +459,51 @@
 </form>
 </div>
 </ng-template>
-
+<!-- ====== ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
+<ng-template #deleteBeneficiarioModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Eliminar Beneficiario</h4>
+  </div>
+  <div class="modal-body">
+      <div class="d-flex justify-content-center" style="width: 100%;">
+          <p>Esta seguro de querer eliminar el registro de Beneficiario?</p>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <div class="d-flex justify-content-center" style="width: 100%;">
+          <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+          <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+              <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+          </button>
+          <button type="button" class="btn btn-bg-1" (click)="deleteBeneficiario()">
+              <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+          </button>
+      </div>
+  </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ====== ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
+<ng-template #deleteAliadoModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Eliminar Aliado</h4>
+  </div>
+  <div class="modal-body">
+      <div class="d-flex justify-content-center" style="width: 100%;">
+          <p>Esta seguro de querer eliminar el registro de Aliado?</p>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <div class="d-flex justify-content-center" style="width: 100%;">
+          <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+          <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+              <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+          </button>
+          <button type="button" class="btn btn-bg-1" (click)="onDeleteAliado()">
+              <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+          </button>
+      </div>
+  </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
 
 </div>

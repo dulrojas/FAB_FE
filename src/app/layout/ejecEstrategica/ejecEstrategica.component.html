@@ -4,7 +4,9 @@
         <!-- Bloque de Encabezado -->
         <div class="col col-md-6 align-items-center custom-body-header">
             <!-- Componente personalizado para el encabezado -->
-                <app-bodyHeader></app-bodyHeader>
+            <app-bodyHeader 
+            (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader> 
         </div>
         <!-- Bloque de Tarjetas de Estadísticas -->
         <div class="col col-md-6 text-center">
@@ -37,7 +39,7 @@
                         <div class="col col-xl-12 col-lg-12 text-end">
                             <button type="button" 
                             class="btn btn-view-bg-1" 
-                            (click)="initReportEjecEstrategica(ejecEstrategicaFormModal)"
+                            (click)="initEditEjecEstrategica(ejecEstrategicaFormModal)"
                             [disabled]="!ejecEstrategicaSelected">
                             <i aria-hidden="true"></i> Reportar
                         </button>
@@ -72,25 +74,24 @@
                         </thead>
 
                         <tbody>
-                            <tr *ngFor="let ejecEstrategica of ejecEstrategicaTable">
+                            <tr *ngFor="let ejecEstrategica of ejecEstrategicaTable; let i = index">
                                 <td>
-                                    <input type="checkbox" 
-                                        [checked]="ejecEstrategica.selected" 
+                                    <input type="checkbox" [(ngModel)]=" ejecEstrategica.selected"
                                         (change)="checkboxChanged(ejecEstrategica)" 
                                         id="checkbox-{{i}}" 
                                         name="checkbox-{{i}}"/>
                                 </td>
-                                <td>{{ ejecEstrategica.id_proyecto }}</td>
-                                <td>{{ ejecEstrategica.proyecto }}</td>
-                                <td>{{ ejecEstrategica.fecha_convenio }}</td>
-                                <td>{{ ejecEstrategica.progreso }}</td>
+                                <td>{{ ejecEstrategica.codigo }}</td>
+                                <td>{{ ejecEstrategica.indicador }}</td>
+                                <td>{{ getDescripcionSubtipo(ejecEstrategica.id_proyecto, fecha_reportar) }}</td>
+                                <td>{{ ejecEstrategica.orden }}</td>
                                 <td>{{ ejecEstrategica.medida }}</td>
-                                <td>{{ ejecEstrategica.notas }}</td>
-                                <td>{{ ejecEstrategica.presupuesto_me }}</td>
+                                <td>{{ ejecEstrategica.medio_verifica }}</td>
+                                <td>{{ ejecEstrategica.linea_base }}</td>
                                 <td>{{ ejecEstrategica.avance_periodo }}</td>
-                                <td>{{ ejecEstrategica.presupuesto_mn }}</td>
+                                <td>{{ ejecEstrategica.meta_final }}</td>
                                 <td>{{ ejecEstrategica.avance }}</td>
-                                <td>{{ ejecEstrategica.descrpcion }}</td>
+                                <td>{{ ejecEstrategica.descripcion }}</td>
                             </tr>
                         </tbody>
                         
@@ -126,209 +127,207 @@
                             <!-- ======= ======= Tipo ======= ======= -->
                             <div class="col col-xl-3 col-lg-3 mt-auto">
                                 <label for="id_proy_aprende">Tipo</label>
-                                <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" 
-                                    [(ngModel)]="id_proy_elemento" (change)="onSelectionChange()">
-                                    <option value="" disabled selected>Selecciona un elemento</option>
-                                    <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
-                                        {{ componente.meto_elemento }}
-                                    </option>
-                                </select>
+                                <input 
+                                type="text" 
+                                class="form-control" 
+                                id="id_proy_elem_padre" 
+                                [value]="getElementoNombre(id_proy_elem_padre)" 
+                                readonly>
                             </div>
                             <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                             <div class="col col-xl-1 col-lg-1 mt-auto">
                                 <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
                             </div>
-                            <!-- ======= ======= sub tipo ======= ======= -->
-                            <div class="col col-xl-4 col-lg-4 mt-auto">
-                                <label for="idp_aprendizaje_area">SubTipo</label>
-                                <select
-                                class="form-control"
-                                [(ngModel)]="idp_categoria"
-                                name="idp_categoria">
-                                <option value="" disabled>Seleccione</option>
-                                <option *ngFor="let categoria of riesgoCategoria" [value]="categoria.id_subtipo">
-                                  {{ categoria.descripcion_subtipo }}
-                                </option>
-                              </select>
-                            </div>
-                            <div class="col col-xl-1 col-lg-1 mt-auto">
-                                
-                            </div>
-                            <!-- ======= ======= codigo ======= ======= -->
-                            <div class="col col-xl-3 col-lg-3 mt-auto">
-                                <label for="codigo">codigo</label>
-                                <input class="form-control" type="text" 
-                                    id="codigo" name="codigo" [(ngModel)]="codigo" disabled/>
-                            </div>
-                            <!-- ======= ======= Categoria ======= ======= -->
-                            <div class="col col-xl-4 col-lg-4 mt-auto">
-                                <label>Categoría</label>
-                                <select
-                                class="form-control"
-                                [(ngModel)]="idp_categoria"
-                                name="idp_categoria">
-                                <option value="" disabled>Seleccione</option>
-                                <option *ngFor="let categoria of riesgoCategoria" [value]="categoria.id_subtipo">
-                                  {{ categoria.descripcion_subtipo }}
-                                </option>
-                              </select>
-                            </div>
-                          
-                            <!-- ======= ======= sub categoria ======= ======= -->
-                            <div class="col col-xl-4 col-lg-4 mt-auto">
-                                <label for="idp_aprendizaje_area">SubCategoria</label>
-                                <select
-                                class="form-control"
-                                [(ngModel)]="idp_categoria"
-                                name="idp_categoria">
-                                <option value="" disabled>Seleccione</option>
-                                <option *ngFor="let categoria of ejecESubtipo" [value]="categoria.id_subtipo">
-                                  {{ categoria.descripcion_subtipo }}
-                                </option>
-                              </select>
-                            </div>
-                            <!-- ======= ======= TIPO  ======= ======= -->
-                            <div class="col col-xl-4 col-lg-4 mt-auto">
-                                <label for="idp_aprendizaje_tipo">Tipo</label>
-                                <select
-                                class="form-control"
-                                [(ngModel)]="idp_categoria"
-                                name="idp_categoria">
-                                <option value="" disabled>Seleccione</option>
-                                <option *ngFor="let categoria of ejecETipo" [value]="categoria.id_subtipo">
-                                  {{ categoria.descripcion_subtipo }}
-                                </option>
-                              </select>
-                            </div>
-
-                            <!-- ======= ======= PROBLEMA SECTION ======= ======= -->
-                            <div class="col col-xl-12 col-lg-12 mt-auto">
-                                <label for="problema">Descripcion</label>
-                                <textarea class="form-control" id="problema" name="problema" 
-                                    [(ngModel)]="problema"></textarea>
-                            </div>
+                           <!-- ======= ======= sub tipo ======= ======= -->
+                           <div class="col col-xl-4 col-lg-4 mt-auto">
+                            <label for="idp_aprendizaje_area">SubTipo</label>
+                            <select
+                            class="form-control"
+                            [(ngModel)]="idp_categoria"
+                            name="idp_categoria">
+                            <option value="" disabled>Seleccione</option>
+                            <option *ngFor="let ejecSubTipo of riesgoCategoria" [value]="categoria.id_subtipo">
+                              {{ categoria.descripcion_subtipo }}
+                            </option>
+                          </select>
+                        </div>
+                        <div class="col col-xl-1 col-lg-1 mt-auto">
                             
-                            <div class="row">
-                                <!-- Padre -->
-                                <div class="col-12 mt-3 mb-3 p-3" style="border: 1px solid white;">Padre
-                                  <div class="row align-items-center">
-                                    <!-- Código -->
-                                    <div class="col-auto">
-                                      <label for="codigo">Código</label>
-                                      <input class="form-control" type="text" id="codigo" name="codigo" [(ngModel)]="codigo" disabled>
+                        </div>
+                        <!-- ======= ======= codigo ======= ======= -->
+                        <div class="col col-xl-3 col-lg-3 mt-auto">
+                            <label for="codigo">codigo</label>
+                            <input class="form-control" type="text" 
+                                id="codigo" name="codigo" [(ngModel)]="codigo" disabled/>
+                        </div>
+                        <!-- ======= ======= Categoria ======= ======= -->
+                         <!-- Categoría -->
+                  <div class="col col-xl-4 col-lg-4 mt-auto">
+                    <label for="inst_categoria_1">Categoría</label>
+                    <select class="form-control" id="inst_categoria_1" name="inst_categoria_1"
+                      [(ngModel)]="inst_categoria_1" (change)="ValidateCategoria()">
+                      <option value="" disabled selected>Seleccione una categoría</option>
+                      <option *ngFor="let categoria of  inst_categoria_1" [value]="categoria.id_subtipo">
+                        {{ categoria.descripcion_subtipo }}
+                      </option>
+                    </select>
+                  <span class="custom-alert-message" *ngIf="!valCategoria">Debe elegir una Categoria</span>
+                  </div>
+    
+                  <!-- SubCategoría -->
+                  <div class="col col-xl-4 col-lg-4 mt-auto">
+                    <label for="subCategoria">SubCategoría</label>
+                    <select class="form-control" id="inst_categoria_2" name="inst_categoria_2"
+                      [(ngModel)]="inst_categoria_2" (change)="ValidateSubCategoria()">
+                      <option value="" disabled selected>Seleccione una categoría</option>
+                      <option *ngFor="let categoria of  inst_categoria_2" [value]="categoria.id_subtipo">
+                        {{ categoria.descripcion_subtipo }}
+                      </option>
+                    </select>
+                    <span class="custom-alert-message" *ngIf="!valSubCategoria">Debe elegir una SubCategoria</span>
+                  </div>
+    
+                  <!-- Tipo -->
+                  <div class="col col-xl-4 col-lg-4 mt-auto">
+                    <label for="tipoIndicador">Tipo</label>
+                    <select class="form-control" id="inst_categoria_3" name="inst_categoria_3"
+                    [(ngModel)]="inst_categoria_3" (change)="ValidateTipoCategoria()">
+                    <option value="" disabled selected>Seleccione una Tipo</option>
+                    <option *ngFor="let categoria of  inst_categoria_3" [value]="categoria.id_subtipo">
+                      {{ categoria.descripcion_subtipo }}
+                    </option>
+                  </select>
+                  <span class="custom-alert-message" *ngIf="!valTipoCategoria">Debe elegir una SubCategoria</span>
+                </div>
+
+                        <!-- ======= ======= PROBLEMA SECTION ======= ======= -->
+                        <div class="col col-xl-12 col-lg-12 mt-auto">
+                            <label for="problema">Descripcion</label>
+                            <textarea class="form-control" id="problema" name="problema" 
+                                [(ngModel)]="problema"></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Padre -->
+                            <div class="col-12 mt-3 mb-3 p-3" style="border: 1px solid white;">Padre
+                              <div class="row align-items-center">
+                                <!-- Código -->
+                                <div class="col-auto">
+                                  <label for="codigo">Código</label>
+                                  <input class="form-control" type="text" id="codigo" name="codigo" [(ngModel)]="codigo" disabled>
+                                </div>
+                          
+                                <!-- Tipo -->
+                                <div class="col-auto">
+                                  <label for="tipo">Tipo</label>
+                                  <input class="form-control" type="text" id="tipo" name="tipo" [(ngModel)]="tipo" disabled>
+                                </div>
+                          
+                                <!-- Componente -->
+                                <div class="col-auto">
+                                    <div class="col col-xl-1 col-lg-1 mt-auto">
+                                        <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
                                     </div>
-                              
-                                    <!-- Tipo -->
-                                    <div class="col-auto">
-                                      <label for="tipo">Tipo</label>
-                                      <input class="form-control" type="text" id="tipo" name="tipo" [(ngModel)]="tipo" disabled>
-                                    </div>
-                              
-                                    <!-- Componente -->
-                                    <div class="col-auto">
-                                        <div class="col col-xl-1 col-lg-1 mt-auto">
-                                            <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
-                                        </div>
-                                    </div>
-                              
-                                    <!-- Abuelo -->
-                                    <div class="col-auto">
-                                      <label for="abuelo">Abuelo</label>
-                                      <select
-                                      class="form-control"
-                                      [(ngModel)]="idp_categoria"
-                                      name="idp_categoria">
-                                      <option value="" disabled>Seleccione</option>
-                                      <option *ngFor="let categoria of riesgoCategoria" [value]="categoria.id_subtipo">
-                                        {{ categoria.descripcion_subtipo }}
-                                      </option>
-                                    </select>
-                                    </div>
-                                  </div>
-                              
-                                  <!-- Descripción -->
-                                  <div class="row mt-3">
-                                    <div class="col">
-                                      <label for="descripcion">Descripción</label>
-                                      <textarea class="form-control" id="descripcion" name="descripcion" [(ngModel)]="descripcion"></textarea>
-                                    </div>
-                                  </div>
+                                </div>
+                          
+                                <!-- Abuelo -->
+                                <div class="col-auto">
+                                  <label for="abuelo">Abuelo</label>
+                                  <select
+                                  class="form-control"
+                                  [(ngModel)]="idp_categoria"
+                                  name="idp_categoria">
+                                  <option value="" disabled>Seleccione</option>
+                                  <option *ngFor="let categoria of riesgoCategoria" [value]="categoria.id_subtipo">
+                                    {{ categoria.descripcion_subtipo }}
+                                  </option>
+                                </select>
                                 </div>
                               </div>
+                          
+                              <!-- Descripción -->
+                              <div class="row mt-3">
+                                <div class="col">
+                                  <label for="descripcion">Descripción</label>
+                                  <textarea class="form-control" id="descripcion" name="descripcion" [(ngModel)]="descripcion"></textarea>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
 
-                               <!-- Línea base, Medida y Meta Final -->
-                                    <div class="col-md-2 mb-3">
-                                        <label for="lineaBase">Línea base</label>
-                                        <input class="form-control" type="number" 
-                                            id="lineaBase" name="lineaBase" 
-                                            [(ngModel)]="lineaBase" required>
-                                    </div>
-                        
-                                    <div class="col-md-2 mb-3">
-                                        <label for="medida">Medida</label>
-                                        <input class="form-control" type="text" 
-                                            id="medida" name="medida" 
-                                            [(ngModel)]="medida" required>
-                                    </div>
-                        
-                                    <div class="col-md-2 mb-3">
-                                        <label for="metaFinal">Meta Final</label>
-                                        <input class="form-control" type="number" 
-                                            id="metaFinal" name="metaFinal" 
-                                            [(ngModel)]="metaFinal" required>
-                                    </div>
-                        
-                                    <!-- Medio de verificación -->
-                                    <div class="col-6 mb-3">
-                                        <label for="medioVerificacion">Medio de verificación</label>
-                                        <input class="form-control" type="text" 
-                                            id="medioVerificacion" name="medioVerificacion" 
-                                            [(ngModel)]="medioVerificacion" required>
-                                    </div>
-                        
-                                    <!-- Supuestos/Comentario -->
-                                    <div class="col-12 mb-3">
-                                        <label for="supuestosComentario">Supuestos/Comentario</label>
-                                        <textarea class="form-control" 
-                                                id="supuestosComentario" name="supuestosComentario" 
-                                                [(ngModel)]="supuestosComentario" rows="2"></textarea>
-                                    </div>
+                           <!-- Línea base, Medida y Meta Final -->
+                                <div class="col-md-2 mb-3">
+                                    <label for="lineaBase">Línea base</label>
+                                    <input class="form-control" type="number" 
+                                        id="lineaBase" name="lineaBase" 
+                                        [(ngModel)]="lineaBase" required>
+                                </div>
+                    
+                                <div class="col-md-2 mb-3">
+                                    <label for="medida">Medida</label>
+                                    <input class="form-control" type="text" 
+                                        id="medida" name="medida" 
+                                        [(ngModel)]="medida" required>
+                                </div>
+                    
+                                <div class="col-md-2 mb-3">
+                                    <label for="metaFinal">Meta Final</label>
+                                    <input class="form-control" type="number" 
+                                        id="metaFinal" name="metaFinal" 
+                                        [(ngModel)]="metaFinal" required>
+                                </div>
+                    
+                                <!-- Medio de verificación -->
+                                <div class="col-6 mb-3">
+                                    <label for="medioVerificacion">Medio de verificación</label>
+                                    <input class="form-control" type="text" 
+                                        id="medioVerificacion" name="medioVerificacion" 
+                                        [(ngModel)]="medioVerificacion" required>
+                                </div>
+                    
+                                <!-- Supuestos/Comentario -->
+                                <div class="col-12 mb-3">
+                                    <label for="supuestosComentario">Supuestos/Comentario</label>
+                                    <textarea class="form-control" 
+                                            id="supuestosComentario" name="supuestosComentario" 
+                                            [(ngModel)]="supuestosComentario" rows="2"></textarea>
+                                </div>
 
-                                    <div class="col-12 mb-3">
-                                        <!-- Título con línea blanca -->
-                                          <div class="relative mb-1">
-                                            <span class="text-green-700 relative z-10 pl-2">Reporte</span>
-                                            <div class="absolute top-0 left-0 right-0 bottom-0 border-t border-l border-r border-white -ml-1"></div>
-                                            <!-- Contenedor blanco para la tabla -->
-                                                <div class="bg-white p-2 border border-white">
-                                                    <table class="w-full border-collapse">
-                                                      <thead>
-                                                        <tr class="bg-yellow-300">
-                                                          <th class="col-2 py-0.5 px-2 text-left text-sm font-bold w-8">#</th>
-                                                          <th class="col-2 py-0.5 px-2 text-left text-sm font-bold">Periodo</th>
-                                                          <th class="col-2 py-0.5 px-2 text-left text-sm font-bold">Valor esperado</th>
-                                                          <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Progreso</th>
-                                                          <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Notas</th>
-                                                          <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Evidencia</th>
-                                                        </tr>
-                                                      </thead>
-                                                      <tbody>
-                                                        <tr *ngFor="let row of evaluationData">
-                                                          <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.id }}</td>
-                                                          <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.period }}</td>
-                                                          <td class="py-0.5 px-2 text-sm">{{ row.value }}</td>
-                                                          <td class="py-0.5 px-2 text-sm">{{ row.progress }}</td>
-                                                            <td class="py-0.5 px-2 text-sm">{{ row.notes }}</td>
-                                                            <td class="py-0.5 px-2 text-sm">{{ row.evidence }}</td>
-                                                        </tr>
-                                                      </tbody>
-                                                    </table>
-                                                </div>
+                                <div class="col-12 mb-3">
+                                    <!-- Título con línea blanca -->
+                                      <div class="relative mb-1">
+                                        <span class="text-green-700 relative z-10 pl-2">Reporte</span>
+                                        <div class="absolute top-0 left-0 right-0 bottom-0 border-t border-l border-r border-white -ml-1"></div>
+                                        <!-- Contenedor blanco para la tabla -->
+                                            <div class="bg-white p-2 border border-white">
+                                                <table class="w-full border-collapse">
+                                                  <thead>
+                                                    <tr class="bg-yellow-300">
+                                                      <th class="col-2 py-0.5 px-2 text-left text-sm font-bold w-8">#</th>
+                                                      <th class="col-2 py-0.5 px-2 text-left text-sm font-bold">Periodo</th>
+                                                      <th class="col-2 py-0.5 px-2 text-left text-sm font-bold">Valor esperado</th>
+                                                      <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Progreso</th>
+                                                      <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Notas</th>
+                                                      <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Evidencia</th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    <tr *ngFor="let row of evaluationData">
+                                                      <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.id }}</td>
+                                                      <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.period }}</td>
+                                                      <td class="py-0.5 px-2 text-sm">{{ row.value }}</td>
+                                                      <td class="py-0.5 px-2 text-sm">{{ row.progress }}</td>
+                                                        <td class="py-0.5 px-2 text-sm">{{ row.notes }}</td>
+                                                        <td class="py-0.5 px-2 text-sm">{{ row.evidence }}</td>
+                                                    </tr>
+                                                  </tbody>
+                                                </table>
                                             </div>
-                                    </div>
-                                
-                            <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>
+                                        </div>
+                                </div>
+                            
+                        <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>
 
                            
                         </div>

@@ -4,6 +4,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
+import {servInstCategorias} from '../../servicios/instCategoria';
 
 @Component({
     selector: 'app-aprendizajes',
@@ -21,6 +22,7 @@ export class AprendizajesComponent implements OnInit {
       private modalService: NgbModal,
       private servicios: servicios,
       private servApredizaje: servAprendizaje,
+      private servInstCategorias: servInstCategorias,
       private cdr: ChangeDetectorRef
     ){}
 

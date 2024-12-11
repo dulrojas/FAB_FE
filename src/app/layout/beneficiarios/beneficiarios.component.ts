@@ -10,6 +10,7 @@ import { AliadosService } from "../../servicios/aliados";
 
 
 import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
+import { register } from 'module';
 
 interface Beneficiario {
   id: number;
@@ -42,8 +43,25 @@ export class BeneficiariosComponent implements OnInit {
   beneficiariesForm: FormGroup;
   aliadosForm: FormGroup;
 
+  mainPage = 1;
+  mainPageSize = 10;
+  totalLength = 0;
+
+  constructor(
+    private modalService: NgbModal,
+    private proyectoService: ProyectoService,
+    private fb: FormBuilder,
+    private beneficiariosService: BeneficiariosService,
+    
+    private servicios: servicios,
+    private aliadosService: AliadosService,
+    private ubicaGeograficaService: servUbicaGeografica
+  ) {}
+
+
   // ======= ======= VARIABLES SECTION ======= =======
   departamentos: any[] = [];
+  provincias: any[] = [];
   municipios: any[] = [];
   comunidades: any[] = [];
   tiposOrganizacion: any[] = [];
@@ -52,10 +70,9 @@ export class BeneficiariosComponent implements OnInit {
   organizacionTipo: any[] = [];
   aliadosTable: any[] = [];
   tiposConvenio: any[] = [];
+  peronsaRegistro:any="";
+ 
 
-  mainPage = 1;
-  mainPageSize = 10;
-  totalLength = 0;
   // ======= ======= HEADER SECTION ======= =======
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
   idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
@@ -84,16 +101,9 @@ export class BeneficiariosComponent implements OnInit {
   currentPageAliados = 1;
   pageSizeAliados = 10;
 
-  constructor(
-    private modalService: NgbModal,
-    private proyectoService: ProyectoService,
-    private fb: FormBuilder,
-    private beneficiariosService: BeneficiariosService,
-    
-    private servicios: servicios,
-    private aliadosService: AliadosService,
-    private ubicaGeograficaService: servUbicaGeografica
-  ) {}
+
+
+  
 
   ngOnInit(): void {
     this.loadBeneficiarios();
@@ -105,6 +115,7 @@ export class BeneficiariosComponent implements OnInit {
     this.loadAliados();
     this.loadConvenios();
     this.countHeaderData();
+
 
   }
 //obtenr actividades
@@ -119,6 +130,7 @@ getActividades(): void {
     (error) => console.error('Error al cargar actividades:', error)
   );
 }
+// inicializar formulario con los campos del beneficiario
   private initForm(): void {
     this.beneficiariesForm = this.fb.group({
       id: [{ value: '', disabled: true }],
@@ -132,9 +144,11 @@ getActividades(): void {
       evento: [''],
       mujeres: [0],
       hombres: [0],
-      total: [{ value: 0, disabled: true }],
+      total: [{ value: 0, disabled: true  }],
       details: [''],
-      registeredBy: ['']
+      registeredBy: [{ value: '' ,disabled: true }] // Este campo es solo lectura
+     
+
     });
 
     
@@ -143,7 +157,6 @@ getActividades(): void {
   this.servicios.getParametricaByIdTipo(18).subscribe(
     (data) => {
       this. organizacionTipo = data[0].dato;
-      console.log('organizacion tip0o optenidos :', this.organizacionTipo);
     },
     (error) => {
       console.error(error);
@@ -162,11 +175,11 @@ private initAliadosForm(): void {
     referentName: ['',],
     resultsLink: [''],
     convenio: ['',],
-    registeredBy: ['']
+    registeredByAliado: [{ value: '' ,disabled: true }] // Este campo es solo lectura
+   
   });
 }
-
-  loadDepartamentos(): void {
+loadDepartamentos(): void {
     this.ubicaGeograficaService.getUbicaciones(2, 1, 1).subscribe(
       (response) => {
         if (response[0]?.res === 'OK') {
@@ -179,20 +192,31 @@ private initAliadosForm(): void {
   }
   
   onDepartamentoChange(p_orden_departamento: number): void {
-    console.log('Departamento seleccionado en el select dadadad: ', p_orden_departamento);
+    console.log('Departamento seleccionado en el select: ', p_orden_departamento);
+    this.provincias = [];
     this.municipios = [];
     this.comunidades = [];
-    this.ubicaGeograficaService.getUbicaciones(4, 1,p_orden_departamento).subscribe(
+    this.ubicaGeograficaService.getUbicaciones(3, 1, p_orden_departamento).subscribe(
       (response) => {
         if (response[0]?.res === 'OK') {
-          this.municipios = response[0].dato;
-          console.log('municipios  recibidos :', this.municipios); 
+          this.provincias = response[0].dato;
+          console.log('Provincias recibidas:', this.provincias);
+          this.provincias.forEach(provincia => {
+            this.ubicaGeograficaService.getUbicaciones(4, 1, provincia.orden).subscribe(
+              (response) => {
+                if (response[0]?.res === 'OK') {
+                  this.municipios = this.municipios.concat(response[0].dato);
+                  console.log('Municipios recibidos:', this.municipios);
+                }
+              },
+              (error) => console.error('Error al cargar municipios:', error)
+            );
+          });
         }
       },
-      (error) => console.error('Error al cargar municipios:', error)
+      (error) => console.error('Error al cargar provincias:', error)
     );
   }
-
   onMunicipioChange(p_orden_monucipio: number): void {
     console.log('Municipio seleccionado en el select:', p_orden_monucipio);
     this.ubicaGeograficaService.getUbicaciones(5, 1,p_orden_monucipio).subscribe(
@@ -235,6 +259,7 @@ private initAliadosForm(): void {
     this.beneficiariosService.getBeneficiarios().subscribe(
       (response) => {
         console.log('Datos recibidos del servicio:', response);
+        console.log('nombre de la persona',this.namePersonaReg);  
   
         if (response[0]?.res === 'OK') {
           const rawBeneficiarios = response[0].dato || [];
@@ -283,9 +308,9 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
 
   if (beneficiario) {
     this.beneficiariesForm.patchValue({
-      id: beneficiario.id,
+      id: this.selectedBeneficiarios.id,
       fecha: beneficiario.fecha,
-      municipio: beneficiario.municipio,
+      municipio: this.selectedBeneficiarios.municipio,
       comunidad: beneficiario.comunidad,
       tipoOrganizacion: beneficiario.tipoOrganizacion,
       organizacion: beneficiario.organizacion,
@@ -294,10 +319,25 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
       mujeres: beneficiario.mujeres,
       hombres: beneficiario.hombres,
       total: beneficiario.total,
-      details: beneficiario.details 
+      details: beneficiario.details,
+ 
+      registeredBy: this.namePersonaReg // Asignar el nombre 
+
+
     });
+    console.log('datos cargados al formulario:', this.beneficiariesForm.value);
+
+
   } else {
+
     this.beneficiariesForm.reset();
+    // ASIGNAr el nombre de la persona que registra al formulario
+    console.log('Nombre de la persona registrada primer verificacion:', this.namePersonaReg);
+    this.beneficiariesForm.patchValue({
+     registeredBy: this.namePersonaReg 
+
+   });
+    
   }
 
   document.querySelector('app-root')?.setAttribute('inert', 'true'); 
@@ -330,7 +370,7 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
           hombres: formValue.hombres || 0,
           total: (formValue.mujeres || 0) + (formValue.hombres || 0),
           details: formValue.details || '',
-          registeredBy: formValue.registeredBy || null,
+          registeredBy: this.idPersonaReg || null,
       };
   
       console.log('Datos normalizados para enviar:', beneficiarioData);
@@ -443,10 +483,15 @@ openAliadoModal(modal: TemplateRef<any>, aliado?: any): void {
       referentName: aliado.referente || null,
       resultsLink: aliado.vinculo || null,
       convenio: aliado.convenio || null,
-      registeredBy: aliado.registeredBy || null
+      registeredByAliado: this.namePersonaReg || null
     });
+    console.log('nombre de persoanregistro en alidados ',this.namePersonaReg);
+    
   } else {
     this.aliadosForm.reset();
+    this.aliadosForm.patchValue({
+      registeredByAliado: this.namePersonaReg || null
+    });
   }
 
   this.modalService.open(modal).result.finally(() => {

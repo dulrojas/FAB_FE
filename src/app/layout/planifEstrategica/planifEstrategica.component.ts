@@ -9,6 +9,7 @@ import { PlanifEstrategicaService } from '../../servicios/planifEstrategica';
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
 import { servIndicador } from '../../servicios/indicador';
+import {servInstCategorias} from '../../servicios/instCategoria';
 
 
 // Estructura del Decorador del Componente 
@@ -31,8 +32,10 @@ export class PlanifEstrategicaComponent implements OnInit {
       private cdr: ChangeDetectorRef,
       private ServPlanifEstrategica: PlanifEstrategicaService,
       private servicios: servicios,
+      private servInstCategorias: servInstCategorias,
       private servApredizaje: servAprendizaje,
       private servIndicador: servIndicador,
+      
     ) {}
 
         // ======= ======= HEADER SECTION ======= =======
@@ -194,9 +197,9 @@ export class PlanifEstrategicaComponent implements OnInit {
             }
           );
 
-          this.servicios.getParametricaByIdTipo(18).subscribe(
+          this.servInstCategorias.getCategoriaById(3).subscribe(
             (data) => {
-              this.planifTipoCategoria = data[0].dato;
+              this.planifTipoCategoria = data; 
             },
             (error) => {
               console.error(error);
