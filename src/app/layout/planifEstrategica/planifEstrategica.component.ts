@@ -179,30 +179,34 @@ export class PlanifEstrategicaComponent implements OnInit {
           );
 
           // ======= ======= =======
-          this.servicios.getParametricaByIdTipo(12).subscribe(
-            (data) => {
-              this.planifCategoria = data[0].dato;
+
+          this.servInstCategorias.getCategoriaById(1).subscribe(
+            (data: any) => {
+              this.planifCategoria = data[0]?.dato || []; 
+              console.log("tiposcargados:", this.planifTipoCategoria);
             },
             (error) => {
-              console.error(error);
+              console.error("Error al cargar categorías:", error);
             }
           );
 
-          this.servicios.getParametricaByIdTipo(14).subscribe(
-            (data) => {
-              this.planifSubCategoria = data[0].dato;
+          this.servInstCategorias.getCategoriaById(2).subscribe(
+            (data: any) => {
+              this.planifSubCategoria = data[0]?.dato || []; 
+              console.log("tiposcargados:", this.planifTipoCategoria);
             },
             (error) => {
-              console.error(error);
+              console.error("Error al cargar categorías:", error);
             }
           );
 
           this.servInstCategorias.getCategoriaById(3).subscribe(
-            (data) => {
-              this.planifTipoCategoria = data; 
+            (data: any) => {
+              this.planifTipoCategoria = data[0]?.dato || []; 
+              console.log("tiposcargados:", this.planifTipoCategoria);
             },
             (error) => {
-              console.error(error);
+              console.error("Error al cargar categorías:", error);
             }
           );
 

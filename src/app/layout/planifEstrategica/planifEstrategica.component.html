@@ -344,43 +344,62 @@
                 
   
                 <!-- Categoría -->
-                  <div class="col col-xl-4 col-lg-4 mt-auto">
-                      <label for="inst_categoria_1">Categoría</label>
-                      <select class="form-control" id="inst_categoria_1" name="inst_categoria_1"
-                        [(ngModel)]="inst_categoria_1" (change)="ValidateCategoria()">
-                        <option value="" disabled selected>Seleccione una categoría</option>
-                        <option *ngFor="let categoria of  planifCategoria" [value]="categoria.id_subtipo">
-                          {{ categoria.descripcion_subtipo }}
-                        </option>
-                      </select>
-                    <span class="custom-alert-message" *ngIf="!valCategoria">Debe elegir una Categoria</span>
-                    </div>
-      
-                    <!-- SubCategoría -->
-                    <div class="col col-xl-4 col-lg-4 mt-auto">
-                      <label for="subCategoria">SubCategoría</label>
-                      <select class="form-control" id="inst_categoria_2" name="inst_categoria_2"
-                        [(ngModel)]="inst_categoria_2" (change)="ValidateSubCategoria()">
-                        <option value="" disabled selected>Seleccione una categoría</option>
-                        <option *ngFor="let categoria of  planifSubCategoria" [value]="categoria.id_subtipo">
-                          {{ categoria.descripcion_subtipo }}
-                        </option>
-                      </select>
-                      <span class="custom-alert-message" *ngIf="!valSubCategoria">Debe elegir una SubCategoria</span>
-                    </div>
+                <div class="col col-xl-4 col-lg-4 mt-auto">
+                  <label for="inst_categoria_1">Categoría</label>
+                  <select 
+                    class="form-control" 
+                    id="inst_categoria_1" 
+                    name="inst_categoria_1"
+                    [(ngModel)]="inst_categoria_1" 
+                    (change)="ValidateCategoria()">
+                    <option value="" disabled selected>Seleccione una categoría</option>
+                    <option *ngFor="let categoria of planifCategoria" [value]="categoria.id_inst_categoria">
+                      {{ categoria.nombre }}
+                    </option>
+                  </select>
+                  <span class="custom-alert-message" *ngIf="!valCategoria">
+                    Debe elegir una Categoría
+                  </span>
+                </div>
+                
+                <!-- SubCategoría -->
+                <div class="col col-xl-4 col-lg-4 mt-auto">
+                  <label for="inst_categoria_2">SubCategoría</label>
+                  <select 
+                    class="form-control" 
+                    id="inst_categoria_2" 
+                    name="inst_categoria_2"
+                    [(ngModel)]="inst_categoria_2" 
+                    (change)="ValidateSubCategoria()">
+                    <option value="" disabled selected>Seleccione una SubCategoría</option>
+                    <option *ngFor="let categoria of planifSubCategoria" [value]="categoria.id_inst_categoria">
+                      {{ categoria.nombre }}
+                    </option>
+                  </select>
+                  <span class="custom-alert-message" *ngIf="!valSubCategoria">
+                    Debe elegir una SubCategoría
+                  </span>
+                </div>
       
                     <!-- Tipo -->
                     <div class="col col-xl-4 col-lg-4 mt-auto">
                       <label for="tipoIndicador">Tipo</label>
-                      <select class="form-control" id="inst_categoria_3" name="inst_categoria_3"
-                      [(ngModel)]="inst_categoria_3" (change)="ValidateTipoCategoria()">
-                      <option value="" disabled selected>Seleccione una Tipo</option>
-                      <option *ngFor="let categoria of  planifSubCategoria" [value]="categoria.id_subtipo">
-                        {{ categoria.descripcion_subtipo }}
-                      </option>
-                    </select>
-                    <span class="custom-alert-message" *ngIf="!valTipoCategoria">Debe elegir una SubCategoria</span>
-                  </div>
+                      <select 
+                        class="form-control" 
+                        id="inst_categoria_3" 
+                        name="inst_categoria_3"
+                        [(ngModel)]="inst_categoria_3" 
+                        (change)="ValidateTipoCategoria()"
+                      >
+                        <option value="" disabled selected>Seleccione un Tipo</option>
+                        <option *ngFor="let categoria of planifTipoCategoria" [value]="categoria.id_inst_categoria">
+                          {{ categoria.nombre }}
+                        </option>
+                      </select>
+                      <span class="custom-alert-message" *ngIf="!valTipoCategoria">
+                        Debe elegir una SubCategoría
+                      </span>
+                    </div>
                   
                 <!-- Nombre del Indicador -->
                 <div class="col col-xl-12 col-lg-12 mt-auto">

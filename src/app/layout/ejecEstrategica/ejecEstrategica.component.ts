@@ -181,30 +181,34 @@ export class EjecEstrategicaComponent implements OnInit {
     );
 
     // ======= ======= =======
+
     this.servInstCategorias.getCategoriaById(1).subscribe(
-      (data) => {
-        this.inst_categoria_1 = data[0].dato;
+      (data: any) => {
+        this.inst_categoria_1 = data[0]?.dato || []; 
+        
       },
       (error) => {
-        console.error(error);
+        console.error("Error al cargar categorías:", error);
       }
     );
 
     this.servInstCategorias.getCategoriaById(2).subscribe(
-      (data) => {
-        this.inst_categoria_2 = data[0].dato;
+      (data: any) => {
+        this.inst_categoria_2 = data[0]?.dato || []; 
+  
       },
       (error) => {
-        console.error(error);
+        console.error("Error al cargar categorías:", error);
       }
     );
 
     this.servInstCategorias.getCategoriaById(3).subscribe(
-      (data) => {
-        this.inst_categoria_3 = data[0].dato;
+      (data: any) => {
+        this.inst_categoria_3 = data[0]?.dato || []; 
+      
       },
       (error) => {
-        console.error(error);
+        console.error("Error al cargar categorías:", error);
       }
     );
     this.servIndicadorAvance.getIndicadoresAvanceById(1).subscribe(
@@ -368,6 +372,36 @@ export class EjecEstrategicaComponent implements OnInit {
         // Formatear el nuevo código en el formato "X.0.0.0".
         return `${lastOG[0]}.0.0.0`;
       }
+
+      getAvanceVerde(lineaBase: number, metaFinal: number, avancePeriodo: number): number {
+        console.log('Datos para Verde ->', { lineaBase, metaFinal, avancePeriodo });
+      
+        if (!lineaBase || !metaFinal || !avancePeriodo) return 0; // Validación de entrada
+        const totalRango = metaFinal - lineaBase;
+        if (totalRango <= 0) return 0; // Evitar divisiones por cero o rangos inválidos
+      
+        const progreso = avancePeriodo - lineaBase; // Progreso actual desde la línea base
+        const porcentaje = (progreso / totalRango) * 100;
+        return Math.min(Math.max(porcentaje, 0), 100); // Asegurar rango [0, 100]
+      }
+      
+      getAvanceAmarillo(lineaBase: number, metaFinal: number, avancePeriodo: number): number {
+        console.log('Datos para Amarillo ->', { lineaBase, metaFinal, avancePeriodo });
+      
+        if (!lineaBase || !metaFinal || !avancePeriodo) return 0; // Validación de entrada
+        const totalRango = metaFinal - lineaBase;
+        if (totalRango <= 0) return 0; // Evitar divisiones por cero o rangos inválidos
+      
+        const restante = metaFinal - avancePeriodo; // Rango restante hacia la meta final
+        const porcentaje = (restante / totalRango) * 100;
+        return Math.min(Math.max(porcentaje, 0), 100); // Asegurar rango [0, 100]
+      }
+        
+      
+      
+      
+      
+      
 
 
   // ======= ======= INIT EJECUCION ESTRATEGICA NGMODEL ======= =======

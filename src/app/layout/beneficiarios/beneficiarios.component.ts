@@ -582,8 +582,6 @@ onDeleteAliado(): void {
   }
 }
 
-
-
 // cargar convenios
 loadConvenios(): void {
   this.servicios.getParametricaByIdTipo(5).subscribe(
