@@ -6,6 +6,7 @@ import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servDashboard } from "../../servicios/dashboard";
 import { Chart } from 'chart.js/auto'; // Importación de Chart.js
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-dashboard2',
@@ -49,6 +50,10 @@ export class Dashboard2Component implements OnInit {
     currentDateGap: number = 0;
     finalDateGap: number = 0;
     realFinalDate: any = '';
+
+    images: any[] = [
+      { "id_institucion": 1, "ruta__iconos": `${environment.assetsPath}images/Manejo de fuego.jpg` }
+    ];
 
     ngOnInit() {
         this.createDoughnutChart(); // Grafico Presupuesto
@@ -109,7 +114,30 @@ export class Dashboard2Component implements OnInit {
 
     countHeaderData() {
        
+        this.headerDataNro01 = this.obligaciones.length;
+        this.headerDataNro02 = this.obligaciones.filter((obligacion) => obligacion.estado === 'Cumplida').length;
+        this.headerDataNro03 = this.obligaciones.filter((obligacion) => obligacion.estado === 'Incumplida').length;
+        this.headerDataNro04 = this.obligaciones.filter((obligacion) => obligacion.estado === 'En proceso').length;
       }
+      imageSelected: any = null;
+      imageSelectedAux: any = null;
+      onImageClick(imageSel: any) {
+        this.images.forEach(image =>{
+          if(imageSel.id_institucion == image.id_institucion){
+            image.selected = !image.selected;
+            if(imageSel.selected){
+              this.imageSelectedAux = imageSel;
+            }
+            else{
+              this.imageSelectedAux = null;
+            }
+          }
+          else{
+            image.selected = false;
+          }
+        });
+      }
+
       
       // ====== ======= ====== Grafico Presupuesto ====== ======= ======
       createDoughnutChart() {
