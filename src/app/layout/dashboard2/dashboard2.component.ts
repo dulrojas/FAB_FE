@@ -52,7 +52,13 @@ export class Dashboard2Component implements OnInit {
     realFinalDate: any = '';
 
     images: any[] = [
-      { "id_institucion": 1, "ruta__iconos": `${environment.assetsPath}images/Manejo de fuego.jpg` }
+      { "id_institucion": 1, "ruta__iconos": `${environment.assetsPath}images/Manejo de fuego.jpg` },
+      { "id_institucion": 2, "ruta__iconos": `${environment.assetsPath}Actividades.jpg}` },
+      { "id_institucion": 3, "ruta__iconos": `${environment.assetsPath}Logros.jpg}` },
+      { "id_institucion": 4, "ruta__iconos": `${environment.assetsPath}Hombre.png}` },
+      { "id_institucion": 5, "ruta__iconos": `${environment.assetsPath}Mujer.png}` },
+      { "id_institucion": 6, "ruta__iconos": `${environment.assetsPath}ActoresClave.jpg}` }
+
     ];
 
     ngOnInit() {
