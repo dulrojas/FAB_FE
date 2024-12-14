@@ -58,7 +58,6 @@ export class Dashboard2Component implements OnInit {
       { "id_institucion": 4, "ruta__iconos": `${environment.assetsPath}Hombre.png}` },
       { "id_institucion": 5, "ruta__iconos": `${environment.assetsPath}Mujer.png}` },
       { "id_institucion": 6, "ruta__iconos": `${environment.assetsPath}ActoresClave.jpg}` }
-
     ];
 
     ngOnInit() {

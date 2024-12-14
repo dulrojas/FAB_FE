@@ -265,6 +265,7 @@
                   <label for="impacto">Impacto</label>
                     <select class="form-control" id="impacto" name="impacto" 
                       [(ngModel)]="impacto" >
+                      <option value="" disabled selected>Seleccione Impacto</option>
                       <option value="3">Alto</option>
                       <option value="2">Medio</option>
                       <option value="1">Bajo</option>
@@ -275,6 +276,7 @@
                   <label for="probabilidad">Probabilidad</label>
                   <select class="form-control" id="probabilidad" name="probabilidad" 
                   [(ngModel)]="probabilidad" >
+                    <option value="" disabled selected>Seleccione Probabilidad</option>
                     <option value="3">Alta</option>
                     <option value="2">Media</option>
                     <option value="1">Baja</option>
@@ -285,6 +287,7 @@
                   <label for="nivelRiesgo">Nivel de Riesgo</label>
                   <select class="form-control" id="nivel" name="nivel" 
                   [(ngModel)]="nivel" >
+                  <option value="" disabled selected>Seleccione Nivel de Riesgo</option>
                     <option value="3">Alto</option>
                     <option value="2">Medio</option>
                     <option value="1">Bajo</option>
@@ -326,7 +329,7 @@
                   <div class="col col-xl-12 col-lg-12 mt-auto">
                     <label for="medidas">Medidas de Respuesta al Riesgo</label>
                     <input  class="form-control" type="text" 
-                          id="medidas" name="medidas" 
+                          id="medidas" name="medidas" placeholder="Ingresa Medidas de Respuesta al Riesgo"
                           [(ngModel)]="medidas" (change)="this.ValidateMedida()"/>
                           <span class="custom-alert-message" *ngIf="!valMedida">Ingresa Medidas de Respuesta al Riesgo</span>
                   </div>
@@ -358,10 +361,10 @@
                 <div class="modal-footer">
                   <div class="d-flex justify-content-center" style="width: 100%;">
                     <button type="button" class="btn btn-bg-3" (click)="closeModal('Cerrar')">
-                      <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+                      <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                     </button>
                     <button type="button" class="btn btn-bg-1" [disabled]="riesgosForm.invalid" (click)="onSubmit()">
-                      <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+                      <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
                     </button>
                   </div>
                 </div>

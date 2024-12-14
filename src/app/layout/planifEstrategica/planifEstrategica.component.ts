@@ -183,7 +183,6 @@ export class PlanifEstrategicaComponent implements OnInit {
           this.servInstCategorias.getCategoriaById(1).subscribe(
             (data: any) => {
               this.planifCategoria = data[0]?.dato || []; 
-              console.log("tiposcargados:", this.planifTipoCategoria);
             },
             (error) => {
               console.error("Error al cargar categorías:", error);
@@ -193,7 +192,6 @@ export class PlanifEstrategicaComponent implements OnInit {
           this.servInstCategorias.getCategoriaById(2).subscribe(
             (data: any) => {
               this.planifSubCategoria = data[0]?.dato || []; 
-              console.log("tiposcargados:", this.planifTipoCategoria);
             },
             (error) => {
               console.error("Error al cargar categorías:", error);
@@ -203,7 +201,6 @@ export class PlanifEstrategicaComponent implements OnInit {
           this.servInstCategorias.getCategoriaById(3).subscribe(
             (data: any) => {
               this.planifTipoCategoria = data[0]?.dato || []; 
-              console.log("tiposcargados:", this.planifTipoCategoria);
             },
             (error) => {
               console.error("Error al cargar categorías:", error);
@@ -238,19 +235,22 @@ export class PlanifEstrategicaComponent implements OnInit {
     planifEstrategicaSelected: any = null;
     
     // ======= ======= CHECKBOX CHANGED ======= =======
-      checkboxChanged(planifEstrategicaSel: any) {
-        this.planifEstrategica.forEach(planifEstrategica => {
-          if (planifEstrategicaSel.id_proy_indicador == planifEstrategica.id_proy_indicador) {
-            if (planifEstrategicaSel.selected) {
-              this.planifEstrategicaSelected = planifEstrategicaSel;
-            } else {
-              this.planifEstrategicaSelected = null;
-            }
+    checkboxChanged(planifEstrategicaSel: any) {
+      // Recorre todos los elementos y actualiza el estado de selección
+      this.planifEstrategica.forEach(planifEstrategica => {
+        if (planifEstrategicaSel.id_proy_indicador === planifEstrategica.id_proy_indicador) {
+          // Si el checkbox está marcado, seleccionamos el elemento
+          if (planifEstrategicaSel.selected) {
+            this.planifEstrategicaSelected = planifEstrategicaSel;
           } else {
-            planifEstrategica.selected = false;
+            this.planifEstrategicaSelected = null;
           }
-        });
-      }
+        } else {
+          // Si no es el elemento seleccionado, desmarcamos su checkbox
+          planifEstrategica.selected = false;
+        }
+      });
+    }
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
       onSelectionChange() {
         const selectedComponente = this.componentes.find(comp => comp.id_meto_elemento == this.id_proy_elem_padre);
@@ -304,6 +304,8 @@ export class PlanifEstrategicaComponent implements OnInit {
 
     // Filtrar padres válidos en función del tipo del elemento a crear
       getValidParents(tipo: string): any[] {
+        console.log('Tipo recibido en getValidParents:', tipo);
+        console.log('Datos de planifEstrategica:', this.planifEstrategica);
         switch (tipo) {
           case 'OG': // Objetivo General no tiene padres válidos (es la raíz)
             return [];
@@ -334,6 +336,7 @@ export class PlanifEstrategicaComponent implements OnInit {
 
       // Método para manejar cambios en el tipo y filtrar padres válidos
       onParentChange(): void {
+        console.log('Tipo actual:', this.tipo);
         if (!this.tipo) {
           console.error("No se ha definido un tipo para validar el padre.");
           return;
@@ -341,6 +344,7 @@ export class PlanifEstrategicaComponent implements OnInit {
 
         // Actualizar lista de padres válidos
         this.validParents = this.getValidParents(this.tipo);
+        console.log('Padres válidos actualizados:', this.validParents);
         
       }
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
@@ -428,6 +432,8 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.modalAction = "add";
       this.modalTitle = this.getModalTitle("add");
 
+      console.log('Iniciando proceso de añadir...');
+
       // Si se pasa un ID, establece el elemento automáticamente
       if (id_proy_elem_padre) {
         this.id_proy_elem_padre = id_proy_elem_padre;
@@ -440,6 +446,11 @@ export class PlanifEstrategicaComponent implements OnInit {
         if (this.tipo === 'OG') {
           this.codigo = this.generateCodigoOG(); // Generar el código para OG
         }
+        console.log('ID Padre:', this.id_proy_elem_padre);
+        console.log('Color:', this.color);
+        console.log('Sigla:', this.sigla);
+        console.log('Tipo:', this.tipo);
+        console.log('Valid Parents:', this.validParents);
       }
 
       this.openModal(modalScope);
@@ -465,9 +476,11 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_inst_categoria_2: this.inst_categoria_2,
         p_inst_categoria_3: this.inst_categoria_3
       };
+      console.log('Objetos a añadir:', objIndicador);
       this.servIndicador.addIndicador(objIndicador).subscribe(
         (data) => {
           this.getPlanifEstrategica();
+          console.log('Elemento añadido con éxito', data);
         },
         (error) => {
           console.error(error);
@@ -542,6 +555,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.servIndicador.editIndicador(objIndicador).subscribe(
         (data) => {
           this.getPlanifEstrategica();
+          console.log('Elemento editado con éxito', data);
         },
         (error) => {
           console.error(error);
@@ -558,10 +572,13 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
     deleteIndicador(){
+      //console.log('Eliminando el ID:', this.id_proy_indicador);
       this.servIndicador.deleteIndicador(this.id_proy_indicador).subscribe(
         (data) => {
+          this.planifEstrategicaSelected = null;
           this.closeModal();
           this.getPlanifEstrategica();
+          console.log('Elemento eliminado con éxito', data);
         },
         (error) => {
           console.error(error);
@@ -620,12 +637,14 @@ countHeaderData(): void {
       if(valForm){
         if(this.modalAction == "add"){
           this.addIndicador();
+          console.log('Formulario enviado:', this.codigo, this.indicador, this.descripcion, this.comentario);
         }
         else{
           this.editIndicador();
         }
         this.closeModal();
       }
+      
     }
     // ======= ======= ======= ======= =======
 

@@ -233,7 +233,8 @@
                               id="codigo" 
                               name="codigo" 
                               [(ngModel)]="codigo" 
-                              [readonly]="false"> 
+                              [readonly]="false" 
+                              [required]="false"> 
                           </div>
                           
 
@@ -262,10 +263,10 @@
                             <div class="modal-footer">
                               <div class="d-flex justify-content-end" style="width: 100%;">
                                   <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-                                  <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                                  <button type="button" class="btn btn-bg-3" (click)="modal.close('Cancelar')">
                                       <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                   </button>
-                                  <button type="button" class="btn btn-bg-1" [disabled]="planifEstrategicaForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
+                                  <button type="button" class="btn btn-bg-1" [disabled]="planifEstrategicaForm.invalid" (click)="onSubmit(); modal.close('Grabar')">
                                       <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
                                   </button>
                               </div>
@@ -339,7 +340,7 @@
                     id="codigo" 
                     name="codigo" 
                     [(ngModel)]="codigo" 
-                    readonly>
+                    [readonly]="false"> 
                 </div>
                 
   

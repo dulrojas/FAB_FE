@@ -95,34 +95,35 @@ export class servIndicador {
           "procedure_name": "sp_indicador",
           "body": {
             "params": [
-              { "name": "p_accion", "value": "A1", "type": "string" }, 
-              { "name": "p_id_proy_indicador", "value": null, "type": "int" }, 
-              { "name": "p_id_proyecto", "value": obj.id_proyecto, "type": "int" }, 
-              { "name": "p_id_proy_elem_padre", "value": obj.id_proy_elem_padre, "type": "int" }, 
-              { "name": "p_codigo", "value": obj.codigo, "type": "string" }, 
-              { "name": "p_indicador", "value": obj.indicador, "type": "string" }, 
-              { "name": "p_descripcion", "value": obj.descripcion, "type": "string" }, 
-              { "name": "p_comentario", "value": obj.comentario, "type": "string" },
-              { "name": "p_orden", "value": obj.orden, "type": "int" }, 
-              { "name": "p_linea_base", "value": obj.linea_base, "type": "string" }, 
-              { "name": "p_medida", "value": obj.medida, "type": "string" }, 
-              { "name": "p_meta_final", "value": obj.meta_final, "type": "string" }, 
-              { "name": "p_medio_verifica", "value": obj.medio_verifica, "type": "string" }, 
-              { "name": "p_id_estado", "value": obj.id_estado, "type": "int" }, 
-              { "name": "p_id_inst_categoria_1", "value": obj.id_inst_categoria_1, "type": "int" }, 
-              { "name": "p_id_inst_categoria_2", "value": obj.id_inst_categoria_2, "type": "int" }, 
-              { "name": "p_id_inst_categoria_3", "value": obj.id_inst_categoria_3, "type": "int" } 
+              { "name": "p_accion", "value": "A1", "type": "string" },
+              { "name": "p_id_proy_indicador", "value": null, "type": "int" },
+              { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },
+              { "name": "p_id_proy_elem_padre", "value": obj.p_id_proy_elem_padre, "type": "int" },
+              { "name": "p_codigo", "value": obj.p_codigo, "type": "string" },
+              { "name": "p_indicador", "value": obj.p_indicador, "type": "string" },
+              { "name": "p_descripcion", "value": obj.p_descripcion, "type": "string" },
+              { "name": "p_comentario", "value": obj.p_comentario, "type": "string" },
+              { "name": "p_orden", "value": obj.p_orden, "type": "int" },
+              { "name": "p_linea_base", "value": obj.p_linea_base, "type": "string" },
+              { "name": "p_medida", "value": obj.p_medida, "type": "string" },
+              { "name": "p_meta_final", "value": obj.p_meta_final, "type": "string" },
+              { "name": "p_medio_verifica", "value": obj.p_medio_verifica, "type": "string" },
+              { "name": "p_id_estado", "value": obj.p_id_estado, "type": "int" },
+              { "name": "p_id_inst_categoria_1", "value": obj.p_id_inst_categoria_1, "type": "int" },
+              { "name": "p_id_inst_categoria_2", "value": obj.p_id_inst_categoria_2, "type": "int" },
+              { "name": "p_id_inst_categoria_3", "value": obj.p_id_inst_categoria_3, "type": "int" }
             ]
           }
         };
-
+      
         const ip = sessionStorage.getItem('ip') || '';
-          const headers = new HttpHeaders({
-            'ip': "127.0.0.1"
-          });
-        
-          return this.http.post<any>(this.URL, params, { headers });
+        const headers = new HttpHeaders({
+          'ip': ip || "127.0.0.1"
+        });
+      
+        return this.http.post<any>(this.URL, params, { headers });
       }
+  
 
 
   // ======= ======= ======= ======= ======= ======= =======
@@ -133,30 +134,30 @@ export class servIndicador {
           "procedure_name": "sp_indicador",
           "body": {
             "params": [
-              {"name": "p_accion", "value": "M1", "type": "string"},
-              {"name": "p_id_proy_indicador", "value": obj.id_proy_indicador, "type": "int"},
-              {"name": "p_id_proyecto", "value": obj.id_proyecto, "type": "int"},
-              {"name": "p_id_proy_elem_padre", "value": obj.id_proy_elem_padre, "type": "int"},
-              {"name": "p_codigo", "value": obj.codigo, "type": "string"},
-              {"name": "p_indicador", "value": obj.indicador, "type": "string"},
-              {"name": "p_descripcion", "value": obj.descripcion, "type": "string"},
-              {"name": "p_comentario", "value": obj.comentario, "type": "string"},
-              {"name": "p_orden", "value": obj.orden, "type": "int"},
-              {"name": "p_linea_base", "value": obj.linea_base, "type": "string"},
-              {"name": "p_medida", "value": obj.medida, "type": "string"},
-              {"name": "p_meta_final", "value": obj.meta_final, "type": "string"},
-              {"name": "p_medio_verifica", "value": obj.medio_verifica, "type": "string"},
-              {"name": "p_id_estado", "value": obj.id_estado, "type": "int"},
-              {"name": "p_id_inst_categoria_1", "value": obj.id_inst_categoria_1, "type": "int"},
-              {"name": "p_id_inst_categoria_2", "value": obj.id_inst_categoria_2, "type": "int"},
-              {"name": "p_id_inst_categoria_3", "value": obj.id_inst_categoria_3, "type": "int"}              
+              { "name": "p_accion", "value": "M1", "type": "string" },
+              { "name": "p_id_proy_indicador", "value": obj.id_proy_indicador, "type": "int" },
+              { "name": "p_id_proyecto", "value": obj.id_proyecto, "type": "int" },
+              { "name": "p_id_proy_elem_padre", "value": obj.id_proy_elem_padre, "type": "int" },
+              { "name": "p_codigo", "value": obj.codigo, "type": "string" },
+              { "name": "p_indicador", "value": obj.indicador, "type": "string" },
+              { "name": "p_descripcion", "value": obj.descripcion, "type": "string" },
+              { "name": "p_comentario", "value": obj.comentario, "type": "string" },
+              { "name": "p_orden", "value": obj.orden, "type": "int" },
+              { "name": "p_linea_base", "value": obj.linea_base, "type": "string" },
+              { "name": "p_medida", "value": obj.medida, "type": "string" },
+              { "name": "p_meta_final", "value": obj.meta_final, "type": "string" },
+              { "name": "p_medio_verifica", "value": obj.medio_verifica, "type": "string" },
+              { "name": "p_id_estado", "value": obj.id_estado, "type": "int" },
+              { "name": "p_id_inst_categoria_1", "value": obj.id_inst_categoria_1, "type": "int" },
+              { "name": "p_id_inst_categoria_2", "value": obj.id_inst_categoria_2, "type": "int" },
+              { "name": "p_id_inst_categoria_3", "value": obj.id_inst_categoria_3, "type": "int" }
             ]
           }
         };
-
+      
         const ip = sessionStorage.getItem('ip') || '';
         const headers = new HttpHeaders({
-          'ip': "127.0.0.1"
+          'ip': ip || "127.0.0.1"
         });
       
         return this.http.post<any>(this.URL, params, { headers });
@@ -169,32 +170,32 @@ export class servIndicador {
           "procedure_name": "sp_indicador",
           "body": {
             "params": [
-              {"name": "p_accion", "value": "B1", "type": "string"},
-              {"name": "p_id_proy_indicador", "value": id, "type": "int"},
-              {"name": "p_id_proyecto", "value": null, "type": "int"},
-              {"name": "p_id_proy_elem_padre", "value": null, "type": "int"},
-              {"name": "p_codigo", "value": null, "type": "string"},
-              {"name": "p_indicador", "value": null, "type": "string"},
-              {"name": "p_descripcion", "value": null, "type": "string"},
-              {"name": "p_comentario", "value": null, "type": "string"},
-              {"name": "p_orden", "value": null, "type": "int"},
-              {"name": "p_linea_base", "value": null, "type": "string"},
-              {"name": "p_medida", "value": null, "type": "string"},
-              {"name": "p_meta_final", "value": null, "type": "string"},
-              {"name": "p_medio_verifica", "value": null, "type": "string"},
-              {"name": "p_id_estado", "value": null, "type": "int"},
-              {"name": "p_id_inst_categoria_1", "value": null, "type": "int"},
-              {"name": "p_id_inst_categoria_2", "value": null, "type": "int"},
-              {"name": "p_id_inst_categoria_3", "value": null, "type": "int"}
+              { "name": "p_accion", "value": "D1", "type": "string" },
+              { "name": "p_id_proy_indicador", "value": id, "type": "int" },
+              { "name": "p_id_proyecto", "value": null, "type": "int" },
+              { "name": "p_id_proy_elem_padre", "value": null, "type": "int" },
+              { "name": "p_codigo", "value": null, "type": "string" },
+              { "name": "p_indicador", "value": null, "type": "string" },
+              { "name": "p_descripcion", "value": null, "type": "string" },
+              { "name": "p_comentario", "value": null, "type": "string" },
+              { "name": "p_orden", "value": null, "type": "int" },
+              { "name": "p_linea_base", "value": null, "type": "string" },
+              { "name": "p_medida", "value": null, "type": "string" },
+              { "name": "p_meta_final", "value": null, "type": "string" },
+              { "name": "p_medio_verifica", "value": null, "type": "string" },
+              { "name": "p_id_estado", "value": null, "type": "int" },
+              { "name": "p_id_inst_categoria_1", "value": null, "type": "int" },
+              { "name": "p_id_inst_categoria_2", "value": null, "type": "int" },
+              { "name": "p_id_inst_categoria_3", "value": null, "type": "int" }
             ]
           }
         };
-
+      
         const ip = sessionStorage.getItem('ip') || '';
         const headers = new HttpHeaders({
-          'ip': "127.0.0.1"
+          'ip': ip || "127.0.0.1"
         });
-
+      
         return this.http.post<any>(this.URL, params, { headers });
       }
   
