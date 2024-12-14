@@ -296,7 +296,7 @@
                     <!-- ======= IMAGE SECTION ======= -->
                     <div class="card mb-3">
                         <div class="card-body custom-card">
-                            <img [src]="imageSrc || '../../../assets/images/empty.jpg'" alt="formImg" style="width: 100%;">
+                            <img [src]="imageSrc || defaultImageSrc" alt="formImg" style="width: 100%;">
                             <input type="file" id="fileImg" (change)="onFileSelected($event)" class="form-control" />
                         </div>
                     </div>

@@ -60,6 +60,9 @@ export class Dashboard2Component implements OnInit {
       { "id_institucion": 6, "ruta__iconos": `${environment.assetsPath}ActoresClave.jpg}` }
     ];
 
+    imageSrc: any = null;
+    defaultImageSrc: any = environment.defaultImageSrc;
+
     ngOnInit() {
         this.createDoughnutChart(); // Grafico Presupuesto
         this.createDoughnutChart2024() // Grafico Presupuesto 2024
@@ -72,6 +75,7 @@ export class Dashboard2Component implements OnInit {
       this.servDashboard.getDashboardData(this.idProyecto, "2024-12-03").subscribe(
         (data) => {
           //this.dashboardData = data[0].dato;
+          this.downloadFile(this.idProyecto);
           console.log(data[0].dato[0]);
         },
         (error) => {
@@ -382,5 +386,42 @@ export class Dashboard2Component implements OnInit {
           ],
         });
       }
+      
+    // ======= ======= UPLOAD IMAGE FUN ======= =======
+    uploadFile(file: any, idRegistro: any, nombreRegistro: any){
+      this.servicios.uploadFile(file, "persona", "ruta_foto", "id_persona", nombreRegistro, idRegistro).subscribe(
+        (response) => {
+          //console.log('Archivo subido correctamente:', response);
+        },
+        (error) => {
+          console.error('Error al subir el archivo:', error);
+        }
+      );
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= DOWNLOAD IMAGE FUN ======= =======
+    downloadFile(idRegistro: any){
+      this.servicios.downloadFile("proyecto", "ruta_imagen", "id_proyecto", idRegistro).subscribe(
+        (response: Blob) => {
+          if (response instanceof Blob) {
+            const url = window.URL.createObjectURL(response);
+            this.imageSrc = url;
+          } 
+          else {
+            //console.warn('La respuesta no es un Blob:', response);
+            this.imageSrc = null; 
+          }
+        },
+        (error) => {
+          if (error.status === 404) {
+            //console.warn('No se encontró imagen para el registro:', idRegistro);
+            this.imageSrc = null;
+          } else {
+            //console.error('Error al descargar la imagen:', error);
+          }
+        }
+      );
+    }
+    // ======= ======= ======= ======= =======
 
 }

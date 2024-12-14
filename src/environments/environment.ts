@@ -4,7 +4,11 @@
 
 export const environment = {
     production: false,
-    assetsPath: '../../../assets/'
+    URL: "https://foro-condominios.com/apiFanDev/sp",
+    URLUploadFile: "https://foro-condominios.com/apiFanDev/uploadFile",
+    URLDownloadFile: "https://foro-condominios.com/apiFanDev/downloadFile",
+    assetsPath: '../../../assets/',
+    defaultImageSrc: '../../../assets/images/empty.jpg'
 };
 
 /*

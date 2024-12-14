@@ -9,7 +9,7 @@
         <div class="col col-md-6">
             <div class="row">
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro01}} Personas
+                    {{headerDataNro01}} Logros
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
                     {{headerDataNro02}} Administrador de Sistema
@@ -60,7 +60,7 @@
                                 [ngClass]="{'custom-logro-container-selected': logro.selected}"
                                 (click)="onLogroClick(logro)">
                                 <div class="row mt-auto">
-                                    <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="(logro.ruta_imagen) || '../../../assets/images/empty.jpg'" alt="Imagen del logro">
+                                    <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="(logro.imagen_src) || defaultImageSrc" alt="Imagen del logro">
                                     <div class="col col-xl-2 col-lg-2">
                                         <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+logro.color}">{{ logro.sigla }}</label>
                                     </div>
@@ -149,7 +149,7 @@
                                 <!-- ======= ======= IMAGE SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="accion">Imagen logro</label>
-                                    <img class="custom-img-selector" [src]="ruta_imagen" alt="Imagen de logro" id="imagen" 
+                                    <img class="custom-img-selector" [src]="(ruta_imagen)||(defaultImageSrc)" alt="Imagen de logro" id="imagen" 
                                         (click)="initSelectImage(selectImageModal)" (error)="onError($event)">
                                     <span class="custom-alert-message" *ngIf="!valImagen">Debe seleccionar una imagen.</span>
                                 </div>
@@ -225,7 +225,7 @@
                                     (click)="onImageClick(image)">
                                     <div class="row">
                                         <div class="col col-lg-12 col-md-12">
-                                            <img [src]="image.ruta_logros_iconos" alt="iconoLogro" style="width: 100%; height: auto;">
+                                            <img [src]="(image.icono_src)||(defaultImageSrc)" alt="iconoLogro" style="width: 100%; height: auto;">
                                         </div>
                                     </div>
                                 </div>

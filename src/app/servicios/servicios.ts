@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import config from './config';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class servicios{
-  private URL = config.URL;
-  private URLUpload = config.URLUploadFile;
+  private URL = environment.URL;
+  private URLUpload = environment.URLUploadFile;
+  private URLDownload = environment.URLDownloadFile;
 
   constructor(private http: HttpClient) {}
 
@@ -90,13 +91,35 @@ export class servicios{
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= UPLOAD FILE ======= ======= =======
-  uploadFile(formData: FormData): Observable<any> {
+  uploadFile(file: any, nombreTabla: any, campoTabla: any, idEnTabla: any, nombreRegistro: any, idRegistro: any): Observable<any> {
+    let formData = new FormData();
+    formData.append('file', file);
+    formData.append('nombre_tabla', nombreTabla);
+    formData.append('campo_tabla', campoTabla);
+    formData.append('id_en_tabla', idEnTabla);
+    formData.append('nombre_registro', nombreRegistro);
+    formData.append('id_registro', idRegistro);
 
     const ip = sessionStorage.getItem('ip') || '';
     const headers = new HttpHeaders({
       'ip': "127.0.0.1"
     });
     return this.http.post<any>(this.URLUpload, formData, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= DOWNLOAD FILE ======= ======= =======
+  downloadFile(nombreTabla: any, campoTabla: any, idEnTabla: any, idRegistro: any): Observable<any> {
+    let formData = new FormData();
+    formData.append('nombre_tabla', nombreTabla);
+    formData.append('campo_tabla', campoTabla);
+    formData.append('id_en_tabla', idEnTabla);
+    formData.append('id_registro', idRegistro);
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+    return this.http.post<any>(this.URLDownload, formData, { headers, responseType: 'blob' as 'json' });
   }
   // ======= ======= ======= ======= ======= ======= =======
 }

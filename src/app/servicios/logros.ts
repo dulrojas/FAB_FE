@@ -11,7 +11,7 @@ export class servLogros{
 
   constructor(private http: HttpClient) {}
 
-  // ======= ======= ======= GET APRENDIZAJES ======= ======= =======
+  // ======= ======= ======= GET LOGROS ======= ======= =======
   getLogrosByIdProy(idProy: any): Observable<any> {
     const params = {
       "procedure_name": "sp_logro",
@@ -111,6 +111,27 @@ export class servLogros{
           { "name": "p_id_persona_reg", "value": null, "type": "int" },
           { "name": "p_id_proy_elemento", "value": null, "type": "int" },
           { "name": "p_fecha_logro", "value": null, "type": "string" }
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= GET LOGROS ======= ======= =======
+  getIconos(): Observable<any> {
+    const params = {
+      "procedure_name": "sp_inst_iconos",
+      "body": {
+        "params": [
+          { "name": "p_accion", "value": "C1", "type": "string" },
+          { "name": "p_id_icono", "value": null, "type": "int" },
+          { "name": "p_ruta_icono", "value": null, "type": "string" }
         ]
       }
     };

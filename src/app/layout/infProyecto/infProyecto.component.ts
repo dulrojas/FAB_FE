@@ -7,9 +7,11 @@ import { servicios } from "../../servicios/servicios";
 import { servProyectos } from "../../servicios/proyectos";
 import { servInstituciones } from "../../servicios/instituciones";
 import { servProyObjetivos } from "../../servicios/proyObjetivos";
+import { servInstObjetivos } from "../../servicios/instObjetivos";
 import { servObligaciones } from "../../servicios/obligaciones";
 import { servFinanciadores } from "../../servicios/financiadores";
 import { servUbicaGeografica } from "../../servicios/ubicaGeografica";
+import { servProyAlcanceGeo } from "../../servicios/proyAlcanceGeo";
 import { servPersonaRoles } from "../../servicios/personaRoles";
 import { environment } from '../../../environments/environment';
 
@@ -31,10 +33,12 @@ export class InfProyectoComponent implements OnInit {
       private servProyectos: servProyectos,
       private servInstituciones: servInstituciones,
       private servProyObjetivos: servProyObjetivos,
+      private servInstObjetivos: servInstObjetivos,
       private servObligaciones: servObligaciones,
       private servPersonaRoles: servPersonaRoles,
       private servFinanciadores: servFinanciadores,
-      private servUbicaGeografica: servUbicaGeografica
+      private servUbicaGeografica: servUbicaGeografica,
+      private servProyAlcanceGeo: servProyAlcanceGeo
     ){}
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
@@ -75,126 +79,19 @@ export class InfProyectoComponent implements OnInit {
     tipoFinanciadores: any[] = [];
     estadosEntrega: any[] = [];
 
-    ubicaciones: any[] = [];
-    ubicacionesB: any[] = [];
-    ubicacionesBAux: any[] = [];
-
-    instObjetivos: any[] = [
-      {
-        id_inst_objetivos: 1,
-        objetivo_imagen: `${environment.assetsPath}images/objFan1.png`,
-        idp_tipo_objetivo: 2
-      },
-      {
-        id_inst_objetivos: 2,
-        objetivo_imagen: `${environment.assetsPath}images/objFan2.png`,
-        idp_tipo_objetivo: 2
-      },
-      {
-        id_inst_objetivos: 3,
-        objetivo_imagen: `${environment.assetsPath}images/objFan3.png`,
-        idp_tipo_objetivo: 2
-      },
-      {
-        id_inst_objetivos: 4,
-        objetivo_imagen: `${environment.assetsPath}images/objFan4.png`,
-        idp_tipo_objetivo: 2
-      },
-      {
-        id_inst_objetivos: 5,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu01.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 6,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu02.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 7,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu03.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 8,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu04.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 9,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu05.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 10,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu06.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 11,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu07.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 12,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu08.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 13,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu09.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 14,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu10.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 15,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu11.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 16,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu12.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 17,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu13.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 18,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu14.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 19,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu15.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 20,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu16.png`,
-        idp_tipo_objetivo: 1
-      },
-      {
-        id_inst_objetivos: 21,
-        objetivo_imagen: `${environment.assetsPath}images/objOnu17.png`,
-        idp_tipo_objetivo: 1
-      }
-    ];
+    instObjetivos: any[] = [];
     proyObjetivos: any[] = [];
     
     objetivosFAN: any[];
     objetivosODS: any[];
 
+    defaultImageSrc: any = environment.defaultImageSrc;
+
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
       this.getInformacionProyecto();
+      this.getInstObjetivos();
       this.getProyObjetivos();
       this.getFinanciadores();
       this.getObligaciones();
@@ -258,39 +155,54 @@ export class InfProyectoComponent implements OnInit {
         }
       );
       // ======= ======= =======
-      // ======= GET OBJETIVOS =======
-      this.servProyObjetivos.getProyObjetivosByIdProy(this.idProyecto).subscribe(
-        (data) => {
-          this.proyObjetivos = (data[0].dato)?(data[0].dato):([]);
-          this.instObjetivos.forEach((instObjetivo)=>{
-            let proyObjetivoRes = this.proyObjetivos.find(
-              (proyObjetivo) => proyObjetivo.id_inst_objetivos == instObjetivo.id_inst_objetivos
-            );
-            if(proyObjetivoRes){
-              instObjetivo.selected = (proyObjetivoRes.idp_valor_objetivo == 1)?(2):(1);
-            }
-          });
-
-          this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 2);
-          this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 1);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-      // ======= ======= =======
       // ======= GET UBICACIONES =======
       this.servUbicaGeografica.getUbicaGeografica().subscribe(
         (data) => {
           this.ubicaciones = data[0].dato;
-          this.ubicacionesB = [
-            ...this.getUbiBranch(this.ubicaciones, 2), 
-            ...this.getUbiBranch(this.ubicaciones, 3), 
-            ...this.getUbiBranch(this.ubicaciones, 4), 
-            ...this.getUbiBranch(this.ubicaciones, 5)
-          ];
-          this.getGroupedData();
-          this.ubicaciones = this.buildUbicacionesFamily(this.ubicaciones);
+
+          // ======= GET PROY ALCANCE =======
+          this.servProyAlcanceGeo.getProyAlcanceGeoByIdProy(this.idProyecto).subscribe(
+            (data) => {
+              this.ubicacionesSel = (data[0].dato)?(data[0].dato):([]);
+
+              // === GETTING SELECTED UBICACIONES SEL ===
+              let ubicacionesSelAux: any = [];
+              this.ubicacionesSel.forEach((ubicacionSel) => {
+                let match = this.ubicaciones.find(
+                  (ubicacion) => ubicacion.id_ubica_geo == ubicacionSel.id_ubica_geo
+                );
+                if (match) {
+                  match.selected = true;
+                  ubicacionesSelAux.push(match);
+                }
+              });
+              this.ubicacionesSel = ubicacionesSelAux;
+
+              // === UBICACIONES BRANCHS ===
+              this.ubicacionesB = [
+                ...this.getUbiBranch(this.ubicaciones, 2), 
+                ...this.getUbiBranch(this.ubicaciones, 3), 
+                ...this.getUbiBranch(this.ubicaciones, 4), 
+                ...this.getUbiBranch(this.ubicaciones, 5)
+              ];
+              // === FILTER UBICACIONES SEL ===
+              this.ubicacionesSel = this.ubicacionesSel.filter(
+                (ubicacionSel) =>
+                  !this.ubicacionesB.some(
+                    (ubicacionB) => ubicacionSel.id_ubica_geo == ubicacionB.id_ubica_geo
+                  )
+              );
+              // === BUILD UBICACIONES BRANCHS ===
+              this.getGroupedData();
+
+              // === BUILD COMPONENT UBICA GEO DATA ===
+              this.ubicaciones = this.buildUbicacionesFamily(this.ubicaciones);
+            },
+            (error) => {
+              console.error(error);
+            }
+          );
+          // ======= ======= =======
         },
         (error) => {
           console.error(error);
@@ -337,6 +249,49 @@ export class InfProyectoComponent implements OnInit {
         }
       );
       // ======= ======= =======
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= GET INST OBJETIVOS ======= =======
+    async getInstObjetivos(){
+      try{
+        const data: any = await new Promise((resolve, reject) => {
+          this.servInstObjetivos.getInstObjetivos().subscribe(
+            (response) => resolve(response),
+            (error) => reject(error)
+          );
+        });
+    
+        this.instObjetivos = data[0].dato;
+    
+        for (const objetivo of this.instObjetivos) {
+          objetivo.imagen_src = await this.downloadFile("inst_objetivos", "objetivo_imagen", "id_inst_objetivos", objetivo.id_inst_objetivos);
+        }
+
+        // ======= GET OBJETIVOS =======
+        this.servProyObjetivos.getProyObjetivosByIdProy(this.idProyecto).subscribe(
+          (data) => {
+            this.proyObjetivos = (data[0].dato)?(data[0].dato):([]);
+            this.instObjetivos.forEach((instObjetivo)=>{
+              let proyObjetivoRes = this.proyObjetivos.find(
+                (proyObjetivo) => proyObjetivo.id_inst_objetivos == instObjetivo.id_inst_objetivos
+              );
+              if(proyObjetivoRes){
+                instObjetivo.selected = (proyObjetivoRes.idp_valor_objetivo == 1)?(2):(1);
+              }
+            });
+
+            this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 2);
+            this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 1);
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+        // ======= ======= =======
+      }
+      catch(error){
+        console.error('Error en getIconos:', error);
+      }
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OPEN MODALS FUN ======= =======
@@ -389,7 +344,6 @@ export class InfProyectoComponent implements OnInit {
           this.proyectoScope.presupuesto_me = (this.proyectoScope.presupuesto_me).slice(1);
           this.proyectoScope.presupuesto_mn = (this.proyectoScope.presupuesto_mn).slice(1);
 
-          this.objetivosFAN
 
           this.getProyectDateGaps();
 
@@ -410,12 +364,10 @@ export class InfProyectoComponent implements OnInit {
         (data) => {
           // ======= OBJETIVOS SECTION =======
           let allObjetivos: any = [...this.objetivosFAN, ...this.objetivosODS];
-          let addRequests = [];
+          let addRequestsObj = [];
+
+          let deleteRequestObj = this.servProyObjetivos.deleteProyObjetivos(this.proyectoScope.id_proyecto);
       
-          // Petición de eliminación
-          let deleteRequest = this.servProyObjetivos.deleteProyObjetivos(this.proyectoScope.id_proyecto);
-      
-          // Agregar peticiones de adición a addRequests
           allObjetivos.forEach((objetivo) => {
             if (objetivo.selected) {
               let objetivoObj = {
@@ -424,15 +376,36 @@ export class InfProyectoComponent implements OnInit {
                 p_idp_inst_objetivos: objetivo.id_inst_objetivos,
                 p_idp_valor_objetivo: objetivo.selected === 1 ? 2 : 1
               };
-              addRequests.push(this.servProyObjetivos.addProyObjetivos(objetivoObj));
+              addRequestsObj.push(this.servProyObjetivos.addProyObjetivos(objetivoObj));
             }
           });
+          // ======= ======= =======
+          // ======= ALCANCE GEO SECTION =======
+          let ubicacionesBSel = this.ubicacionesB.filter(ubicacion => ubicacion.selected);
+          let allAlcanceGeo: any = [...this.ubicacionesSel, ...ubicacionesBSel];
+          let addRequestsAlc = [];
+
+          let deleteRequestAlc = this.servProyAlcanceGeo.deleteAlcanceGeo(this.proyectoScope.id_proyecto);
       
-          // Usamos forkJoin para esperar a que todas las solicitudes se completen
-          forkJoin([deleteRequest, ...addRequests]).subscribe(
-            ([deleteResult, ...addResults]) => {
-              console.log('Eliminación y adiciones completadas', deleteResult, addResults);
-              this.disableEditMode();  // Ejecuta disableEditMode después de todas las peticiones
+          allAlcanceGeo.forEach((alcance) => {
+            let alcanceObj = {
+              p_id_proy_alcance: null,
+              p_id_proyecto: this.idProyecto,
+              p_id_ubica_geo: alcance.id_ubica_geo
+            };
+            addRequestsAlc.push(this.servProyAlcanceGeo.addProyAlcanceGeo(alcanceObj));
+          });
+          // ======= ======= =======
+          // ======= ON ALL REQUEST END =======
+          forkJoin([
+            deleteRequestObj, 
+            ...addRequestsObj,
+            deleteRequestAlc,
+            ...addRequestsAlc
+          ]).subscribe(
+            (responses) => {
+              //console.log(responses);
+              this.disableEditMode();  
             },
             (error) => {
               console.error('Error en las peticiones:', error);
@@ -769,6 +742,10 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
 
     // ======= ======= UBICACIONES FUN ======= =======
+    ubicaciones: any[] = [];
+    ubicacionesB: any[] = [];
+    ubicacionesSel: any[] = [];
+
     toggleChildren(item: any) {
       item.isOpen = !item.isOpen;
     }
@@ -792,7 +769,9 @@ export class InfProyectoComponent implements OnInit {
           }
         } 
         else {
-          resultado.push(mapa.get(item.id_ubica_geo)!);
+          if(!padreId){
+            resultado.push(mapa.get(item.id_ubica_geo)!);
+          }
         }
       });
     
@@ -822,24 +801,43 @@ export class InfProyectoComponent implements OnInit {
 
     ubiInfCheckboxChanged(item: any) {
       if (item.selected) {
-        if (!this.ubicacionesBAux.some((ubi) => ubi.id_ubica_geo === item.id_ubica_geo)) {
-          this.ubicacionesBAux.push(item);
+        if (!this.ubicacionesB.some((ubi) => ubi.id_ubica_geo === item.id_ubica_geo)) {
+          this.ubicacionesB.push(item);
         }
       } 
       else {
-        this.ubicacionesBAux = this.ubicacionesBAux.filter(
+        this.ubicacionesB = this.ubicacionesB.filter(
           (ubi) => ubi.id_ubica_geo !== item.id_ubica_geo
         );
       }
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= INIT ADD PERSONA ROLES ======= =======
+    // ======= ======= INIT ADD UBICA GEO ======= =======
     initUbicaGeo(modalScope: TemplateRef<any>){
 
       this.modalAction = "add";
       this.modalTitle = "Ubicaciones geograficas";
 
       this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= UBICA FAMILY TREE ======= =======
+    getSelectedUbicaFamily(ubicaciones: any[]) {
+      ubicaciones.forEach((ubicacion) => {
+        if(ubicacion.selected) {
+          this.ubicacionesSel.push(ubicacion);
+        }
+        if(ubicacion.childrens) {
+          this.getSelectedUbicaFamily(ubicacion.childrens);
+        }
+      });
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= ON SUBMIT UBICA GEO ======= =======
+    onUbicaGeoSubmit(){
+      this.ubicacionesSel = [];
+      this.getSelectedUbicaFamily(this.ubicaciones);
+      this.closeModal();
     }
     // ======= ======= ======= ======= =======
 
@@ -957,7 +955,7 @@ export class InfProyectoComponent implements OnInit {
       this.initObligacionesModel();
 
       this.modalAction = "add";
-      this.modalTitle = "Añadir obligacion";
+      this.modalTitle = "Añadir obligación";
 
       this.openModal(modalScope);
     }
@@ -1069,6 +1067,31 @@ export class InfProyectoComponent implements OnInit {
         }
         this.closeModal();
       }
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= DOWNLOAD IMAGE FUN ======= =======
+    downloadFile(nombreTabla: any, campoTabla: any, idEnTabla: any, idRegistro: any){
+      return new Promise((resolve, reject) => {
+        this.servicios.downloadFile(nombreTabla, campoTabla, idEnTabla, idRegistro).subscribe(
+          (response: Blob) => {
+            if (response instanceof Blob) {
+              const url = window.URL.createObjectURL(response);
+              resolve(url);
+            } 
+            else {
+              resolve(null); 
+            }
+          },
+          (error) => {
+            if (error.status === 404) {
+              resolve(null);
+            } 
+            else {
+              reject(error);
+            }
+          }
+        );
+      });
     }
     // ======= ======= ======= ======= =======
 }

@@ -90,7 +90,7 @@
                                         [ngClass]="getObjOptCSSClass(objetivo)"
                                         (click)="onObjetivoClick(objetivo)">
                                         <div class="row mt-auto">
-                                            <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="objetivo.objetivo_imagen || '../../../assets/images/empty.jpg'" alt="Imagen del objetivo">
+                                            <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="(objetivo.imagen_src)||(defaultImageSrc)" alt="Imagen del objetivo">
                                         </div>
                                     </div>
                                 </div>
@@ -102,7 +102,7 @@
                                             [ngClass]="getObjOptCSSClass(objetivo)"
                                             (click)="onObjetivoClick(objetivo)">
                                             <div class="row mt-auto">
-                                                <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="objetivo.objetivo_imagen || '../../../assets/images/empty.jpg'" alt="Imagen del objetivo">
+                                                <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="(objetivo.imagen_src)||(defaultImageSrc)" alt="Imagen del objetivo">
                                             </div>
                                         </div>
 
@@ -396,7 +396,7 @@
                                 </div>
                                 <div class="col col-md-12">
                                     
-                                    <table class="table custom-table table-striped table-bordered custom-table-info-proy custom-table-info-proy-1">
+                                    <table class="table custom-table table-striped table-bordered custom-table-info-proy-3">
                                         <thead>
                                             <tr>
                                                 <th>Tipo</th>
@@ -404,7 +404,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let ubicacion of ubicaciones; let i = index">
+                                            <tr *ngFor="let ubicacion of ubicacionesSel; let i = index">
                                                 <td>{{ ubicacion.idp_tipo_ubica_geo }}</td>
                                                 <td>{{ ubicacion.nombre }}</td>
                                             </tr>
@@ -668,7 +668,7 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="geograficoFormModal.invalid" (click)="onSubmit(); modal.close('Añadir')">
+            <button type="button" class="btn btn-bg-1" [disabled]="geograficoFormModal.invalid" (click)="onUbicaGeoSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Elegir
             </button>
         </div>
@@ -704,14 +704,14 @@
 
                                 <!-- ======= ======= OBLIGACION SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="obligacion">Obligacion</label>
+                                    <label for="obligacion">Obligación</label>
                                     <input class="form-control" type="text" id="obligacion" name="obligacion" placeholder="Ingresa el requisito"
                                         [(ngModel)]="obligacionesModel.obligacion" (change)="ValidateObligacion()"/>
                                     <span class="custom-alert-message" *ngIf="!valObligacion">Debe ingresar una obligacion valida, con menos de 100 caracteres.</span>
                                 </div>
                                 <!-- ======= ======= DESCRIPCION SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="descripcion">Descripcion</label>
+                                    <label for="descripcion">Descripción</label>
                                     <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" placeholder="Ingresa una descipcion"
                                         [(ngModel)]="obligacionesModel.descripcion" (change)="ValidateDescripcion()"></textarea>
                                     <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una descripcion valida, con menos de 250 caracteres.</span>
@@ -719,7 +719,7 @@
                                 
                                 <!-- ======= ======= FECHA SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="fecha_obligacion">Fecha obligacion</label>
+                                    <label for="fecha_obligacion">Fecha obligación</label>
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_obligacion" name="fecha_obligacion" 
                                         [(ngModel)]="obligacionesModel.fecha_obligacion" (change)="ValidateFechaObligacion()"/>

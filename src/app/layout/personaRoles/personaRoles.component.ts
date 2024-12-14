@@ -10,6 +10,8 @@ import { servProyectos } from "../../servicios/proyectos";
 
 import { forkJoin } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
+
 @Component({
     selector: 'app-personaRoles',
     templateUrl: './personaRoles.component.html',
@@ -72,6 +74,7 @@ export class PersonaRolesComponent implements OnInit {
     admi_sistema: any = null;
 
     imageSrc: any = null;
+    defaultImageSrc: any = environment.defaultImageSrc;
 
     // ======= ======= VALIDATION SECTION ======= =======
     valNombres: any = true;
@@ -186,6 +189,7 @@ export class PersonaRolesComponent implements OnInit {
     tipoDoc: any[] = [];
     roles: any[] = [];
     proyectos: any[] = [];
+    proyectosInitAux: any[] = [];
     detalle_proyectos_to_add: any[] = [];
     detalle_proyectos_to_add_inited: any[] = [];
     persona_proyecto_mod_to_add: any[] = [];
@@ -309,8 +313,9 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= PERSONA ROL FORM CHAGNED ======= =======
     personaProyectoRolChange(event: Event, proyecto: any) {
       const selectedValue = (event.target as HTMLSelectElement).value;
-      const proyectoToAdd = this.persona_proyecto_mod_to_add.some(obj => (obj.id_proyecto == proyecto.id_proyecto));
-      if((this.modalAction == "add")||(!proyecto.rol)||(proyectoToAdd)){
+      const proyectoToAdd = !(this.proyectosInitAux.some(obj => ((obj.id_proyecto == proyecto.id_proyecto)&&(obj.rol))));
+      const proyectoInAdd = this.persona_proyecto_mod_to_add.some(obj => (obj.id_proyecto == proyecto.id_proyecto));
+      if((this.modalAction == "add")||(proyectoToAdd)||(proyectoInAdd)){
         if(proyectoToAdd){
           this.persona_proyecto_mod_to_add = this.persona_proyecto_mod_to_add.filter(obj => (obj.id_proyecto != proyecto.id_proyecto));
         }
@@ -344,6 +349,7 @@ export class PersonaRolesComponent implements OnInit {
       this.detalle_proyectos_to_add = this.detalle_proyectos_to_add_inited;
       this.persona_proyecto_mod_to_add = [];
       this.persona_proyecto_mod_to_edit = [];
+      this.proyectosInitAux = [];
 
       this.modalAction = "";
       this.modalTitle = "";
@@ -441,7 +447,7 @@ export class PersonaRolesComponent implements OnInit {
           const idPersona = data[0].dato[0].id_persona;
 
           // ======= ADD PERSONA PROYECTO =======
-          this.uploadImage(idPersona, this.fileData);
+          this.uploadFile(this.fileData, this.id_persona, ((this.nombres+this.apellido_1+this.apellido_2).replace(/ /g, "_")));
           // ======= ======= =======
           // ======= ADD PERSONA PROYECTO =======
           const requests = this.persona_proyecto_mod_to_add.map((personaProyecto) => {
@@ -512,6 +518,9 @@ export class PersonaRolesComponent implements OnInit {
         proyecto.rol = (proyecto.rol)?(proyecto.rol):("");
       });
       this.proyectos = this.personaRolesSelected.detalle_proyectos;
+      this.proyectosInitAux = this.personaRolesSelected.detalle_proyectos.filter(item => 
+        item.id_persona_proyecto !== null && item.rol !== null && item.rol !== ""
+      );
 
       this.modalAction = "edit";
       this.modalTitle = this.getModalTitle("edit");
@@ -531,6 +540,8 @@ export class PersonaRolesComponent implements OnInit {
       this.usuario = this.personaRolesSelected.usuario;
       this.contrasenia = this.personaRolesSelected.contrasenia;
       this.logedBy = this.personaRolesSelected.logedBy;
+
+      this.downloadFile(this.id_persona);
 
       this.admi_sistema = this.personaRolesSelected.admi_sistema;
 
@@ -564,64 +575,56 @@ export class PersonaRolesComponent implements OnInit {
       this.servPersona.editPersona(objPersona).subscribe(
         (data) => {
 
-          // ======= ADD PERSONA PROYECTO =======
-          this.uploadImage(this.id_persona, this.fileData);
+          // ======= UPLOAD FILE =======
+          if(this.fileData){
+            this.uploadFile(this.fileData, this.id_persona, ((this.nombres+this.apellido_1+this.apellido_2).replace(/ /g, "_")));
+          }
           // ======= ======= =======
-          // ======= ADD PERSONA PROYECTO =======
-          const requestsAdd = this.persona_proyecto_mod_to_add.map((personaProyecto) => {
-            const objPersonaRol = {
+          // ======= BUILD PERSONA PROYECTO =======
+          let addRequestsPersona: any[] = [];
+          this.persona_proyecto_mod_to_add.forEach((personaProyecto) => {
+            let objPersonaRol = {
               p_id_persona_proyecto: null,
               p_id_persona: this.id_persona,
               p_id_institucion: 1,
               p_id_proyecto: personaProyecto.id_proyecto,
-              p_rol: personaProyecto.rol
+              p_rol: personaProyecto.rol,
             };
-            return this.servPersonaRoles.addPersonaRol(objPersonaRol);
+            addRequestsPersona.push(this.servPersonaRoles.addPersonaRol(objPersonaRol));
           });
           // ======= ======= =======
-
-          if (requestsAdd.length == 0) {
-            this.onAllServicesComplete();
-            this.personaRolesSelected = null;
-          }
-          else{
-            forkJoin(requestsAdd).subscribe(
-              () => {
-                this.onAllServicesComplete();
-              },
-              (error) => {
-                console.error(error);
-              }
-            );
-          }
           // ======= EDIT PERSONA PROYECTO =======
-          const requestsEdit = this.persona_proyecto_mod_to_edit.map((personaProyecto) => {
-            const objPersonaRol = {
+          let editRequestsPersona: any[] = [];
+          this.persona_proyecto_mod_to_edit.forEach((personaProyecto) => {
+            let objPersonaRol = {
               p_id_persona_proyecto: personaProyecto.id_persona_proyecto,
               p_id_persona: this.id_persona,
               p_id_institucion: 1,
               p_id_proyecto: personaProyecto.id_proyecto,
-              p_rol: personaProyecto.rol
+              p_rol: personaProyecto.rol,
             };
-            return this.servPersonaRoles.editPersonaRol(objPersonaRol);
+            editRequestsPersona.push(this.servPersonaRoles.editPersonaRol(objPersonaRol));
           });
           // ======= ======= =======
+          // ======= ON ALL REQUEST END =======
+          let allRequests = [...addRequestsPersona, ...editRequestsPersona];
 
-          if (requestsEdit.length == 0) {
+          if (allRequests.length == 0) {
             this.onAllServicesComplete();
             this.personaRolesSelected = null;
-          }
-          else{
-            forkJoin(requestsEdit).subscribe(
+          } 
+            else {
+            forkJoin(allRequests).subscribe(
               (responses) => {
+                console.log(responses);
                 this.onAllServicesComplete();
               },
               (error) => {
-                console.error(error);
+                console.error('Error en las peticiones:', error);
               }
             );
           }
-          
+          // ======= ======= =======
           // ======= IS RESPONSABLE =======
           if(this.responsable){
             let unidadObj = this.unidades.find(unidad => unidad.id_inst_unidad == this.id_inst_unidad);
@@ -705,22 +708,37 @@ export class PersonaRolesComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= UPLOAD IMAGE FUN ======= =======
-    uploadImage(idRegistro: any, file: any){
-      // =======  =======
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('nombre_tabla', "persona");
-      formData.append('campo_tabla', "ruta_foto");
-      formData.append('id_en_tabla', idRegistro);
-      formData.append('nombre_registro', "test");
-  
-      // ======= SEND TO SERVICE =======
-      this.servicios.uploadFile(formData).subscribe(
+    uploadFile(file: any, idRegistro: any, nombreRegistro: any){
+      this.servicios.uploadFile(file, "persona", "ruta_foto", "id_persona", nombreRegistro, idRegistro).subscribe(
         (response) => {
-          console.log('Archivo subido correctamente:', response);
+          //console.log('Archivo subido correctamente:', response);
         },
         (error) => {
           console.error('Error al subir el archivo:', error);
+        }
+      );
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= DOWNLOAD IMAGE FUN ======= =======
+    downloadFile(idRegistro: any){
+      this.servicios.downloadFile("persona", "ruta_foto", "id_persona", idRegistro).subscribe(
+        (response: Blob) => {
+          if (response instanceof Blob) {
+            const url = window.URL.createObjectURL(response);
+            this.imageSrc = url;
+          } 
+          else {
+            //console.warn('La respuesta no es un Blob:', response);
+            this.imageSrc = null; 
+          }
+        },
+        (error) => {
+          if (error.status === 404) {
+            //console.warn('No se encontró imagen para el registro:', idRegistro);
+            this.imageSrc = null;
+          } else {
+            //console.error('Error al descargar la imagen:', error);
+          }
         }
       );
     }

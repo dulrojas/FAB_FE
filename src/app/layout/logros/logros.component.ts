@@ -61,31 +61,12 @@ export class LogrosComponent implements OnInit {
 
     sigla: any = "";
     color: any = "";
+
+    imageSrc: any = null;
+    defaultImageSrc: any = environment.defaultImageSrc;
     // ======= ======= VARIABLES SECTION ======= =======
     componentes: any[] = [];
-    images: any[] = [
-      { "id_institucion": 1, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage001.png` },
-      { "id_institucion": 2, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage002.png` },
-      { "id_institucion": 3, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage003.png` },
-      { "id_institucion": 4, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage004.png` },
-      { "id_institucion": 5, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage005.png` },
-      { "id_institucion": 6, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage006.png` },
-      { "id_institucion": 7, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage007.png` },
-      { "id_institucion": 8, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage008.png` },
-      { "id_institucion": 9, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage009.png` },
-      { "id_institucion": 10, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage010.png` },
-      { "id_institucion": 11, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage011.png` },
-      { "id_institucion": 12, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage012.png` },
-      { "id_institucion": 13, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage013.png` },
-      { "id_institucion": 14, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage014.png` },
-      { "id_institucion": 15, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage015.png` },
-      { "id_institucion": 16, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage016.png` },
-      { "id_institucion": 17, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage017.png` },
-      { "id_institucion": 18, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage018.png` },
-      { "id_institucion": 19, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage019.png` },
-      { "id_institucion": 20, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage020.png` },
-      { "id_institucion": 21, "ruta_logros_iconos": `${environment.assetsPath}images/logroImage021.png` }
-    ];
+    images: any[] = [];
     // ======= ======= ======= ======= =======
     // ======= ======= VALIDATION VARIABLES SECTION ======= =======
     valElemento: any = true;
@@ -131,6 +112,7 @@ export class LogrosComponent implements OnInit {
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
+      this.getIconos();
       this.getLogros();
     }
     // ======= ======= ======= ======= =======
@@ -163,6 +145,27 @@ export class LogrosComponent implements OnInit {
         }
       );
       // ======= ======= =======
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= GET ICONS ======= =======
+    async getIconos() {
+      try {
+        const data: any = await new Promise((resolve, reject) => {
+          this.servLogros.getIconos().subscribe(
+            (response) => resolve(response),
+            (error) => reject(error)
+          );
+        });
+    
+        this.images = data[0].dato;
+    
+        for (const image of this.images) {
+          image.icono_src = await this.downloadFile("inst_iconos", "ruta_icono", "id_icono", image.id_icono);
+        }
+      } 
+      catch (error) {
+        console.error('Error en getIconos:', error);
+      }
     }
     // ======= ======= ======= ======= =======
     // ======= ======= MODALS FUN ======= =======
@@ -218,7 +221,7 @@ export class LogrosComponent implements OnInit {
     imageSelectedAux: any = null;
     onImageClick(imageSel: any) {
       this.images.forEach(image =>{
-        if(imageSel.id_institucion == image.id_institucion){
+        if(imageSel.id_icono == image.id_icono){
           image.selected = !image.selected;
           if(imageSel.selected){
             this.imageSelectedAux = imageSel;
@@ -236,7 +239,7 @@ export class LogrosComponent implements OnInit {
       this.openModal(modalScope);
     }
     selectImage(){
-      this.ruta_imagen = this.imageSelectedAux.ruta_logros_iconos;
+      this.ruta_imagen = this.imageSelectedAux.icono_src;
       this.imageSelected = this.imageSelectedAux;
       this.ValidateImagen();
       this.closeModal();
@@ -254,7 +257,7 @@ export class LogrosComponent implements OnInit {
       this.id_persona_reg = 0;
       this.id_proy_elemento = "";
       this.fecha_logro = "";
-      this.ruta_imagen = `${environment.assetsPath}images/empty.jpg`;
+      this.ruta_imagen = null;
       
       this.sigla = "";
       this.color = "ffffff";
@@ -286,11 +289,18 @@ export class LogrosComponent implements OnInit {
     // ======= ======= GET LOGROS ======= =======
     getLogros(){
       this.servLogros.getLogrosByIdProy(this.idProyecto).subscribe(
-        (data) => {
-          this.logros = (data[0].dato)?(data[0].dato):([]);
+        async (data) => {
+          this.logros = data[0]?.dato || [];
           this.logros.forEach((logro: any) => {
-            logro.selected = false;
+            logro.selected = false
           });
+    
+          await Promise.all(
+            this.logros.map(async (logro: any) => {
+              logro.imagen_src = await this.downloadFile("proy_logros", "ruta_imagen", "id_proy_logro", logro.id_proy_logro);
+            })
+          );
+    
           this.countHeaderData();
         },
         (error) => {
@@ -318,7 +328,7 @@ export class LogrosComponent implements OnInit {
         p_id_proyecto: parseInt(this.idProyecto,10),
         p_logro: this.logro,
         p_descripcion: this.descripcion,
-        p_ruta_imagen: this.ruta_imagen,
+        p_ruta_imagen: this.imageSelected.ruta_icono,
         p_fecha_hora: null,
         p_id_persona_reg: this.idPersonaReg,
         p_id_proy_elemento: parseInt(this.id_proy_elemento,10),
@@ -346,11 +356,14 @@ export class LogrosComponent implements OnInit {
       this.id_proyecto = this.logrosSelected.id_proyecto;
       this.logro = this.logrosSelected.logro;
       this.descripcion = this.logrosSelected.descripcion;
-      this.ruta_imagen = this.logrosSelected.ruta_imagen;
       this.fecha_hora = this.logrosSelected.fecha_hora;
       this.id_persona_reg = this.logrosSelected.id_persona_reg;
       this.id_proy_elemento = this.logrosSelected.id_proy_elemento;
       this.fecha_logro = this.logrosSelected.fecha_logro;
+
+      this.imageSelected = this.images.find((image) => image.ruta_icono == this.logrosSelected.ruta_imagen);
+      this.imageSelected.selected = true;
+      this.ruta_imagen = this.logrosSelected.imagen_src;
       
       this.sigla = this.logrosSelected.sigla;
       this.color = this.logrosSelected.color;
@@ -433,6 +446,43 @@ export class LogrosComponent implements OnInit {
         }
         this.closeModal();
       }
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= UPLOAD IMAGE FUN ======= =======
+    uploadFile(file: any, idRegistro: any, nombreRegistro: any){
+      this.servicios.uploadFile(file, "proy_logros", "ruta_imagen", "id_proy_logro", nombreRegistro, idRegistro).subscribe(
+        (response) => {
+          //console.log('Archivo subido correctamente:', response);
+        },
+        (error) => {
+          console.error('Error al subir el archivo:', error);
+        }
+      );
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= DOWNLOAD IMAGE FUN ======= =======
+    downloadFile(nombreTabla: any, campoTabla: any, idEnTabla: any, idRegistro: any){
+      return new Promise((resolve, reject) => {
+        this.servicios.downloadFile(nombreTabla, campoTabla, idEnTabla, idRegistro).subscribe(
+          (response: Blob) => {
+            if (response instanceof Blob) {
+              const url = window.URL.createObjectURL(response);
+              resolve(url);
+            } 
+            else {
+              resolve(null); 
+            }
+          },
+          (error) => {
+            if (error.status === 404) {
+              resolve(null);
+            } 
+            else {
+              reject(error);
+            }
+          }
+        );
+      });
     }
     // ======= ======= ======= ======= =======
 }

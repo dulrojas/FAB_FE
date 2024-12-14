@@ -68,7 +68,7 @@ export class servPersonaRoles {
           {"name": "p_accion","value": "A1","type": "string"},
           {"name": "p_id_persona_proyecto","value": null,"type": "int"},
           {"name": "p_id_persona","value": obj.p_id_persona,"type": "int"},
-          {"name": "p_id_institucion","value": null,"type": "int"},
+          {"name": "p_id_institucion","value": obj.p_id_institucion,"type": "int"},
           {"name": "p_id_proyecto","value": obj.p_id_proyecto,"type": "int"},
           {"name": "p_rol","value": obj.p_rol,"type": "string"}
         ]
