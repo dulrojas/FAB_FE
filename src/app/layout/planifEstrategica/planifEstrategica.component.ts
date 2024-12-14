@@ -109,6 +109,13 @@ export class PlanifEstrategicaComponent implements OnInit {
             this.valComponente = false;
           }
         }
+        valCodigo: any = true;
+        ValidateCodigo(){
+          this.valCodigo = true;
+          if((!this.codigo)||(this.codigo.length >= 10)){
+            this.valCodigo = false;
+          }
+        }
         valCategoria: any = true;
         ValidateCategoria(){
           this.valCategoria = true;
@@ -130,7 +137,69 @@ export class PlanifEstrategicaComponent implements OnInit {
             this.valCategoria = false;
           }
         }
-
+        valIndicador: any = true;
+        ValidateIndicador(){
+          this.valIndicador = true;
+          if((!this.indicador)||(this.indicador.length >= 100)){
+            this.valIndicador = false;
+          }
+        }
+        valDescripcion: any = true;
+        ValidateDescripcion(){
+          this.valDescripcion = true;
+          if((!this.descripcion)||(this.descripcion.length >= 255)){
+            this.valDescripcion = false;
+          }
+        }
+        valComentario: any = true;
+        ValidateComentario(){
+          this.valComentario = true;
+          if((!this.comentario)||(this.comentario.length >= 255)){
+            this.valComentario = false;
+          }
+        }
+        valOrden: any = true;
+        ValidateOrden(){
+          this.valOrden = true;
+          if(!this.orden){
+            this.valOrden = false;
+          }
+        }
+        valLineaBase: any = true;
+        ValidateLineaBase(){
+          this.valLineaBase = true;
+          if(!this.linea_base){
+            this.valLineaBase = false;
+          }
+        }
+        valMedida: any = true;
+        ValidateMedida(){
+          this.valMedida = true;
+          if((!this.medida)||(this.medida.length >= 20)){
+            this.valMedida = false;
+          }
+        }
+        valMetaFinal: any = true;
+        ValidateMetaFinal(){
+          this.valMetaFinal = true;
+          if(!this.meta_final){
+            this.valMetaFinal = false;
+          }
+        }
+        valMedioVerifica: any = true;
+        ValidateMedioVerifica(){
+          this.valMedioVerifica = true;
+          if((!this.medio_verifica)||(this.medio_verifica.length >= 255)){
+            this.valMedioVerifica = false;
+          }
+        }
+        valEstado: any = true;
+        ValidateEstado(){
+          this.valEstado = true;
+          if(!this.id_estado){
+            this.valEstado = false;
+          }
+        }
        
     // ======= ======= INIT VIEW FUN ======= =======
         ngOnInit(): void {
@@ -409,6 +478,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.valCategoria = true;
         this.valSubCategoria = true;
         this.valTipoCategoria = true;
+
       
       }
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
@@ -446,11 +516,6 @@ export class PlanifEstrategicaComponent implements OnInit {
         if (this.tipo === 'OG') {
           this.codigo = this.generateCodigoOG(); // Generar el código para OG
         }
-        console.log('ID Padre:', this.id_proy_elem_padre);
-        console.log('Color:', this.color);
-        console.log('Sigla:', this.sigla);
-        console.log('Tipo:', this.tipo);
-        console.log('Valid Parents:', this.validParents);
       }
 
       this.openModal(modalScope);
@@ -622,27 +687,49 @@ countHeaderData(): void {
       let valForm = false;
 
       this.ValidateComponente();
+      this.ValidateCodigo();
       this.ValidateCategoria();
       this.ValidateSubCategoria();
       this.ValidateTipoCategoria();
+      this.ValidateIndicador();
+      this.ValidateDescripcion();
+      this.ValidateComentario();
+      this.ValidateOrden();
+      this.ValidateLineaBase();
+      this.ValidateMedida();
+      this.ValidateMetaFinal();
+      this.ValidateMedioVerifica();
+      this.ValidateEstado();
 
       valForm = 
         this.valComponente &&
+        this.valCodigo &&
         this.valCategoria &&
         this.valSubCategoria &&
-        this.valTipoCategoria;
+        this.valTipoCategoria &&
+        this.valIndicador &&
+        this.valDescripcion &&
+        this.valComentario &&
+        this.valOrden &&
+        this.valLineaBase &&
+        this.valMedida &&
+        this.valMetaFinal &&
+        this.valMedioVerifica &&
+        this.valEstado;
        
 
       // ======= ACTION SECTION =======
       if(valForm){
         if(this.modalAction == "add"){
           this.addIndicador();
-          console.log('Formulario enviado:', this.codigo, this.indicador, this.descripcion, this.comentario);
+          console.log('Añadiendo...');
         }
         else{
           this.editIndicador();
+          console.log('Editando...');
         }
         this.closeModal();
+        console.log('Cerrando...');
       }
       
     }

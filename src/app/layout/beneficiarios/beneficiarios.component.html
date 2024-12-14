@@ -117,7 +117,7 @@
 <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmit()">
   <div class="row">
     <div class="col col-xl-12 col-lg-12">
-      <div class="card mb-3">
+      <div class="card">
         <div class="card-body custom-card">
           <!-- ID y Fecha -->
           <div class="row">
@@ -174,12 +174,11 @@
               </option>
             </select>
           </div>
-          <div class="col col-xl-2 col-lg-2 mt-auto" style=" font-size: 1.5em; font-weight: bold;">
-            <div class="d-flex justify-content-center" style="width: 100%;">
-              <button type="button" class="btn btn-bg-3" (click)="openModal()">
-                <i class="" aria-hidden="true"></i> +
+          <div class="col col-xl-1 col-lg-1 mt-auto">
+            <button type="button" (click)="openModal()" 
+              style="background-color: #d67600; color: white; border: none; border-radius: 30%; width: 35px; height: 35px; font-size: 15px; 
+                display: flex; justify-content: center; align-items: center;">+
             </button>
-            </div> 
           </div>
            <!-- Tipo de Organización y Organización -->
            <div class="col col-xl-6 col-lg-6 mt-auto">
@@ -213,12 +212,11 @@
             <label for="total">Total</label>
             <input type="number" formControlName="total" class="form-control" min="0" />
           </div>
-          <div class="col col-xl-3 col-lg-3 mt-auto" style=" font-size: 1.5em; font-weight: bold;">
-            <div class="d-flex justify-content-center" style="width: 100%;">
-              <button type="button" class="btn btn-bg-3" (click)="openModal(listaBeneficiariesModal)">
-                <i class="" aria-hidden="true"></i> Lista
-            </button>
-            </div> 
+          <div class="col col-xl-3 col-lg-3 mt-auto">
+              <button type="button" (click)="openModal(listaBeneficiariesModal)" 
+                style="background-color: #d67600; color: white; border: none; border-radius: 15%; width: 90px; height: 35px; font-size: 10px; 
+                  display: flex; justify-content: center; align-items: center;">Lista de Participantes
+              </button>
           </div>
 
           <!-- Persona Registro -->
@@ -403,7 +401,7 @@
       </div>
 
       <div class="row mt-3">
-        <div class="col col-xl-5 col-lg-5 mt-auto">
+        <div class="col col-xl-6 col-lg-6 mt-auto">
           <label for="tipoOrganizacion">Institucion/Organizacion</label>
           <select formControlName="tipoOrganizacion" class="form-control">
             <option value="" disabled selected>Seleccione un tipo de organización</option>
@@ -412,14 +410,12 @@
             </option>
           </select>
         </div>
-        <div class="col col-xl-2 col-lg-2 mt-auto" style=" font-size: 1.5em; font-weight: bold;">
-          <div class="d-flex justify-content-center" style="width: 100%;">
-            <button type="button" class="btn btn-bg-3" (click)="openModal()">
-              <i class="" aria-hidden="true"></i> +
+        <div class="col col-xl-2 col-lg-2 mt-auto">
+          <button type="button" (click)="openModal()" 
+            style="background-color: #d67600; color: white; border: none; border-radius: 30%; width: 35px; height: 35px;">+
           </button>
-          </div> 
         </div>
-        <div class="col col-xl-5 col-lg-5 mt-auto">
+        <div class="col col-xl-4 col-lg-4 mt-auto">
           <label for="referentName">Nombre Referente</label>
           <input type="text" formControlName="referentName" class="form-control" />
         </div>

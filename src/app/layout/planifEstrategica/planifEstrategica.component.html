@@ -228,36 +228,33 @@
                           <div class="col col-xl-3 col-lg-3 mt-auto">
                             <label for="codigo">Código</label>
                             <input 
-                              class="form-control" 
-                              type="text" 
-                              id="codigo" 
-                              name="codigo" 
-                              [(ngModel)]="codigo" 
-                              [readonly]="false" 
-                              [required]="false"> 
+                              class="form-control" type="text" id="codigo" name="codigo" 
+                              [(ngModel)]="codigo" [readonly]="false" [required]="false"> 
                           </div>
                           
-
                             <div class="col col-xl-12 col-lg-12 mt-auto">
                               <label for="indicador">Nombre de elemento</label>
-                              <textarea class="form-control" 
-                                      id="indicador" name="indicador" 
-                                      [(ngModel)]="indicador" rows="3"></textarea>
+                              <input class="form-control" type="text" id="indicador" name="indicador" 
+                                        placeholder="Ingresa el Nombre de elemento" [(ngModel)]="indicador" 
+                                        (change)="ValidateIndicador()"/>
+                                    <span class="custom-alert-message" *ngIf="!valIndicador">Debe ingresar el Nombre de elemento</span>
                             </div>
 
                             <div class="col col-xl-12 col-lg-12 mt-auto">
                               <label for="descripcion">Descripcion</label>
-                              <input class="form-control" type="text" 
-                                    id="descripcion" name="descripcion" 
-                                    [(ngModel)]="descripcion">
+                              <input class="form-control" type="text" id="descripcion" name="descripcion" 
+                                        placeholder="Ingresa una Descripcion" [(ngModel)]="descripcion" 
+                                        (change)="ValidateDescripcion()"/>
+                                    <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una Descripcion</span>
                             </div>
 
                             <!-- Supuestos/Comentario -->
                             <div class="col col-xl-12 col-lg-12 mt-auto">
                               <label for="comentario">Supuestos/Comentario</label>
-                              <textarea class="form-control" 
-                                      id="comentario" name="comentario" 
-                                      [(ngModel)]="comentario" rows="3"></textarea>
+                              <input class="form-control" type="text" id="comentario" name="comentario" 
+                                        placeholder="Ingresa un comentario" [(ngModel)]="comentario" 
+                                        (change)="ValidateComentario()"/>
+                                    <span class="custom-alert-message" *ngIf="!valComentario">Debe ingresar un Comentario</span>
                             </div>
 
                             <div class="modal-footer">
@@ -402,63 +399,67 @@
                       </span>
                     </div>
                   
-                <!-- Nombre del Indicador -->
-                <div class="col col-xl-12 col-lg-12 mt-auto">
-                  <label for="indicador">Nombre de Indicador</label>
-                  <input class="form-control" type="text"
-                          id="indicador" name="indicador"  placeholder="Ingresa el Nombre del Indicador"
-                          [(ngModel)]="indicador">
-                </div>
-  
-                <!-- Descripción -->
-                <div class="col col-xl-12 col-lg-12 mt-auto">
-                  <label for="descripcion">Descripción</label>
-                  <input class="form-control" type="text"
-                          id="descripcion" name="descripcion"  placeholder="Ingresa una Descripcion"
-                          [(ngModel)]="descripcion">
-                </div>
+                    <div class="col col-xl-12 col-lg-12 mt-auto">
+                      <label for="indicador">Nombre de elemento</label>
+                      <input class="form-control" type="text" id="indicador" name="indicador" 
+                                placeholder="Ingresa el Nombre de elemento" [(ngModel)]="indicador" 
+                                (change)="ValidateIndicador()"/>
+                            <span class="custom-alert-message" *ngIf="!valIndicador">Debe ingresar el Nombre de elemento</span>
+                    </div>
+
+                    <div class="col col-xl-12 col-lg-12 mt-auto">
+                      <label for="descripcion">Descripcion</label>
+                      <input class="form-control" type="text" id="descripcion" name="descripcion" 
+                                placeholder="Ingresa una Descripcion" [(ngModel)]="descripcion" 
+                                (change)="ValidateDescripcion()"/>
+                            <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una Descripcion</span>
+                    </div>
   
                 <!-- Línea base, Medida y Meta Final -->
                 <div class="col col-xl-2 col-lg-2 mt-auto">
                   <label for="linea_base">Línea base</label>
-                  <input class="form-control" type="text" 
-                        id="linea_base" name="linea_base" 
-                        [(ngModel)]="linea_base" required>
+                  <input class="form-control" type="text" id="linea_base" name="linea_base" 
+                                placeholder="Ingresa una Línea base" [(ngModel)]="linea_base" 
+                                (change)="ValidateLineaBase()"/>
+                            <span class="custom-alert-message" *ngIf="!ValidateLineaBase">Debe ingresar una Línea base</span>
                 </div>
   
                 <div class="col col-xl-2 col-lg-2 mt-auto">
                   <label for="medida">Medida</label>
-                  <input class="form-control" type="text" 
-                        id="medida" name="medida" 
-                        [(ngModel)]="medida" required>
+                  <input class="form-control" type="text" id="medida" name="medida" 
+                                placeholder="Ingresa un Medida" [(ngModel)]="medida" 
+                                (change)="ValidateMedida()"/>
+                            <span class="custom-alert-message" *ngIf="!ValidateMedida">Debe ingresar una Medida</span>
                 </div>
   
                 <div class="col col-xl-2 col-lg-2 mt-auto">
                   <label for="meta_final">Meta Final</label>
-                  <input class="form-control" type="text" 
-                        id="meta_final" name="meta_final" 
-                        [(ngModel)]="meta_final" required>
+                  <input class="form-control" type="text" id="meta_final" name="meta_final" 
+                                placeholder="Ingresa una Meta Final" [(ngModel)]="meta_final" 
+                                (change)="ValidateMetaFinal()"/>
+                            <span class="custom-alert-message" *ngIf="!ValidateMetaFinal">Debe ingresar una Meta Final</span>
                 </div>
   
                 <!-- Medio de verificación -->
                 <div class="col col-xl-6 col-lg-6 mt-auto">
                   <label for="medio_verifica">Medio de verificación</label>
-                  <input class="form-control" type="text" 
-                        id="medio_verifica" name="medio_verifica" 
-                        placeholder="Ingresa el Medio de verificación"
-                        [(ngModel)]="medio_verifica" required>
+                  <input class="form-control" type="text" id="medio_verifica" name="medio_verifica" 
+                                placeholder="Ingresa un Medio de verificación" [(ngModel)]="medio_verifica" 
+                                (change)="ValidateMedioVerifica()"/>
+                            <span class="custom-alert-message" *ngIf="!ValidateMedioVerifica">Debe ingresar un Medio de verificación</span>
                 </div>
                 
                 <div class="row">
                   <div class="row">
                     <!-- Supuestos/Comentario -->
-                    <div class="col col-xl-6 col-lg-6 mt-auto">
+                    <div class="col col-xl-7 col-lg-7 mt-auto">
                       <label for="comentario">Supuestos/Comentario</label>
-                      <input class="form-control" type="text" 
-                        id="comentario" name="comentario" 
-                        placeholder="Ingresa Comentario"
-                        [(ngModel)]="comentario" required>
+                      <input class="form-control" type="text" id="comentario" name="comentario" 
+                                placeholder="Ingresa un comentario" [(ngModel)]="comentario" 
+                                (change)="ValidateComentario()"/>
+                            <span class="custom-alert-message" *ngIf="!valComentario">Debe ingresar un Comentario</span>
                     </div>
+                            
                   </div>
                   <div class="row">
                     <div class="col-xl-7 col-lg-7 mt-auto">
