@@ -416,30 +416,42 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
           (error) => console.error('Error al guardar beneficiario:', error)
       );
   }
-// Eliminar beneficiario
-onDelete(): void {
-  if (this.selectedBeneficiarios) {
-    this.beneficiariosService.deleteBeneficiario(this.selectedBeneficiarios.id).subscribe(
-      (response) => {
-        console.log('Respuesta del backend (eliminar):', response);
-        if (response[0]?.res === 'OK') {
-          console.log('Beneficiario eliminado correctamente');
-          this.loadBeneficiarios(); // Recargar la lista después de eliminar
-          this.selectedBeneficiarios = null; // Reiniciar selección
-        } else {
-          console.error('Error en la respuesta del backend (eliminar):', response);
+
+  openDeleteBeneficiarioModal(deleteBeneficiarioModal: TemplateRef<any>): void {
+    const modalRef = this.modalService.open(deleteBeneficiarioModal, { centered: true });
+  
+    modalRef.result.then(
+      (result) => {
+        if (result === 'Eliminar') {
+          this.onDeleteBeneficiario(); // Proceder con la eliminación solo si se confirma
         }
       },
-      (error) => console.error('Error al eliminar beneficiario:', error)
+      (reason) => {
+        console.log('Modal cerrado sin eliminar:', reason);
+      }
     );
-  } else {
-    console.warn('No hay beneficiario seleccionado para eliminar');
   }
-}
-
-
-
-
+  
+  // Eliminar beneficiario
+  onDeleteBeneficiario(): void {
+    if (this.selectedBeneficiarios) {
+      this.beneficiariosService.deleteBeneficiario(this.selectedBeneficiarios.id).subscribe(
+        (response) => {
+          console.log('Respuesta del backend (eliminar):', response);
+          if (response[0]?.res === 'OK') {
+            console.log('Beneficiario eliminado correctamente');
+            this.loadBeneficiarios(); // Recargar la lista después de eliminar
+            this.selectedBeneficiarios = null; // Reiniciar selección
+          } else {
+            console.error('Error en la respuesta del backend (eliminar):', response);
+          }
+        },
+        (error) => console.error('Error al eliminar beneficiario:', error)
+      );
+    } else {
+      console.warn('No hay beneficiario seleccionado para eliminar');
+    }
+  }
 
 /// ahora alido 
  // Abrir el modal para crear o editar un aliado
@@ -562,9 +574,24 @@ editAliado(aliadoData: any): void {
   );
 }
 
-// Eliminar Aliado
+openDeleteModal(deleteAliadoModal: any): void {
+  const modalRef = this.modalService.open(deleteAliadoModal, { centered: true });
 
-onDeleteAliado(): void {
+  modalRef.result.then(
+    (result) => {
+      if (result === 'Eliminar') {
+        this.onDeleteAliado(modalRef); // Proceder con la eliminación
+      }
+    },
+    (reason) => {
+      console.log('Modal cerrado sin eliminar:', reason);
+    }
+  );
+  
+}
+
+// Eliminar Aliado
+onDeleteAliado(modalRef: any): void {
   if (this.selectedAliados) {
     this.aliadosService.deleteAliado(this.selectedAliados.id).subscribe(
       (response) => {
@@ -573,11 +600,15 @@ onDeleteAliado(): void {
           console.log('Aliado eliminado correctamente');
           this.loadAliados(); // Recargar la lista después de eliminar
           this.selectedAliados = null; // Reiniciar selección
+          modalRef.close(); // Cerrar el modal
         } else {
           console.error('Error en la respuesta del backend (eliminar aliado):', response);
         }
       },
-      (error) => console.error('Error al eliminar aliado:', error)
+      (error) => {
+        console.error('Error al eliminar aliado:', error);
+        modalRef.close(); // También cerrar el modal en caso de error
+      }
     );
   }
 }

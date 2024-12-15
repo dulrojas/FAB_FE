@@ -72,54 +72,6 @@ export class PlanifEstrategicaService {
       return this.http.post<any>(this.URL, params, { headers });
     }
 
-
-   // ======= ======= ======= GET METO ELEMENTOS ======= ======= =======
-    /*getMetoElementos(): Observable<any> {
-      const params = {
-          "procedure_name": "sp_planif_estrategica",
-          "body": {
-              "params": [
-                  {"name": "p_accion", "value": "C3", "type": "string"},
-                  {"name": "p_id_meto_elemento", "value": null, "type": "int"},
-                  {"name": "p_id_metodologia", "value": null, "type": "int"},
-                  {"name": "p_meto_elemento", "value": null, "type": "string"},
-                  {"name": "p_nivel", "value": null, "type": "string"},
-                  {"name": "p_color", "value": null, "type": "string"},
-                  {"name": "p_sigla", "value": null, "type": "int"}
-              ]
-          }
-      };
-  
-      const ip = sessionStorage.getItem('ip') || '';
-      const headers = new HttpHeaders({
-        'ip': "127.0.0.1"
-      });
-  
-      return this.http.post<any>(this.URL, params, { headers });
-    }*/
-
-    // ======= Consultar indicadores =======
-/*getIndicadores(idProyecto: any): Observable<any> {
-  const params = {
-    "procedure_name": "sp_planif_estrategica",
-    "body": {
-      "params": [
-        { "name": "p_accion", "value": "C4", "type": "string" },
-        { "name": "p_id_proyecto", "value": idProyecto, "type": "int" },
-        { "name": "p_id_indicador", "value": null, "type": "int" },
-        { "name": "p_nombre", "value": null, "type": "string" },
-        { "name": "p_descripcion", "value": null, "type": "string" }
-      ]
-    }
-  };
-
-  const headers = new HttpHeaders({
-    'ip': "127.0.0.1"
-  });
-
-  return this.http.post<any>(this.URL, params, { headers });
-}*/
-
 // ======= Consultar indicadores de avance =======
 getIndicadoresAvance(idProyecto: any): Observable<any> {
   const params = {

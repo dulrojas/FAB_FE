@@ -44,7 +44,7 @@
           </button>
           <button type="button" class="btn btn-view-bg-1" 
             [disabled]="!selectedBeneficiarios" 
-            (click)="onDelete()">
+            (click)="openDeleteBeneficiarioModal(deleteBeneficiarioModal)">
             <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
           </button>
         </div>
@@ -317,7 +317,8 @@
         <i class="fa fa-pencil"></i> Editar
       </button>
       <button type="button" class="btn btn-view-bg-1 ms-2" 
-      [disabled]="!selectedAliados" (click)="onDeleteAliado()">
+        [disabled]="!selectedAliados" 
+        (click)="openDeleteModal(deleteAliadoModal)">
         <i class="fa fa-trash"></i> Eliminar
       </button>
       
@@ -462,16 +463,16 @@
   </div>
   <div class="modal-body">
       <div class="d-flex justify-content-center" style="width: 100%;">
-          <p>Esta seguro de querer eliminar el registro de Beneficiario?</p>
+          <p>¿Está seguro de querer eliminar el registro de Beneficiario?</p>
       </div>
   </div>
   <div class="modal-footer">
       <div class="d-flex justify-content-center" style="width: 100%;">
-          <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+          <!-- ======= Botones ======= -->
           <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
               <i class="fa fa-times" aria-hidden="true"></i> Cerrar
           </button>
-          <button type="button" class="btn btn-bg-1" (click)="deleteBeneficiario()">
+          <button type="button" class="btn btn-bg-1" (click)="modal.close('Eliminar')">
               <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
           </button>
       </div>
