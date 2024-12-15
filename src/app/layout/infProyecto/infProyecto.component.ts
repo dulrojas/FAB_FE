@@ -943,6 +943,21 @@ export class InfProyectoComponent implements OnInit {
       this.servObligaciones.getObligaciones(this.idProyecto).subscribe(
         (data) => {
           this.obligaciones = (data[0].dato)?(data[0].dato):([]);
+
+          let currentDate = new Date();
+
+          this.obligaciones.forEach((obligacion) => {
+
+            // ======= PROGRESO SECTION =======
+            let fechaObligacion = new Date(obligacion.fecha_obligacion);
+            let fechaEntrega = new Date(obligacion.fecha_hora_entrega);
+
+            let currentDateGap = (fechaEntrega.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24);
+            let datesGap = (fechaEntrega.getTime() - fechaObligacion.getTime()) / (1000 * 60 * 60 * 24);
+
+            obligacion.progreso = Math.round(100*(currentDateGap / datesGap));
+            // ======= ======= =======
+          });
         },
         (error) => {
           console.error(error);
@@ -987,7 +1002,7 @@ export class InfProyectoComponent implements OnInit {
 
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= INIT ADD OBLIGACIONES ======= =======
+    // ======= ======= INIT EDIT OBLIGACIONES ======= =======
     initEditObligaciones(modalScope: TemplateRef<any>){
       this.initObligacionesModel();
 
@@ -1010,7 +1025,7 @@ export class InfProyectoComponent implements OnInit {
       this.openModal(modalScope);
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= ADD OBLIGACIONES ======= =======
+    // ======= ======= EDIT OBLIGACIONES ======= =======
     editObligaciones(){
       const objObligacion = {
         p_id_proy_obliga: this.obligacionesModel.id_proy_obliga,
@@ -1029,12 +1044,36 @@ export class InfProyectoComponent implements OnInit {
       this.servObligaciones.editObligaciones(objObligacion).subscribe(
         (data) => {
           this.getObligaciones();
+          this.obligacionesSelected = null;
         },
         (error) => {
           console.error(error);
         }
       );
 
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= INIT DELETE OBLIGACION ======= =======
+    initDeleteObligacion(modalScope: TemplateRef<any>){
+      this.initObligacionesModel();
+
+      this.obligacionesModel.id_proy_obliga = this.obligacionesSelected.id_proy_obliga;
+
+      this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= DELETE OBLIGACION ======= =======
+    deleteObligacion(){
+      this.servObligaciones.deleteObligacion(this.obligacionesModel.id_proy_obliga).subscribe(
+        (data) => {
+          this.obligacionesSelected = null;
+          this.getObligaciones();
+          this.closeModal();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     }
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======

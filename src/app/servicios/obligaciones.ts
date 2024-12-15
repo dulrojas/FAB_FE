@@ -104,4 +104,35 @@ export class servObligaciones{
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= GET PERSONAS ======= ======= =======
+  deleteObligacion(idObli: any): Observable<any> {
+    const params = {
+      "procedure_name": "sp_proy_obligaciones",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "D1","type": "string"},
+          {"name": "p_id_proy_obliga","value": idObli,"type": "int"},
+          {"name": "p_id_proyecto","value": null,"type": "int"},
+          {"name": "p_id_inst_obligaciones","value": null,"type": "int"},
+          {"name": "p_obligacion","value": null,"type": "string"},
+          {"name": "p_descripcion","value": null,"type": "string"},
+          {"name": "p_fecha_obligacion","value": null,"type": "string"},
+          {"name": "p_ruta_plantilla","value": null,"type": "string"},
+          {"name": "p_id_institucion_exige","value": null,"type": "int"},
+          {"name": "p_idp_estado_entrega","value": null,"type": "int"},
+          {"name": "p_ruta_documento","value": null,"type": "string"},
+          {"name": "p_fecha_hora_entrega","value": null,"type": "string"},
+          {"name": "p_id_persona_entrega","value": null,"type": "int"}
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
 }
