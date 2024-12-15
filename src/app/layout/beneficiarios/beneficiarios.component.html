@@ -318,10 +318,10 @@
       </button>
       <button type="button" class="btn btn-view-bg-1 ms-2" 
         [disabled]="!selectedAliados" 
-        (click)="openDeleteModal(deleteAliadoModal)">
+        (click)="openDeleteAliadoModal(deleteAliadoModal)">
         <i class="fa fa-trash"></i> Eliminar
       </button>
-      
+
     </div>
   </div>
 </div>
@@ -486,21 +486,21 @@
   </div>
   <div class="modal-body">
       <div class="d-flex justify-content-center" style="width: 100%;">
-          <p>Esta seguro de querer eliminar el registro de Aliado?</p>
+          <p>¿Está seguro de querer eliminar el registro de Aliado?</p>
       </div>
   </div>
   <div class="modal-footer">
       <div class="d-flex justify-content-center" style="width: 100%;">
-          <!-- ======= ======= BUTTONS SECTION ======= ======= -->
           <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
               <i class="fa fa-times" aria-hidden="true"></i> Cerrar
           </button>
-          <button type="button" class="btn btn-bg-1" (click)="onDeleteAliado()">
+          <button type="button" class="btn btn-bg-1" (click)="modal.close('Eliminar')">
               <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
           </button>
       </div>
   </div>
 </ng-template>
+
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
 
 </div>

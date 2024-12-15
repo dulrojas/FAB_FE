@@ -574,7 +574,7 @@ editAliado(aliadoData: any): void {
   );
 }
 
-openDeleteModal(deleteAliadoModal: any): void {
+openDeleteAliadoModal(deleteAliadoModal: any): void {
   const modalRef = this.modalService.open(deleteAliadoModal, { centered: true });
 
   modalRef.result.then(
@@ -587,7 +587,6 @@ openDeleteModal(deleteAliadoModal: any): void {
       console.log('Modal cerrado sin eliminar:', reason);
     }
   );
-  
 }
 
 // Eliminar Aliado
@@ -612,6 +611,7 @@ onDeleteAliado(modalRef: any): void {
     );
   }
 }
+
 
 // cargar convenios
 loadConvenios(): void {
