@@ -479,6 +479,7 @@
                             </button>
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                (click)="initDeleteObligacion(deleteObligacionModal)"
                                 [disabled]="((!obligacionesSelected)||(!editMode))">
                                 <i class="fa fa-minus" aria-hidden="true"></i>
                             </button>
@@ -509,7 +510,12 @@
                                         <td>{{ obligacion.descripcion }}</td>
                                         <td>{{ obligacion.fecha_obligacion }}</td>
                                         <td>
-                                            {{ obligacion.progreso }}
+                                            <div class="custom-obligacion-progress-bar">
+                                                <div 
+                                                    class="custom-obligacion-progress-fill" 
+                                                    [style.width.%]="obligacion.progreso">
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>{{ obligacion.fecha_hora_entrega }}</td>
                                     </tr>
@@ -676,7 +682,7 @@
 </ng-template>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
 
-<!-- ======= ======= ======= OBLIGACIONES MDOAL ======= ======= ======= -->
+<!-- ======= ======= ======= OBLIGACIONES MODAL ======= ======= ======= -->
 <ng-template #obligacionesFormModal let-modal class="custom-modal">
     <div class="modal-header">
         <h4 class="modal-title">{{ modalTitle }}</h4>
@@ -689,6 +695,7 @@
                     <div class="card mb-3">
                         <div class="card-body custom-card">
                             <div class="row">
+
                                 <!-- ======= ======= ID SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="id_proy_obliga">Id</label>
@@ -723,19 +730,19 @@
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_obligacion" name="fecha_obligacion" 
                                         [(ngModel)]="obligacionesModel.fecha_obligacion" (change)="ValidateFechaObligacion()"/>
-                                    <span class="custom-alert-message" *ngIf="!valFechaObligacion">Debe seleccionar una fecha de obligacion.</span>
+                                    <span class="custom-alert-message" *ngIf="!valFechaObligacion">Debe seleccionar una fecha de obligación.</span>
                                 </div>
                                 <!-- ======= ======= INSTITUCION EXIGE SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="id_institucion_exige">Institucion exige</label>
+                                    <label for="id_institucion_exige">Institución exige</label>
                                     <select class="form-control" id="id_institucion_exige" name="id_institucion_exige" 
                                         [(ngModel)]="obligacionesModel.id_institucion_exige" (change)="ValidateIdInstitucionExige()">
-                                        <option value="" disabled selected>Selecciona una institucion</option>
+                                        <option value="" disabled selected>Selecciona una institución</option>
                                         <option *ngFor="let institucion of instituciones" [value]="institucion.id_institucion">
                                             {{ institucion.institucion }}
                                         </option>
                                     </select>
-                                    <span class="custom-alert-message" *ngIf="!valIdInstitucionExige">Debe seleccionar una institucion.</span>
+                                    <span class="custom-alert-message" *ngIf="!valIdInstitucionExige">Debe seleccionar una institución.</span>
                                 </div>
 
                                 <!-- ======= ======= ESTADO ENTREGA SECTION ======= ======= -->
@@ -766,7 +773,6 @@
                                         [(ngModel)]="obligacionesModel.id_persona_entrega" disabled>
                                 </div>
                                 
-
                             </div>
                         </div>
                     </div>
@@ -781,7 +787,31 @@
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
             <button type="button" class="btn btn-bg-1" [disabled]="obligacionesForm.invalid" (click)="obligacionesOnSubmit()">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE OBLIGACON MODAL ======= ======= ======= -->
+<ng-template #deleteObligacionModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar obligación</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de esta obligación?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="deleteObligacion()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
             </button>
         </div>
     </div>

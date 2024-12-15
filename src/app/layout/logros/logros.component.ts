@@ -357,7 +357,7 @@ export class LogrosComponent implements OnInit {
       this.logro = this.logrosSelected.logro;
       this.descripcion = this.logrosSelected.descripcion;
       this.fecha_hora = this.logrosSelected.fecha_hora;
-      this.id_persona_reg = this.logrosSelected.id_persona_reg;
+      this.id_persona_reg = (this.logrosSelected.nombres +" "+ this.logrosSelected.apellido_1 +" "+ ((this.logrosSelected.apellido_2)?(this.logrosSelected.apellido_2):("")));
       this.id_proy_elemento = this.logrosSelected.id_proy_elemento;
       this.fecha_logro = this.logrosSelected.fecha_logro;
 
@@ -378,7 +378,7 @@ export class LogrosComponent implements OnInit {
         p_id_proyecto: parseInt(this.idProyecto,10),
         p_logro: this.logro,
         p_descripcion: this.descripcion,
-        p_ruta_imagen: this.ruta_imagen,
+        p_rut_imagen: this.imageSelected.ruta_icono,
         p_fecha_hora: null,
         p_id_persona_reg: this.idPersonaReg,
         p_id_proy_elemento: parseInt(this.id_proy_elemento,10),
