@@ -10,6 +10,7 @@ import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
 import { servIndicador } from '../../servicios/indicador';
 import {servInstCategorias} from '../../servicios/instCategoria';
+import { servIndicadorAvance } from '../../servicios/indicadorAvance';
 
 
 // Estructura del Decorador del Componente 
@@ -35,6 +36,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       private servInstCategorias: servInstCategorias,
       private servApredizaje: servAprendizaje,
       private servIndicador: servIndicador,
+      private servIndicadorAvance: servIndicadorAvance
       
     ) {}
 
@@ -94,6 +96,9 @@ export class PlanifEstrategicaComponent implements OnInit {
           planifCategoria: any[] = [];
           planifSubCategoria: any[] = [];
           planifTipoCategoria: any[] = [];
+          planifIDindAvance: any[] = [];
+          planifPeriodofecha: any[] = [];
+          planifMetaEsperada: any[] = [];
 
             //LLAMADO PARA TABLA
             planifEstrategicaTipo: any[] = [];
@@ -102,20 +107,23 @@ export class PlanifEstrategicaComponent implements OnInit {
 
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
-        valComponente: any = true;
-        ValidateComponente(){
-          this.valComponente = true;
-          if(!this.id_proy_elem_padre){
-            this.valComponente = false;
-          }
-        }
-        valCodigo: any = true;
-        ValidateCodigo(){
-          this.valCodigo = true;
-          if((!this.codigo)||(this.codigo.length >= 10)){
-            this.valCodigo = false;
-          }
-        }
+    valComponente: any = false;  // Inicializar como false, ya que debe ser verdadero solo cuando la validación pase
+
+    ValidateComponente() {
+      if (this.id_proy_elem_padre) {
+        this.valComponente = true;  
+      } else {
+        this.valComponente = false;  
+      }
+      console.log('Componente válido:', this.valComponente);  
+    }
+    /*valCodigo: any = true;
+    ValidateCodigo() {
+      this.valCodigo = true;
+      if (!this.codigo || this.codigo.length > 10) {
+        this.valCodigo = false;
+      }
+    }*/
         valCategoria: any = true;
         ValidateCategoria(){
           this.valCategoria = true;
@@ -137,27 +145,34 @@ export class PlanifEstrategicaComponent implements OnInit {
             this.valCategoria = false;
           }
         }
+
         valIndicador: any = true;
-        ValidateIndicador(){
+        ValidateIndicador() {
           this.valIndicador = true;
-          if((!this.indicador)||(this.indicador.length >= 100)){
+          if (!this.indicador || this.indicador.length > 100) {
+            console.log("Indicador inválido");
             this.valIndicador = false;
           }
         }
+
         valDescripcion: any = true;
-        ValidateDescripcion(){
+        ValidateDescripcion() {
           this.valDescripcion = true;
-          if((!this.descripcion)||(this.descripcion.length >= 255)){
+          if (!this.descripcion || this.descripcion.length > 255) {
+            console.log("Descripción inválida");
             this.valDescripcion = false;
           }
         }
+
         valComentario: any = true;
-        ValidateComentario(){
+        ValidateComentario() {
           this.valComentario = true;
-          if((!this.comentario)||(this.comentario.length >= 255)){
+          if (!this.comentario || this.comentario.length > 255) {
+            console.log("Comentario inválido");
             this.valComentario = false;
           }
         }
+
         valOrden: any = true;
         ValidateOrden(){
           this.valOrden = true;
@@ -205,6 +220,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         ngOnInit(): void {
           this.getParametricas(); // Obtiene datos de las paramétricas
           this.getPlanifEstrategica(); // Obtiene datos del servicio
+          this.cargarIndicadoresAvance();
         }
     // ======= ======= ======= ======= =======  ======= ======= =======  =======
         jsonToString(json: object): string {
@@ -277,6 +293,22 @@ export class PlanifEstrategicaComponent implements OnInit {
           );
 
         } 
+
+        cargarIndicadoresAvance() {
+          this.servIndicadorAvance.getIndicadoresAvance().subscribe(
+            (response: any) => {
+              const datos = response[0]?.dato || [];
+        
+              // Extraer los valores necesarios
+              this.planifIDindAvance = datos.map((item: any) => item.id_proy_indica_avance);
+              this.planifPeriodofecha = datos.map((item: any) => item.fecha_reportar);
+              this.planifMetaEsperada = datos.map((item: any) => item.valor_esperado);
+            },
+            (error) => {
+              console.error("Error al cargar los datos:", error);
+            }
+          );
+        }
     // ======= ======= ======= ======= ======= ======= =======  ======= =======        
       private modalRef: NgbModalRef | null = null;
       openModal(content: TemplateRef<any>) {
@@ -521,37 +553,39 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.openModal(modalScope);
     }
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
-
-    addIndicador(){
-      const objIndicador = {
-        p_id_proy_indicador: 0,
-        p_id_proyecto: parseInt(this.idProyecto,10),
-        p_id_proy_elem_padre: this.id_proy_elem_padre,
-        p_codigo: this.codigo,
-        p_indicador: this.indicador,
-        p_descripcion: this.descripcion,
-        p_comentario: this.comentario,
-        p_orden: this.orden,
-        p_linea_base: this.linea_base,
-        p_medida: this.medida,
-        p_meta_final: this.meta_final,
-        p_medio_verifica: this.medio_verifica,
-        p_id_estado: this.id_estado,
-        p_inst_categoria_1: this.inst_categoria_1,
-        p_inst_categoria_2: this.inst_categoria_2,
-        p_inst_categoria_3: this.inst_categoria_3
-      };
-      console.log('Objetos a añadir:', objIndicador);
-      this.servIndicador.addIndicador(objIndicador).subscribe(
-        (data) => {
-          this.getPlanifEstrategica();
-          console.log('Elemento añadido con éxito', data);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    }
+  addIndicador() {
+    const objIndicador = {
+      p_id_proy_indicador: 0,
+      p_id_proyecto: parseInt(this.idProyecto, 10),
+      p_id_proy_elem_padre: this.id_proy_elem_padre,
+      p_codigo: this.codigo,
+      p_indicador: this.indicador,
+      p_descripcion: this.descripcion,
+      p_comentario: this.comentario,
+      p_orden: this.orden,
+      p_linea_base: this.linea_base,
+      p_medida: this.medida,
+      p_meta_final: this.meta_final,
+      p_medio_verifica: this.medio_verifica,
+      p_id_estado: this.id_estado,
+      p_inst_categoria_1: this.inst_categoria_1,
+      p_inst_categoria_2: this.inst_categoria_2,
+      p_inst_categoria_3: this.inst_categoria_3
+    };
+  
+    console.log('Objeto enviado a la API:', objIndicador); // Verifica los valores
+  
+    this.servIndicador.addIndicador(objIndicador).subscribe(
+      (data) => {
+        console.log('Elemento añadido con éxito', data);
+        this.getPlanifEstrategica();
+      },
+      (error) => {
+        console.error('Error al guardar los datos:', error);
+      }
+    );
+  }
+  
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
     initEditPlanifEstrategica(planifEstrategicaOGOERE: TemplateRef<any>, planifEstrategicaIN: TemplateRef<any>){
       if (!this.planifEstrategicaSelected) {
@@ -687,23 +721,51 @@ countHeaderData(): void {
       let valForm = false;
 
       this.ValidateComponente();
-      this.ValidateCodigo();
+      console.log('Componente válido:', this.valComponente);
+    
+      /*this.ValidateCodigo();
+      console.log('Código válido:', this.valCodigo);*/
+    
       this.ValidateCategoria();
+      console.log('Categoría válida:', this.valCategoria);
+    
       this.ValidateSubCategoria();
+      console.log('Subcategoría válida:', this.valSubCategoria);
+    
       this.ValidateTipoCategoria();
+      console.log('Tipo de categoría válido:', this.valTipoCategoria);
+    
       this.ValidateIndicador();
+      console.log('Indicador válido:', this.valIndicador);
+    
       this.ValidateDescripcion();
+      console.log('Descripción válida:', this.valDescripcion);
+    
       this.ValidateComentario();
+      console.log('Comentario válido:', this.valComentario);
+    
       this.ValidateOrden();
+      console.log('Orden válido:', this.valOrden);
+    
       this.ValidateLineaBase();
+      console.log('Línea base válida:', this.valLineaBase);
+    
       this.ValidateMedida();
+      console.log('Medida válida:', this.valMedida);
+    
       this.ValidateMetaFinal();
+      console.log('Meta final válida:', this.valMetaFinal);
+    
       this.ValidateMedioVerifica();
+      console.log('Medio de verificación válido:', this.valMedioVerifica);
+    
       this.ValidateEstado();
+      console.log('Estado válido:', this.valEstado);
+    
 
       valForm = 
         this.valComponente &&
-        this.valCodigo &&
+        //this.valCodigo &&
         this.valCategoria &&
         this.valSubCategoria &&
         this.valTipoCategoria &&
@@ -716,23 +778,24 @@ countHeaderData(): void {
         this.valMetaFinal &&
         this.valMedioVerifica &&
         this.valEstado;
-       
+       console.log('Formulario válido:', valForm); // Para verificar qué está fallando
 
       // ======= ACTION SECTION =======
-      if(valForm){
-        if(this.modalAction == "add"){
-          this.addIndicador();
-          console.log('Añadiendo...');
-        }
-        else{
-          this.editIndicador();
-          console.log('Editando...');
-        }
-        this.closeModal();
-        console.log('Cerrando...');
-      }
-      
+      // ======= ACTION SECTION =======
+  if (valForm) {
+    if (this.modalAction === "add") {
+      this.addIndicador();
+      console.log('Añadiendo...');
+    } else {
+      this.editIndicador();
+      console.log('Editando...');
     }
+    this.closeModal();
+    console.log('Cerrando...');
+  } else {
+    console.log('El formulario no es válido');
+  }
+}
     // ======= ======= ======= ======= =======
 
 

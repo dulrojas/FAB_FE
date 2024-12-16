@@ -83,31 +83,21 @@
                                 </td>
                                 <td>{{ ejecEstrategica.codigo }}</td>
                                 <td>{{ ejecEstrategica.indicador }}</td>
-                                <td>{{ getDescripcionSubtipo(ejecEstrategica.id_proyecto, fecha_reportar) }}</td>
+                                <td></td>
                                 <td>{{ ejecEstrategica.orden }}</td>
                                 <td>{{ ejecEstrategica.medida }}</td>
                                 <td>{{ ejecEstrategica.medio_verifica }}</td>
                                 <td>{{ ejecEstrategica.linea_base }}</td>
                                 <td>
-                                    <div style="position: relative; height: 20px; background-color: #f0f0f0; border-radius: 4px; overflow: hidden; width: 100%;">
-                                      <div 
-                                        [style.width.%]="getAvanceVerde(ejecEstrategica.linea_base, ejecEstrategica.meta_final, ejecEstrategica.avance_periodo)"
-                                        style="height: 100%; background-color: #4caf50; transition: width 0.3s ease;">
-                                      </div>
-                                    </div>
-                                  </td>
+                                  
+                                </td>
                                 
                                   <td>{{ ejecEstrategica.meta_final }}</td>
-                                
-                                  <!-- Barra de progreso amarillo -->
+
                                   <td>
-                                    <div style="position: relative; height: 20px; background-color: #f0f0f0; border-radius: 4px; overflow: hidden; width: 100%; margin-top: 5px;">
-                                      <div 
-                                        [style.width.%]="getAvanceAmarillo(ejecEstrategica.linea_base, ejecEstrategica.meta_final, ejecEstrategica.avance_periodo)"
-                                        style="height: 100%; background-color: #ffc107; transition: width 0.3s ease;">
-                                      </div>
-                                    </div>
+                                    
                                   </td>
+                                  
                                 <td>{{ ejecEstrategica.descripcion }}</td>
                             </tr>
                         </tbody>
@@ -144,106 +134,107 @@
                             <!-- ======= ======= Tipo ======= ======= -->
                             <div class="col col-xl-3 col-lg-3 mt-auto">
                                 <label for="tipoIndicador">Tipo</label>
-                                <select 
-                                  class="form-control" 
-                                  id="inst_categoria_3" 
-                                  name="inst_categoria_3"
-                                  [(ngModel)]="inst_categoria_3" 
-                                  (change)="ValidateTipoCategoria()"
-                                >
-                                  <option value="" disabled selected>Seleccione un Tipo</option>
-                                  <option *ngFor="let categoria of planifTipoCategoria" [value]="categoria.id_inst_categoria">
-                                    {{ categoria.nombre }}
-                                  </option>
-                                </select>
-                                <span class="custom-alert-message" *ngIf="!valTipoCategoria">
-                                  Debe elegir una SubCategoría
-                                </span>
+                                <input 
+                                type="text" 
+                                class="form-control" 
+                                id="id_proy_elem_padre" 
+                                [value]="getElementoNombre(id_proy_elem_padre)" 
+                                readonly>
                               </div>
                             <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                             <div class="col col-xl-1 col-lg-1 mt-auto">
                                 <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
                             </div>
                            <!-- ======= ======= sub tipo ======= ======= -->
-                           <div class="col col-xl-4 col-lg-4 mt-auto">
-                            <label for="idp_aprendizaje_area">SubTipo</label>
-                            <select
-                            class="form-control"
-                            [(ngModel)]="idp_categoria"
-                            name="idp_categoria">
-                            <option value="" disabled>Seleccione</option>
-                            <option *ngFor="let ejecSubTipo of riesgoCategoria" [value]="categoria.id_subtipo">
-                              {{ categoria.descripcion_subtipo }}
-                            </option>
-                          </select>
-                        </div>
-                        <div class="col col-xl-1 col-lg-1 mt-auto">
-                            
-                        </div>
-                        <!-- ======= ======= codigo ======= ======= -->
-                        <div class="col col-xl-3 col-lg-3 mt-auto">
-                            <label for="codigo">codigo</label>
-                            <input class="form-control" type="text" 
-                                id="codigo" name="codigo" [(ngModel)]="codigo" disabled/>
-                        </div>
-                        <!-- ======= ======= Categoria ======= ======= -->
-                         <!-- Categoría -->
-                         <div class="col col-xl-4 col-lg-4 mt-auto">
-                            <label for="inst_categoria_1">Categoría</label>
-                            <select 
-                              class="form-control" 
-                              id="inst_categoria_1" 
-                              name="inst_categoria_1"
-                              [(ngModel)]="inst_categoria_1" 
-                              (change)="ValidateCategoria()">
-                              <option value="" disabled selected>Seleccione una categoría</option>
-                              <option *ngFor="let categoria of inst_categoria_1" [value]="categoria.id_inst_categoria">
-                                {{ categoria.nombre }}
-                              </option>
-                            </select>
-                            <span class="custom-alert-message" *ngIf="!valCategoria">
-                              Debe elegir una Categoría
-                            </span>
-                          </div>
-                          
-                          <!-- SubCategoría -->
-                          <div class="col col-xl-4 col-lg-4 mt-auto">
-                            <label for="inst_categoria_2">SubCategoría</label>
-                            <select 
-                              class="form-control" 
-                              id="inst_categoria_2" 
-                              name="inst_categoria_2"
-                              [(ngModel)]="inst_categoria_2" 
-                              (change)="ValidateSubCategoria()">
-                              <option value="" disabled selected>Seleccione una SubCategoría</option>
-                              <option *ngFor="let categoria of inst_categoria_2" [value]="categoria.id_inst_categoria">
-                                {{ categoria.nombre }}
-                              </option>
-                            </select>
-                            <span class="custom-alert-message" *ngIf="!valSubCategoria">
-                              Debe elegir una SubCategoría
-                            </span>
-                          </div>
-                
-                              <!-- Tipo -->
-                              <div class="col col-xl-4 col-lg-4 mt-auto">
-                                <label for="tipoIndicador">Tipo</label>
-                                <select 
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                  <label for="idp_aprendizaje_area">SubTipo</label>
+                                  <select 
                                   class="form-control" 
-                                  id="inst_categoria_3" 
-                                  name="inst_categoria_3"
-                                  [(ngModel)]="inst_categoria_3" 
-                                  (change)="ValidateTipoCategoria()"
-                                >
-                                  <option value="" disabled selected>Seleccione un Tipo</option>
-                                  <option *ngFor="let categoria of inst_categoria_3" [value]="categoria.id_inst_categoria">
+                                  id="inst_categoria_2" 
+                                  name="inst_categoria_2"
+                                  [(ngModel)]="inst_categoria_2" 
+                                  (change)="ValidateSubCategoria()">
+                                  <option value="" disabled selected>Seleccione una SubCategoría</option>
+                                  <option *ngFor="let categoria of planifSubCategoria" [value]="categoria.id_inst_categoria">
                                     {{ categoria.nombre }}
                                   </option>
                                 </select>
-                                <span class="custom-alert-message" *ngIf="!valTipoCategoria">
+                                <span class="custom-alert-message" *ngIf="!valSubCategoria">
                                   Debe elegir una SubCategoría
                                 </span>
                               </div>
+                              <div class="col col-xl-1 col-lg-1 mt-auto">
+                            
+                              </div>
+                        <!-- ======= ======= codigo ======= ======= -->
+                        <div class="col col-xl-3 col-lg-3 mt-auto">
+                            <label for="codigo">codigo</label>
+                            <input 
+                            class="form-control" 
+                            type="text" 
+                            id="codigo" 
+                            name="codigo" 
+                            [(ngModel)]="codigo" 
+                            [readonly]="false"> 
+                        </div>
+                        <!-- ======= ======= Categoria ======= ======= -->
+                         <!-- Categoría -->
+                <div class="col col-xl-4 col-lg-4 mt-auto">
+                  <label for="inst_categoria_1">Categoría</label>
+                  <select 
+                    class="form-control" 
+                    id="inst_categoria_1" 
+                    name="inst_categoria_1"
+                    [(ngModel)]="inst_categoria_1" 
+                    (change)="ValidateCategoria()">
+                    <option value="" disabled selected>Seleccione una categoría</option>
+                    <option *ngFor="let categoria of planifCategoria" [value]="categoria.id_inst_categoria">
+                      {{ categoria.nombre }}
+                    </option>
+                  </select>
+                  <span class="custom-alert-message" *ngIf="!valCategoria">
+                    Debe elegir una Categoría
+                  </span>
+                </div>
+                
+                <!-- SubCategoría -->
+                <div class="col col-xl-4 col-lg-4 mt-auto">
+                  <label for="inst_categoria_2">SubCategoría</label>
+                  <select 
+                    class="form-control" 
+                    id="inst_categoria_2" 
+                    name="inst_categoria_2"
+                    [(ngModel)]="inst_categoria_2" 
+                    (change)="ValidateSubCategoria()">
+                    <option value="" disabled selected>Seleccione una SubCategoría</option>
+                    <option *ngFor="let categoria of planifSubCategoria" [value]="categoria.id_inst_categoria">
+                      {{ categoria.nombre }}
+                    </option>
+                  </select>
+                  <span class="custom-alert-message" *ngIf="!valSubCategoria">
+                    Debe elegir una SubCategoría
+                  </span>
+                </div>
+      
+                    <!-- Tipo -->
+                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                      <label for="tipoIndicador">Tipo</label>
+                      <select 
+                        class="form-control" 
+                        id="inst_categoria_3" 
+                        name="inst_categoria_3"
+                        [(ngModel)]="inst_categoria_3" 
+                        (change)="ValidateTipoCategoria()"
+                      >
+                        <option value="" disabled selected>Seleccione un Tipo</option>
+                        <option *ngFor="let categoria of planifTipoCategoria" [value]="categoria.id_inst_categoria">
+                          {{ categoria.nombre }}
+                        </option>
+                      </select>
+                      <span class="custom-alert-message" *ngIf="!valTipoCategoria">
+                        Debe elegir una SubCategoría
+                      </span>
+                    </div>
 
                         <div class="col col-xl-12 col-lg-12 mt-auto">
                             <label for="indicador">indicador</label>
@@ -272,21 +263,12 @@
                                 <!-- Tipo -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="tipoIndicador">Tipo</label>
-                                    <select 
+                                    <input 
+                                      type="text" 
                                       class="form-control" 
-                                      id="inst_categoria_3" 
-                                      name="inst_categoria_3"
-                                      [(ngModel)]="inst_categoria_3" 
-                                      (change)="ValidateTipoCategoria()"
-                                    >
-                                      <option value="" disabled selected>Seleccione un Tipo</option>
-                                      <option *ngFor="let categoria of planifTipoCategoria" [value]="categoria.id_inst_categoria">
-                                        {{ categoria.nombre }}
-                                      </option>
-                                    </select>
-                                    <span class="custom-alert-message" *ngIf="!valTipoCategoria">
-                                      Debe elegir una SubCategoría
-                                    </span>
+                                      id="id_proy_elem_padre" 
+                                      [value]="getElementoNombre(id_proy_elem_padre)" 
+                                      readonly>
                                   </div>
                           
                                 <!-- Componente -->
@@ -381,15 +363,16 @@
                                                     </tr>
                                                   </thead>
                                                   <tbody>
-                                                    <tr *ngFor="let row of evaluationData">
-                                                      <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.id }}</td>
-                                                      <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.period }}</td>
-                                                      <td class="py-0.5 px-2 text-sm">{{ row.value }}</td>
-                                                      <td class="py-0.5 px-2 text-sm">{{ row.progress }}</td>
-                                                        <td class="py-0.5 px-2 text-sm">{{ row.notes }}</td>
-                                                        <td class="py-0.5 px-2 text-sm">{{ row.evidence }}</td>
+                                                    <tr *ngFor="let row of planifData; let i = index">
+                                                      <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.id_proy_indica_avance }}</td>
+                                                      <td class="py-0.5 px-2 text-sm border-r border-gray-200">{{ row.fecha_reportar || 'N/A' }}</td>
+                                                      <td class="py-0.5 px-2 text-sm">{{ row.valor_esperado || 'N/A' }}</td>
+                                                      <td class="py-0.5 px-2 text-sm">{{ row.valor_reportado || 'N/A' }}</td>
+                                                      <td class="py-0.5 px-2 text-sm">{{ row.comentarios || 'N/A' }}</td>
+                                                      <td class="py-0.5 px-2 text-sm">{{ row.ruta_evidencia || 'N/A' }}</td>
                                                     </tr>
-                                                  </tbody>
+                                                  </tbody>                                                
+                                                                                                                                                  
                                                 </table>
                                             </div>
                                         </div>

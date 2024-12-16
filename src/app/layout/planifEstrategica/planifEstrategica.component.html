@@ -229,7 +229,7 @@
                             <label for="codigo">Código</label>
                             <input 
                               class="form-control" type="text" id="codigo" name="codigo" 
-                              [(ngModel)]="codigo" [readonly]="false" [required]="false"> 
+                              [(ngModel)]="codigo" [readonly]="false" [required]="false" placeholder="Ingresa el Código"> 
                           </div>
                           
                             <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -337,7 +337,7 @@
                     id="codigo" 
                     name="codigo" 
                     [(ngModel)]="codigo" 
-                    [readonly]="false"> 
+                    [readonly]="false" placeholder="Ingresa el Código"> 
                 </div>
                 
   
@@ -474,10 +474,11 @@
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr *ngFor="let planifEstrategica of planifEstrategicaTable; let i = index">
-                                    <td style="text-align: center;">{{planifEstrategica.id_proy_indicador}}</td>
-                                    <td>{{planifEstrategica.fecha}}</td>
-                                    <td style="text-align: end;">{{planifEstrategica.meta_final}}</td>
+                                <tr *ngFor="let id of planifIDindAvance; let i = index">
+                                  <td style="text-align: center;">{{ id }}</td>
+                                  <td>{{ planifPeriodofecha[i] || 'N/A' }}</td>
+                                  <td style="text-align: end;">{{ planifMetaEsperada[i] || 'N/A' }}</td>
+                                </tr>
                               </tbody>
                           </table>
                     </div>

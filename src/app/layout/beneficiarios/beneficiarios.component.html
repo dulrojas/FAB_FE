@@ -138,20 +138,21 @@
           <!-- Actividad y Evento -->
           <div class="col col-xl-6 col-lg-6 mt-auto">
               <label for="actividad">Pertenece a la Actividad</label>
-              <select formControlName="actividad" class="form-control">
+              <select  class="form-control" id="actividad" name="actividad" >
+                <option value="" disabled selected>Seleccione la Actividad</option>
                 <option *ngFor="let actividad of actividades" [value]="actividad.id_proy_actividad">
-                  {{ actividad.actividad }}
+                  {{ actividad.actividad }} 
                 </option>
               </select>
           </div>
           <div class="col col-xl-6 col-lg-6 mt-auto">
               <label for="evento">Evento</label>
-              <input type="text" formControlName="evento" class="form-control" />
+              <input type="text" formControlName="evento" class="form-control" placeholder="Ingresa el evento"/>
           </div>
           <!-- Departamento, Municipio, Comunidad -->
           <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="department">Departamento</label>
-            <select formControlName="department" class="form-control" (change)="onDepartamentoChange($event.target.value)">
+            <select class="form-control" (change)="onDepartamentoChange($event.target.value)" >
               <option value="" disabled selected>Seleccione un departamento</option>
               <option *ngFor="let depto of departamentos" [value]="depto.orden">
                 {{ depto.nombre }}
@@ -160,7 +161,8 @@
           </div>
           <div class="col col-xl-4 col-lg-4 mt-auto">
             <label for="municipio">Municipio</label>
-            <select formControlName="municipio" class="form-control" (change)="onMunicipioChange($event.target.value)">
+            <select  class="form-control" (change)="onMunicipioChange($event.target.value)">
+              <option value="" disabled selected>Seleccione un Municipio</option>
               <option *ngFor="let muni of municipios" [value]="muni.orden">
                 {{ muni.nombre }}
               </option>
@@ -168,7 +170,8 @@
           </div>
           <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="comunidad">Comunidad</label>
-            <select formControlName="comunidad" class="form-control" >
+            <select class="form-control" id="comunidad" name="comunidad" >
+              <option value="" disabled selected>Seleccione una Comunidad</option>
               <option *ngFor="let comunidad of comunidades" [value]="comunidad.orden">
                 {{ comunidad.nombre }}
               </option>
@@ -183,7 +186,7 @@
            <!-- Tipo de Organización y Organización -->
            <div class="col col-xl-6 col-lg-6 mt-auto">
             <label for="tipoOrganizacion">Tipo de Organización</label>
-            <select formControlName="tipoOrganizacion" class="form-control">
+            <select class="form-control" id="tipoOrganizacion" name="tipoOrganizacion" >
               <option value="" disabled selected>Seleccione un tipo de organización</option>
               <option *ngFor="let tipo of organizacionTipo" [value]="tipo.id_subtipo">
                 {{ tipo.descripcion_subtipo }}
@@ -192,25 +195,25 @@
           </div>
           <div class="col col-xl-6 col-lg-6 mt-auto">
             <label for="organizacion">Nombre de la Organización</label>
-            <input type="text" formControlName="organizacion" class="form-control" />
+            <input type="text" formControlName="organizacion" class="form-control" placeholder="Ingresa el Nombre de la Organización"/>
           </div>
           <!-- Detalle -->
           <div class="col col-xl-12 col-lg-12 mt-auto">
             <label for="details">Detalle de evento</label>
-            <textarea formControlName="details" class="form-control"></textarea>
+            <textarea formControlName="details" class="form-control" placeholder="Ingresa el Detalle de evento" ></textarea>
           </div>
           <!-- Mujeres, Hombres y Total -->
                    <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="mujeres">Nro de Mujeres</label>
-            <input type="number" formControlName="mujeres" class="form-control" min="0" />
+            <input type="number" formControlName="mujeres" class="form-control" min="0" placeholder="Ingresa el Nro de Mujeres"/>
           </div>
           <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="hombres">Nro de Hombres</label>
-            <input type="number" formControlName="hombres" class="form-control" min="0" />
+            <input type="number" formControlName="hombres" class="form-control" min="0" placeholder="Ingresa el Nro de Hombres"/>
           </div>
           <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="total">Total</label>
-            <input type="number" formControlName="total" class="form-control" min="0" />
+            <input type="number" formControlName="total" class="form-control" min="0" placeholder="Total al Grabar"/>
           </div>
           <div class="col col-xl-3 col-lg-3 mt-auto">
               <button type="button" (click)="openModal(listaBeneficiariesModal)" 
@@ -271,14 +274,14 @@
                   </tr>
               </thead>
               <tbody>
-                  <tr *ngFor="let beneficiario of paginatedBeneficiarios">
-                    <td>{{ beneficiario.id }}</td>
-                    <td>{{ beneficiario.comunidad }}</td>
-                    <td>{{ beneficiario.docIden }}</td>
-                    <td>{{ beneficiario.id_person_reg }}</td>
-                    <td>{{ beneficiario.rangoEdad }}</td>
-                    <td>{{ beneficiario.sexo }}</td>
-                  </tr>
+                <tr *ngFor="let persona of tablaPersonas">
+                  <td>{{ persona.id }}</td>
+                  <td>{{ persona.comunidad }}</td>
+                  <td>{{ persona.docIden }}</td>
+                  <td>{{ persona.nombreCompleto }}</td>
+                  <td>{{ persona.rangoEdad }}</td>
+                  <td>{{ persona.sexo }}</td>
+                </tr>
               </tbody>
           </table>
             <!-- Botones Cancelar y Guardar -->
@@ -404,7 +407,7 @@
       <div class="row mt-3">
         <div class="col col-xl-6 col-lg-6 mt-auto">
           <label for="tipoOrganizacion">Institucion/Organizacion</label>
-          <select formControlName="tipoOrganizacion" class="form-control">
+          <select class="form-control" id="tipoOrganizacion" name="tipoOrganizacion" >
             <option value="" disabled selected>Seleccione un tipo de organización</option>
             <option *ngFor="let tipo of organizacionTipo" [value]="tipo.id_subtipo">
               {{ tipo.descripcion_subtipo }}
@@ -418,17 +421,17 @@
         </div>
         <div class="col col-xl-4 col-lg-4 mt-auto">
           <label for="referentName">Nombre Referente</label>
-          <input type="text" formControlName="referentName" class="form-control" />
+          <input type="text" formControlName="referentName" class="form-control" placeholder="Ingresa el Nombre"/>
         </div>
 
         <div class="col col-xl-12 col-lg-12 mt-auto">
           <label for="resultsLink">Vínculo con Resultados</label>
-          <textarea formControlName="resultsLink" class="form-control"></textarea>
+          <textarea formControlName="resultsLink" class="form-control" placeholder="Ingresa Vínculo"></textarea>
         </div>
 
         <div class="col-md-6">
           <label for="convenio">Convenio</label>
-          <select formControlName="convenio" class="form-control">
+          <select class="form-control" id="convenio" name="convenio" >
             <option value="" disabled selected>Seleccione un convenio</option>
             <option *ngFor="let convenio of tiposConvenio" [value]="convenio.id">
               {{ convenio.descripcion }}

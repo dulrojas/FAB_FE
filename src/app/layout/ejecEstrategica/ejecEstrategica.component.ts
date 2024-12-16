@@ -83,8 +83,11 @@ export class EjecEstrategicaComponent implements OnInit {
     // Variables de Selección
     componentes: any[] = [];
     ejecSubTipo: any[] = [];
-    fecha_reportar: any[] = [];
+   
     fecha_hora_reporte: any[] = [];
+          planifCategoria: any[] = [];
+          planifSubCategoria: any[] = [];
+          planifTipoCategoria: any[] = [];
 
 
     // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
@@ -103,31 +106,32 @@ export class EjecEstrategicaComponent implements OnInit {
       }
     }
     valCategoria: any = true;
-    ValidateCategoria(){
-      this.valCategoria = true;
-      if(!this.inst_categoria_1){
-        this.valCategoria = false;
-      }
-    }
-    valSubCategoria: any = true;
-    ValidateSubCategoria(){
-      this.valSubCategoria = true;
-      if(!this.inst_categoria_2){
-        this.valCategoria = false;
-      }
-    }
-    valTipoCategoria: any = true;
-    ValidateTipoCategoria(){
-      this.valTipoCategoria = true;
-      if(!this.inst_categoria_3){
-        this.valCategoria = false;
-      }
-    }
+        ValidateCategoria(){
+          this.valCategoria = true;
+          if(!this.inst_categoria_1){
+            this.valCategoria = false;
+          }
+        }
+        valSubCategoria: any = true;
+        ValidateSubCategoria(){
+          this.valSubCategoria = true;
+          if(!this.inst_categoria_2){
+            this.valCategoria = false;
+          }
+        }
+        valTipoCategoria: any = true;
+        ValidateTipoCategoria(){
+          this.valTipoCategoria = true;
+          if(!this.inst_categoria_3){
+            this.valCategoria = false;
+          }
+        }
 
   // ======= ======= INIT VIEW FUN ======= =======
   ngOnInit(): void {
     this.getParametricas();
     this.getEjecEstrategica();
+    this.cargarIndicadoresAvance();
   }
   // ======= ======= ======= ======= =======  ======= ======= =======  =======
   jsonToString(json: object): string {
@@ -184,8 +188,7 @@ export class EjecEstrategicaComponent implements OnInit {
 
     this.servInstCategorias.getCategoriaById(1).subscribe(
       (data: any) => {
-        this.inst_categoria_1 = data[0]?.dato || []; 
-        
+        this.planifCategoria = data[0]?.dato || []; 
       },
       (error) => {
         console.error("Error al cargar categorías:", error);
@@ -194,8 +197,7 @@ export class EjecEstrategicaComponent implements OnInit {
 
     this.servInstCategorias.getCategoriaById(2).subscribe(
       (data: any) => {
-        this.inst_categoria_2 = data[0]?.dato || []; 
-  
+        this.planifSubCategoria = data[0]?.dato || []; 
       },
       (error) => {
         console.error("Error al cargar categorías:", error);
@@ -204,24 +206,33 @@ export class EjecEstrategicaComponent implements OnInit {
 
     this.servInstCategorias.getCategoriaById(3).subscribe(
       (data: any) => {
-        this.inst_categoria_3 = data[0]?.dato || []; 
-      
+        this.planifTipoCategoria = data[0]?.dato || []; 
       },
       (error) => {
         console.error("Error al cargar categorías:", error);
       }
     );
-    this.servIndicadorAvance.getIndicadoresAvanceById(1).subscribe(
-      (data) => {
-        this.fecha_reportar = data[0].dato;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
 
 
   } 
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
+  planifData: any[] = []; // Arreglo para almacenar los datos procesados
+  cargarIndicadoresAvance() {
+    this.servIndicadorAvance.getIndicadoresAvance().subscribe(
+      (response: any) => {
+        if (response[0]?.res === 'OK') {
+          this.planifData = response[0]?.dato || [];
+          console.log('Datos cargados:', this.planifData); // Verifica los datos en la consola
+        } else {
+          console.error('Error en la respuesta del API:', response);
+        }
+      },
+      (error) => {
+        console.error('Error al cargar los datos del servicio:', error);
+      }
+    );
+  }
+
   // ======= ======= ======= ======= ======= ======= =======  ======= =======        
   private modalRef: NgbModalRef | null = null;
   openModal(content: TemplateRef<any>) {
@@ -372,37 +383,35 @@ export class EjecEstrategicaComponent implements OnInit {
         // Formatear el nuevo código en el formato "X.0.0.0".
         return `${lastOG[0]}.0.0.0`;
       }
-
-      getAvanceVerde(lineaBase: number, metaFinal: number, avancePeriodo: number): number {
-        console.log('Datos para Verde ->', { lineaBase, metaFinal, avancePeriodo });
-      
-        if (!lineaBase || !metaFinal || !avancePeriodo) return 0; // Validación de entrada
-        const totalRango = metaFinal - lineaBase;
-        if (totalRango <= 0) return 0; // Evitar divisiones por cero o rangos inválidos
-      
-        const progreso = avancePeriodo - lineaBase; // Progreso actual desde la línea base
-        const porcentaje = (progreso / totalRango) * 100;
-        return Math.min(Math.max(porcentaje, 0), 100); // Asegurar rango [0, 100]
-      }
-      
-      getAvanceAmarillo(lineaBase: number, metaFinal: number, avancePeriodo: number): number {
-        console.log('Datos para Amarillo ->', { lineaBase, metaFinal, avancePeriodo });
-      
-        if (!lineaBase || !metaFinal || !avancePeriodo) return 0; // Validación de entrada
-        const totalRango = metaFinal - lineaBase;
-        if (totalRango <= 0) return 0; // Evitar divisiones por cero o rangos inválidos
-      
-        const restante = metaFinal - avancePeriodo; // Rango restante hacia la meta final
-        const porcentaje = (restante / totalRango) * 100;
-        return Math.min(Math.max(porcentaje, 0), 100); // Asegurar rango [0, 100]
-      }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
         
-      
-      
-      
-      
-      
+    getAvanceVerde(lineaBase: number, metaFinal: number, avancePeriodo: number): number {
+      if (!lineaBase || !metaFinal || avancePeriodo === null || avancePeriodo === undefined) return 0;
+    
+      const totalRango = metaFinal - lineaBase;
+      if (totalRango <= 0) return 0;
+    
+      const progreso = avancePeriodo - lineaBase;
+      const porcentaje = (progreso / totalRango) * 100;
+    
+      return Math.min(Math.max(porcentaje, 0), 100); // Limita entre 0 y 100
+    }
+    
+    getAvanceAmarillo(lineaBase: number, metaFinal: number, avancePeriodo: number): number {
+      if (!lineaBase || !metaFinal || avancePeriodo === null || avancePeriodo === undefined) return 0;
+    
+      const totalRango = metaFinal - lineaBase;
+      if (totalRango <= 0) return 0;
+    
+      const progreso = metaFinal - avancePeriodo;
+      const porcentaje = (progreso / totalRango) * 100;
+    
+      return Math.min(Math.max(porcentaje, 0), 100); // Limita entre 0 y 100
+    }
+    
 
+    
+    
 
   // ======= ======= INIT EJECUCION ESTRATEGICA NGMODEL ======= =======
   initEjecEstrategicaModel() {
@@ -542,9 +551,14 @@ export class EjecEstrategicaComponent implements OnInit {
     let valForm = false;
 
     this.ValidateComponente();
-    this.ValidateCategoria();
-    this.ValidateSubCategoria();
-    this.ValidateTipoCategoria();
+   this.ValidateCategoria();
+      console.log('Categoría válida:', this.valCategoria);
+    
+      this.ValidateSubCategoria();
+      console.log('Subcategoría válida:', this.valSubCategoria);
+    
+      this.ValidateTipoCategoria();
+      console.log('Tipo de categoría válido:', this.valTipoCategoria);
 
     valForm = 
       this.valComponente &&

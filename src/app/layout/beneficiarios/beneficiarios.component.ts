@@ -7,7 +7,7 @@ import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { BeneficiariosService } from "../../servicios/Beneficiarios";
 import { AliadosService } from "../../servicios/aliados";
-
+import { servPersona } from "../../servicios/persona";
 
 import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
 import { register } from 'module';
@@ -55,6 +55,7 @@ export class BeneficiariosComponent implements OnInit {
     
     private servicios: servicios,
     private aliadosService: AliadosService,
+    private personaService: servPersona,
     private ubicaGeograficaService: servUbicaGeografica
   ) {}
 
@@ -71,6 +72,7 @@ export class BeneficiariosComponent implements OnInit {
   aliadosTable: any[] = [];
   tiposConvenio: any[] = [];
   peronsaRegistro:any="";
+  
  
 
   // ======= ======= HEADER SECTION ======= =======
@@ -115,8 +117,7 @@ export class BeneficiariosComponent implements OnInit {
     this.loadAliados();
     this.loadConvenios();
     this.countHeaderData();
-
-
+    this.cargarPersona();
   }
 //obtenr actividades
 getActividades(): void {
@@ -163,6 +164,38 @@ getActividades(): void {
     }
   );
   }
+
+  planifData: any[] = []; // Datos originales del API
+tablaPersonas: any[] = []; // Datos procesados para la tabla
+
+cargarPersona() {
+  this.personaService.getPersonas().subscribe(
+    (response: any) => {
+      if (response[0]?.res === 'OK') {
+        // Asigna los datos originales del API
+        this.planifData = response[0]?.dato || [];
+        console.log('Datos originales:', this.planifData);
+
+        // Transforma los datos al formato necesario para la tabla
+        this.tablaPersonas = this.planifData.map((persona, index) => ({
+          id: index + 1, // Número secuencial
+          comunidad: persona.id_inst_unidad || 'N/A', // Comunidad (puedes ajustar el campo según sea necesario)
+          docIden: persona.p_nro_documento || 'Sin documento', // Número de documento
+          nombreCompleto: `${persona.nombres || ''} ${persona.apellido_1 || ''} ${persona.apellido_2 || ''}`.trim(), // Nombre completo
+          rangoEdad: 'N/A', // Rango de edad (puedes calcularlo si tienes la fecha de nacimiento)
+          sexo: 'N/A', // Sexo (puedes inferirlo si está disponible en los datos)
+        }));
+
+        console.log('Datos transformados:', this.tablaPersonas);
+      } else {
+        console.error('Error en la respuesta del API:', response);
+      }
+    },
+    (error) => {
+      console.error('Error al cargar los datos del servicio:', error);
+    }
+  );
+}
 
 
 /// init aliados form
@@ -259,7 +292,7 @@ loadDepartamentos(): void {
     this.beneficiariosService.getBeneficiarios().subscribe(
       (response) => {
         console.log('Datos recibidos del servicio:', response);
-        console.log('nombre de la persona',this.namePersonaReg);  
+        console.log('nombre de la persona', this.namePersonaReg);  
   
         if (response[0]?.res === 'OK') {
           const rawBeneficiarios = response[0].dato || [];
@@ -280,6 +313,9 @@ loadDepartamentos(): void {
           }));
   
           this.totalLengthBeneficiarios = this.beneficiariosTable.length;
+  
+          // Llamada a countHeaderData después de cargar los beneficiarios
+          this.countHeaderData();
         } else {
           console.error('Respuesta inválida del servicio:', response);
         }
@@ -289,6 +325,7 @@ loadDepartamentos(): void {
       }
     );
   }
+  
   get paginatedBeneficiarios(): Beneficiario[] {
     const startIndex = (this.currentPageBeneficiarios - 1) * this.pageSizeBeneficiarios;
     const endIndex = startIndex + this.pageSizeBeneficiarios;
@@ -636,20 +673,36 @@ get paginatedAliados(): any[] {
 }
 
 countHeaderData() {
+  // Inicializar contadores
+  this.headerDataNro01 = 0;
+  this.headerDataNro02 = 0;
+  this.headerDataNro03 = 0;
+  this.headerDataNro04 = 0;
+
+  // Iterar sobre la tabla de beneficiarios
   this.beneficiariosTable.forEach((beneficiario) => {
+    // Contar comunidades presentes en la lista de comunidades
     if (this.comunidades.includes(beneficiario.comunidad)) {
-      this.headerDataNro01++;
-    }
-    if (beneficiario.mujeres) {
-      this.headerDataNro02++;
-    }
-    if (beneficiario.hombres) {
-      this.headerDataNro03++;
-    }
-    if (this.beneficiariosTable.some(b => b.total === beneficiario.total)) {
       this.headerDataNro04++;
     }
 
-}, 0);}
+    // Contar beneficiarios que sean mujeres
+    if (beneficiario.mujeres && typeof beneficiario.mujeres === 'number') {
+      this.headerDataNro02 += beneficiario.mujeres;
+    }
+
+    // Contar beneficiarios que sean hombres
+    if (beneficiario.hombres && typeof beneficiario.hombres === 'number') {
+      this.headerDataNro03 += beneficiario.hombres;
+    }
+
+    // Contar aliados (condición a ajustar según tus necesidades)
+    if (beneficiario.total !== undefined && typeof beneficiario.total === 'number') {
+      this.headerDataNro01++;
+    }
+  });
+}
+
+
 
 }
