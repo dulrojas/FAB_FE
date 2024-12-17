@@ -124,27 +124,32 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.valCodigo = false;
       }
     }*/
-        valCategoria: any = true;
-        ValidateCategoria(){
-          this.valCategoria = true;
-          if(!this.inst_categoria_1){
-            this.valCategoria = false;
-          }
+      valCategoria: any = true;
+      ValidateCategoria(){
+        this.valCategoria = true;
+        if(!this.inst_categoria_1){
+          console.log('Validación Categoría:', this.valCategoria);
+          this.valCategoria = false; 
         }
-        valSubCategoria: any = true;
-        ValidateSubCategoria(){
-          this.valSubCategoria = true;
-          if(!this.inst_categoria_2){
-            this.valCategoria = false;
-          }
+      }
+      
+      valSubCategoria: any = true;
+      ValidateSubCategoria(){
+        this.valSubCategoria = true;
+        if(!this.inst_categoria_2){
+          console.log('Validación SubCategoría:', this.valSubCategoria);
+          this.valSubCategoria = false; 
         }
-        valTipoCategoria: any = true;
-        ValidateTipoCategoria(){
-          this.valTipoCategoria = true;
-          if(!this.inst_categoria_3){
-            this.valCategoria = false;
-          }
+      }
+      
+      valTipoCategoria: any = true;
+      ValidateTipoCategoria(){
+        this.valTipoCategoria = true;
+        if(!this.inst_categoria_3){
+          this.valTipoCategoria = false; 
         }
+      }
+      
 
         valIndicador: any = true;
         ValidateIndicador() {
@@ -568,9 +573,9 @@ export class PlanifEstrategicaComponent implements OnInit {
       p_meta_final: this.meta_final,
       p_medio_verifica: this.medio_verifica,
       p_id_estado: this.id_estado,
-      p_inst_categoria_1: this.inst_categoria_1,
-      p_inst_categoria_2: this.inst_categoria_2,
-      p_inst_categoria_3: this.inst_categoria_3
+      p_inst_categoria_1: this.inst_categoria_1 ,
+      p_inst_categoria_2:  this.inst_categoria_2 ,
+      p_inst_categoria_3:  this.inst_categoria_3 
     };
   
     console.log('Objeto enviado a la API:', objIndicador); // Verifica los valores
@@ -584,7 +589,9 @@ export class PlanifEstrategicaComponent implements OnInit {
         console.error('Error al guardar los datos:', error);
       }
     );
-  }
+    
+  }  
+  
   
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
     initEditPlanifEstrategica(planifEstrategicaOGOERE: TemplateRef<any>, planifEstrategicaIN: TemplateRef<any>){
