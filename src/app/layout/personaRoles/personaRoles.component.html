@@ -22,15 +22,14 @@
         </div>
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
-    <!--app-page-header [heading]="'Persona y Roles'" [icon]="'fa-table'"></app-page-header-->
-    <div class="row">
-        <div class="col col-md-12">
-            <h2 class="custom-view-title">Persona y Roles</h2>
-        </div>
-    </div>
     <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
     <div class="card mb-3">
         <div class="card-body custom-card table-responsive">
+            <div class="row">
+                <div class="col col-md-12">
+                    <h2 class="custom-view-title">Persona y Roles</h2>
+                </div>
+            </div>
             <div class="row">
                 <div class="col col-xl-12 col-lg-12 text-end">
                     <button type="button" class="btn btn-view-bg-1" 
@@ -181,8 +180,8 @@
         
                                 <!-- ======= ======= NRO TELEFONO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
-                                    <label for="telefono">Numero de telefono</label>
-                                    <input class="form-control" type="text" placeholder="Ingrese el numero de telefono"
+                                    <label for="telefono">Número de teléfono</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el número de teléfono"
                                         id="telefono" name="telefono" 
                                         [(ngModel)]="telefono" (change)="ValidateTelefono()" />
                                     <span class="custom-alert-message" *ngIf="!valTelefono">
@@ -191,8 +190,8 @@
                                 </div>
                                 <!-- ======= ======= CORREO ELECTRONICO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
-                                    <label for="correo">Correo electronico</label>
-                                    <input class="form-control" type="text" placeholder="Ingrese el correo electronico"
+                                    <label for="correo">Correo electrónico</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el correo electrónico"
                                         id="correo" name="correo" 
                                         [(ngModel)]="correo" (change)="ValidateCorreo()" />
                                     <span class="custom-alert-message" *ngIf="!valCorreo">

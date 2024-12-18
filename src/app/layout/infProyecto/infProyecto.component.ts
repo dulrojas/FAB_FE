@@ -174,6 +174,16 @@ export class InfProyectoComponent implements OnInit {
                 if (match) {
                   match.selected = true;
                   ubicacionesSelAux.push(match);
+                  // === COUNT UBI HEADER DATA ===
+                  this.contarMunicipiosYComunidades(match.id_ubica_geo);
+
+                  if (match.idp_tipo_ubica_geo === "Municipios") {
+                    this.headerDataNro01 += 1;
+                  }
+                  if (match.idp_tipo_ubica_geo === "Comunidades") {
+                    this.headerDataNro01 += 2;
+                  }
+                  // === === ===
                 }
               });
               this.ubicacionesSel = ubicacionesSelAux;
@@ -702,6 +712,7 @@ export class InfProyectoComponent implements OnInit {
 
       this.servFinanciadores.editFinanciador(objPresupuesto).subscribe(
         (data) => {
+          this.closeModal();
           this.getFinanciadores();
           this.financiadoresSelected = null;
         },
@@ -738,8 +749,7 @@ export class InfProyectoComponent implements OnInit {
       }
     }
     // ======= ======= ======= ======= =======
-
-    // ======= ======= UBICACIONES FUN ======= =======
+    // ======= ======= UBICACIONES FUNCTIONS ======= =======
     ubicaciones: any[] = [];
     ubicacionesB: any[] = [];
     ubicacionesSel: any[] = [];
@@ -809,6 +819,21 @@ export class InfProyectoComponent implements OnInit {
         );
       }
     }
+    contarMunicipiosYComunidades = (ubicacionPadreId: number): void => {
+      const hijosDirectos = this.ubicaciones.filter(
+        (ubicacion) => ubicacion.id_ubica_geo_padre === ubicacionPadreId
+      );
+
+      hijosDirectos.forEach((hijo) => {
+        if (hijo.idp_tipo_ubica_geo === "Municipios") {
+          this.headerDataNro01 += 1;
+        } 
+        else if (hijo.idp_tipo_ubica_geo === "Comunidades") {
+          this.headerDataNro02 += 1;
+        }
+        this.contarMunicipiosYComunidades(hijo.id_ubica_geo);
+      });
+    };
     // ======= ======= ======= ======= =======
     // ======= ======= INIT ADD UBICA GEO ======= =======
     initUbicaGeo(modalScope: TemplateRef<any>){
@@ -822,10 +847,10 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= UBICA FAMILY TREE ======= =======
     getSelectedUbicaFamily(ubicaciones: any[]) {
       ubicaciones.forEach((ubicacion) => {
-        if(ubicacion.selected) {
+        if (ubicacion.selected) {
           this.ubicacionesSel.push(ubicacion);
         }
-        if(ubicacion.childrens) {
+        if (ubicacion.childrens) {
           this.getSelectedUbicaFamily(ubicacion.childrens);
         }
       });
@@ -884,12 +909,21 @@ export class InfProyectoComponent implements OnInit {
     }
     
     valFechaHoraEntrega = true;
+    valFechaHoraEntrega2 = true;
     ValidateFechaHoraEntrega() {
       this.valFechaHoraEntrega = true;
+      this.valFechaHoraEntrega2 = true;
       if (!this.obligacionesModel.fecha_hora_entrega) {
-        this.valFechaHoraEntrega = false;
+          this.valFechaHoraEntrega = false;
+          return;
       }
-    }
+      const fechaObligacion = new Date(this.obligacionesModel.fecha_obligacion);
+      const fechaHoraEntrega = new Date(this.obligacionesModel.fecha_hora_entrega);
+
+      if (fechaHoraEntrega <= fechaObligacion) {
+          this.valFechaHoraEntrega2 = false;
+      }
+  }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT OBLIGACIONES NGMODEL ======= =======
     obligaCheckboxChanged(obligacionesSel: any){
@@ -926,7 +960,7 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.fecha_hora_entrega = null;
       this.obligacionesModel.ruta_plantilla = "";
       this.obligacionesModel.ruta_documente = "";
-      this.obligacionesModel.id_persona_entrega = this.namePersonaReg;
+      this.obligacionesModel.persona_entrega = this.namePersonaReg;
 
       this.valObligacion = true;
       this.valDescripcion = true;
@@ -952,7 +986,7 @@ export class InfProyectoComponent implements OnInit {
             let fechaObligacion = new Date(obligacion.fecha_obligacion);
             let fechaEntrega = new Date(obligacion.fecha_hora_entrega);
 
-            let currentDateGap = (fechaEntrega.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24);
+            let currentDateGap = (currentDate.getTime() - fechaObligacion.getTime()) / (1000 * 60 * 60 * 24);
             let datesGap = (fechaEntrega.getTime() - fechaObligacion.getTime()) / (1000 * 60 * 60 * 24);
 
             obligacion.progreso = Math.round(100*(currentDateGap / datesGap));
@@ -1098,7 +1132,8 @@ export class InfProyectoComponent implements OnInit {
         this.valFechaObligacion &&
         this.valIdInstitucionExige &&
         this.valIdpEstadoEntrega &&
-        this.valFechaHoraEntrega;
+        this.valFechaHoraEntrega &&
+        this.valFechaHoraEntrega2;
 
       // ======= SUBMIT SECTION =======
       if(valForm){
