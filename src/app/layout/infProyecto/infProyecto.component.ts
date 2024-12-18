@@ -15,7 +15,7 @@ import { servProyAlcanceGeo } from "../../servicios/proyAlcanceGeo";
 import { servPersonaRoles } from "../../servicios/personaRoles";
 import { environment } from '../../../environments/environment';
 
-import { forkJoin } from 'rxjs';
+import { forkJoin, concatMap, of } from 'rxjs';
 
 @Component({
     selector: 'app-infProyecto',
@@ -360,6 +360,7 @@ export class InfProyectoComponent implements OnInit {
       // ======= PROJECT SECTION =======
       this.proyectoScope.presupuesto_me = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_me);
       this.proyectoScope.presupuesto_mn = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn);
+
       this.servProyectos.editProyecto(this.proyectoScope).subscribe(
         (data) => {
           // ======= OBJETIVOS SECTION =======
@@ -367,7 +368,7 @@ export class InfProyectoComponent implements OnInit {
           let addRequestsObj = [];
 
           let deleteRequestObj = this.servProyObjetivos.deleteProyObjetivos(this.proyectoScope.id_proyecto);
-      
+
           allObjetivos.forEach((objetivo) => {
             if (objetivo.selected) {
               let objetivoObj = {
@@ -385,8 +386,9 @@ export class InfProyectoComponent implements OnInit {
           let allAlcanceGeo: any = [...this.ubicacionesSel, ...ubicacionesBSel];
           let addRequestsAlc = [];
 
+
           let deleteRequestAlc = this.servProyAlcanceGeo.deleteAlcanceGeo(this.proyectoScope.id_proyecto);
-      
+
           allAlcanceGeo.forEach((alcance) => {
             let alcanceObj = {
               p_id_proy_alcance: null,
@@ -396,34 +398,30 @@ export class InfProyectoComponent implements OnInit {
             addRequestsAlc.push(this.servProyAlcanceGeo.addProyAlcanceGeo(alcanceObj));
           });
           // ======= ======= =======
-          // ======= ON ALL REQUEST END =======
-          forkJoin([
-            deleteRequestObj, 
-            ...addRequestsObj,
-            deleteRequestAlc,
-            ...addRequestsAlc
-          ]).subscribe(
+          // ======= ON ALL QUERY SECTION =======
+          deleteRequestObj.pipe(
+            concatMap(() => {
+              return forkJoin(addRequestsObj.length > 0 ? addRequestsObj : of(null));
+            }),
+            concatMap(() => {
+              return deleteRequestAlc;
+            }),
+            concatMap(() => {
+              return forkJoin(addRequestsAlc.length > 0 ? addRequestsAlc : of(null));
+            })
+          ).subscribe(
             (responses) => {
-              //console.log(responses);
-              this.disableEditMode();  
+              //console.log('Todas las operaciones se completaron:', responses);
+              this.disableEditMode();
             },
             (error) => {
-              console.error('Error en las peticiones:', error);
+              console.error('Error en la ejecución secuencial:', error);
             }
           );
+          // ======= ======= =======
         },
         (error) => {
           console.error('Error en la edición del proyecto:', error);
-        }
-      );
-      // ======= ======= =======
-      // ======= OBJETIVOS SECTION =======
-      this.servProyObjetivos.deleteProyObjetivos(this.idProyecto).subscribe(
-        (data) => {
-          
-        },
-        (error) => {
-          console.error(error);
         }
       );
       // ======= ======= =======
@@ -896,7 +894,7 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= INIT OBLIGACIONES NGMODEL ======= =======
     obligaCheckboxChanged(obligacionesSel: any){
       this.obligaciones.forEach(obligacion =>{
-        if(obligacionesSel.id_proy_finan == obligacion.id_proy_finan){
+        if(obligacionesSel.id_proy_obliga == obligacion.id_proy_obliga){
           if(obligacionesSel.selected){
             this.obligacionesSelected = obligacionesSel;
           }
@@ -948,6 +946,8 @@ export class InfProyectoComponent implements OnInit {
 
           this.obligaciones.forEach((obligacion) => {
 
+            obligacion.fecha_hora_entrega = (obligacion.fecha_hora_entrega).slice(0,10);
+
             // ======= PROGRESO SECTION =======
             let fechaObligacion = new Date(obligacion.fecha_obligacion);
             let fechaEntrega = new Date(obligacion.fecha_hora_entrega);
@@ -989,7 +989,7 @@ export class InfProyectoComponent implements OnInit {
         p_idp_estado_entrega: parseInt(this.obligacionesModel.idp_estado_entrega),
         p_ruta_documente: this.obligacionesModel.ruta_documente,
         p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
-        p_id_persona_entrega: parseInt(this.obligacionesModel.id_persona_entrega)
+        p_id_persona_entrega: parseInt(this.idPersonaReg)
       };
       this.servObligaciones.addObligaciones(objObligacion).subscribe(
         (data) => {
@@ -1007,7 +1007,7 @@ export class InfProyectoComponent implements OnInit {
       this.initObligacionesModel();
 
       this.modalAction = "edit";
-      this.modalTitle = "Editar obligacion";
+      this.modalTitle = "Editar obligación";
 
       this.obligacionesModel.id_proy_obliga = this.obligacionesSelected.id_proy_obliga;
       this.obligacionesModel.id_proyecto = this.obligacionesSelected.id_proyecto;
@@ -1020,7 +1020,11 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.idp_estado_entrega = this.obligacionesSelected.idp_estado_entrega;
       this.obligacionesModel.ruta_documente = this.obligacionesSelected.ruta_documente;
       this.obligacionesModel.fecha_hora_entrega = this.obligacionesSelected.fecha_hora_entrega;
-      this.obligacionesModel.id_persona_entrega = this.obligacionesSelected.id_persona_entrega;
+      this.obligacionesModel.persona_entrega = (
+        this.obligacionesSelected.nombres+" "+
+        this.obligacionesSelected.apellido_1+" "+
+        ((this.obligacionesSelected.apellido_2)?(this.obligacionesSelected.apellido_2):(""))
+      );
 
       this.openModal(modalScope);
     }
@@ -1039,7 +1043,7 @@ export class InfProyectoComponent implements OnInit {
         p_idp_estado_entrega: parseInt(this.obligacionesModel.idp_estado_entrega),
         p_ruta_documente: this.obligacionesModel.ruta_documente,
         p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
-        p_id_persona_entrega: parseInt(this.obligacionesModel.id_persona_entrega)
+        p_id_persona_entrega: parseInt(this.obligacionesModel.idPersonaReg)
       };
       this.servObligaciones.editObligaciones(objObligacion).subscribe(
         (data) => {

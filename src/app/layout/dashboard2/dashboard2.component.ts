@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servDashboard } from "../../servicios/dashboard";
-import { Chart } from 'chart.js/auto'; // Importación de Chart.js
+import { Chart } from 'chart.js/auto';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -51,23 +51,16 @@ export class Dashboard2Component implements OnInit {
     finalDateGap: number = 0;
     realFinalDate: any = '';
 
-    images: any[] = [
-      { "id_institucion": 1, "ruta__iconos": `${environment.assetsPath}images/Manejo de fuego.jpg` },
-      { "id_institucion": 2, "ruta__iconos": `${environment.assetsPath}Actividades.jpg}` },
-      { "id_institucion": 3, "ruta__iconos": `${environment.assetsPath}Logros.jpg}` },
-      { "id_institucion": 4, "ruta__iconos": `${environment.assetsPath}Hombre.png}` },
-      { "id_institucion": 5, "ruta__iconos": `${environment.assetsPath}Mujer.png}` },
-      { "id_institucion": 6, "ruta__iconos": `${environment.assetsPath}ActoresClave.jpg}` }
-    ];
+    assetsPath = environment.assetsPath;
 
     imageSrc: any = null;
     defaultImageSrc: any = environment.defaultImageSrc;
 
     ngOnInit() {
-        this.createDoughnutChart(); // Grafico Presupuesto
-        this.createDoughnutChart2024() // Grafico Presupuesto 2024
-        this.createRadarChart(); // Grafico Indicadores
-        this.createLearnDoughnutChart(); // Grafico Aprendizajes
+      this.createDoughnutChart(); // Grafico Presupuesto
+      this.createDoughnutChart2024() // Grafico Presupuesto 2024
+      this.createRadarChart(); // Grafico Indicadores
+      this.createLearnDoughnutChart(); // Grafico Aprendizajes
       this.getDashboardData();
     }
 
@@ -128,25 +121,6 @@ export class Dashboard2Component implements OnInit {
         this.headerDataNro03 = this.obligaciones.filter((obligacion) => obligacion.estado === 'Incumplida').length;
         this.headerDataNro04 = this.obligaciones.filter((obligacion) => obligacion.estado === 'En proceso').length;
       }
-      imageSelected: any = null;
-      imageSelectedAux: any = null;
-      onImageClick(imageSel: any) {
-        this.images.forEach(image =>{
-          if(imageSel.id_institucion == image.id_institucion){
-            image.selected = !image.selected;
-            if(imageSel.selected){
-              this.imageSelectedAux = imageSel;
-            }
-            else{
-              this.imageSelectedAux = null;
-            }
-          }
-          else{
-            image.selected = false;
-          }
-        });
-      }
-
       
       // ====== ======= ====== Grafico Presupuesto ====== ======= ======
       createDoughnutChart() {
