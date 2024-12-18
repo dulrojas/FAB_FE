@@ -79,13 +79,13 @@ export class PlanifEstrategicaComponent implements OnInit {
           indicador: any = "";
           descripcion: any = "";
           comentario: any = "";
-          orden: any = "";
+          orden: any ;
           linea_base: any = "";
           medida: any = "";
           meta_final: any = "";
           medio_verifica: any = "";
           id_estado: any = "";
-          inst_categoria_1: any = "";
+          inst_categoria_1: any ;
           inst_categoria_2: any = "";
           inst_categoria_3: any = "";
 
@@ -93,6 +93,7 @@ export class PlanifEstrategicaComponent implements OnInit {
           color: any = "";
           // Variables de Selección
           componentes: any[] = [];
+          selectedParentCodigo: any = '';
           planifCategoria: any[] = [];
           planifSubCategoria: any[] = [];
           planifTipoCategoria: any[] = [];
@@ -124,32 +125,27 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.valCodigo = false;
       }
     }*/
-      valCategoria: any = true;
-      ValidateCategoria(){
-        this.valCategoria = true;
-        if(!this.inst_categoria_1){
-          console.log('Validación Categoría:', this.valCategoria);
-          this.valCategoria = false; 
+        valCategoria: any = true;
+        ValidateCategoria(){
+          this.valCategoria = true;
+          if(!this.inst_categoria_1){
+            this.valCategoria = false;
+          }
         }
-      }
-      
-      valSubCategoria: any = true;
-      ValidateSubCategoria(){
-        this.valSubCategoria = true;
-        if(!this.inst_categoria_2){
-          console.log('Validación SubCategoría:', this.valSubCategoria);
-          this.valSubCategoria = false; 
+        valSubCategoria: any = true;
+        ValidateSubCategoria(){
+          this.valSubCategoria = true;
+          if(!this.inst_categoria_2){
+            this.valCategoria = false;
+          }
         }
-      }
-      
-      valTipoCategoria: any = true;
-      ValidateTipoCategoria(){
-        this.valTipoCategoria = true;
-        if(!this.inst_categoria_3){
-          this.valTipoCategoria = false; 
+        valTipoCategoria: any = true;
+        ValidateTipoCategoria(){
+          this.valTipoCategoria = true;
+          if(!this.inst_categoria_3){
+            this.valCategoria = false;
+          }
         }
-      }
-      
 
         valIndicador: any = true;
         ValidateIndicador() {
@@ -182,6 +178,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         ValidateOrden(){
           this.valOrden = true;
           if(!this.orden){
+            console.log('el orden es : ',  this.orden);
             this.valOrden = false;
           }
         }
@@ -217,6 +214,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         ValidateEstado(){
           this.valEstado = true;
           if(!this.id_estado){
+            console.log('el id estado es : ',  this.id_estado);
             this.valEstado = false;
           }
         }
@@ -442,17 +440,19 @@ export class PlanifEstrategicaComponent implements OnInit {
 
       // Método para manejar cambios en el tipo y filtrar padres válidos
       onParentChange(): void {
-        console.log('Tipo actual:', this.tipo);
-        if (!this.tipo) {
-          console.error("No se ha definido un tipo para validar el padre.");
-          return;
-        }
+        if (this.selectedParentCodigo) {
+          if (this.tipo === 'OE') {
+            this.codigo = this.generarCodigoOE(this.selectedParentCodigo);
 
-        // Actualizar lista de padres válidos
-        this.validParents = this.getValidParents(this.tipo);
-        console.log('Padres válidos actualizados:', this.validParents);
-        
+            
+          } else if (this.tipo === 'RE') {
+            this.codigo = this.generarCodigoRE(this.selectedParentCodigo);
+          }
+        } else {
+          this.codigo = ''; // Limpia el código si no hay un padre seleccionado
+        }
       }
+      
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
     // ======= ======= GENERAR CÓDIGO ======= ======= 
     // Método para obtener el último código de "OG" y generar el siguiente código.
@@ -475,12 +475,59 @@ export class PlanifEstrategicaComponent implements OnInit {
         // Formatear el nuevo código en el formato "X.0.0.0".
         return `${lastOG[0]}.0.0.0`;
       }
-
+      generarCodigoOE(parentCodigo: string): string {
+        const oeElements = this.planifEstrategica.filter(el => el.id_proy_elem_padre === 1|| el.id_proy_elem_padre === 2);
+        const lastOE = oeElements.reduce((max, el) => {
+          const currentCode = el.codigo.split('.').map(Number);
+          if (currentCode[1] > max[1]) {
+            return currentCode;
+          }
+          return max;
+        }, [Number(parentCodigo.split('.')[0]), 0, 0, 0]);
+      
+        lastOE[1]++;
+        return `${lastOE[0]}.${lastOE[1]}.0.0`;
+      }
+      
+      generarCodigoRE(parentCodigo: string): string {
+        const reElements = this.planifEstrategica.filter(el => el.id_proy_elem_padre === 3);
+        const lastRE = reElements.reduce((max, el) => {
+          const currentCode = el.codigo.split('.').map(Number);
+          if (currentCode[2] > max[2]) {
+            return currentCode;
+          }
+          return max;
+        }, [Number(parentCodigo.split('.')[0]), Number(parentCodigo.split('.')[1]), 0, 0]);
+      
+        lastRE[2]++;
+        return `${lastRE[0]}.${lastRE[1]}.${lastRE[2]}.0`;
+      }
 
     // ======= ======= MOVER ELEMENTO ======= =======
     moverElemento(elemento: any, direccion: string): void {
-      
-    }
+      // Encontrar el índice actual del elemento
+      const index = this.planifEstrategica.findIndex(el => el === elemento);
+    
+      if (index === -1) {
+        console.error('Elemento no encontrado.');
+        return;
+      }
+    
+      // Determinar el nuevo índice
+      let newIndex = direccion === 'arriba' ? index - 1 : index + 1;
+    
+      // Validar que el índice esté dentro de los límites
+      if (newIndex < 0 || newIndex >= this.planifEstrategica.length) {
+        console.warn('Movimiento fuera de límites.');
+        return;
+      }
+    
+      // Intercambiar elementos en la lista
+      [this.planifEstrategica[index], this.planifEstrategica[newIndex]] = 
+      [this.planifEstrategica[newIndex], this.planifEstrategica[index]];
+    
+      console.log(`Elemento movido ${direccion}. Nuevo orden:`, this.planifEstrategica);
+    }   
     
     
     
@@ -498,15 +545,15 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.indicador = "";
         this.descripcion = "";
         this.comentario = "";
-        this.orden = "";
+        this.orden = 2;
         this.linea_base = "";
         this.medida = "";
         this.meta_final = "";
         this.medio_verifica = "";
-        this.id_estado = "";
+        this.id_estado = 1;
         this.inst_categoria_1 = "";
-        this.inst_categoria_2 = "";
-        this.inst_categoria_3 = "";
+        this.inst_categoria_2 = "" ;
+        this.inst_categoria_3 = "" ;
 
         this.sigla = null;
         this.color = null;
@@ -553,6 +600,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         if (this.tipo === 'OG') {
           this.codigo = this.generateCodigoOG(); // Generar el código para OG
         }
+      
       }
 
       this.openModal(modalScope);
@@ -560,22 +608,22 @@ export class PlanifEstrategicaComponent implements OnInit {
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
   addIndicador() {
     const objIndicador = {
-      p_id_proy_indicador: 0,
-      p_id_proyecto: parseInt(this.idProyecto, 10),
-      p_id_proy_elem_padre: this.id_proy_elem_padre,
-      p_codigo: this.codigo,
-      p_indicador: this.indicador,
-      p_descripcion: this.descripcion,
-      p_comentario: this.comentario,
-      p_orden: this.orden,
-      p_linea_base: this.linea_base,
-      p_medida: this.medida,
-      p_meta_final: this.meta_final,
-      p_medio_verifica: this.medio_verifica,
-      p_id_estado: this.id_estado,
-      p_inst_categoria_1: this.inst_categoria_1 ,
-      p_inst_categoria_2:  this.inst_categoria_2 ,
-      p_inst_categoria_3:  this.inst_categoria_3 
+      p_id_proy_indicador: 0|| null,
+      p_id_proyecto: parseInt(this.idProyecto, 10)|| null,
+      p_id_proy_elem_padre: this.id_proy_elem_padre|| null,
+      p_codigo: this.codigo|| null,
+      p_indicador: this.indicador|| null,
+      p_descripcion: this.descripcion|| null,
+      p_comentario: this.comentario || null,
+      p_orden: this.orden|| null,
+      p_linea_base: this.linea_base || null,
+      p_medida: this.medida|| null,
+      p_meta_final: this.meta_final|| null,
+      p_medio_verifica: this.medio_verifica|| null,
+      p_id_estado: this.id_estado|| null,
+      p_inst_categoria_1: parseInt(this.inst_categoria_1, 10)|| null,
+      p_inst_categoria_2: parseInt(this.inst_categoria_2, 10)|| null,
+      p_inst_categoria_3: parseInt(this.inst_categoria_3, 10)|| null
     };
   
     console.log('Objeto enviado a la API:', objIndicador); // Verifica los valores
@@ -589,9 +637,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         console.error('Error al guardar los datos:', error);
       }
     );
-    
-  }  
-  
+  }
   
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
     initEditPlanifEstrategica(planifEstrategicaOGOERE: TemplateRef<any>, planifEstrategicaIN: TemplateRef<any>){
@@ -617,7 +663,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.meta_final = this.planifEstrategicaSelected.meta_final;
       this.medio_verifica = this.planifEstrategicaSelected.medio_verifica;
       this.id_estado = this.planifEstrategicaSelected.id_estado;
-      this.inst_categoria_1 = this.planifEstrategicaSelected.inst_categoria_1;
+        this.inst_categoria_1 = this.planifEstrategicaSelected.inst_categoria_1;
       this.inst_categoria_2 = this.planifEstrategicaSelected.inst_categoria_2;
       this.inst_categoria_3 = this.planifEstrategicaSelected.inst_categoria_3;
 
@@ -642,7 +688,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     editIndicador(){
       const objIndicador = {
         p_id_proy_indicador: this.id_proy_indicador,
-        p_id_proyecto: this.id_proyecto,
+        p_id_proyecto: parseInt(this.idProyecto, 10)|| null,
         p_id_proy_elem_padre: this.id_proy_elem_padre,
         p_codigo: this.codigo,
         p_indicador: this.indicador,
@@ -654,9 +700,9 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_meta_final: this.meta_final,
         p_medio_verifica: this.medio_verifica,
         p_id_estado: this.id_estado,
-        p_inst_categoria_1: this.inst_categoria_1,
-        p_inst_categoria_2: this.inst_categoria_2,
-        p_inst_categoria_3: this.inst_categoria_3
+        p_inst_categoria_1: parseInt(this.inst_categoria_1,10),
+        p_inst_categoria_2: parseInt(this.inst_categoria_2,10),
+        p_inst_categoria_3: parseInt(this.inst_categoria_3,10)
       };
       this.servIndicador.editIndicador(objIndicador).subscribe(
         (data) => {
@@ -783,13 +829,13 @@ countHeaderData(): void {
         this.valLineaBase &&
         this.valMedida &&
         this.valMetaFinal &&
-        this.valMedioVerifica &&
-        this.valEstado;
+        this.valMedioVerifica
+
        console.log('Formulario válido:', valForm); // Para verificar qué está fallando
 
       // ======= ACTION SECTION =======
-      // ======= ACTION SECTION =======
-  if (valForm) {
+
+
     if (this.modalAction === "add") {
       this.addIndicador();
       console.log('Añadiendo...');
@@ -799,9 +845,8 @@ countHeaderData(): void {
     }
     this.closeModal();
     console.log('Cerrando...');
-  } else {
-    console.log('El formulario no es válido');
-  }
+
+  
 }
     // ======= ======= ======= ======= =======
 

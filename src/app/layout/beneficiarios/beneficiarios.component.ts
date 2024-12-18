@@ -8,6 +8,8 @@ import { servicios } from "../../servicios/servicios";
 import { BeneficiariosService } from "../../servicios/Beneficiarios";
 import { AliadosService } from "../../servicios/aliados";
 import { servPersona } from "../../servicios/persona";
+import { servPersonaRoles } from "../../servicios/personaRoles";
+import { ChangeDetectorRef } from '@angular/core';
 
 import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
 import { register } from 'module';
@@ -56,7 +58,9 @@ export class BeneficiariosComponent implements OnInit {
     private servicios: servicios,
     private aliadosService: AliadosService,
     private personaService: servPersona,
-    private ubicaGeograficaService: servUbicaGeografica
+    private ubicaGeograficaService: servUbicaGeografica,
+    private cdr: ChangeDetectorRef,
+    private servPersonaRoles: servPersona
   ) {}
 
 
@@ -117,12 +121,13 @@ export class BeneficiariosComponent implements OnInit {
     this.loadAliados();
     this.loadConvenios();
     this.countHeaderData();
-    this.cargarPersona();
+    this.cargarPersonaRoles();
   }
 //obtenr actividades
 getActividades(): void {
   this.beneficiariosService.getActividades().subscribe(
     (response) => {
+      console.log('Respuesta completa de actividades:', response);
       if (response[0]?.res === 'OK') {
         this.actividades = response[0].dato;
         console.log('Actividades cargadas:', this.actividades);
@@ -131,6 +136,7 @@ getActividades(): void {
     (error) => console.error('Error al cargar actividades:', error)
   );
 }
+
 // inicializar formulario con los campos del beneficiario
   private initForm(): void {
     this.beneficiariesForm = this.fb.group({
@@ -164,38 +170,49 @@ getActividades(): void {
     }
   );
   }
+  
 
   planifData: any[] = []; // Datos originales del API
-tablaPersonas: any[] = []; // Datos procesados para la tabla
-
-cargarPersona() {
-  this.personaService.getPersonas().subscribe(
-    (response: any) => {
+  tablaPersonas: any[] = []; // Datos procesados para la tabla
+  
+  cargarPersonaRoles() {
+    this.servPersonaRoles.getPersonas().subscribe((response: any) => {
       if (response[0]?.res === 'OK') {
-        // Asigna los datos originales del API
         this.planifData = response[0]?.dato || [];
-        console.log('Datos originales:', this.planifData);
-
-        // Transforma los datos al formato necesario para la tabla
         this.tablaPersonas = this.planifData.map((persona, index) => ({
-          id: index + 1, // Número secuencial
-          comunidad: persona.id_inst_unidad || 'N/A', // Comunidad (puedes ajustar el campo según sea necesario)
-          docIden: persona.p_nro_documento || 'Sin documento', // Número de documento
-          nombreCompleto: `${persona.nombres || ''} ${persona.apellido_1 || ''} ${persona.apellido_2 || ''}`.trim(), // Nombre completo
-          rangoEdad: 'N/A', // Rango de edad (puedes calcularlo si tienes la fecha de nacimiento)
-          sexo: 'N/A', // Sexo (puedes inferirlo si está disponible en los datos)
+          id: index + 1,
+          comunidad: persona.id_inst_unidad || 'N/A',
+          docIden: persona.nro_documento || 'Sin documento',
+          nombreCompleto: `${persona.nombres || ''} ${persona.apellido_1 || ''} ${persona.apellido_2 || ''}`.trim(),
+          rangoEdad: this.calcularRangoEdad(persona.fecha_nacimiento),
+          sexo: persona.sexo || 'N/A',
         }));
-
         console.log('Datos transformados:', this.tablaPersonas);
-      } else {
-        console.error('Error en la respuesta del API:', response);
+        this.cdr.detectChanges(); // Actualiza manualmente la vista
       }
-    },
-    (error) => {
-      console.error('Error al cargar los datos del servicio:', error);
-    }
-  );
-}
+    });
+  }
+  
+  // Función para obtener el nombre completo de una persona
+  obtenerNombreCompleto(persona: any): string {
+    const nombres = persona.nombres || '';
+    const apellido1 = persona.apellido_1 || '';
+    const apellido2 = persona.apellido_2 || '';
+    return `${nombres} ${apellido1} ${apellido2}`.trim();
+  }
+  
+  // Función para calcular el rango de edad (opcional)
+  calcularRangoEdad(fechaNacimiento: string | null): string {
+    if (!fechaNacimiento) return 'N/A';
+  
+    const fechaNac = new Date(fechaNacimiento);
+    const edad = new Date().getFullYear() - fechaNac.getFullYear();
+    if (edad < 18) return 'Menor de edad';
+    if (edad <= 35) return '18-35 años';
+    if (edad <= 60) return '36-60 años';
+    return 'Mayor de 60 años';
+  }
+  
 
 
 /// init aliados form

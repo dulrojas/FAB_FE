@@ -209,28 +209,37 @@
                           <div class="col col-xl-3 col-lg-3 mt-auto">
                             <label for="padre">Padre</label>
                             <select 
-                              class="form-control" 
-                              id="padre" 
-                              name="padre" 
-                              [(ngModel)]="selectedParentCodigo" 
-                              [disabled]="tipo === 'OG'" 
-                              (change)="onParentChange()">
-                              <option value="">Seleccionar padre</option>
-                              <option 
-                                *ngFor="let parent of validParents" 
-                                [value]="parent.codigo">
-                                {{ parent.nombre }} ({{ parent.codigo }})
-                              </option>
-                            </select>
+                            class="form-control" 
+                            id="padre" 
+                            name="padre" 
+                            [(ngModel)]="selectedParentCodigo" 
+                            [disabled]="tipo === 'OG'" 
+                            (change)="onParentChange()">
+                            <option value="">Seleccionar padre</option>
+                            <option 
+                              *ngFor="let parent of validParents" 
+                              [value]="parent.codigo">
+                              {{ parent.nombre }} ({{ parent.codigo }})
+                            </option>
+                          </select>
+                          
                           </div>
 
                           <!-- Código -->
                           <div class="col col-xl-3 col-lg-3 mt-auto">
                             <label for="codigo">Código</label>
                             <input 
-                              class="form-control" type="text" id="codigo" name="codigo" 
-                              [(ngModel)]="codigo" [readonly]="false" [required]="false" placeholder="Ingresa el Código"> 
+
+                              class="form-control" 
+                              type="text" 
+                              id="codigo" 
+                              name="codigo" 
+                              [(ngModel)]="codigo" 
+                              [readonly]="true" 
+                              required>
+
                           </div>
+                          
                           
                             <div class="col col-xl-12 col-lg-12 mt-auto">
                               <label for="indicador">Nombre de elemento</label>
@@ -528,4 +537,3 @@
   </div>
 </ng-template>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
-

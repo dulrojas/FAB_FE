@@ -362,6 +362,8 @@ export class EjecEstrategicaComponent implements OnInit {
         
       }
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
+      
+
     // ======= ======= GENERAR CÓDIGO ======= ======= 
     // Método para obtener el último código de "OG" y generar el siguiente código.
       generateCodigoOG(): string {
