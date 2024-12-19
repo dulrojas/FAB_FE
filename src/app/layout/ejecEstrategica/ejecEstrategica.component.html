@@ -77,45 +77,63 @@
                         </thead>
 
                         <tbody>
-                            <tr *ngFor="let ejecEstrategica of ejecEstrategicaTable; let i = index">
-                                <td>
-                                    <input type="checkbox" [(ngModel)]=" ejecEstrategica.selected"
-                                        (change)="checkboxChanged(ejecEstrategica)" 
-                                        id="checkbox-{{i}}" 
-                                        name="checkbox-{{i}}"/>
-                                </td>
-                                <td>{{ ejecEstrategica.codigo }}</td>
-                                <td>{{ ejecEstrategica.indicador }}</td>
-                                <td></td>
-                                <td>{{ ejecEstrategica.orden }}</td>
-                                <td>{{ ejecEstrategica.medida }}</td>
-                                <td>{{ ejecEstrategica.medio_verifica }}</td>
-                                <td>{{ ejecEstrategica.linea_base }}</td>
-                                <td>
-                                  <div 
+                          <tr *ngFor="let ejecEstrategica of ejecEstrategicaTable; let i = index">
+                            <td>
+                                <input type="checkbox" [(ngModel)]="ejecEstrategica.selected"
+                                    (change)="checkboxChanged(ejecEstrategica)" 
+                                    id="checkbox-{{i}}" 
+                                    name="checkbox-{{i}}"/>
+                            </td>
+                            <td>{{ ejecEstrategica.codigo }}</td>
+                            <td>{{ ejecEstrategica.indicador }}</td>
+                            
+                            <!-- Reporte a: Fecha del último avance -->
+                            <td>{{ getUltimoAvance(ejecEstrategica.id_proy_indicador)?.fecha_reportar || 'No Disponible' }}</td>
+                            
+                            <!-- Progreso: Valor Reportado -->
+                            <td>{{ getUltimoAvance(ejecEstrategica.id_proy_indicador)?.valor_reportado || 0 }}</td>
+                            
+                            <td>{{ ejecEstrategica.medida }}</td>
+                            
+                            <!-- Notas: Comentarios del último avance -->
+                            <td>{{ getUltimoAvance(ejecEstrategica.id_proy_indicador)?.comentarios || 'Sin comentarios' }}</td>
+                            
+                            <td>{{ ejecEstrategica.linea_base }}</td>
+                        
+                            <!-- Avance Per.: Progreso Esperado -->
+                            <td>
+                                <div 
                                     style="width: 100%; height: 10px; background-color: #e0e0e0; border-radius: 5px; overflow: hidden;">
                                     <div 
-                                      [style.width.%]="ejecEstrategica.progresoActual || 60"
-                                      style="height: 100%; background-color: #4caf50; border-radius: 5px;">
+                                        [style.width.%]="getAvanceVerde(
+                                            ejecEstrategica.linea_base, 
+                                            ejecEstrategica.meta_final, 
+                                            getUltimoAvance(ejecEstrategica.id_proy_indicador)?.valor_reportado || 0)"
+                                        style="height: 100%; background-color: #4caf50; border-radius: 5px;">
                                     </div>
-                                  </div>
-                                </td>
-                                
-                                  <td>{{ ejecEstrategica.meta_final }}</td>
-
-                                  <td>
+                                </div>
+                            </td>
+                            
+                            <td>{{ ejecEstrategica.meta_final }}</td>
+                        
+                            <!-- Avance: Porcentaje de avance final -->
+                            <td>
+                                <div 
+                                    style="width: 100%; height: 10px; background-color: #e0e0e0; border-radius: 5px; overflow: hidden;">
                                     <div 
-                                      style="width: 100%; height: 10px; background-color: #e0e0e0; border-radius: 5px; overflow: hidden;">
-                                      <div 
-                                        [style.width.%]="ejecEstrategica.progresoEsperado || 75"
+                                        [style.width.%]="getAvanceAmarillo(
+                                            ejecEstrategica.linea_base, 
+                                            ejecEstrategica.meta_final, 
+                                            getUltimoAvance(ejecEstrategica.id_proy_indicador)?.valor_reportado || 0)"
                                         style="height: 100%; background-color: #ffc107; border-radius: 5px;">
-                                      </div>
                                     </div>
-                                  </td>
-                                  
-                                <td>{{ ejecEstrategica.descripcion }}</td>
-                            </tr>
-                        </tbody>
+                                </div>
+                            </td>
+                            
+                            <td>{{ ejecEstrategica.descripcion }}</td>
+                        </tr>
+                        
+                      </tbody>
                         
                     </table>
                     <div class="d-flex justify-content-center">
@@ -150,10 +168,9 @@
                               <!-- ======= ======= TIPO ======= ======= -->
                                 <div class="col col-xl-3 col-lg-3">
                                     <label for="id_proy_elem_padre">Tipo</label>
-                                    <input 
-                                    type="text" class="form-control" id="id_proy_elem_padre" 
-                                    [value]="getElementoNombre(id_proy_elem_padre)" 
-                                    readonly>
+                                    <input class="form-control" type="text" id="id_proy_elem_padre" name="id_proy_elem_padre"
+                                     [disabled]="!editMode"                                  
+                                    [value]="getElementoNombre(id_proy_elem_padre)" disabled>                      
                                 </div>
                               <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                                 <div class="col col-xl-1 col-lg-1 mt-auto">
@@ -168,11 +185,8 @@
                                 <div class="col col-xl-2 col-lg-2">
                                   <label for="codigo">Código</label>
                                   <input 
-                                    class="form-control" 
-                                    type="text" 
-                                    id="codigo" 
-                                    name="codigo" 
-                                    [(ngModel)]="codigo" 
+                                    class="form-control" type="text" id="codigo" name="codigo" 
+                                    [(ngModel)]="codigo"  [disabled]="!editMode"
                                     [readonly]="true" 
                                     required>
                                 </div>
@@ -184,13 +198,10 @@
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                   <label for="inst_categoria_1">Categoría</label>
                                   <select 
-                                    class="form-control" 
-                                    id="inst_categoria_1" 
-                                    name="inst_categoria_1"
-                                    [(ngModel)]="inst_categoria_1"  
-                                    aria-label="Seleccionar Categoría">
+                                    class="form-control" id="inst_categoria_1" name="inst_categoria_1"
+                                    [disabled]="!editMode" >
                                     <option *ngFor="let categoria of ejecCategoria" [value]="categoria.id_inst_categoria">
-                                      {{ categoria.nombre }}
+                                      {{ categoria.inst_categoria_1}}
                                     </option>
                                   </select>
                                 </div>
@@ -199,10 +210,8 @@
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                   <label for="inst_categoria_2">SubCategoría</label>
                                   <select 
-                                    class="form-control" 
-                                    id="inst_categoria_2" 
-                                    name="inst_categoria_2"
-                                    [(ngModel)]="inst_categoria_2" 
+                                    class="form-control" id="inst_categoria_2" name="inst_categoria_2"
+                                    [(ngModel)]="inst_categoria_2" [disabled]="!editMode"
                                     aria-label="Seleccionar SubCategoría">
                                     <option *ngFor="let categoria of ejecSubCategoria" [value]="categoria.id_inst_categoria">
                                       {{ categoria.nombre }}
@@ -214,10 +223,8 @@
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                   <label for="tipoIndicador">Tipo</label>
                                   <select 
-                                    class="form-control" 
-                                    id="inst_categoria_3" 
-                                    name="inst_categoria_3"
-                                    [(ngModel)]="inst_categoria_3"  
+                                    class="form-control" id="inst_categoria_3"  name="inst_categoria_3"
+                                    [(ngModel)]="inst_categoria_3" [disabled]="!editMode"
                                     aria-label="Seleccionar Tipo">
                                     <option *ngFor="let categoria of ejecTipoCategoria" [value]="categoria.id_inst_categoria">
                                       {{ categoria.nombre }}
@@ -231,13 +238,13 @@
                               <div class="col col-xl-12 col-lg-12 mt-auto">
                                 <label for="indicador">Indicador</label>
                                 <input class="form-control" type="text" id="indicador" name="indicador" 
-                                   [(ngModel)]="indicador" required/>                                    
+                                   [(ngModel)]="indicador" [disabled]="!editMode"/>                                    
                               </div>
                               <!-- DESCRIPCION -->
                               <div class="col col-xl-12 col-lg-12 mt-auto">
                                 <label for="descripcion">Descripcion</label>
                                 <input class="form-control" type="text" id="descripcion" name="descripcion" 
-                                    [(ngModel)]="descripcion" required/>
+                                    [(ngModel)]="descripcion" [disabled]="!editMode"/>
                               </div>
                             </div>
                             <!-- ======= ======= PROY ELEMENTOS ======= ======= -->
@@ -249,11 +256,9 @@
                                     <div class="col col-xl-2 col-lg-2">
                                       <label for="codigo">Código</label>
                                       <input 
-                                        class="form-control" 
-                                        type="text" 
-                                        id="codigo" 
-                                        name="codigo" 
-                                        [(ngModel)]="codigo" 
+                                        class="form-control" type="text" 
+                                        id="codigo" name="codigo" 
+                                        [(ngModel)]="codigo" [disabled]="!editMode"
                                         [readonly]="true" 
                                         required>
                                     </div>                              
@@ -261,9 +266,7 @@
                                     <div class="col col-xl-2 col-lg-2">
                                         <label for="tipoIndicador">Tipo</label>
                                         <input 
-                                          type="text" 
-                                          class="form-control" 
-                                          id="id_proy_elem_padre" 
+                                          type="text" class="form-control" id="id_proy_elem_padre" [disabled]="!editMode"
                                           [value]="getElementoNombre(id_proy_elem_padre)" 
                                           readonly>
                                       </div>                              
@@ -281,9 +284,7 @@
                                       [(ngModel)]="idp_categoria"
                                       name="idp_categoria">
                                       <select 
-                                        class="form-control" 
-                                        id="padre" 
-                                        name="padre" 
+                                        class="form-control" id="padre" name="padre" 
                                         [(ngModel)]="selectedParentCodigo" 
                                         [disabled]="tipo === 'OG'" 
                                         (change)="onParentChange()">
@@ -301,7 +302,7 @@
                                       <label for="descripcion">Descripción</label>
                                       <input class="form-control" type="text"
                                               id="descripcion" name="descripcion"
-                                              [(ngModel)]="descripcion">
+                                              [(ngModel)]="descripcion" [disabled]="!editMode">
                                     </div>
                                   </div>                     
                                 </div>
@@ -312,31 +313,31 @@
                               <div class="col col-xl-2 col-lg-2">
                                 <label for="linea_base">Línea base</label>
                                 <input class="form-control" type="text" id="linea_base" name="linea_base" 
-                                              [(ngModel)]="linea_base"/>
+                                              [(ngModel)]="linea_base" [disabled]="!editMode"/>
                               </div>     
                               <!-- Medida -->           
                               <div class="col col-xl-2 col-lg-2">
                                 <label for="medida">Medida</label>
                                 <input class="form-control" type="text" id="medida" name="medida" 
-                                              [(ngModel)]="medida"/>                                          
+                                              [(ngModel)]="medida" [disabled]="!editMode"/>                                          
                               </div>   
                               <!-- Meta Final -->             
                               <div class="col col-xl-2 col-lg-2">
                                 <label for="meta_final">Meta Final</label>
                                 <input class="form-control" type="text" id="meta_final" name="meta_final" 
-                                             [(ngModel)]="meta_final" />
+                                             [(ngModel)]="meta_final" [disabled]="!editMode"/>
                               </div>                
                               <!-- Medio de verificación -->
                               <div class="col col-xl-6 col-lg-6">
                                 <label for="medio_verifica">Medio de verificación</label>
                                 <input class="form-control" type="text" id="medio_verifica" name="medio_verifica" 
-                                              [(ngModel)]="medio_verifica" />                                          
+                                              [(ngModel)]="medio_verifica" [disabled]="!editMode"/>                                          
                               </div>
                               <!-- Supuestos/Comentario -->
                               <div class="col col-xl-12 col-lg-12">
                                 <label for="comentario">Supuestos/Comentario</label>
                                 <input class="form-control" type="text" id="comentario" name="comentario" 
-                                          [(ngModel)]="comentario"/>
+                                          [(ngModel)]="comentario" [disabled]="!editMode"/>
                               </div>
                             </div>
                             <!-- ======= ======= REPORTE ======= ======= -->
@@ -344,28 +345,38 @@
                               <div class="col-12 mt-2 mb-2 p-2" style="border: 1px solid white;">
                                 <label for="comentario">Reporte</label>
                                 <!-- Tabla Reporte -->
-                                  <table class="table custom-table-planifEstrategica table-striped table-bordered table-responsive">
-                                    <thead>
-                                      <tr>
-                                        <th style="text-align: center;">#</th>
-                                        <th style="text-align: center;">Periodo</th>
-                                        <th style="text-align: end;">Valor Esperado</th>
-                                        <th>Progreso</th>
-                                        <th>Notas</th>
-                                        <th>Evidencia</th>                                         
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      <tr *ngFor="let item of planifDatosAvance; let i = index">
-                                        <td style="text-align: center;">{{ i + 1 }}</td>
-                                        <td style="text-align: center;">{{ item.periodo }}</td>
-                                        <td style="text-align: end;">{{ item.valorEsperado }}</td>
-                                        <td>{{ item.progreso }}</td>
-                                        <td>{{ item.notas }}</td>
-                                        <td>{{ item.evidencia }}</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>                
+                                <table class="table custom-table-planifEstrategica table-striped table-bordered table-responsive">
+                                  <thead>
+                                    <tr>
+                                      <th style="text-align: center;">#</th>
+                                      <th style="text-align: center;">Periodo</th>
+                                      <th style="text-align: end;">Valor Esperado</th>
+                                      <th>Progreso</th>
+                                      <th>Notas</th>
+                                      <th>Evidencia</th>                                         
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr *ngFor="let item of indicadoresAvance; let i = index">
+                                      <td style="text-align: center;">{{ i + 1 }}</td> <!-- Muestra el índice -->
+                                      <td style="text-align: center;">{{ item.periodo || '-' }}</td> <!-- Muestra el periodo -->
+                                      <td style="text-align: end;">{{ item.valor_esperado | number:'1.0-0' }}</td> <!-- Muestra el valor esperado -->
+                                      <td>
+                                        <!-- Muestra un gráfico de progreso (por ejemplo, un valor porcentual o barra) -->
+                                        <div class="progress" style="height: 20px;">
+                                          <div class="progress-bar" role="progressbar" [style.width.%]="item.avance_total" aria-valuenow="{{item.avance_total}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span>{{ item.avance_total }}%</span>
+                                      </td>
+                                      <td>{{ item.notas || '-' }}</td> <!-- Muestra las notas -->
+                                      <td>
+                                        <!-- Aquí puedes agregar un enlace o botón para ver la evidencia, si existe -->
+                                        <a *ngIf="item.ruta_evidencia" [href]="item.ruta_evidencia" target="_blank">Ver Evidencia</a>
+                                        <span *ngIf="!item.ruta_evidencia">Sin evidencia</span>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>                                           
                               </div>
                               <div class="modal-footer">
                                 <div class="d-flex justify-content-end" style="width: 100%;">
