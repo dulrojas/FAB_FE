@@ -24,14 +24,14 @@
         </div>
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
-    <div class="row">
-        <div class="col col-md-12">
-            <h2 class="custom-view-title">Aprendizajes</h2>
-        </div>
-    </div>
     <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
     <div class="card mb-3">
         <div class="card-body custom-card table-responsive">
+            <div class="row">
+                <div class="col col-md-12">
+                    <h2 class="custom-view-title">Aprendizajes</h2>
+                </div>
+            </div>
             <div class="row">
                 <div class="col col-xl-12 col-lg-12 text-end">
                     <button type="button" class="btn btn-view-bg-1" 
@@ -146,13 +146,13 @@
         
                                 <!-- ======= ======= AREA DE APRENDIZAJE SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="idp_aprendizaje_area">Area de aprendizaje</label>
+                                    <label for="idp_aprendizaje_area">Área de aprendizaje</label>
                                     <select class="form-control" id="idp_aprendizaje_area" name="idp_aprendizaje_area" 
                                         [(ngModel)]="idp_aprendizaje_area" (change)="ValidateArea()">
-                                        <option value="" disabled selected>Selecciona un area</option>
+                                        <option value="" disabled selected>Selecciona un área</option>
                                         <option *ngFor="let area of areasAprendizaje" [value]="area.id_subtipo">{{ area.descripcion_subtipo }}</option>
                                     </select>
-                                    <span class="custom-alert-message" *ngIf="!valArea">Debe elegir un area</span>
+                                    <span class="custom-alert-message" *ngIf="!valArea">Debe elegir un área</span>
                                 </div>
                                 <!-- ======= ======= TIPO APRENDIZAJE SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
@@ -193,9 +193,9 @@
 
                                 <!-- ======= ======= ACCION DESARROLLADA SECTION ======= ======= -->
                                 <div class="col col-xl-12 col-lg-12 mb-auto">
-                                    <label for="accion">Accion desarrollada</label>
+                                    <label for="accion">Acción desarrollada</label>
                                     <textarea class="form-control" id="accion" name="accion" 
-                                        placeholder="Ingresa la accion del aprendizaje" 
+                                        placeholder="Ingresa la acción del aprendizaje" 
                                         [(ngModel)]="accion" (change)="ValidateAccion()">
                                     </textarea>
                                     <span class="custom-alert-message" *ngIf="!valAccion">Debe ingresar una accion valida, con menos de 500 caracteres</span>

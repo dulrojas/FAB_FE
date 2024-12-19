@@ -53,7 +53,7 @@
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Responsable de registro</h2>
                                     <input class="form-control custom-info-proy-input" type="text" 
-                                        id="person_resp" name="person_resp" [(ngModel)]="person_resp" [disabled]="!editMode"/>
+                                        id="person_resp" name="person_resp" [(ngModel)]="person_resp" disabled/>
                                 </div>
                                 <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
@@ -326,17 +326,17 @@
                                     <label class="custom-info-proy-sub-title" for="">Composición del Presupuesto</label>
                                 </div>
                                 <div class="col col-md-12 text-end">
-                                    <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initAddFinanciadores(presupuestoFormModal)"
                                         [disabled]="((financiadoresSelected)||(!editMode))">
                                         <i class="fa fa-plus" aria-hidden="true"></i>
                                     </button>
-                                    <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initEditFinanciadores(presupuestoFormModal)"
                                         [disabled]="((!financiadoresSelected)||(!editMode))">
                                         <i class="fa fa-caret-up" aria-hidden="true"></i>
                                     </button>
-                                    <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initDeleteFinanciadores(deletePresupuestoModal)"
                                         [disabled]="((!financiadoresSelected)||(!editMode))">
                                         <i class="fa fa-minus" aria-hidden="true"></i>
@@ -637,7 +637,7 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" (click)="editFinanciadores();">
+            <button type="button" class="btn btn-bg-1" (click)="deleteFinanciadores();">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
             </button>
         </div>
@@ -764,6 +764,7 @@
                                         id="fecha_hora_entrega" name="fecha_hora_entrega" 
                                         [(ngModel)]="obligacionesModel.fecha_hora_entrega" (change)="ValidateFechaHoraEntrega()"/>
                                     <span class="custom-alert-message" *ngIf="!valFechaHoraEntrega">Debe seleccionar una fecha y hora de entrega.</span>
+                                    <span class="custom-alert-message" *ngIf="!valFechaHoraEntrega2">La fecha de entrega debe ser posterior a la fecha de obligación.</span>
                                 </div>
                                 <!-- ======= ======= ID PERSONA ENTREGA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mb-auto">

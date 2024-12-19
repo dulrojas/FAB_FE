@@ -1,8 +1,8 @@
 <div class="row">
-    <div class="col col-md-3 mx-auto">
-        <img class="mx-auto" [src]="(userImg)||(defaultImageSrc)" style="border-radius: 45%; object-fit: cover;" height="80" width="80" alt="Sin imagen" />
+    <div class="col col-md-3 my-auto">
+        <img class="custom-body-header-image row mx-auto" [src]="(userImg)||(defaultImageSrc)" alt="Sin imagen" />
     </div>
-    <div class="col col-md-6 mx-auto">
+    <div class="col col-md-6">
         <span class="pt-4 titulo">Bienvenido(a): {{fullUserName}}</span>
         <span>
             <select class="form-control" id="proyecto" name="proyecto" 
@@ -15,7 +15,7 @@
         </span>
         <span class="pt-4 titulo">Rol: {{currentPerProRol}}</span>
     </div>
-    <div class="col col-md-3 mx-auto">
-        <img class="mx-auto" [src]="projectImg" style="border-radius: 45%; object-fit: cover;" height="80" width="80" alt="Sin imagen" />
+    <div class="col col-md-3 my-auto">
+        <img class="custom-body-header-image row mx-auto" [src]="(projectImg)||(defaultImageSrc)" alt="Sin imagen" />
     </div>
 </div>

@@ -148,7 +148,7 @@ export class LogrosComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET ICONS ======= =======
-    async getIconos() {
+    async getIconos(){
       try {
         const data: any = await new Promise((resolve, reject) => {
           this.servLogros.getIconos().subscribe(

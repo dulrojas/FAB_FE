@@ -234,6 +234,13 @@ select.form-control {
 }
 // ======= ======= ======= ======= =======
 // ======= ======= SOME CUSTOMS ======= =======
+.custom-body-header-image{
+    height: 80px !important;
+    width: 80px !important;
+
+    border-radius: 45% !important; 
+    object-fit: cover !important;
+}
 .custom-alert-message{
     font-size: 15px;
     color: #cc2222;
