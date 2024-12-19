@@ -3,8 +3,7 @@ import { Component, OnInit, TemplateRef, ChangeDetectorRef} from '@angular/core'
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
-// Importacion de servicios 
-
+// ======= ======= ======= SERVICES SECTION ======= ======= =======
 import { PlanifEstrategicaService } from '../../servicios/planifEstrategica';
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
@@ -13,7 +12,7 @@ import {servInstCategorias} from '../../servicios/instCategoria';
 import { servIndicadorAvance } from '../../servicios/indicadorAvance';
 
 
-// Estructura del Decorador del Componente 
+// ======= ======= ======= COMPONENTES ======= ======= =======
 @Component({
   selector: 'app-planifEstrategica',
   templateUrl: './planifEstrategica.component.html',
@@ -22,9 +21,10 @@ import { servIndicadorAvance } from '../../servicios/indicadorAvance';
 })
 
 export class PlanifEstrategicaComponent implements OnInit {
-    // Variables de datos principales
+    // ======= ======= VARIABLES SECTION ======= =======
     planifEstrategica: any[] = [];
-    // Variables de paginación
+
+    // ======= ======= VARIABLES PAGINACION ======= =======
     mainPage = 1;
     mainPageSize = 10;
     totalLength = 0;
@@ -101,14 +101,14 @@ export class PlanifEstrategicaComponent implements OnInit {
           planifPeriodofecha: any[] = [];
           planifMetaEsperada: any[] = [];
 
-            //LLAMADO PARA TABLA
-            planifEstrategicaTipo: any[] = [];
+          //LLAMADO PARA TABLA
+          planifEstrategicaTipo: any[] = [];
     
 
 
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
-    valComponente: any = false;  // Inicializar como false, ya que debe ser verdadero solo cuando la validación pase
+    valComponente: any = false; 
 
     ValidateComponente() {
       if (this.id_proy_elem_padre) {
@@ -221,8 +221,8 @@ export class PlanifEstrategicaComponent implements OnInit {
        
     // ======= ======= INIT VIEW FUN ======= =======
         ngOnInit(): void {
-          this.getParametricas(); // Obtiene datos de las paramétricas
-          this.getPlanifEstrategica(); // Obtiene datos del servicio
+          this.getParametricas(); 
+          this.getPlanifEstrategica(); 
           this.cargarIndicadoresAvance();
         }
     // ======= ======= ======= ======= =======  ======= ======= =======  =======
@@ -439,69 +439,108 @@ export class PlanifEstrategicaComponent implements OnInit {
       }
 
       // Método para manejar cambios en el tipo y filtrar padres válidos
+      // Método para manejar cambios en el tipo y filtrar padres válidos
       onParentChange(): void {
         if (this.selectedParentCodigo) {
-          if (this.tipo === 'OE') {
-            this.codigo = this.generarCodigoOE(this.selectedParentCodigo);
-
-            
-          } else if (this.tipo === 'RE') {
-            this.codigo = this.generarCodigoRE(this.selectedParentCodigo);
+          switch (this.tipo) {
+            case 'OG':
+              this.codigo = this.generateCodigoOG();
+              break;
+            case 'OE':
+              this.codigo = this.generarCodigoOE(this.selectedParentCodigo);
+              break;
+            case 'RE':
+              this.codigo = this.generarCodigoRE(this.selectedParentCodigo);
+              break;
+            case 'IN':
+              this.codigo = this.generarCodigoIN(this.selectedParentCodigo);
+              break;
+            default:
+              this.codigo = '';
+              break;
           }
         } else {
           this.codigo = ''; // Limpia el código si no hay un padre seleccionado
         }
       }
       
-    // ======= ======= ======= ======= ======= ======= =======  ======= =======
     // ======= ======= GENERAR CÓDIGO ======= ======= 
     // Método para obtener el último código de "OG" y generar el siguiente código.
-      generateCodigoOG(): string {
-        // Obtener los elementos con id_proy_elem_padre === 1 (OG).
-        const ogElements = this.planifEstrategica.filter(el => el.id_proy_elem_padre === 1);
+    generateCodigoOG(): string {
+      // Obtener los elementos con id_proy_elem_padre === 1 (OG).
+      const ogElements = this.planifEstrategica.filter(el => el.id_proy_elem_padre === 1);
 
-        // Buscar el código más alto de los OG.
-        const lastOG = ogElements.reduce((max, el) => {
-          const currentCode = el.codigo.split('.').map(Number);
-          if (currentCode[0] > max[0]) {
-            return currentCode;
-          }
-          return max;
-        }, [0, 0, 0, 0]); // [1, 0, 0, 0] es el valor predeterminado
+      // Buscar el código más alto de los OG.
+      const lastOG = ogElements.reduce((max, el) => {
+        const currentCode = el.codigo.split('.').map(Number);
+        if (currentCode[0] > max[0]) {
+          return currentCode;
+        }
+        return max;
+      }, [0, 0, 0, 0]); // [1, 0, 0, 0] es el valor predeterminado
 
-        // Incrementar el primer dígito del código.
-        lastOG[0]++;
+      // Incrementar el primer dígito del código.
+      lastOG[0]++;
 
-        // Formatear el nuevo código en el formato "X.0.0.0".
-        return `${lastOG[0]}.0.0.0`;
+      // Formatear el nuevo código en el formato "X.0.0.0".
+      return `${lastOG[0]}.0.0.0`;
+    }
+    // Generar código para OE
+    generarCodigoOE(parentCodigo: string): string {
+    const oeElements = this.planifEstrategica.filter(el => el.id_proy_elem_padre === 2);
+    const lastOE = oeElements.reduce((max, el) => {
+      const currentCode = el.codigo.split('.').map(Number);
+      if (currentCode[1] > max[1]) return currentCode;
+      return max;
+    }, [Number(parentCodigo.split('.')[0]), 0, 0, 0]);
+
+    lastOE[1]++;
+    return `${lastOE[0]}.${lastOE[1]}.0.0`;
+    }
+      // Generar código para RE
+    generarCodigoRE(parentCodigo: string): string {
+    const reElements = this.planifEstrategica.filter(el => el.codigo.startsWith(parentCodigo) && el.id_proy_elem_padre === 2);
+    const lastRE = reElements.reduce((max, el) => {
+      const currentCode = el.codigo.split('.').map(Number);
+      if (currentCode[2] > max[2]) return currentCode;
+      return max;
+    }, [Number(parentCodigo.split('.')[0]), Number(parentCodigo.split('.')[1]), 0, 0]);
+
+    console.log('Último RE:', lastRE);
+    lastRE[2]++;
+    return `${lastRE[0]}.${lastRE[1]}.${lastRE[2]}.0`;
+    }
+    generarCodigoIN(parentCodigo: string): string {
+    // Convertimos el código del padre a un array de números para la comparación
+    const parentCodeArray = parentCodigo.split('.').map(Number);
+
+    // Filtrar elementos que coincidan con el prefijo del código del padre seleccionado
+    const inElements = this.planifEstrategica.filter(el => {
+      const currentCodeArray = el.codigo.split('.').map(Number);
+      return (
+        currentCodeArray[0] === parentCodeArray[0] && // Mismo nivel 1
+        currentCodeArray[1] === parentCodeArray[1] && // Mismo nivel 2
+        currentCodeArray[2] === parentCodeArray[2]    // Mismo nivel 3
+      );
+    });
+
+    console.log('Elementos filtrados:', inElements);
+
+    // Reducir para encontrar el último código válido en el nivel 4
+    const lastIN = inElements.reduce((max, el) => {
+      const currentCodeArray = el.codigo.split('.').map(Number);
+      if (currentCodeArray[3] > max[3]) {
+        return currentCodeArray; // Actualizamos si el nivel 4 es mayor
       }
-      generarCodigoOE(parentCodigo: string): string {
-        const oeElements = this.planifEstrategica.filter(el => el.id_proy_elem_padre === 1|| el.id_proy_elem_padre === 2);
-        const lastOE = oeElements.reduce((max, el) => {
-          const currentCode = el.codigo.split('.').map(Number);
-          if (currentCode[1] > max[1]) {
-            return currentCode;
-          }
-          return max;
-        }, [Number(parentCodigo.split('.')[0]), 0, 0, 0]);
-      
-        lastOE[1]++;
-        return `${lastOE[0]}.${lastOE[1]}.0.0`;
-      }
-      
-      generarCodigoRE(parentCodigo: string): string {
-        const reElements = this.planifEstrategica.filter(el => el.id_proy_elem_padre === 3);
-        const lastRE = reElements.reduce((max, el) => {
-          const currentCode = el.codigo.split('.').map(Number);
-          if (currentCode[2] > max[2]) {
-            return currentCode;
-          }
-          return max;
-        }, [Number(parentCodigo.split('.')[0]), Number(parentCodigo.split('.')[1]), 0, 0]);
-      
-        lastRE[2]++;
-        return `${lastRE[0]}.${lastRE[1]}.${lastRE[2]}.0`;
-      }
+      return max;
+    }, parentCodeArray); // Inicializamos con el código del padre convertido a números
+
+    console.log('Último código encontrado:', lastIN);
+
+    // Incrementar el cuarto nivel del código
+    lastIN[3]++;
+    return `${lastIN[0]}.${lastIN[1]}.${lastIN[2]}.${lastIN[3]}`; // Formateamos el nuevo código
+    }
 
     // ======= ======= MOVER ELEMENTO ======= =======
     moverElemento(elemento: any, direccion: string): void {
@@ -740,32 +779,31 @@ export class PlanifEstrategicaComponent implements OnInit {
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
 
 
-// COUNT HEADER DATA
-countHeaderData(): void {
-  // Inicializamos los contadores
-  this.headerDataNro01 = 0;
-  this.headerDataNro02 = 0;
-  this.headerDataNro03 = 0;
-  this.headerDataNro04 = 0;
-
-  // Recorremos solo una vez el arreglo y actualizamos los contadores
-  this.planifEstrategica.forEach(e => {
-    switch (e.tipo) {
-      case 'OG':
-        this.headerDataNro01++;
-        break;
-      case 'OE':
-        this.headerDataNro02++;
-        break;
-      case 'RE':
-        this.headerDataNro03++;
-        break;
-      case 'IN':
-        this.headerDataNro04++;
-        break;
-    }
-  });
-}
+  countHeaderData(): void {
+    // Inicializamos los contadores
+    this.headerDataNro01 =0;
+    this.headerDataNro02 = 0;
+    this.headerDataNro03 = 0;
+    this.headerDataNro04 = 0;
+    console.log('Planificación Estratégica para e counter :', this.planifEstrategica);
+    // Recorremos solo una vez el arreglo y actualizamos los contadores
+    this.planifEstrategica.forEach(e => {
+      switch (e.sigla) {
+        case 'IM':
+          this.headerDataNro01++;
+          break;
+        case 'OC':
+          this.headerDataNro02++;
+          break;
+        case 'RE':
+          this.headerDataNro03++;
+          break;
+        case 'IN':
+          this.headerDataNro04++;
+          break;
+      }
+    });
+  }
 
 
 // ======= ======= SUBMIT FORM ======= =======
@@ -774,47 +812,22 @@ countHeaderData(): void {
       let valForm = false;
 
       this.ValidateComponente();
-      console.log('Componente válido:', this.valComponente);
-    
+          
       /*this.ValidateCodigo();
       console.log('Código válido:', this.valCodigo);*/
     
-      this.ValidateCategoria();
-      console.log('Categoría válida:', this.valCategoria);
-    
-      this.ValidateSubCategoria();
-      console.log('Subcategoría válida:', this.valSubCategoria);
-    
+      this.ValidateCategoria();        
+      this.ValidateSubCategoria();  
       this.ValidateTipoCategoria();
-      console.log('Tipo de categoría válido:', this.valTipoCategoria);
-    
       this.ValidateIndicador();
-      console.log('Indicador válido:', this.valIndicador);
-    
       this.ValidateDescripcion();
-      console.log('Descripción válida:', this.valDescripcion);
-    
       this.ValidateComentario();
-      console.log('Comentario válido:', this.valComentario);
-    
       this.ValidateOrden();
-      console.log('Orden válido:', this.valOrden);
-    
       this.ValidateLineaBase();
-      console.log('Línea base válida:', this.valLineaBase);
-    
       this.ValidateMedida();
-      console.log('Medida válida:', this.valMedida);
-    
       this.ValidateMetaFinal();
-      console.log('Meta final válida:', this.valMetaFinal);
-    
       this.ValidateMedioVerifica();
-      console.log('Medio de verificación válido:', this.valMedioVerifica);
-    
       this.ValidateEstado();
-      console.log('Estado válido:', this.valEstado);
-    
 
       valForm = 
         this.valComponente &&
@@ -830,8 +843,6 @@ countHeaderData(): void {
         this.valMedida &&
         this.valMetaFinal &&
         this.valMedioVerifica
-
-       console.log('Formulario válido:', valForm); // Para verificar qué está fallando
 
       // ======= ACTION SECTION =======
 
