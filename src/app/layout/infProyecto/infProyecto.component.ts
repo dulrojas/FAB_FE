@@ -48,8 +48,12 @@ export class InfProyectoComponent implements OnInit {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
+      this.getParametricas();
       this.getInformacionProyecto();
+      this.getInstObjetivos();
+      this.getProyObjetivos();
       this.getFinanciadores();
+      this.getUbicaGeografica();
       this.getObligaciones();
     }
 
@@ -63,7 +67,6 @@ export class InfProyectoComponent implements OnInit {
     modalTitle: any = "";
 
     proyectoScope: any = {};
-    proyectoScopeAux: any = {};
 
     editMode: any = false;
 
@@ -94,6 +97,7 @@ export class InfProyectoComponent implements OnInit {
       this.getInstObjetivos();
       this.getProyObjetivos();
       this.getFinanciadores();
+      this.getUbicaGeografica();
       this.getObligaciones();
     }
     // ======= ======= ======= ======= =======
@@ -155,7 +159,50 @@ export class InfProyectoComponent implements OnInit {
         }
       );
       // ======= ======= =======
-      // ======= GET UBICACIONES =======
+      // ======= GET INSTITUCIONES =======
+      this.servInstituciones.getInstituciones().subscribe(
+        (data) => {
+          this.instituciones = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
+      // ======= GET FINAN TIPO =======
+      this.servicios.getParametricaByIdTipo(9).subscribe(
+        (data) => {
+          this.tipoFinanciadores = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
+      // ======= GET PERIODOS =======
+      this.servicios.getParametricaByIdTipo(10).subscribe(
+        (data) => {
+          this.periodos = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
+      // ======= GET ESTADOS ENTREGA =======
+      this.servicios.getParametricaByIdTipo(8).subscribe(
+        (data) => {
+          this.estadosEntrega = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= ======= =======
+    }
+    // ======= ======= ======= ======= =======
+    // ======= GET UBICACIONES =======
+    getUbicaGeografica(){
       this.servUbicaGeografica.getUbicaGeografica().subscribe(
         (data) => {
           this.ubicaciones = data[0].dato;
@@ -218,49 +265,8 @@ export class InfProyectoComponent implements OnInit {
           console.error(error);
         }
       );
-      // ======= ======= =======
-      // ======= GET INSTITUCIONES =======
-      this.servInstituciones.getInstituciones().subscribe(
-        (data) => {
-          this.instituciones = data[0].dato;
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-      // ======= ======= =======
-      // ======= GET FINAN TIPO =======
-      this.servicios.getParametricaByIdTipo(9).subscribe(
-        (data) => {
-          this.tipoFinanciadores = data[0].dato;
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-      // ======= ======= =======
-      // ======= GET PERIODOS =======
-      this.servicios.getParametricaByIdTipo(10).subscribe(
-        (data) => {
-          this.periodos = data[0].dato;
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-      // ======= ======= =======
-      // ======= GET ESTADOS ENTREGA =======
-      this.servicios.getParametricaByIdTipo(8).subscribe(
-        (data) => {
-          this.estadosEntrega = data[0].dato;
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-      // ======= ======= =======
     }
-    // ======= ======= ======= ======= =======
+    // ======= ======= =======
     // ======= ======= GET INST OBJETIVOS ======= =======
     async getInstObjetivos(){
       try{
@@ -326,21 +332,17 @@ export class InfProyectoComponent implements OnInit {
     disableEditMode(){
       this.editMode = false;
 
-      this.ngOnInit();
+      this.getInformacionProyecto();
+      this.getInstObjetivos();
+      this.getProyObjetivos();
+      this.getUbicaGeografica();
     }
     // ======= ======= ======= ======= =======
     // ======= ======= COUNT HEADER DATA FUCTION ======= =======
     countHeaderData(){
-      this.headerDataNro01 = this.informacionProyecto.length;
-
       this.headerDataNro03 = this.finalDateGap - this.currentDateGap;
-      
-      this.informacionProyecto.forEach(logro =>{
-        if(logro.admi_sistema){
-          this.headerDataNro02 += 1
-        }
-        this.headerDataNro04 += 1;
-      });
+
+      this.headerDataNro04 = (parseFloat((this.proyectoScope.total_ejecutado.toString()).slice(1))) / (parseFloat(this.proyectoScope.presupuesto_me.toString()));
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET PROYECTO ======= =======
@@ -348,13 +350,11 @@ export class InfProyectoComponent implements OnInit {
       this.servProyectos.getInfoProyectoByIdPro(this.idProyecto).subscribe(
         (data) => {
           this.proyectoScope = data[0].dato[0];
-          this.proyectoScopeAux = this.proyectoScope;
 
           this.person_resp = this.proyectoScope.nombres +" "+ this.proyectoScope.apellido_1 +" "+ this.proyectoScope.apellido_2;
           this.proyectoScope.presupuesto_me = (this.proyectoScope.presupuesto_me).slice(1);
           this.proyectoScope.presupuesto_mn = (this.proyectoScope.presupuesto_mn).slice(1);
-
-
+          
           this.getProyectDateGaps();
 
           this.countHeaderData();
@@ -385,7 +385,7 @@ export class InfProyectoComponent implements OnInit {
                 p_id_proy_objetivos: null,
                 p_id_proyecto: this.idProyecto,
                 p_idp_inst_objetivos: objetivo.id_inst_objetivos,
-                p_idp_valor_objetivo: objetivo.selected === 1 ? 2 : 1
+                p_idp_valor_objetivo: (objetivo.selected == 1)?(2):(1)
               };
               addRequestsObj.push(this.servProyObjetivos.addProyObjetivos(objetivoObj));
             }

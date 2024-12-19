@@ -37,16 +37,17 @@ export class BodyHeaderComponent implements OnInit {
     this.pushRightClass = 'push-right';
 
     this.fullUserName = localStorage.getItem("userFullName");
+    
     this.proyectos = JSON.parse(localStorage.getItem("projects"));
     this.currentIdProy = parseInt(localStorage.getItem("currentIdProy"));
     this.currentIdProy = (this.currentIdProy)?(this.currentIdProy):(this.proyectos[0].id_proyecto);
     this.currentPerProRol = localStorage.getItem("currentPerProRol");
-
-    this.projectImg = null;
-    this.getProjectImg();
     
     this.userImg = null;
     this.getUserImg();
+
+    this.projectImg = null;
+    this.getProjectImg();
   }
 
   // ======= ======= ======= GETING USER IMAGE ======= ======= ======
@@ -56,18 +57,23 @@ export class BodyHeaderComponent implements OnInit {
     } 
     catch (error) {
       this.userImg = null;
-      console.error('Error en getIconos:', error);
+      console.error('Error en getUserImg:', error);
     }
   }
   // ======= ======= ======= ======= ======= ======= ======
   // ======= ======= ======= GETING PROJECT IMAGE ======= ======= ======
   async getProjectImg(){
     try {
-      this.projectImg = await this.downloadFile("proyecto", "ruta_imagen", "id_proyecto", this.currentIdProy);
+      if((this.proyectos.find(proyecto => proyecto.id_proyecto == this.currentIdProy)).ruta_imagen){
+        this.projectImg = await this.downloadFile("proyecto", "ruta_imagen", "id_proyecto", this.currentIdProy);
+      }
+      else{
+        this.projectImg = null;
+      }
     } 
     catch (error) {
       this.projectImg = null;
-      console.error('Error en getIconos:', error);
+      console.error('Error en getProjectImg:', error);
     }
   }
   // ======= ======= ======= ======= ======= ======= ======
