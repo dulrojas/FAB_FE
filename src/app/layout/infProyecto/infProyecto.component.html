@@ -18,7 +18,7 @@
                     {{headerDataNro03}} Dias para conclucir
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    Periodo vigente: {{headerDataNro04}} 
+                    {{headerDataNro04}}% Porcentaje ejecutado
                 </div>
             </div>
         </div>
@@ -42,23 +42,23 @@
                                         id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto" [disabled]="!editMode"/>
                                 </div>
                                 <div class="col col-lg-6 col-md-6">
-                                    <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                    <!-- ======= ======= ======= NOMBRE COMPLETO PROYECTO ======= ======= ======= -->
                                     <h2 class="custom-info-proy-sub-title">Nombre completo del proyecto</h2>
                                     <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" 
                                         [(ngModel)]="proyectoScope.descrpcion" [disabled]="!editMode"></textarea>
                                 </div>
                             </div>
                             <div class="row">
-                                <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                <!-- ======= ======= ======= RESPONSABLE PROYECTO ======= ======= ======= -->
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Responsable de registro</h2>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="person_resp" name="person_resp" [(ngModel)]="person_resp" disabled/>
                                 </div>
-                                <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                <!-- ======= ======= ======= UNIDAD PROYECTO ======= ======= ======= -->
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Unidad ejecutora</h2>
-                                    <select class="form-control custom-info-proy-input" id="unidad" name="unidad" 
+                                    <select class="form-control custom-info-proy-input" id="id_inst_unidad" name="id_inst_unidad" 
                                         [(ngModel)]="proyectoScope.id_inst_unidad" [disabled]="!editMode">
                                         <option value="" disabled selected>Selecciona una unidad</option>
                                         <option *ngFor="let unidad of unidades" [value]="unidad.id_inst_unidad">
@@ -66,8 +66,8 @@
                                         </option>
                                     </select>
                                 </div>
+                                <!-- ======= ======= ======= NOTAS PROYECTO ======= ======= ======= -->
                                 <div class="col col-md-6"> 
-                                    <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
                                     <h2 class="custom-info-proy-sub-title">Notas adicionales</h2>
                                     <textarea class="form-control custom-info-proy-input" id="notas" name="notas" 
                                         [(ngModel)]="proyectoScope.notas" [disabled]="!editMode"></textarea>
@@ -133,6 +133,7 @@
                     <div class="row">
                         <!-- ======= ======= ======= TITLE DATE ======= ======= ======= -->
                         <h2 class="custom-info-proy-title">Estado de proyecto:</h2>
+                        <h2 class="custom-estado-proy">{{ proyectoScope.estado_proy }}</h2>
 
                         <!-- ======= ======= ======= GRABAR DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-1" 
@@ -151,7 +152,7 @@
                         </button>
                         <!-- ======= ======= ======= REPORTE DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-2">
-                            Habilitar reporte
+                            Activar
                         </button>
                         <!-- ======= ======= ======= EVALUACION DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-2">

@@ -298,6 +298,21 @@ select.form-control {
     gap: 5px;
 }
 
+.custom-estado-proy{
+    width: 100%;
+
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+
+    margin-bottom: 5px;
+
+    background-color: $third-color;
+
+    text-align: center;
+    font-size: 1rem;
+    color: $txt-2-color;
+}
+
 .data-project-section{
     grid-column: 1 / span 4;
     grid-row: 1;
