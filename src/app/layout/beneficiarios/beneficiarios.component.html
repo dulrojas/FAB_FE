@@ -124,7 +124,7 @@
             <div class="col col-xl-2 col-lg-2 mt-auto">
               <label for="id">Id</label>
               <input class="form-control" type="text" 
-                  id="id" name="id" disabled formControlName="id" class="form-control"/>
+                  id="id" name="id" formControlName="id" class="form-control"/>
             </div>
             <div class="col col-xl-6 col-lg-6 mt-auto">
             </div>
@@ -138,12 +138,12 @@
           <!-- Actividad y Evento -->
           <div class="col col-xl-6 col-lg-6 mt-auto">
               <label for="actividad">Pertenece a la Actividad</label>
-              <select  class="form-control" id="actividad" name="actividad" >
-                <option value="" disabled selected>Seleccione la Actividad</option>
+              <select class="form-control" id="actividad" formControlName="actividad">
+                <option value="" selected>Seleccione la Actividad</option>
                 <option *ngFor="let actividad of actividades" [value]="actividad.id_proy_actividad">
-                  {{ actividad.actividad }} 
+                  {{ actividad.actividad }}
                 </option>
-              </select>
+              </select>              
           </div>
           <div class="col col-xl-6 col-lg-6 mt-auto">
               <label for="evento">Evento</label>
@@ -153,7 +153,7 @@
           <div class="col col-xl-3 col-lg-3 mt-auto" >
             <label for="department">Departamento</label>
             <select class="form-control" (change)="onDepartamentoChange($event.target.value)" >
-              <option value="" disabled selected>Seleccione un departamento</option>
+              <option value="" selected>Seleccione un departamento</option>
               <option *ngFor="let depto of departamentos" [value]="depto.orden">
                 {{ depto.nombre }}
               </option>
@@ -162,7 +162,7 @@
           <div class="col col-xl-4 col-lg-4 mt-auto">
             <label for="municipio">Municipio</label>
             <select  class="form-control" (change)="onMunicipioChange($event.target.value)">
-              <option value="" disabled selected>Seleccione un Municipio</option>
+              <option value="" selected>Seleccione un Municipio</option>
               <option *ngFor="let muni of municipios" [value]="muni.orden">
                 {{ muni.nombre }}
               </option>
@@ -171,14 +171,14 @@
           <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="comunidad">Comunidad</label>
             <select class="form-control" id="comunidad" name="comunidad" >
-              <option value="" disabled selected>Seleccione una Comunidad</option>
+              <option value="" selected>Seleccione una Comunidad</option>
               <option *ngFor="let comunidad of comunidades" [value]="comunidad.orden">
                 {{ comunidad.nombre }}
               </option>
             </select>
           </div>
           <div class="col col-xl-1 col-lg-1 mt-auto">
-            <button type="button" (click)="openModal()" 
+            <button type="button" (click)="openModal(beneficiaUBIModal)" 
               style="background-color: #d67600; color: white; border: none; border-radius: 30%; width: 35px; height: 35px; font-size: 15px; 
                 display: flex; justify-content: center; align-items: center;">+
             </button>
@@ -186,12 +186,12 @@
            <!-- Tipo de Organización y Organización -->
            <div class="col col-xl-6 col-lg-6 mt-auto">
             <label for="tipoOrganizacion">Tipo de Organización</label>
-            <select class="form-control" id="tipoOrganizacion" name="tipoOrganizacion" >
-              <option value="" disabled selected>Seleccione un tipo de organización</option>
-              <option *ngFor="let tipo of organizacionTipo" [value]="tipo.id_subtipo">
-                {{ tipo.descripcion_subtipo }}
+            <select class="form-control" formControlName="tipoOrganizacion">
+              <option value="" selected>Seleccione un tipo de organización</option>
+              <option *ngFor="let tipo of tiposOrganizacion" [value]="tipo.id_subtipo">
+                {{ tipo.nombre }}
               </option>
-            </select>
+            </select>            
           </div>
           <div class="col col-xl-6 col-lg-6 mt-auto">
             <label for="organizacion">Nombre de la Organización</label>
@@ -248,6 +248,54 @@
 </form>
 </div>
 </ng-template>
+
+<ng-template #beneficiaUBIModal let-modal class="custom-modal">
+  <div class="modal-header">
+    <h4 class="modal-title">Ubicación Geográfica</h4>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmitLocation()">
+      <div class="row">
+        <div class="col-12 mt-3">
+          <label class="d-flex justify-content-center" for="department">DEPARTAMENTO</label>
+          <select class="form-control mt-2" (change)="onDepartamentoChange($event.target.value)">
+            <option value="" selected>Seleccione un departamento</option>
+            <option *ngFor="let depto of departamentos" [value]="depto.orden">
+              {{ depto.nombre }}
+            </option>
+          </select>
+        </div>
+        <div class="col-12 mt-3">
+          <label class="d-flex justify-content-center" for="municipio">MUNICIPIO</label>
+          <select class="form-control mt-2" (change)="onMunicipioChange($event.target.value)">
+            <option value="" selected>Seleccione un Municipio</option>
+            <option *ngFor="let muni of municipios" [value]="muni.orden">
+              {{ muni.nombre }}
+            </option>
+          </select>
+        </div>
+        <div class="col-12 mt-3">
+          <label class="d-flex justify-content-center" for="comunidad">COMUNIDAD</label>
+          <select class="form-control mt-2" (change)="onComunidadChange($event.target.value)">
+            <option value="" selected>Seleccione una Comunidad</option>
+            <option *ngFor="let comunidad of comunidades" [value]="comunidad.orden">
+              {{ comunidad.nombre }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer mt-2">
+        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+          <i class="fa fa-times"></i> Cancelar
+        </button>
+        <button type="button" class="btn btn-bg-1" (click)="saveLocationSelection(modal)">
+          <i class="fa fa-check"></i> Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
 
 <ng-template #listaBeneficiariesModal let-modal class="custom-modal">
   <!-- Encabezado del Modal-->

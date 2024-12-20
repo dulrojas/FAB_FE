@@ -14,6 +14,7 @@ import {servProyectos} from '../../servicios/proyectos';
 
 @Component({
   selector: 'app-ejec-estrategica',
+ //  templateUrl: './ejecucuion.html',
   templateUrl: './ejecEstrategica.component.html',
   styleUrls: ['./ejecEstrategica.component.scss'],
   animations: [routerTransition()]
@@ -60,7 +61,7 @@ export class EjecEstrategicaComponent implements OnInit {
       headerDataNro04: any = 0;
   // ======= ======= NGMODEL VARIABLES SECTION ======= =======
       modalAccion: any = '';
-      modalTitle: any = "";
+      modalTitle: any = '';
 
       // VARIABLES PROY_INDICADOR 
       id_proy_indicador: any = "";
@@ -172,6 +173,7 @@ export class EjecEstrategicaComponent implements OnInit {
     openModal(content: TemplateRef<any>) {
       const modalRef = this.modalService.open(content, { size: 'xl' });
       this.modalRefs.push(modalRef);
+      this.cdr.detectChanges();
     }
 
     closeModal() {
@@ -409,34 +411,66 @@ validateComentarios() {
     this.valComentarios = false;
   }
 }
+convertToNumber(value: string): number {
+  return parseFloat(value.replace(/[^0-9.-]+/g, ''));
+}
 
 // Cargar indicadores de avance
 getIndicadoresAvance(): void {
   this.servIndicadorAvance.getIndicadoresAvance().subscribe(
     (data) => {
-      if (data) {
-        this.indicadoresAvance = data.map((item: any) => {
-          const ultimoAvance = item.avances?.[item.avances.length - 1] || {};
+      if (data && data.length > 0 && data[0].dato) {
+        const indicadores = data[0].dato;
+   
+
+        console.log('Indicadores de avance mucho antes:', indicadores);
+
+        // Asegurarse de que los datos sean correctos antes de asignarlos
+        this.indicadoresAvance = indicadores.map((item: any) => {
+          console.log('Procesando indicador:', item);
+
+          // Verificar si los avances existen
+          const ultimoAvance = item.avances?.length > 0 ? item.avances[item.avances.length - 1] : null;
+          console.log('Datos de avances:', ultimoAvance);
+
+          if (!ultimoAvance) {
+            console.warn('No hay avances para el indicador:', item);
+          }
+
+          // Calcular los avances
+          const avancePeriodo = this.calcularAvancePorcentual(item.meta_periodo, ultimoAvance?.valor_reportado || 0);
+          const avanceTotal = this.calcularAvancePorcentual(item.meta_final, ultimoAvance?.valor_reportado || 0);
+
+          // Verificar y transformar los datos correctamente
           return {
             ...item,
             periodo: item.periodo || '-',
             valor_esperado: item.valor_esperado || 0,
-            progreso: ultimoAvance.valor_reportado || 0,
-            notas: ultimoAvance.comentarios || '-',
-            avance_per: this.calcularAvancePorcentual(item.meta_periodo, ultimoAvance.valor_reportado),
-            avance_total: this.calcularAvancePorcentual(item.meta_final, ultimoAvance.valor_reportado),
-            ruta_evidencia: ultimoAvance.ruta_evidencia || null,
+            progreso: ultimoAvance?.valor_reportado || item.valor_reportado || 0,
+            notas: ultimoAvance?.comentarios || item.comentarios||'-',
+            avance_per: avancePeriodo || item.avance_per || 0,
+            avance_total: avanceTotal,
+            ruta_evidencia: ultimoAvance?.ruta_evidencia || item.ruta_evidencia || null,
+
+            // Validación extra: Verificar que los valores calculados no sean NaN
+            avance_per_validado: isNaN(avancePeriodo) ? 0 : avancePeriodo,
+            avance_total_validado: isNaN(avanceTotal) ? 0 : avanceTotal,
           };
         });
+
+        console.log('Indicadores de avance procesados:', this.indicadoresAvance);
+        console.log( 'mostrar solo un indicador: ', this.indicadoresAvance[0]?.ruta_evidencia);
+      
       } else {
-        console.error('No data received from API');
+        console.error('No se recibieron datos válidos de la API');
       }
     },
     (error) => {
-      console.error('Error loading data:', error);
+      console.error('Error al cargar datos:', error);
     }
   );
 }
+
 
 
 // Calcular porcentaje de avance

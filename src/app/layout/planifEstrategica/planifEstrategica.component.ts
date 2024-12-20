@@ -795,7 +795,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         case 'OC':
           this.headerDataNro02++;
           break;
-        case 'RE':
+        case 'OP':
           this.headerDataNro03++;
           break;
         case 'IN':

@@ -107,10 +107,6 @@ export class BeneficiariosComponent implements OnInit {
   currentPageAliados = 1;
   pageSizeAliados = 10;
 
-
-
-  
-
   ngOnInit(): void {
     this.loadBeneficiarios();
     this.initForm();
@@ -355,6 +351,7 @@ loadDepartamentos(): void {
     this.beneficiariosTable.forEach(b => (b.selected = b.id === selectedBeneficiario.id));
     this.selectedBeneficiarios = selectedBeneficiario.selected ? selectedBeneficiario : null;
   }
+  
 
 // Método para abrir el modal en modo edición o creación
 openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
