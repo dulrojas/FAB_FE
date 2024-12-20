@@ -17,7 +17,7 @@ export class servPersona{
         "procedure_name": "sp_persona",
         "body": {
             "params": [
-                {"name": "p_accion","value": "C1","type": "string"},
+                {"name": "p_accion","value": "C2","type": "string"},
                 {"name": "p_id_persona","value": null,"type": "int"},
                 {"name": "p_nombres","value": null,"type": "string"},
                 {"name": "p_apellido_1","value": null,"type": "string"},

@@ -52,8 +52,13 @@
                                 <!-- ======= ======= ======= RESPONSABLE PROYECTO ======= ======= ======= -->
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Responsable de registro</h2>
-                                    <input class="form-control custom-info-proy-input" type="text" 
-                                        id="person_resp" name="person_resp" [(ngModel)]="person_resp" disabled/>
+                                    <select class="form-control custom-info-proy-input" id="id_person_resp" name="id_person_resp" 
+                                        [(ngModel)]="proyectoScope.id_person_resp" [disabled]="!editMode">
+                                        <option value="" disabled selected>Selecciona un responsable</option>
+                                        <option *ngFor="let persona of personas" [value]="persona.id_persona">
+                                            {{ persona.nombres +" "+ persona.apellido_1 +" "+((persona.apellido_2)?(persona.apellido_2):("")) }}
+                                        </option>
+                                    </select>
                                 </div>
                                 <!-- ======= ======= ======= UNIDAD PROYECTO ======= ======= ======= -->
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
@@ -433,7 +438,7 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <ng-container *ngFor="let group of ubicacionesB">
+                                  <ng-container *ngFor="let group of ubicacionesBranch">
                                     <ng-container *ngFor="let item of group.items; let i = index">
                                       <tr>
                                         <td *ngIf="i == 0" [attr.rowspan]="group.rowspan">

@@ -12,7 +12,7 @@ import { servObligaciones } from "../../servicios/obligaciones";
 import { servFinanciadores } from "../../servicios/financiadores";
 import { servUbicaGeografica } from "../../servicios/ubicaGeografica";
 import { servProyAlcanceGeo } from "../../servicios/proyAlcanceGeo";
-import { servPersonaRoles } from "../../servicios/personaRoles";
+import { servPersona } from "../../servicios/persona";
 import { environment } from '../../../environments/environment';
 
 import { forkJoin, concatMap, of } from 'rxjs';
@@ -35,7 +35,7 @@ export class InfProyectoComponent implements OnInit {
       private servProyObjetivos: servProyObjetivos,
       private servInstObjetivos: servInstObjetivos,
       private servObligaciones: servObligaciones,
-      private servPersonaRoles: servPersonaRoles,
+      private servPersona: servPersona,
       private servFinanciadores: servFinanciadores,
       private servUbicaGeografica: servUbicaGeografica,
       private servProyAlcanceGeo: servProyAlcanceGeo
@@ -75,7 +75,7 @@ export class InfProyectoComponent implements OnInit {
     currentDateGap: any = 0;
     finalDateGap: any = 0;
 
-    personasProyecto: any[] = [];
+    personas: any[] = [];
     unidades: any[] = [];
     instituciones: any[] = [];
     periodos: any[] = [];
@@ -140,9 +140,10 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
       // ======= GET PERSONA ROLES =======
-      this.servPersonaRoles.getPersonaRolesByIdProyect(this.idProyecto).subscribe(
+      this.proyectoScope.id_person_resp = "";
+      this.servPersona.getPersonas().subscribe(
         (data) => {
-          this.personasProyecto = data[0].dato;
+          this.personas = data[0].dato;
         },
         (error) => {
           console.error(error);
@@ -236,7 +237,7 @@ export class InfProyectoComponent implements OnInit {
               this.ubicacionesSel = ubicacionesSelAux;
 
               // === UBICACIONES BRANCHS ===
-              this.ubicacionesB = [
+              this.ubicacionesBranch = [
                 ...this.getUbiBranch(this.ubicaciones, 2), 
                 ...this.getUbiBranch(this.ubicaciones, 3), 
                 ...this.getUbiBranch(this.ubicaciones, 4), 
@@ -245,8 +246,8 @@ export class InfProyectoComponent implements OnInit {
               // === FILTER UBICACIONES SEL ===
               this.ubicacionesSel = this.ubicacionesSel.filter(
                 (ubicacionSel) =>
-                  !this.ubicacionesB.some(
-                    (ubicacionB) => ubicacionSel.id_ubica_geo == ubicacionB.id_ubica_geo
+                  !this.ubicacionesBranch.some(
+                    (ubicacionBranch) => ubicacionSel.id_ubica_geo == ubicacionBranch.id_ubica_geo
                   )
               );
               // === BUILD UBICACIONES BRANCHS ===
@@ -392,10 +393,16 @@ export class InfProyectoComponent implements OnInit {
           });
           // ======= ======= =======
           // ======= ALCANCE GEO SECTION =======
-          let ubicacionesBSel = this.ubicacionesB.filter(ubicacion => ubicacion.selected);
-          let allAlcanceGeo: any = [...this.ubicacionesSel, ...ubicacionesBSel];
+          let ubicacionesBranchSel = [];
+          this.ubicacionesBranch.forEach((ubicacionBranch) => {
+            if(ubicacionBranch.items){
+              ubicacionesBranchSel = ubicacionesBranchSel.concat(
+                ubicacionBranch.items.filter(ubicacion => ubicacion.selected)
+              );
+            }
+          });
+          let allAlcanceGeo: any = [...this.ubicacionesSel, ...ubicacionesBranchSel];
           let addRequestsAlc = [];
-
 
           let deleteRequestAlc = this.servProyAlcanceGeo.deleteAlcanceGeo(this.proyectoScope.id_proyecto);
 
@@ -751,7 +758,7 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= UBICACIONES FUNCTIONS ======= =======
     ubicaciones: any[] = [];
-    ubicacionesB: any[] = [];
+    ubicacionesBranch: any[] = [];
     ubicacionesSel: any[] = [];
 
     toggleChildren(item: any) {
@@ -793,14 +800,14 @@ export class InfProyectoComponent implements OnInit {
     getGroupedData() {
       const grouped: { [key: string]: any[] } = {};
       
-      this.ubicacionesB.forEach((item) => {
+      this.ubicacionesBranch.forEach((item) => {
         if (!grouped[item.idp_tipo_ubica_geo]) {
           grouped[item.idp_tipo_ubica_geo] = [];
         }
         grouped[item.idp_tipo_ubica_geo].push(item);
       });
     
-      this.ubicacionesB = Object.entries(grouped).map(([tipo, items]) => ({
+      this.ubicacionesBranch = Object.entries(grouped).map(([tipo, items]) => ({
         tipo,
         items,
         rowspan: items.length,
@@ -809,12 +816,12 @@ export class InfProyectoComponent implements OnInit {
 
     ubiInfCheckboxChanged(item: any) {
       if (item.selected) {
-        if (!this.ubicacionesB.some((ubi) => ubi.id_ubica_geo === item.id_ubica_geo)) {
-          this.ubicacionesB.push(item);
+        if (!this.ubicacionesBranch.some((ubi) => ubi.id_ubica_geo === item.id_ubica_geo)) {
+          this.ubicacionesBranch.push(item);
         }
       } 
       else {
-        this.ubicacionesB = this.ubicacionesB.filter(
+        this.ubicacionesBranch = this.ubicacionesBranch.filter(
           (ubi) => ubi.id_ubica_geo !== item.id_ubica_geo
         );
       }
