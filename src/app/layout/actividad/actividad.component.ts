@@ -1,6 +1,6 @@
-import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { routerTransition } from '../../router.animations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
@@ -18,6 +18,22 @@ import { Chart } from 'chart.js/auto'; // Importación de Chart.js
 })
 
 export class ActividadComponent implements OnInit {
+  meses = ['En', 'Fe', 'Ma', 'Ab', 'My', 'Ju', 'Jl', 'Ag', 'Se', 'Oc', 'No', 'Di'];
+seleccionados: number[] = []; // Días seleccionados
+
+toggleCheckbox(dia: number): void {
+  if (this.seleccionados.includes(dia)) {
+    // Si el día ya está seleccionado, lo eliminamos
+    this.seleccionados = this.seleccionados.filter(d => d !== dia);
+    console.log(`Día ${dia} deseleccionado. Seleccionados: ${this.seleccionados}`);
+  } else {
+    // Si el día no está seleccionado, lo agregamos
+    this.seleccionados.push(dia);
+    console.log(`Día ${dia} seleccionado. Seleccionados: ${this.seleccionados}`);
+  }
+}
+
+
 
   actividades: any[] = [];
   tareas: any[] = []; // Array para almacenar las tareas del Gantt
@@ -32,16 +48,17 @@ export class ActividadComponent implements OnInit {
       private servActividad: servActividad,
       private servActAvance: servActAvance
     ) {}
+
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-    @Output() selectionChange = new EventEmitter<any>();
+    namePersonaReg: any = localStorage.getItem('userFullName');
     onChildSelectionChange(selectedId: any) {
       this.idProyecto = selectedId;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
       // ======= *ADD A GETTER DOWN HERE* =======
-      // this.getLogros();
+      //this.getLogros();
     }
 
     headerDataNro01: any = 0;
@@ -53,6 +70,20 @@ export class ActividadComponent implements OnInit {
     declaraciones: any = [];
     nuevoEjecutado: any = [];
     motivo: any = [];
+
+    id_proy_actividad: any = "";
+    id_proyecto: any = "";
+    id_proy_elemento_padre: any = "";
+    codigo: any = "";
+    actividad: any = "";
+    descripcion: any = "";
+    orden: any = "";
+    id_proy_acti_repro: any = "";
+    presupuesto: any = "";
+    fecha_inicio: any = "";
+    fecha_fin: any = "";
+    resultado: any = "";
+    idp_actividad_estado: any = "";
     
 
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
@@ -66,16 +97,47 @@ export class ActividadComponent implements OnInit {
       this.createDoughnutChart2024();
       
     }
-// ======= ======= ======= ======= =======
+    // ======= ======= ======= ======= =======
+    jsonToString(json: object): string {
+      return JSON.stringify(json);
+    }
+    stringToJson(jsonString: string): object {
+      return JSON.parse(jsonString);
+    }
+    getDescripcionSubtipo(idRegistro: any, paramList: any): string{
+      const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
+      return subtipo ? subtipo.descripcion_subtipo : 'Null';
+    }
+    getCurrentDateTime(): string {
+      const date: Date = new Date();
+      
+      const day: string = String(date.getDate()).padStart(2, '0');
+      const month: string = String(date.getMonth() + 1).padStart(2, '0');
+      const year: number = date.getFullYear();
+      
+      const hours: string = String(date.getHours()).padStart(2, '0');
+      const minutes: string = String(date.getMinutes()).padStart(2, '0');
+      const seconds: string = String(date.getSeconds()).padStart(2, '0');
+      
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
     // ======= ======= ======= ======= =======
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OPEN MODALS FUN ======= =======
-    openModal(content: TemplateRef<any>) {
-      this.modalService.open(content, { size: 'xl' });
-    }
+    private modalRef: NgbModalRef | null = null;
+        openModal(content: TemplateRef<any>) {
+          this.modalRef = this.modalService.open(content, { size: 'xl' });
+        }
+    
+        closeModal() {
+          if (this.modalRef) {
+            this.modalRef.close(); 
+            this.modalRef = null;
+          }
+        }
     // ======= ======= ======= ======= =======
     // ======= ======= GET MODAL TITLE FUN ======= =======
     getModalTitle(modalAction: any){
@@ -84,9 +146,36 @@ export class ActividadComponent implements OnInit {
       return this.modalTitle;
     }
     // ======= ======= ======= ======= =======
+    actividadSelected: any = null;
+
+    checkboxChanged(actividadSel: any){
+      this.actividad.forEach(actividad => {
+        if(actividadSel.id.proy_actividad == actividad.id.proy_actividad){
+          if(actividadSel.selected){
+            actividad.selected = true;
+            this.actividadSelected = actividad;
+          }
+        }
+      })
+    }
+
     // ======= ======= INIT PERSONA ROLES NGMODEL ======= =======
     initActividadModel(){
       this.modalTitle = "";
+
+      this.id_proy_actividad = "";
+      this.id_proyecto = "";
+      this.id_proy_elemento_padre = "";
+      this.codigo = "";
+      this.actividad = "";
+      this.descripcion = "";
+      this.orden = "";
+      this.id_proy_acti_repro = "";
+      this.presupuesto = "";
+      this.fecha_inicio = "";
+      this.fecha_fin = "";
+      this.resultado = "";
+      this.idp_actividad_estado = "";
     }
     // ======= ======= ======= ======= =======
     // ======= ======= COUNT HEADER DATA FUCTION ======= =======
@@ -111,7 +200,7 @@ export class ActividadComponent implements OnInit {
               }
             );
           });
-          console.log(this.actividades);
+          console.log ('estas son las actividades : ',this.actividades);
           this.countHeaderData();
         },
         (error) => {
@@ -135,6 +224,18 @@ export class ActividadComponent implements OnInit {
     addActividad(){
       const objActividad = {
         p_id_proy_actividad: 0,
+        p_id_proyecto: parseInt(this.idProyecto,10),
+        p_id_proy_elemento_padre: parseInt(this.id_proy_elemento_padre,10),
+        p_codigo: this.codigo,
+        p_actividad: this.actividad,
+        p_descripcion: this.descripcion,
+        p_orden: parseInt(this.orden,10),
+        p_id_proy_acti_repro: parseInt(this.id_proy_acti_repro,10),
+        p_presupuesto: parseInt(this.presupuesto,10),
+        p_fecha_inicio: this.fecha_inicio,
+        p_fecha_fin: this.fecha_fin,
+        p_resultado: this.resultado,
+        p_idp_actividad_estado: parseInt(this.idp_actividad_estado,10)
       };
 
       this.servActividad.addActividad(objActividad).subscribe(
@@ -153,6 +254,8 @@ export class ActividadComponent implements OnInit {
 
       this.modalAction = "edit";
       this.modalTitle = this.getModalTitle("edit");
+
+      this.id_proy_actividad = this.actividadSelected.id.proy_actividad;
 
       this.openModal(modalScope);
     }

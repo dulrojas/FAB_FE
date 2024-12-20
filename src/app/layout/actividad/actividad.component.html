@@ -99,10 +99,10 @@
                         <!-- Nueva Ejecucion -->
                     <!-- Nueva Ejecución -->
                         <div class="col-lg-2">
-                            <h5 class="text-center">Nuevo Ejecutado</h5>
+                            <h5 class="text-center ">Nuevo Ejecutado</h5>
                             <h5 class="presupuesto mb-3 p-2 w-100" style="background-color: #ffffff; border: 1px solid #ddd;">Bs 250,000.00</h5>
-                            <h5 class="text-center">Motivo</h5>
-                            <h5 class="presupuesto mb-3 p-2 w-100" style="background-color: #ffffff; border: 1px solid #ddd;">Gastos de representación</h5>
+                            <!-- <h5 class="text-center">Motivo</h5>
+                            <h5 class="presupuesto mb-3 p-2 w-100" style="background-color: #ffffff; border: 1px solid #ddd;">Gastos de representación</h5> -->
                             <button class="btn btn-success w-100" style="background-color: #4E8646;">Añadir</button>
                         </div> 
             </div>  
@@ -140,43 +140,25 @@
             <!-- Contenedor del diagrama de Gantt -->
         <div class="gantt-container">
             <div class="gantt-sidebar">
-              <div class="header">
-                <span>Actividades</span>
-              </div>
-          
-              <div class="task">
-                <div class="task-header">
-                  <span class="res">RES 1.1.0 Capacitación</span>
-                  <span>59%</span>
+                <div class="header">
+                  <span>Actividades</span>
                 </div>
-                <div class="task-details">
-                  <span class="activity">Capacitación a 2000 personas</span>
-                  <span class="budget">2,500.00</span>
-                </div>
-              </div>
-          
-              <div class="task">
-                <div class="task-header">
-                  <span class="res">RES 1.1.1 Preparación de sala</span>
-                  <span >89%</span>
-                </div>
-                <div class="task-details">
-                  <span class="activity">REP: Preparación de sala</span>
-                  <span class="budget">3,000.00</span>
+              
+                <!-- Iterar sobre las actividades -->
+                <div *ngFor="let actividad of actividades" class="task">
+                  <div class="task-header">
+                    <!-- Código y avance de la actividad -->
+                    <span class="res">{{ actividad.codigo }}</span>
+                    <span>{{ actividad.actAvances ? actividad.actAvances.porcentaje : '0%' }}</span>
+                  </div>
+                  <div class="task-details">
+                    <!-- Nombre y presupuesto -->
+                    <span class="activity">{{ actividad.nombre }}</span>
+                    <span class="budget">{{ actividad.presupuesto | currency }}</span>
+                  </div>
                 </div>
               </div>
-          
-              <div class="task">
-                <div class="task-header">
-                  <span class="res">RES 1.1.2 Restauración del parque</span>
-                  <span >25%</span>
-                </div>
-                <div class="task-details">
-                  <span class="activity">Restauración del parque</span>
-                  <span class="budget">1,000.00</span>
-                </div>
-              </div>
-            </div>
+              
           
             <!-- Contenedor para las barras de progreso y la línea de tiempo -->
             <div class="gantt-timeline-container">
@@ -215,9 +197,12 @@
     
         <!-- Modal -->
 
-        <ng-template #actividad let-modal class="custom-modal" >
+        <ng-template #actividad let-modal class="custom-modal">
             <div class="modal-header">
             <h4 class="modal-title">{{ modalTitle }}</h4>
+            <button type="button" class="btn-close" aria-label="Close" 
+                (click)="modal.dismiss('Cross click')">
+            </button>
             </div>
             
             <div class="modal-body">
@@ -273,42 +258,52 @@
                         </div>
             
                         <!-- Descripción -->
-                        <div class="col-12">
+                        <div class="col-10">
                             <label for="descripcion">Descripción</label>
                             <textarea class="form-control" 
                                     id="descripcion" name="descripcion" 
                                     [(ngModel)]="descripcion" rows="3" required></textarea>
                         </div>
-            
-                        <!-- Fecha de Inicio -->
-                        <div class="col col-xl-4 col-lg-4 mt-auto">
-                            <label for="fechaIdentificacion">Inicio:</label>
-                            <input
-                              type="date"
-                              [(ngModel)]="fechaIdentificacion"
-                              name="fechaIdentificacion"
-                              class="form-control"
-                            />
-                          </div>
-            
-                          <div class="col col-xl-4 col-lg-4 mt-auto">
-                            <label for="fechaIdentificacion">Fin:</label>
-                            <input
-                              type="date"
-                              [(ngModel)]="fechaIdentificacion"
-                              name="fechaIdentificacion"
-                              class="form-control"
-                            />
-                          </div>
-
-                        <div class="col-md-4">
+                        <div class="col-2">
                             <label for="codigo">Presupuesto</label>
                             <input class="form-control" type="text" 
                                 id="codigo" name="codigo" 
                                 [(ngModel)]="codigo" readonly>
                         </div>
 
-                        <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"></div>
+                        <div class="planificacion">
+                            <label for="fechaIdentificacion" class="titulo">Planificación</label>
+                            
+                            <div class="tabla-meses">
+                              <!-- Encabezado del año -->
+                              <div class="fila-encabezado">
+                                <span class="celda-anio" colspan="12">2024</span>
+                              </div>
+                              
+                              <!-- Meses -->
+                              <div class="fila-meses">
+                                <span *ngFor="let mes of meses" class="mes">{{ mes }}</span>
+                              </div>
+                              
+                              <!-- Checkboxes -->
+                              <div class="fila-checkboxes">
+                                <span *ngFor="let dia of dias" class="checkbox-container">como
+                                  <input 
+                                    type="checkbox" 
+                                    [id]="'checkbox-' + dia" 
+                                    [value]="dia"
+                                    (change)="toggleCheckbox(dia)"
+                                    [checked]="seleccionados.includes(dia)" 
+                                  />
+                                  <label [for]="'checkbox-' + dia">asdsadas</label>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          
+
+                     
+                        <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"> </div>
                         
                         <div class="col-6 mb-3">
                             <!-- Título con línea blanca -->

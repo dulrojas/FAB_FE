@@ -2,7 +2,7 @@
 
 h5.presupuesto {
     background-color: #d67600; /* Fondo verde */
-    color: #ffffff; /* Texto blanco */
+    color: #050505; /* Texto blanco */
     border: 1px solid #000000; /* Borde ligero */
     border-radius: 10px; /* Bordes redondeados */
     text-align: center; /* Centrado del texto */
@@ -12,6 +12,49 @@ h5.presupuesto {
     font-size: 60%; /* Tamaño de texto ajustable */
     font-weight: bold; /* Texto más destacado */
     box-sizing: border-box; /* Asegura que padding no desborde el ancho */
+}
+
+.card {
+  background-color: #ffffff; /* Fondo blanco */
+  border: 1px solid #e0e0e0; /* Borde ligero */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  overflow: hidden; /* Evita desbordes */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animación al pasar el mouse */
+  
+  &:hover {
+      transform: translateY(-5px); /* Levanta la tarjeta al pasar el mouse */
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Incrementa la sombra */
+  }
+
+  .card-img-top {
+      width: 100%; /* Imagen ajustada al ancho de la tarjeta */
+      height: auto; /* Mantiene proporción */
+  }
+
+  .card-body {
+      padding: 1.5rem; /* Espaciado interno */
+      //text-align: center; /* Centrar el texto */
+      color: #4E8646; /* Texto en color oscuro */
+  }
+
+  .card-text {
+      font-size: 0.9rem; /* Texto más pequeño */
+      line-height: 1.5; /* Altura de línea para mejor lectura */
+      color: #000; /* Texto negro */
+      background-color: rgba(112, 167, 105, 0.682); /* Fondo verde claro y opaco */
+      padding: 0.75rem; /* Espaciado interno */
+      margin: 0; /* Sin márgenes externos */
+      text-align: center; /* Centra el texto para mejor presentación */
+  }
+
+  .same-size-img {
+      width: 100px; /* Ajusta el ancho deseado */
+      height: 100px; /* Ajusta la altura deseada */
+      object-fit: contain; /* Asegura que la imagen se vea completa */
+      border-radius: 8px; /* Opcional: redondear bordes */
+  }
+
 }
 
     canvas {
@@ -128,3 +171,70 @@ h5.presupuesto {
       .progress-bar:hover {
         filter: brightness(1.2);
       }  
+
+
+
+      .planificacion {
+        background-color: #f3f3f3;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      
+      .titulo {
+        color: green;
+        font-size: 18px;
+        margin-bottom: 10px;
+        display: block;
+      }
+      
+      .tabla-meses {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .fila-encabezado {
+        background-color: #ffc107;
+        color: black;
+        font-weight: bold;
+        padding: 5px;
+        text-align: center;
+        width: 100%;
+      }
+      
+      .fila-meses {
+        display: flex;
+        justify-content: space-around;
+        background-color: #f7f7f7;
+        padding: 5px;
+        border-bottom: 2px solid #ddd;
+        width: 100%;
+      }
+      
+      .mes {
+        flex: 1;
+        text-align: center;
+        font-size: 14px;
+      }
+      
+      .fila-checkboxes {
+        display: flex;
+        justify-content: space-around;
+        padding: 5px;
+        background-color: #fff;
+        border-bottom: 2px solid #ddd;
+        width: 100%;
+      }
+      
+      .checkbox-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .checkbox-container input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #ff9800; /* Cambia el color del checkbox */
+      }
+      

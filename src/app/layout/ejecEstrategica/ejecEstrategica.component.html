@@ -363,15 +363,11 @@
                           <!-- Progreso con barra de progreso -->
                           <td style="text-align: center">
                             <div class="progress" style="height: 20px; width: 100%">
-                              <div class="progress-bar bg-success" role="progressbar" [style.width.%]="
-                                                                    convertToNumber(
-                                                                        this.indicadoresAvance[i]?.valor_esperado
-                                                                    )
-                                                                " [attr.aria-valuenow]="
-                                                                    convertToNumber(
-                                                                        this.indicadoresAvance[i]?.valor_reportado
-                                                                    )
-                                                                " aria-valuemin="0" aria-valuemax="100"></div>
+                              <div class="progress-bar bg-success" role="progressbar" 
+                              [style.width.%]="convertToNumber(this.indicadoresAvance[i]?.valor_esperado)" 
+                              [attr.aria-valuenow]="convertToNumber(this.indicadoresAvance[i]?.valor_reportado )" 
+                              aria-valuemin="0" aria-valuemax="100">
+                              </div>
                             </div>
                             <span>{{ this.indicadoresAvance[i]?.valor_reportado }}%</span>
                           </td>
