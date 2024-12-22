@@ -242,15 +242,9 @@
                       <!-- Abuelo -->
                       <div class="col col-xl-3 col-lg-3">
                         <label for="abuelo">Abuelo</label>
-                        <select class="form-control" [(ngModel)]="idp_categoria" name="idp_categoria">
-                          <select class="form-control" id="padre" name="padre" [(ngModel)]="selectedParentCodigo"
-                            [disabled]="tipo === 'OG'" (change)="onParentChange()">
-                            <option value="">Seleccionar padre</option>
-                            <option *ngFor="let parent of validParents" [value]="parent.codigo">
-                              {{ parent.nombre }} ({{ parent.codigo }})
-                            </option>
-                          </select>
-                        </select>
+                        <input class="form-control" type="text" id="codigo" name="codigo" [(ngModel)]="codigo"
+                        [disabled]="!editMode" [readonly]="true" required />
+                       
                       </div>
                       <!-- Descripción -->
                       <div class="col col-xl-12 col-lg-12">

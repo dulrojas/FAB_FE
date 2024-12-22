@@ -805,7 +805,7 @@ export class PlanifEstrategicaComponent implements OnInit {
           linea_base: item.linea_base || '-',
           medida: item.medida || '-',          
           medio_verifica: item.medio_verifica || '-',
-          meta_final:item.meta_final,
+          meta_final:item.meta_final || '-',
           orden:item.orden,
           sigla:item.sigla,
           
@@ -830,7 +830,7 @@ export class PlanifEstrategicaComponent implements OnInit {
           linea_base: item.linea_base || '-',
           medida: item.medida || '-',          
           medio_verifica: item.medio_verifica || '-',
-          meta_final:item.meta_final,
+          meta_final:item.meta_final || '-',
           orden:item.orden,
           sigla:this.getSigla(item.id_proy_elem_padre),
         }));
