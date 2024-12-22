@@ -34,17 +34,17 @@
                 <div class="col col-xl-12 col-lg-12 text-end">
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initAddPersonaRoles(personaRolesFormModal)"
-                        [disabled]="personaRolesSelected">
+                        [disabled]="(personaRolesSelected)||(currentPerProRol=='LEC')">
                         <i class="fa fa-plus" aria-hidden="true"></i> Añadir
                     </button>
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initEditPersonaRoles(personaRolesFormModal)"
-                        [disabled]="!personaRolesSelected">
+                        [disabled]="(!personaRolesSelected)||(currentPerProRol=='LEC')">
                         <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                     </button>
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initDeletePersonaRoles(deletePersonaRolesModal)"
-                        [disabled]="!personaRolesSelected">
+                        [disabled]="(!personaRolesSelected)||(currentPerProRol=='LEC')">
                         <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                     </button>
                 </div>

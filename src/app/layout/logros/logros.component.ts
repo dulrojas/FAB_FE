@@ -32,11 +32,14 @@ export class LogrosComponent implements OnInit {
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
     namePersonaReg: any = localStorage.getItem('userFullName');
+    currentPerProRol: any = localStorage.getItem('currentPerProRol');
     @Output() selectionChange = new EventEmitter<any>();
-    onChildSelectionChange(selectedId: any) {
-      this.idProyecto = selectedId;
+    onChildSelectionChange(selectedPro: any) {
+      this.idProyecto = selectedPro.id_proyecto;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
+      this.currentPerProRol = selectedPro.rol;
+      
       this.getLogros();
     }
 

@@ -59,32 +59,46 @@ export class LoginComponent implements OnInit {
                 delete userData.usuario;
                 delete userData.contrasenia;
     
+                localStorage.setItem('isLoggedin', 'true');
+                localStorage.setItem('currentIdPer', userData.id_persona.toString());
+    
                 try {
                     const personaRolesResponse = await lastValueFrom(
                         this.servPersonaRoles.getPersonaRolesByIdPersona(userData.id_persona)
                     );
                     this.proyectos = (personaRolesResponse[0].dato)?(personaRolesResponse[0].dato):([]);
     
-                    localStorage.setItem('isLoggedin', 'true');
-                    localStorage.setItem('currentIdPer', userData.id_persona.toString());
-                    localStorage.setItem(
-                        'currentPerProRol', 
-                        ((this.proyectos[0].rol)?(this.proyectos[0].rol):("Sin rol")).toString()
-                    );
-    
                     if (!userData.admi_sistema) {
+                        // ======= FILTER PROYECTOS WHITOUT ROL =======
                         this.proyectos = this.proyectos.filter(
-                            (proyecto) => proyecto.id_persona_proyecto !== null
+                            (proyecto) => (proyecto.id_persona_proyecto !== null)
                         );
+                        // ======= ======= =======
+                        // ======= FILTER PROYECTOS PENDIENTES (4) =======
+                        this.proyectos = this.proyectos.filter(
+                            (proyecto) => !((proyecto.idp_estado_proy == 4)&&((proyecto.rol == "ESC")||(proyecto.rol == "LEC")))
+                        );
+                        // ======= ======= =======
+                        // ======= FILTER PROYECTOS CONCLUIDOS (2) Y CANCELADOS (3) =======
+                        this.proyectos = this.proyectos.filter(
+                            (proyecto) => !(((proyecto.idp_estado_proy == 2)||(proyecto.idp_estado_proy == 3))&&(proyecto.rol != "CON"))
+                        );
+                        // ======= ======= =======
                     }
     
                     localStorage.setItem('projects', JSON.stringify(this.proyectos));
                     if (this.proyectos.length > 0) {
-                        localStorage.setItem('currentIdProy', this.proyectos[0].id_proyecto.toString());
-                        localStorage.setItem('currentProyName', this.proyectos[0].proyecto.toString());
+                        localStorage.setItem(
+                            'currentIdProy', 
+                            this.proyectos[0].id_proyecto.toString()
+                        );
+                        localStorage.setItem(
+                            'currentProyName', 
+                            this.proyectos[0].proyecto.toString()
+                        );
                         localStorage.setItem(
                             'currentPerProRol',
-                            this.proyectos[0]?.rol || 'Sin rol'
+                            (this.proyectos[0])?(this.proyectos[0].rol):('Sin rol')
                         );
                     }
     

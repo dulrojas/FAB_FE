@@ -80,7 +80,6 @@ export class BodyHeaderComponent implements OnInit {
 
   @Output() selectionChange = new EventEmitter<any>();
   onSelectionChange() {
-    this.selectionChange.emit(this.currentIdProy);
     let currentProy = this.proyectos.find( proyecto => proyecto.id_proyecto == this.currentIdProy);
     let currentPerProRol = (currentProy.rol)?(currentProy.rol):("Sin rol");
     localStorage.setItem('currentPerProRol', (currentPerProRol).toString());
@@ -88,6 +87,8 @@ export class BodyHeaderComponent implements OnInit {
 
     this.projectImg = null;
     this.getProjectImg();
+
+    this.selectionChange.emit(currentProy);
   }
 
   isToggled(): boolean {

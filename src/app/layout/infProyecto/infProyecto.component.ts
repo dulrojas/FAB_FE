@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
@@ -44,10 +44,13 @@ export class InfProyectoComponent implements OnInit {
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
     namePersonaReg: any = localStorage.getItem('userFullName');
-    onChildSelectionChange(selectedId: any) {
-      this.idProyecto = selectedId;
+    currentPerProRol: any = localStorage.getItem('currentPerProRol');
+    @Output() selectionChange = new EventEmitter<any>();
+    onChildSelectionChange(selectedPro: any) {
+      this.idProyecto = selectedPro.id_proyecto;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
+      this.currentPerProRol = selectedPro.rol;
       this.getParametricas();
       this.getInformacionProyecto();
       this.getInstObjetivos();
@@ -326,24 +329,16 @@ export class InfProyectoComponent implements OnInit {
       }
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= FUNCTION INFO PROYECTO NGMODEL ======= =======
-    enableEditMode(){
-      this.editMode = true;
-    }
-    disableEditMode(){
-      this.editMode = false;
-
-      this.getInformacionProyecto();
-      this.getInstObjetivos();
-      this.getProyObjetivos();
-      this.getUbicaGeografica();
-    }
-    // ======= ======= ======= ======= =======
     // ======= ======= COUNT HEADER DATA FUCTION ======= =======
     countHeaderData(){
       this.headerDataNro03 = this.finalDateGap - this.currentDateGap;
 
-      this.headerDataNro04 = (parseFloat((this.proyectoScope.total_ejecutado.toString()).slice(1))) / (parseFloat(this.proyectoScope.presupuesto_me.toString()));
+      if(this.proyectoScope.total_ejecutado){
+        this.headerDataNro04 = (parseFloat((this.proyectoScope.total_ejecutado.toString()).slice(1))) / (parseFloat(this.proyectoScope.presupuesto_me.toString()));
+      }
+      else{
+        this.headerDataNro04 = 0;
+      }
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET PROYECTO ======= =======
@@ -359,6 +354,8 @@ export class InfProyectoComponent implements OnInit {
           this.getProyectDateGaps();
 
           this.countHeaderData();
+
+          this.getButtonsValidation();
         },
         (error) => {
           console.error(error);
@@ -442,6 +439,97 @@ export class InfProyectoComponent implements OnInit {
         }
       );
       // ======= ======= =======
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= FUNCTION INFO PROYECTO NGMODEL ======= =======
+    setEstadoProyecto(newEstadoProyecto: any){
+      this.proyectoScope.idp_estado_proy = newEstadoProyecto;
+      this.proyectoScope.presupuesto_me = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_me);
+      this.proyectoScope.presupuesto_mn = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn);
+
+      this.servProyectos.editProyecto(this.proyectoScope).subscribe(
+        (data) => {
+          this.getInformacionProyecto();
+          this.closeModal();
+        },
+        (error)=>{
+          console.error('Error en la edición del proyecto:', error);
+        }
+      );
+    }
+
+    buttonValidations: any = {};
+    enableEditMode(){
+      this.buttonValidations.editar = false;
+      this.buttonValidations.grabarCancelar = true;
+    }
+    disableEditMode(){
+      this.buttonValidations.editar = true;
+      this.buttonValidations.grabarCancelar = false;
+
+      this.getInformacionProyecto();
+      this.getInstObjetivos();
+      this.getProyObjetivos();
+      this.getUbicaGeografica();
+    }
+    getButtonsValidation(){
+      this.buttonValidations = {
+        "grabarCancelar": false,
+        "editar": false,
+        "activar": false,
+        "evaluacion": false,
+        "concluirCancelar": false,
+        "aniadir": false,
+        "eliminar": false
+      };
+      // ======= PENDIENTE =======
+      if(this.proyectoScope.idp_estado_proy == 4){
+        if(this.currentPerProRol=='CON'){
+          this.buttonValidations.editar = true;
+          this.buttonValidations.activar = true;
+          this.buttonValidations.concluirCancelar = true;
+          this.buttonValidations.aniadir = true;
+          this.buttonValidations.eliminar = true;
+        }
+        else if(this.currentPerProRol=='RES'){
+          this.buttonValidations.editar = true;
+          this.buttonValidations.activar = true;
+        }
+      }
+      // ======= ACTIVO =======
+      else if(this.proyectoScope.idp_estado_proy == 1){
+        if(this.currentPerProRol=='ESC'){
+          this.buttonValidations.editar = true;
+        }
+        else if(this.currentPerProRol=='RES'){
+          this.buttonValidations.editar = true;
+          this.buttonValidations.evaluacion = true;
+        }
+        else if(this.currentPerProRol=='CON'){
+          this.buttonValidations.editar = true;
+          this.buttonValidations.evaluacion = true;
+          this.buttonValidations.concluirCancelar = true;
+          this.buttonValidations.aniadir = true;
+          this.buttonValidations.eliminar = true;
+        }
+      }
+      // ======= CONCLUIDO CANCELADO =======
+      else if((this.proyectoScope.idp_estado_proy == 2)||(this.proyectoScope.idp_estado_proy == 3)){
+        if(this.currentPerProRol=='CON'){
+          this.buttonValidations.aniadir = true;
+          this.buttonValidations.eliminar = true;
+        }
+      }
+      // ======= EVALUACION =======
+      else if(this.proyectoScope.idp_estado_proy == 5){
+        if(this.currentPerProRol=='CON'){
+          this.buttonValidations.editar = true;
+          this.buttonValidations.activar = true;
+          this.buttonValidations.concluirCancelar = true;
+          this.buttonValidations.aniadir = true;
+          this.buttonValidations.eliminar = true;
+        }
+      }
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OBJETIVOS FUNCTIONS ======= =======

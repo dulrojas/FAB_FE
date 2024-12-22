@@ -36,17 +36,17 @@
                 <div class="col col-xl-12 col-lg-12 text-end">
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initAddAprendizajes(aprendizajesFormModal)"
-                        [disabled]="aprendizajesSelected">
+                        [disabled]="(aprendizajesSelected)||(currentPerProRol=='LEC')">
                         <i class="fa fa-plus" aria-hidden="true"></i> Añadir
                     </button>
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initEditAprendizajes(aprendizajesFormModal)"
-                        [disabled]="!aprendizajesSelected">
+                        [disabled]="(!aprendizajesSelected)||(currentPerProRol=='LEC')">
                         <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                     </button>
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initDeleteAprendizajes(deleteAprendizajesModal)"
-                        [disabled]="!aprendizajesSelected">
+                        [disabled]="(!aprendizajesSelected)||(currentPerProRol=='LEC')">
                         <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                     </button>
                 </div>
