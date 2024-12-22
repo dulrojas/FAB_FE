@@ -28,4 +28,39 @@
     //text-align: center; /* Centrar el texto */
     color:#4E8646; /* Texto en color oscuro */
 }
-  
+
+
+
+
+.progress-container {
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  position: relative;
+  height: 24px;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+  position: relative;
+}
+
+.progress-bar.per {
+  background-color: #4CAF50;  /* Green */
+}
+
+.progress-bar.total {
+  background-color: #FFC107;  /* Yellow */
+}
+
+.progress-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  line-height: 24px;
+  color: #000;
+  font-weight: bold;
+  z-index: 1;
+}

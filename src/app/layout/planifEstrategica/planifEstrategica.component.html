@@ -76,7 +76,7 @@
                         <button 
                           class="btn-Editdelete"  
                           [disabled]="!planifEstrategicaSelected"
-                          (click)="initEditPlanifEstrategica(planifEstrategicaOGOERE,planifEstrategicaIN)">
+                          (click)="editPlanifEstrategica(planifEstrategicaOGOERE,planifEstrategicaIN)">
                           Editar
                         </button>
                       <!-- Botón: Eliminar elemento seleccionado -->
@@ -131,7 +131,7 @@
 
         <!-- Contenido de la Tabla -->
         <tbody>
-          <tr *ngFor="let planifEstrategica of planifEstrategicaTable; let i = index">
+          <tr *ngFor="let planifEstrategica of combinedData; let i = index">
             <td>
               <input type="checkbox" 
                      [(ngModel)]="planifEstrategica.selected" 
@@ -174,119 +174,97 @@
 </div>
 </div>
 
-<!-- Modal Cadena de Resultados para Añadir Elementos de OG-OE-RE -->
-
+<!-- nodal para OG OE RE   -->
 <ng-template #planifEstrategicaOGOERE let-modal class="custom-modal">
-
   <div class="modal-header">
-      <h4 class="modal-title">{{ modalTitle }}</h4>
+    <h4 class="modal-title">{{ modalTitle }}</h4>
   </div>
-
   <div class="modal-body">
-    <form #planifEstrategicaForm="ngForm" (ngSubmit)="onSubmit(planifEstrategicaForm)">
-          <div class="row">
-              <div class="col col-xl-12 col-lg-12">
-                  <div class="card mb-3">
-                      <div class="card-body custom-card">
-                          <div class="row">
-
-                            <div class="col col-xl-3 col-lg-3 mt-auto">
-                              <label for="id_proy_elem_padre">Elemento</label>
-                              <input 
-                                type="text" 
-                                class="form-control" 
-                                id="id_proy_elem_padre" 
-                                [value]="getElementoNombre(id_proy_elem_padre)" 
-                                readonly>
-                            </div>
-                            <div class="col col-xl-1 col-lg-1 mt-auto">
-                              <label class="btn-view-bg-3" [ngStyle]="{'background-color': color}">{{ sigla }}</label>
-                            </div>
-                            
-
-                          <div class="col col-xl-2 col-lg-2 mt-auto">
-                          </div>
-
-                          <!-- Selección de Padre -->
-                          <div class="col col-xl-3 col-lg-3 mt-auto">
-                            <label for="padre">Padre</label>
-                            <select 
-                            class="form-control" 
-                            id="padre" 
-                            name="padre" 
-                            [(ngModel)]="selectedParentCodigo" 
-                            [disabled]="tipo === 'OG'" 
-                            (change)="onParentChange()">
-                            <option value="">Seleccionar padre</option>
-                            <option 
-                              *ngFor="let parent of validParents" 
-                              [value]="parent.codigo">
-                              {{ parent.nombre }} ({{ parent.codigo }})
-                            </option>
-                          </select>
-                          
-                          </div>
-
-                          <!-- Código -->
-                          <div class="col col-xl-3 col-lg-3 mt-auto">
-                            <label for="codigo">Código</label>
-                            <input 
-
-                              class="form-control" 
-                              type="text" 
-                              id="codigo" 
-                              name="codigo" 
-                              [(ngModel)]="codigo" 
-                              [readonly]="true" 
-                              required>
-
-                          </div>
-                          
-                          
-                            <div class="col col-xl-12 col-lg-12 mt-auto">
-                              <label for="indicador">Nombre de elemento</label>
-                              <input class="form-control" type="text" id="indicador" name="indicador" 
-                                        placeholder="Ingresa el Nombre de elemento" [(ngModel)]="indicador" 
-                                        (change)="ValidateIndicador()"/>
-                                    <span class="custom-alert-message" *ngIf="!valIndicador">Debe ingresar el Nombre de elemento</span>
-                            </div>
-
-                            <div class="col col-xl-12 col-lg-12 mt-auto">
-                              <label for="descripcion">Descripcion</label>
-                              <input class="form-control" type="text" id="descripcion" name="descripcion" 
-                                        placeholder="Ingresa una Descripcion" [(ngModel)]="descripcion" 
-                                        (change)="ValidateDescripcion()"/>
-                                    <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una Descripcion</span>
-                            </div>
-
-                            <!-- Supuestos/Comentario -->
-                            <div class="col col-xl-12 col-lg-12 mt-auto">
-                              <label for="comentario">Supuestos/Comentario</label>
-                              <input class="form-control" type="text" id="comentario" name="comentario" 
-                                        placeholder="Ingresa un comentario" [(ngModel)]="comentario" 
-                                        (change)="ValidateComentario()"/>
-                                    <span class="custom-alert-message" *ngIf="!valComentario">Debe ingresar un Comentario</span>
-                            </div>
-
-                            <div class="modal-footer">
-                              <div class="d-flex justify-content-end" style="width: 100%;">
-                                  <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-                                  <button type="button" class="btn btn-bg-3" (click)="modal.close('Cancelar')">
-                                      <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                                  </button>
-                                  <button type="button" class="btn btn-bg-1" [disabled]="planifEstrategicaForm.invalid" (click)="onSubmit(); modal.close('Grabar')">
-                                      <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
-                                  </button>
-                              </div>
-                            </div>
-                          </div>
-                      </div>
-                  </div>
+    <form #planifEstrategicaForm="ngForm" (ngSubmit)="onSubmitElemento(planifEstrategicaForm)">
+      <div class="row">
+        <div class="col col-xl-12 col-lg-12">
+          <div class="card mb-3">
+            <div class="card-body custom-card">
+              <div class="row">
+                <!-- Elemento padre -->
+                <div class="col col-xl-3 col-lg-3 mt-auto">
+                  <label for="id_proy_elem_padre">Elemento</label>
+                  <input type="text" class="form-control" id="id_proy_elem_padre" 
+                         [value]="getElementoNombre(id_proy_elem_padre)" readonly>
+                </div>
+                <div class="col col-xl-1 col-lg-1 mt-auto">
+                  <label class="btn-view-bg-3" [ngStyle]="{'background-color': color}">{{ getSigla(id_proy_elem_padre) }}</label>
+                </div>
+               <!-- Padre y Código -->
+               <div class="col col-xl-3 col-lg-3 mt-auto">
+                <label for="padre">Padre</label>
+                <select 
+                  class="form-control" 
+                  id="padre" 
+                  name="padre" 
+                  [(ngModel)]="selectedParentCodigo" 
+                  [disabled]="tipo === 'OG'" 
+                  (change)="onParentChange()">
+                  <option value="">Seleccionar padre</option>
+                  <option 
+                    *ngFor="let parent of validParents" 
+                    [value]="parent.codigo">
+                    {{ parent.nombre }} ({{ parent.codigo }})
+                  </option>
+                </select>
               </div>
+              
+              <!-- Código -->
+              <div class="col col-xl-3 col-lg-3 mt-auto">
+                <label for="codigo">Código</label>
+                <input 
+                  class="form-control" 
+                  type="text" 
+                  id="codigo" 
+                  name="codigo" 
+                  [(ngModel)]="codigo" 
+                  [readonly]="false" placeholder="Ingresa el Código"> 
+              </div>
+              
+                <!-- Nombre -->
+                <div class="col col-xl-12 col-lg-12 mt-auto">
+                  <label for="indicador">Nombre de elemento</label>
+                  <input class="form-control" type="text" id="indicador" name="indicador" 
+                         placeholder="Ingresa el nombre" [(ngModel)]="indicador" required>
+                  <span class="custom-alert-message" *ngIf="!valIndicador">Debe ingresar el nombre</span>
+                </div>
+                <!-- Descripción -->
+                <div class="col col-xl-12 col-lg-12 mt-auto">
+                  <label for="descripcion">Descripción</label>
+                  <input class="form-control" type="text" id="descripcion" name="descripcion" 
+                         placeholder="Ingresa una descripción" [(ngModel)]="descripcion" required>
+                  <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una descripción</span>
+                </div>
+                <!-- Comentario -->
+                <div class="col col-xl-12 col-lg-12 mt-auto">
+                  <label for="comentario">Supuestos/Comentario</label>
+                  <input class="form-control" type="text" id="comentario" name="comentario" 
+                         placeholder="Ingresa un comentario" [(ngModel)]="comentario" required>
+                  <span class="custom-alert-message" *ngIf="!valComentario">Debe ingresar un comentario</span>
+                </div>
+              </div>
+            </div>
           </div>
-      </form>
+        </div>
+      </div>
+      <!-- Botones -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cancelar')">
+          <i class="fa fa-times"></i> Cancelar
+        </button>
+        <button type="submit" class="btn btn-bg-1" [disabled]="planifEstrategicaForm.invalid">
+          <i class="fa fa-floppy-o"></i> Grabar
+        </button>
+      </div>
+    </form>
   </div>
 </ng-template>
+
 
 <!-- Modal Indicadores para Añadir Elementos de IN -->
 
@@ -296,7 +274,7 @@
   </div>
   
   <div class="modal-body">
-    <form #planifEstrategicaForm="ngForm" (ngSubmit)="onSubmit(planifEstrategicaForm)">
+    <form #planifEstrategicaForm="ngForm" (ngSubmit)="onSubmit()">
       <div class="row">
         <div class="col col-xl-12 col-lg-12">
           <div class="card mb-3">
@@ -476,22 +454,29 @@
                     <div class="col-xl-7 col-lg-7 mt-auto">
                       <label for="comentario">Periodos de Evaluación</label>
                         <!-- Tabla Periodos de Evaluacion -->
-                          <table class="table custom-table-planifEstrategica table-striped table-bordered table-responsive">
-                              <thead>
-                                <tr>
-                                  <th style="text-align: center;">#</th>
-                                  <th>Periodo</th>
-                                  <th style="text-align: end;">Valor Esperado</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr *ngFor="let id of planifIDindAvance; let i = index">
-                                  <td style="text-align: center;">{{ id }}</td>
-                                  <td>{{ planifPeriodofecha[i] || 'N/A' }}</td>
-                                  <td style="text-align: end;">{{ planifMetaEsperada[i] || 'N/A' }}</td>
-                                </tr>
-                              </tbody>
-                          </table>
+                        <table class="table custom-table-planifEstrategica table-striped table-bordered table-responsive">
+                          <thead>
+                            <tr>
+                              <th style="text-align: center;">#</th>
+                              <th>Periodo</th>
+                              <th style="text-align: end;">Valor Esperado</th>
+                              <th>Acción</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let id of planifIDindAvance; let i = index">
+                              <td style="text-align: center;">{{ id }}</td>
+                              <td>{{ planifPeriodofecha[i] || 'N/A' }}</td>
+                              <td style="text-align: end;">{{ planifMetaEsperada[i] || 'N/A' }}</td>
+                              <td>
+                                <button type="button" class="btn btn-link" (click)="openEditPeriodoModal(editPeriodoModal, id)">Editar</button>
+                              </td>
+                              
+                            </tr>
+                          </tbody>
+                        </table>
+                        
+                        
                     </div>
                     <div class="col-xl-5 col-lg-5 mt-auto">
                         <div class="d-flex justify-content-end" style="width: 100%;flex-direction: column;align-items: end;">
@@ -515,27 +500,69 @@
   </div>
 </ng-template>
 
+<!-- Formulario de Edición -->
+<ng-template #editPeriodoModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Editar Periodo</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cerrar')"></button>
+  </div>
+  <div class="modal-body">
+    <form #editPeriodoForm="ngForm" (ngSubmit)="onEditSubmit()">
+      <div class="form-group">
+        <label for="editPeriodo">Periodo:</label>
+        <input 
+          type="text" 
+          id="editPeriodo" 
+          class="form-control" 
+          [(ngModel)]="editPeriodo.periodo" 
+          name="editPeriodo" 
+          required>
+      </div>
+      <div class="form-group">
+        <label for="editValorEsperado">Valor Esperado:</label>
+        <input 
+          type="number" 
+          id="editValorEsperado" 
+          class="form-control" 
+          [(ngModel)]="editPeriodo.valorEsperado" 
+          name="editValorEsperado" 
+          required>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cerrar')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
 <!-- ======= ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
 <ng-template #deleteIndicadorModal let-modal>
   <div class="modal-header">
-      <h4 class="modal-title">Eliminar Planificacion Estrategica</h4>
+      <h4 class="modal-title">
+        {{ planifEstrategicaSelected?.id_proy_indicador ? 'Eliminar Indicador' : 'Eliminar Elemento' }}
+      </h4>
   </div>
   <div class="modal-body">
       <div class="d-flex justify-content-center" style="width: 100%;">
-          <p>Esta seguro de querer eliminar el registro de Planificacion Estrategica?</p>
+          <p>
+            ¿Está seguro de que desea eliminar 
+            {{ planifEstrategicaSelected?.id_proy_indicador ? 'el Indicador' : 'el Elemento' }} seleccionado?
+          </p>
       </div>
   </div>
   <div class="modal-footer">
       <div class="d-flex justify-content-center" style="width: 100%;">
-          <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+          <!-- ======= BUTTONS ======= -->
           <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
               <i class="fa fa-times" aria-hidden="true"></i> Cerrar
           </button>
-          <button type="button" class="btn btn-bg-1" (click)="deleteIndicador()">
-              <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+          <button type="button" class="btn btn-bg-1" (click)="deletePlanificacionEstrategica()">
+              <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
           </button>
       </div>
   </div>
 </ng-template>
+
 <!-- ======= ======= ======= ======= ======= ======= ======= -->

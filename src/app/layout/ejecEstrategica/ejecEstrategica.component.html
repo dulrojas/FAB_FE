@@ -79,73 +79,42 @@
                   <input type="checkbox" [(ngModel)]="ejecEstrategica.selected"
                     (change)="checkboxChanged(ejecEstrategica)" id="checkbox-{{ i }}" name="checkbox-{{ i }}" />
                 </td>
+                <!-- CODIGO -->
                 <td>{{ ejecEstrategica.codigo }}</td>
+                <!-- NOMBRE DEL INDICADOR -->
                 <td>{{ ejecEstrategica.indicador }}</td>
-
-                <!-- Reporte a: Fecha del último avance -->
-                <td>
-                  {{
-                  getUltimoAvance(ejecEstrategica.id_proy_indicador)?.fecha_reportar ||
-                  'No Disponible'
-                  }}
-                </td>
-
-                <!-- Progreso: Valor Reportado -->
-                <td>{{ getUltimoAvance(ejecEstrategica.id_proy_indicador)?.valor_reportado || 0 }}</td>
-
+                <!-- FECHA A REPORTAR -->                
+                <td>{{this.indicadoresAvance[i]?.fecha_reportar || '-'}}</td>
+                <!-- PROGRESO SE CONECTA A VALOR REPORTADO-->
+                <td>{{ this.indicadoresAvance[i]?.valor_reportado || '-' }}</td>
+                <!-- MEDIDA -->
                 <td>{{ ejecEstrategica.medida }}</td>
-
-                <!-- Notas: Comentarios del último avance -->
+                <!-- NOTAS SE CONECTA A COMENTARIOS DE IND.AVANCE -->
+                <td>{{ this.indicadoresAvance[i]?.comentarios || '-' }}</td>
+                <!-- META PER SE CONECTA A VALOR ESPERADO -->
+                <td>{{ this.indicadoresAvance[i]?.valor_esperado || '-' }}</td>
+                <!-- “Avance Per.”, pone un gráfico equivalente a un avance porcentual entre la “Meta Per” que es el “valor_esperado” de anterior pantalla y “Progreso” (valor_reportado). -->
                 <td>
-                  {{ this.indicadoresAvance[i]?.comentarios || '-' }}
-                </td>
-
-                <td>{{ ejecEstrategica.linea_base }}</td>
-
-                <!-- Avance Per.: Progreso Esperado -->
-                <td>
-                  <div style="
-                                            width: 100%;
-                                            height: 10px;
-                                            background-color: #e0e0e0;
-                                            border-radius: 5px;
-                                            overflow: hidden;
-                                        ">
-                    <div [style.width.%]="
-                                                getAvanceVerde(
-                                                    ejecEstrategica.linea_base,
-                                                    ejecEstrategica.meta_final,
-                                                    getUltimoAvance(ejecEstrategica.id_proy_indicador)
-                                                        ?.valor_reportado || 0
-                                                )
-                                            " style="height: 100%; background-color: #4caf50; border-radius: 5px">
+                  <div class="progress-container">
+                    <div class="progress-text">{{ calculateAvancePer(ejecEstrategica) }}%</div>
+                    <div class="progress-bar per" 
+                         [style.width]="calculateAvancePer(ejecEstrategica) + '%'">
                     </div>
                   </div>
                 </td>
-
+                <!-- META FINAL -->
                 <td>{{ ejecEstrategica.meta_final }}</td>
 
-                <!-- Avance: Porcentaje de avance final -->
+                <!-- “Avance”, pone un gráfico equivalente a un avance porcentual entre “valor_reportado” y “meta_final”. -->
                 <td>
-                  <div style="
-                                            width: 100%;
-                                            height: 10px;
-                                            background-color: #e0e0e0;
-                                            border-radius: 5px;
-                                            overflow: hidden;
-                                        ">
-                    <div [style.width.%]="
-                                                getAvanceAmarillo(
-                                                    ejecEstrategica.linea_base,
-                                                    ejecEstrategica.meta_final,
-                                                    getUltimoAvance(ejecEstrategica.id_proy_indicador)
-                                                        ?.valor_reportado || 0
-                                                )
-                                            " style="height: 100%; background-color: #ffc107; border-radius: 5px">
+                  <div class="progress-container">
+                    <div class="progress-text">{{ calculateAvanceTotal(ejecEstrategica) }}%</div>
+                    <div class="progress-bar total" 
+                         [style.width]="calculateAvanceTotal(ejecEstrategica) + '%'">
                     </div>
                   </div>
                 </td>
-
+                <!-- DESCRIPCION -->
                 <td>{{ ejecEstrategica.descripcion }}</td>
               </tr>
             </tbody>

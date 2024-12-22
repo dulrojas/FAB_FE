@@ -239,40 +239,60 @@ export class EjecEstrategicaComponent implements OnInit {
       const elemento = this.componentes.find(comp => comp.id_meto_elemento === id_proy_elem_padre);
       return elemento ? elemento.meto_elemento : '';
     }
-        
-    getAvanceVerde(lineaBase: number, metaFinal: number, avancePeriodo: number): number {
-      if (!lineaBase || !metaFinal || avancePeriodo === null || avancePeriodo === undefined) return 0;
     
-      const totalRango = metaFinal - lineaBase;
-      if (totalRango <= 0) return 0;
-    
-      const progreso = avancePeriodo - lineaBase;
-      const porcentaje = (progreso / totalRango) * 100;
-    
-      return Math.min(Math.max(porcentaje, 0), 100); // Limita entre 0 y 100
-    }
-    
-    getAvanceAmarillo(lineaBase: number, metaFinal: number, avancePeriodo: number): number {
-      if (!lineaBase || !metaFinal || avancePeriodo === null || avancePeriodo === undefined) return 0;
-    
-      const totalRango = metaFinal - lineaBase;
-      if (totalRango <= 0) return 0;
-    
-      const progreso = metaFinal - avancePeriodo;
-      const porcentaje = (progreso / totalRango) * 100;
-    
-      return Math.min(Math.max(porcentaje, 0), 100); // Limita entre 0 y 100
-    }
     getUltimoAvance(idProyIndicador: number): any {
-      // Filtra los registros relacionados al indicador
-      const avancesRelacionados = this.ejecEstrategicaAvances.filter(avance => avance.id_proy_indicador === idProyIndicador);
-      
-      // Ordena por fecha_reportar en orden descendente
-      const ordenadosPorFecha = avancesRelacionados.sort((a, b) => new Date(b.fecha_reportar).getTime() - new Date(a.fecha_reportar).getTime());
-      
-      // Retorna el último registro o null si no hay registros
-      return ordenadosPorFecha.length > 0 ? ordenadosPorFecha[0] : null;
+  if (!this.ejecEstrategicaAvances) return null;
+  
+  const avancesIndicador = this.ejecEstrategicaAvances.filter(
+    avance => avance.id_proy_indicador === idProyIndicador
+  );
+  
+  if (avancesIndicador.length === 0) return null;
+  
+  // Ordenar por fecha descendente
+  return avancesIndicador.sort((a, b) => 
+    new Date(b.fecha_reportar).getTime() - new Date(a.fecha_reportar).getTime()
+  )[0];
+}
+
+  sortEjecEstrategicaByCodigo() {
+    if (this.ejecEstrategica && this.ejecEstrategica.length > 0) {
+      this.ejecEstrategica.sort((a, b) => {
+        // Convertir códigos a minúsculas para comparación consistente
+        const codigoA = a.codigo?.toLowerCase() || '';
+        const codigoB = b.codigo?.toLowerCase() || '';
+        return codigoA.localeCompare(codigoB, undefined, {numeric: true, sensitivity: 'base'});
+      });
+    }
   }
+
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
+  // GRAFICO PARA AVANCE PER Y AVANCE
+  
+  calculateAvancePer(ejecEstrategica: any): number {
+    const index = this.ejecEstrategica.indexOf(ejecEstrategica);
+    const valorReportado = this.indicadoresAvance[index]?.valor_reportado || 0;
+    const valorEsperado = this.indicadoresAvance[index]?.valor_esperado || 0;
+    
+    if (valorEsperado <= 0) return 0;
+    
+    // Calculate percentage and round to 1 decimal place
+    const percentage = Math.min(Math.round((valorReportado / valorEsperado) * 1000) / 10, 100);
+    return isNaN(percentage) ? 0 : percentage;
+  }
+  
+  calculateAvanceTotal(ejecEstrategica: any): number {
+    const index = this.ejecEstrategica.indexOf(ejecEstrategica);
+    const valorReportado = this.indicadoresAvance[index]?.valor_reportado || 0;
+    const metaFinal = ejecEstrategica.meta_final || 0;
+    
+    if (metaFinal <= 0) return 0;
+    
+    // Calculate percentage and round to 1 decimal place
+    const percentage = Math.min(Math.round((valorReportado / metaFinal) * 1000) / 10, 100);
+    return isNaN(percentage) ? 0 : percentage;
+  }
+
   
     
   // ======= ======= INIT EJECUCION ESTRATEGICA NGMODEL ======= =======
@@ -307,6 +327,7 @@ export class EjecEstrategicaComponent implements OnInit {
         (data) => {
           if (data && data[0]?.dato) {
             this.ejecEstrategica = data[0].dato;
+            this.sortEjecEstrategicaByCodigo();
             this.totalLength = this.ejecEstrategica.length;
             this.countHeaderData();
           } else {
@@ -421,17 +442,13 @@ getIndicadoresAvance(): void {
     (data) => {
       if (data && data.length > 0 && data[0].dato) {
         const indicadores = data[0].dato;
-   
 
-        console.log('Indicadores de avance mucho antes:', indicadores);
 
         // Asegurarse de que los datos sean correctos antes de asignarlos
         this.indicadoresAvance = indicadores.map((item: any) => {
-          console.log('Procesando indicador:', item);
 
           // Verificar si los avances existen
           const ultimoAvance = item.avances?.length > 0 ? item.avances[item.avances.length - 1] : null;
-          console.log('Datos de avances:', ultimoAvance);
 
           if (!ultimoAvance) {
             console.warn('No hay avances para el indicador:', item);
