@@ -231,7 +231,7 @@
                   <label for="indicador">Nombre de elemento</label>
                   <input class="form-control" type="text" id="indicador" name="indicador" 
                          placeholder="Ingresa el nombre" [(ngModel)]="indicador" required>
-                  <span class="custom-alert-message" *ngIf="!valIndicador">Debe ingresar el nombre</span>
+                  <span class="custom-alert-message" *ngIf="!valIndicador">Ingrese el nombre del Elemento</span>
                 </div>
                 <!-- Descripción -->
                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -384,7 +384,7 @@
                         </option>
                       </select>
                       <span class="custom-alert-message" *ngIf="!valTipoCategoria">
-                        Debe elegir una SubCategoría
+                        Debe elegir una Tipo
                       </span>
                     </div>
                   
@@ -393,15 +393,15 @@
                       <input class="form-control" type="text" id="indicador" name="indicador" 
                                 placeholder="Ingresa el Nombre de elemento" [(ngModel)]="indicador" 
                                 (change)="ValidateIndicador()"/>
-                            <span class="custom-alert-message" *ngIf="!valIndicador">Debe ingresar el Nombre de elemento</span>
+                            <span class="custom-alert-message" *ngIf="!valIndicador">Ingrese el el Nombre del Elemento</span>
                     </div>
 
                     <div class="col col-xl-12 col-lg-12 mt-auto">
-                      <label for="descripcion">Descripcion</label>
+                      <label for="descripcion">Descripción</label>
                       <input class="form-control" type="text" id="descripcion" name="descripcion" 
                                 placeholder="Ingresa una Descripcion" [(ngModel)]="descripcion" 
                                 (change)="ValidateDescripcion()"/>
-                            <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una Descripcion</span>
+                            <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una Descripción</span>
                     </div>
   
                 <!-- Línea base, Medida y Meta Final -->
@@ -460,7 +460,7 @@
                               <th style="text-align: center;">#</th>
                               <th>Periodo</th>
                               <th style="text-align: end;">Valor Esperado</th>
-                              <!-- <th>Acción</th> -->
+                              <th>Acción</th> 
                             </tr>
                           </thead>
                           <tbody>
@@ -468,7 +468,7 @@
                               <td style="text-align: center;">{{ id }}</td>
                               <td>{{ planifPeriodofecha[i] || 'N/A' }}</td>
                               <td style="text-align: end;">{{ planifMetaEsperada[i] || 'N/A' }}</td>
-                              <!-- <td><button type="button" class="btn btn-link" (click)="openEditPeriodoModal(editPeriodoModal, id)">Editar</button></td> -->
+                              <td><button type="button" class="btn btn-link" (click)="openEditPeriodoModal(editPeriodoModal, id)">Editar</button></td> 
                               
                             </tr>
                           </tbody>
