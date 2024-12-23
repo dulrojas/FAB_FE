@@ -1,10 +1,11 @@
 // Importacion de modulos y componentes Principales
-import { Component, OnInit, TemplateRef, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output} from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 // ======= ======= ======= SERVICES SECTION ======= ======= =======
 import { PlanifEstrategicaService } from '../../servicios/planifEstrategica';
+import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
 import { servIndicador } from '../../servicios/indicador';
@@ -31,17 +32,15 @@ export class PlanifEstrategicaComponent implements OnInit {
     mainPage = 1;
     mainPageSize = 10;
     totalLength = 0;
-  elementosTabla: any;
-  combinedData: any[];
-  periodos: any;
+    elementosTabla: any;
+    combinedData: any[];
+    periodos: any;
     periodosForm: any; // Add this line to define periodosForm
     editPeriodo = { periodo: '', valorEsperado: 0 }; // Valores iniciales
-
-
     
     constructor(
       private modalService: NgbModal,
-      private cdr: ChangeDetectorRef,
+      private proyectoService: ProyectoService,
       private ServPlanifEstrategica: PlanifEstrategicaService,
       private servicios: servicios,
       private servInstCategorias: servInstCategorias,
@@ -51,74 +50,78 @@ export class PlanifEstrategicaComponent implements OnInit {
       private proyElementosService: ElementosService
       
     ) {}
-
-        // ======= ======= HEADER SECTION ======= =======
-        idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
-        idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-        namePersonaReg: any = localStorage.getItem('userFullName');
-        onChildSelectionChange(selectedId: string) {
-          this.idProyecto = selectedId;
-          localStorage.setItem('currentIdProy', (this.idProyecto).toString());
     
-          this.getParametricas();
-          this.getPlanifEstrategica();
-          this.initPlanifEstrategicaModel();
-          this.planifEstrategicaSelected = null
-        }
-
-        headerDataNro01: any = 0;
-        headerDataNro02: any = 0;
-        headerDataNro03: any = 0;
-        headerDataNro04: any = 0;
-        // ======= ======= ======= ======= =======
-
-        // ======= ======= NGMODEL VARIABLES SECTION ======= =======
-        modalAction: any = "";
-        modalTitle: any = '';
-
-          //Variables PROY_ELEMENTO "Planificación Estratégica"
-          id_proy_elemento: any = "";
-          elemento: any = "";
-          nivel: any = "";
-          idp_estado: any = "";
-          peso: any = "";
-
-          // Variables PROY_INDICADOR 
-          id_proy_indicador: any = "";
-          id_proyecto: any = "";
-          id_proy_elem_padre: any = "";
-          codigo: any = "";
-          indicador: any = "";
-          descripcion: any = "";
-          comentario: any = "";
-          orden: any ;
-          linea_base: any = "";
-          medida: any = "";
-          meta_final: any = "";
-          medio_verifica: any = "";
-          id_estado: any = "";
-          inst_categoria_1: any ;
-          inst_categoria_2: any = "";
-          inst_categoria_3: any = "";
-
-          sigla: any = "";
-          color: any = "";
-          // Variables de Selección
-          componentes: any[] = [];
-          selectedParentCodigo: any = '';
-          planifCategoria: any[] = [];
-          planifSubCategoria: any[] = [];
-          planifTipoCategoria: any[] = [];
-          planifIDindAvance: any[] = [];
-          planifPeriodofecha: any[] = [];
-          planifMetaEsperada: any[] = [];
-
-          //LLAMADO PARA TABLA
-          planifEstrategicaTipo: any[] = [];
+    // ======= ======= HEADER SECTION ======= =======
+    idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+    idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+    namePersonaReg: any = localStorage.getItem('userFullName');
+    currentPerProRol: any = localStorage.getItem('currentPerProRol');
+    @Output() selectionChange = new EventEmitter<any>();
+    onChildSelectionChange(selectedPro: any) {
+      this.idProyecto = selectedPro.id_proyecto;
+      localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+      this.proyectoService.seleccionarProyecto(this.idProyecto);
+      this.currentPerProRol = selectedPro.rol;
     
+      this.getParametricas();
+      this.getPlanifEstrategica();
+      this.initPlanifEstrategicaModel();
+      this.planifEstrategicaSelected = null
+    }
+
+      headerDataNro01: any = 0;
+      headerDataNro02: any = 0;
+      headerDataNro03: any = 0;
+      headerDataNro04: any = 0;
+      // ======= ======= ======= ======= =======
+
+      // ======= ======= NGMODEL VARIABLES SECTION ======= =======
+      modalAction: any = "";
+      modalTitle: any = '';
+
+        //Variables PROY_ELEMENTO "Planificación Estratégica"
+        id_proy_elemento: any = "";
+        elemento: any = "";
+        nivel: any = "";
+        idp_estado: any = "";
+        peso: any = "";
+
+        // Variables PROY_INDICADOR 
+        id_proy_indicador: any = "";
+        id_proyecto: any = "";
+        id_proy_elem_padre: any = "";
+        codigo: any = "";
+        indicador: any = "";
+        descripcion: any = "";
+        comentario: any = "";
+        orden: any ;
+        linea_base: any = "";
+        medida: any = "";
+        meta_final: any = "";
+        medio_verifica: any = "";
+        id_estado: any = "";
+        inst_categoria_1: any ;
+        inst_categoria_2: any = "";
+        inst_categoria_3: any = "";
+
+        sigla: any = "";
+        color: any = "";
+        // Variables de Selección
+        componentes: any[] = [];
+        selectedParentCodigo: any = '';
+        planifCategoria: any[] = [];
+        planifSubCategoria: any[] = [];
+        planifTipoCategoria: any[] = [];
+        planifIDindAvance: any[] = [];
+        planifPeriodofecha: any[] = [];
+        planifMetaEsperada: any[] = [];
+
+        //LLAMADO PARA TABLA
+        planifEstrategicaTipo: any[] = [];
+  
 
 
-    // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
     valComponente: any = false; 
 

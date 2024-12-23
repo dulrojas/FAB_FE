@@ -31,13 +31,16 @@ export class Dashboard2Component implements OnInit {
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+    namePersonaReg: any = localStorage.getItem('userFullName');
+    currentPerProRol: any = localStorage.getItem('currentPerProRol');
     @Output() selectionChange = new EventEmitter<any>();
-    onChildSelectionChange(selectedId: any) {
-      this.idProyecto = selectedId;
+    onChildSelectionChange(selectedPro: any) {
+      this.idProyecto = selectedPro.id_proyecto;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
-      // ======= *ADD A GETTER DOWN HERE* =======
-      // this.getLogros();
+      this.currentPerProRol = selectedPro.rol;
+
+      
     }
 
     headerDataNro01: any = 0;

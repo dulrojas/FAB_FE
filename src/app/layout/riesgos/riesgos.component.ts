@@ -1,8 +1,9 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output} from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { servRiesgos } from "../../servicios/riesgos";
+import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
 
@@ -14,30 +15,32 @@ import { servAprendizaje } from "../../servicios/aprendizajes";
 })
 
 export class RiesgosComponent implements OnInit {
-  
-  // Variables
-  riesgos: any[] = [];
+    // Variables
+    riesgos: any[] = [];
   
     mainPage = 1;
     mainPageSize = 10;
     totalLength = 0;
 
-  constructor(
-    private modalService: NgbModal,
-    private servRiesgos: servRiesgos,
-    private servicios: servicios,
-    private servApredizaje: servAprendizaje,
-    private cdr: ChangeDetectorRef
+    constructor(
+      private modalService: NgbModal,
+      private proyectoService: ProyectoService,
+      private servRiesgos: servRiesgos,
+      private servicios: servicios,
+      private servApredizaje: servAprendizaje
     ) {}
-
+    
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
     namePersonaReg: any = localStorage.getItem('userFullName');
-    // ======= ======= ======= ======= =======
-    onChildSelectionChange(selectedId: string) {
-      this.idProyecto = selectedId;
+    currentPerProRol: any = localStorage.getItem('currentPerProRol');
+    @Output() selectionChange = new EventEmitter<any>();
+    onChildSelectionChange(selectedPro: any) {
+      this.idProyecto = selectedPro.id_proyecto;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+      this.proyectoService.seleccionarProyecto(this.idProyecto);
+      this.currentPerProRol = selectedPro.rol;
 
       this.getParametricas();
       this.getRiesgos();

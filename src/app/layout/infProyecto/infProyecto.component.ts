@@ -40,6 +40,7 @@ export class InfProyectoComponent implements OnInit {
       private servUbicaGeografica: servUbicaGeografica,
       private servProyAlcanceGeo: servProyAlcanceGeo
     ){}
+    
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
@@ -51,6 +52,7 @@ export class InfProyectoComponent implements OnInit {
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.currentPerProRol = selectedPro.rol;
+      
       this.getParametricas();
       this.getInformacionProyecto();
       this.getInstObjetivos();

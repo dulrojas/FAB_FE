@@ -86,31 +86,38 @@ export class LoginComponent implements OnInit {
                         // ======= ======= =======
                     }
     
-                    localStorage.setItem('projects', JSON.stringify(this.proyectos));
                     if (this.proyectos.length > 0) {
+                        localStorage.setItem('projects', JSON.stringify(this.proyectos));
+
                         localStorage.setItem(
                             'currentIdProy', 
                             this.proyectos[0].id_proyecto.toString()
                         );
+
                         localStorage.setItem(
                             'currentProyName', 
                             this.proyectos[0].proyecto.toString()
                         );
+
                         localStorage.setItem(
                             'currentPerProRol',
                             (this.proyectos[0])?(this.proyectos[0].rol):('Sin rol')
                         );
-                    }
     
-                    this.router.navigate(['/dashboard']);
+                        this.router.navigate(['/dashboard']);
+                    }
+                    else{
+                        this.messageShow = true;
+                        this.message = "Usuario sin proyectos asignados, por favor, comuníquese con un administrador.";
+                    }
                 } 
                 catch (error) {
                     console.error("Error:", error);
                 }
             } 
             else {
-                this.message = "Datos de usuario incorrectos.";
                 this.messageShow = true;
+                this.message = "Datos de usuario incorrectos.";
             }
         } 
         catch (error) {

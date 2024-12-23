@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
@@ -19,25 +19,23 @@ import { Chart } from 'chart.js/auto'; // Importación de Chart.js
 
 export class ActividadComponent implements OnInit {
   meses = ['En', 'Fe', 'Ma', 'Ab', 'My', 'Ju', 'Jl', 'Ag', 'Se', 'Oc', 'No', 'Di'];
-seleccionados: number[] = []; // Días seleccionados
+  seleccionados: number[] = []; // Días seleccionados
 
-toggleCheckbox(dia: number): void {
-  if (this.seleccionados.includes(dia)) {
-    // Si el día ya está seleccionado, lo eliminamos
-    this.seleccionados = this.seleccionados.filter(d => d !== dia);
-    console.log(`Día ${dia} deseleccionado. Seleccionados: ${this.seleccionados}`);
-  } else {
-    // Si el día no está seleccionado, lo agregamos
-    this.seleccionados.push(dia);
-    console.log(`Día ${dia} seleccionado. Seleccionados: ${this.seleccionados}`);
+  toggleCheckbox(dia: number): void {
+    if (this.seleccionados.includes(dia)) {
+      // Si el día ya está seleccionado, lo eliminamos
+      this.seleccionados = this.seleccionados.filter(d => d !== dia);
+      console.log(`Día ${dia} deseleccionado. Seleccionados: ${this.seleccionados}`);
+    } else {
+      // Si el día no está seleccionado, lo agregamos
+      this.seleccionados.push(dia);
+      console.log(`Día ${dia} seleccionado. Seleccionados: ${this.seleccionados}`);
+    }
   }
-}
-
-
 
   actividades: any[] = [];
-  tareas: any[] = []; // Array para almacenar las tareas del Gantt
-  links: any[] = [];  // Array para almacenar las relaciones entre tareas
+  tareas: any[] = [];
+  links: any[] = [];
   mainPage = 1;
   mainPageSize = 10;
   totalLength = 0;
@@ -53,12 +51,14 @@ toggleCheckbox(dia: number): void {
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
     namePersonaReg: any = localStorage.getItem('userFullName');
-    onChildSelectionChange(selectedId: any) {
-      this.idProyecto = selectedId;
+    currentPerProRol: any = localStorage.getItem('currentPerProRol');
+    @Output() selectionChange = new EventEmitter<any>();
+    onChildSelectionChange(selectedPro: any) {
+      this.idProyecto = selectedPro.id_proyecto;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
-      // ======= *ADD A GETTER DOWN HERE* =======
-      //this.getLogros();
+      this.currentPerProRol = selectedPro.rol;
+
     }
 
     headerDataNro01: any = 0;

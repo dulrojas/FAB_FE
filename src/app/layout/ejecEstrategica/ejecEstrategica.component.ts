@@ -1,8 +1,9 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output} from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 // ======= ======= SERVICES SECTION ======= =======
+import { ProyectoService } from '../../services/proyectoData.service';
 import { servIndicador} from '../../servicios/indicador';
 import {servIndicadorAvance} from '../../servicios/indicadorAvance';
 import {servInstCategorias} from '../../servicios/instCategoria';
@@ -31,7 +32,7 @@ export class EjecEstrategicaComponent implements OnInit {
   // ======= ======= CONSTRUCTOR SECTION ======= =======
   constructor(
     private modalService: NgbModal,
-    private cdr: ChangeDetectorRef,
+    private proyectoService: ProyectoService,
     private servIndicador: servIndicador,
     private servIndicadorAvance: servIndicadorAvance,
     private servInstCategorias: servInstCategorias,
@@ -40,14 +41,18 @@ export class EjecEstrategicaComponent implements OnInit {
     private servicios: servicios
   ) {}
 
-  // ======= ======= ======= HEADER SECTION  ======= ======= ======= 
-    idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
-    idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-    namePersonaReg: any = localStorage.getItem('userFullName');
 
-    onChildSelectionChange(selectedId: string) {
-      this.idProyecto = selectedId;
-      localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+  // ======= ======= HEADER SECTION ======= =======
+  idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+  idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+  namePersonaReg: any = localStorage.getItem('userFullName');
+  currentPerProRol: any = localStorage.getItem('currentPerProRol');
+  @Output() selectionChange = new EventEmitter<any>();
+  onChildSelectionChange(selectedPro: any) {
+    this.idProyecto = selectedPro.id_proyecto;
+    localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+    this.proyectoService.seleccionarProyecto(this.idProyecto);
+    this.currentPerProRol = selectedPro.rol;
 
       this.getParametricas();
       this.getEjecEstrategica();
@@ -173,7 +178,6 @@ export class EjecEstrategicaComponent implements OnInit {
     openModal(content: TemplateRef<any>) {
       const modalRef = this.modalService.open(content, { size: 'xl' });
       this.modalRefs.push(modalRef);
-      this.cdr.detectChanges();
     }
 
     closeModal() {
