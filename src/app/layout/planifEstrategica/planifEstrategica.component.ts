@@ -330,7 +330,6 @@ export class PlanifEstrategicaComponent implements OnInit {
 
         } 
 
-     
         isEditing: boolean = false; // Indica si el formulario está en modo de edición
         selectedIdProyIndicador: number | null = null; // Almacena el ID seleccionado
         
@@ -458,8 +457,6 @@ export class PlanifEstrategicaComponent implements OnInit {
     // Método para obtener la sigla
     getSigla(id_proy_elem_padre: number): string {
 
-
-
       return this.elementosMap[id_proy_elem_padre]?.sigla || '';
     }
     
@@ -482,8 +479,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     
     getElementoNombre(id_proy_elem_padre: number): string {
       const elemento = this.componentes.find(comp => comp.id_meto_elemento === id_proy_elem_padre);
-      return elemento ? elemento.meto_elemento : '';
-    }
+      return elemento ? elemento.meto_elemento : 'Nombre no disponible';
+    }    
 
    // ======= ======= ======= ======= ======= ======= =======  ======= ======= 
     // ======= ======= JERARQUIA DE PADRE ======= =======
@@ -492,38 +489,47 @@ export class PlanifEstrategicaComponent implements OnInit {
 
 
     // Filtrar padres válidos en función del tipo del elemento a crear
-      getValidParents(tipo: string): any[] {
-        console.log('Tipo recibido en getValidParents:', tipo);
-        console.log('Datos de planifEstrategica:', this.combinedData);
-        switch (tipo) {
-          case 'OG': // Objetivo General no tiene padres válidos (es la raíz)
-            return [];
-
-          case 'OE': // Objetivo Específico solo puede tener como padre un OG
-            return this.combinedData.filter(el => el.id_proy_elem_padre === 1);
-
-          case 'RE': // Resultado Estratégico puede tener como padre un OG o un OE
-            return this.combinedData.filter(el => el.id_proy_elem_padre === 1 || el.id_proy_elem_padre === 2);
-
-          case 'IN': // Indicador puede tener como padre un OG, OE o RE
-            return this.combinedData.filter(el => 
-              el.id_proy_elem_padre === 1 || 
-              el.id_proy_elem_padre === 2 || 
-              el.id_proy_elem_padre === 3
-            );
-
-          default:
-            return [];
-        }
+    getValidParents(tipo: string): any[] {
+      if (!this.combinedData || !Array.isArray(this.combinedData)) {
+        console.error("combinedData no está disponible o no es un array válido");
+        return [];
       }
-
+    
+      console.log('Tipo recibido en getValidParents:', tipo);
+      switch (tipo) {
+        case 'OG': // Objetivo General no tiene padres válidos (es la raíz)
+          return [];
+    
+        case 'OE': // Objetivo Específico solo puede tener como padre un OG
+          return this.combinedData.filter(el => el.id_proy_elem_padre === 1);
+    
+        case 'RE': // Resultado Estratégico puede tener como padre un OG o un OE
+          return this.combinedData.filter(el => el.id_proy_elem_padre === 1 || el.id_proy_elem_padre === 2);
+    
+        case 'IN': // Indicador puede tener como padre un OG, OE o RE
+          return this.combinedData.filter(el => 
+            el.id_proy_elem_padre === 1 || 
+            el.id_proy_elem_padre === 2 || 
+            el.id_proy_elem_padre === 3
+          );
+    
+        default:
+          return [];
+      }
+    }
+    
       // Validar si un padre seleccionado es válido para el tipo actual
       validarPadre(tipo: string, parentCodigo: string): boolean {
+        if (!parentCodigo || !tipo) {
+          console.error("parentCodigo o tipo no definidos correctamente");
+          return false;
+        }
+      
         const validParents = this.getValidParents(tipo);
         return validParents.some(parent => parent.codigo === parentCodigo);
       }
+      
 
-      // Método para manejar cambios en el tipo y filtrar padres válidos
       // Método para manejar cambios en el tipo y filtrar padres válidos
       onParentChange(): void {
         if (this.selectedParentCodigo) {
@@ -562,7 +568,8 @@ export class PlanifEstrategicaComponent implements OnInit {
           return currentCode;
         }
         return max;
-      }, [0, 0, 0, 0]); // [1, 0, 0, 0] es el valor predeterminado
+      }, [1, 0, 0, 0]); // Asegurarse de que tenga al menos 4 niveles
+      // [1, 0, 0, 0] es el valor predeterminado
 
       // Incrementar el primer dígito del código.
       lastOG[0]++;
@@ -572,16 +579,29 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
     // Generar código para OE
     generarCodigoOE(parentCodigo: string): string {
-    const oeElements = this.combinedData.filter(el => el.id_proy_elem_padre === 2);
-    const lastOE = oeElements.reduce((max, el) => {
-      const currentCode = el.codigo.split('.').map(Number);
-      if (currentCode[1] > max[1]) return currentCode;
-      return max;
-    }, [Number(parentCodigo.split('.')[0]), 0, 0, 0]);
-
-    lastOE[1]++;
-    return `${lastOE[0]}.${lastOE[1]}.0.0`;
+      // Filtrar solo los elementos cuyo padre es el OG correspondiente
+      const oeElements = this.combinedData.filter(el => el.id_proy_elem_padre === 1 && el.codigo.startsWith(parentCodigo.split('.')[0]));
+    
+      // Encontrar el último código de OE
+      const lastOE = oeElements.reduce((max, el) => {
+        const currentCode = el.codigo.split('.').map(Number);
+        if (currentCode[1] > max[1]) return currentCode;
+        return max;
+      }, [Number(parentCodigo.split('.')[0]), 0, 0, 0]);
+    
+      // Incrementar el segundo nivel del código
+      lastOE[1]++;
+    
+      // Verificar si el código generado ya existe
+      let newCode = `${lastOE[0]}.${lastOE[1]}.0.0`;
+      while (this.combinedData.some(el => el.codigo === newCode)) {
+        lastOE[1]++; // Incrementa hasta encontrar un código no utilizado
+        newCode = `${lastOE[0]}.${lastOE[1]}.0.0`;
+      }
+    
+      return newCode;
     }
+    
       // Generar código para RE
     generarCodigoRE(parentCodigo: string): string {
     const reElements = this.combinedData.filter(el => el.codigo.startsWith(parentCodigo) && el.id_proy_elem_padre === 2);
@@ -590,7 +610,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       if (currentCode[2] > max[2]) return currentCode;
       return max;
     }, [Number(parentCodigo.split('.')[0]), Number(parentCodigo.split('.')[1]), 0, 0]);
-
     console.log('Último RE:', lastRE);
     lastRE[2]++;
     return `${lastRE[0]}.${lastRE[1]}.${lastRE[2]}.0`;
@@ -681,9 +700,12 @@ export class PlanifEstrategicaComponent implements OnInit {
      * Un hijo no puede estar encima de su padre y viceversa.
      */
     private puedeMover(codigoHijo: number[], codigoPadre: number[]): boolean {
+      console.log('Comparando:', codigoHijo, codigoPadre);
       for (let i = 0; i < codigoPadre.length; i++) {
+        console.log(`Comparando nivel ${i}: ${codigoHijo[i]} con ${codigoPadre[i]}`);
         if (codigoHijo[i] > codigoPadre[i]) {
-          return false; // Hijo no puede estar encima de un padre
+          console.log('Movimiento no permitido: un hijo no puede estar encima de su padre.');
+          return false;
         } else if (codigoHijo[i] < codigoPadre[i]) {
           return true; // Padre está en una posición válida
         }
@@ -692,10 +714,90 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
     
     
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======  
+    
+    compareCode(a: string, b: string): number {
+      const partsA = a.split('.').map(Number);
+      const partsB = b.split('.').map(Number);
+      
+      for (let i = 0; i < Math.max(partsA.length, partsB.length); i++) {
+        const valueA = partsA[i] || 0;
+        const valueB = partsB[i] || 0;
+        if (valueA !== valueB) {
+          return valueA - valueB;
+        }
+      }
+      return 0;
+    }
+
+    getTypeWeight(type: string): number {
+      switch (type) {
+        case 'OG': return 1;
+        case 'OE': return 2;
+        case 'RE': return 3;
+        case 'IN': return 4;
+        default: return 5;
+      }
+    }
+
+    loadData(): void {
+      this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(
+        (data: any) => {
+          this.planifEstrategica = (data[0].dato) ? data[0].dato : [];
+          this.checkIfDataLoaded();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    
+      this.proyElementosService.getElementosByProyecto(this.idProyecto).subscribe(
+        (data: any) => {
+          this.elementosTabla = (data[0].dato) ? data[0].dato : [];
+          this.checkIfDataLoaded();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+
+    isParentCode(parentCode: string, childCode: string): boolean {
+      const parentParts = parentCode.split('.').map(Number);
+      const childParts = childCode.split('.').map(Number);
+    
+      for (let i = 0; i < parentParts.length; i++) {
+        if (parentParts[i] !== childParts[i]) {
+          return false; // No es hijo
+        }
+      }
+    
+      return childParts.length > parentParts.length; // El hijo tiene más niveles
+    }
+    
+    canDeleteElement(element: any, combinedData: any[]): { canDelete: boolean, message: string } {
+      const elementCode = element.codigo; // Código del elemento a eliminar
+      const elementType = element.tipo;   // Tipo de elemento (OG, OE, RE)
+    
+      // Filtramos los elementos de tipo OG, OE, RE
+      if (['OG', 'OE', 'RE'].includes(elementType)) {
+        // Comprobamos si existe un hijo que tenga un código que empieza con el código del elemento actual
+        const hasChildren = combinedData.some(item => {
+          return item.codigo.startsWith(elementCode) && item.codigo !== elementCode;
+        });
+    
+        if (hasChildren) {
+          return { canDelete: false, message: `No puedes eliminar el elemento ${elementCode} porque tiene hijos debajo de él.` };
+        }
+      }
+    
+      // Si no tiene hijos, se puede eliminar
+      return { canDelete: true, message: `El elemento ${elementCode} puede ser eliminado.` };
+    }
     
     
-    // ======= ======= ======= ======= ======= ======= =======  ======= =======      
-        
+
+    
 
     // ======= ======= INIT PLANIFICACION ESTRATEGICA NGMODEL ======= =======
       initPlanifEstrategicaModel() {
@@ -749,34 +851,7 @@ export class PlanifEstrategicaComponent implements OnInit {
             this.elementosTabla = (data[0].dato)?(data[0].dato):[];
             console.log('Elementos:', this.elementosTabla);
           }
-
-
         )
-      }
-      loadData(): void {
-        this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(
-          (data: any) => {
-            this.planifEstrategica = (data[0].dato)?(data[0].dato):[];
-            console.log(' datos ede indicador en eel loadData : ',this.planifEstrategica )
-            this.checkIfDataLoaded();
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
-      
-        this.proyElementosService.getElementosByProyecto(this.idProyecto).subscribe(
-          (data: any) => {
-            this.elementosTabla = (data[0].dato)?(data[0].dato):[];
-            console.log(' datos ede elementos en el LoadData : ',this.elementosTabla );
-      
-
-            this.checkIfDataLoaded();
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
       }
       
       checkIfDataLoaded(): void {
@@ -785,65 +860,76 @@ export class PlanifEstrategicaComponent implements OnInit {
         }
       }
       
-      combinePlanifEstrategicaAndElementos(): void {
+      combinePlanifEstrategicaAndElementos(): void { 
+        // Mapear datos de planifEstrategica
         const planifEstrategicaMapped = this.planifEstrategica.map((item: any) => ({
-
           tipo: 'Indicador',
           codigo: item.codigo || '-',
-          color:item.color,
-          comentario:item.comentario,  
-          descripcion: item.descripcion || '-',  
-          id_estado:item.id_estado,
-          id_inst_categoria_1:item.id_inst_categoria_1,
-          id_inst_categoria_2:item.id_inst_categoria_2,
-          id_inst_categoria_3:item.id_inst_categoria_3,
+          color: item.color,
+          comentario: item.comentario,
+          descripcion: item.descripcion || '-',
+          id_estado: item.id_estado,
+          id_inst_categoria_1: item.id_inst_categoria_1,
+          id_inst_categoria_2: item.id_inst_categoria_2,
+          id_inst_categoria_3: item.id_inst_categoria_3,
           id_proy_elem_padre: item.id_proy_elem_padre,
-          id_proy_indicador:item.id_proy_indicador,
-          id_proyecto:item.id_proyecto,
+          id_proy_indicador: item.id_proy_indicador,
+          id_proyecto: item.id_proyecto,
           indicador: item.indicador || '-',
-
           linea_base: item.linea_base || '-',
-          medida: item.medida || '-',          
+          medida: item.medida || '-',
           medio_verifica: item.medio_verifica || '-',
-          meta_final:item.meta_final || '-',
-          orden:item.orden,
-          sigla:item.sigla,
-          
+          meta_final: item.meta_final || '-',
+          orden: item.orden,
+          sigla: item.sigla,
         }));
       
+        // Mapear datos de elementosTabla
         const elementosTablaMapped = this.elementosTabla.map((item: any) => ({
-      
           tipo: 'Elemento',
-   
           codigo: item.codigo || '-',
-          color:item.color,
-          comentario:item.comentario,  
-          descripcion: item.descripcion || '-',  
-          id_estado:item.id_estado,
-          id_inst_categoria_1:item.id_inst_categoria_1,
-          id_inst_categoria_2:item.id_inst_categoria_2,
-          id_inst_categoria_3:item.id_inst_categoria_3,
+          color: item.color,
+          comentario: item.comentario,
+          descripcion: item.descripcion || '-',
+          id_estado: item.id_estado,
+          id_inst_categoria_1: item.id_inst_categoria_1,
+          id_inst_categoria_2: item.id_inst_categoria_2,
+          id_inst_categoria_3: item.id_inst_categoria_3,
           id_proy_elem_padre: item.id_proy_elem_padre,
-          id_proy_elemento:item.id_proy_elemento,
-          id_proyecto:item.id_proyecto,
+          id_proy_elemento: item.id_proy_elemento,
+          id_proyecto: item.id_proyecto,
           indicador: item.elemento || '-',
           linea_base: item.linea_base || '-',
-          medida: item.medida || '-',          
+          medida: item.medida || '-',
           medio_verifica: item.medio_verifica || '-',
-          meta_final:item.meta_final || '-',
-          orden:item.orden,
-          sigla:this.getSigla(item.id_proy_elem_padre),
+          meta_final: item.meta_final || '-',
+          orden: item.orden,
+          sigla: this.getSigla(item.id_proy_elem_padre), // Asegúrate de que `getSigla` devuelve correctamente el valor para `RE`.
         }));
-      console.log('datos en el elemeto tabla de elementos ante de ser combinado:', elementosTablaMapped);
-        // Combina ambas tablas
+      
+        console.log('Datos en elementosTabla antes de ser combinados:', elementosTablaMapped);
+      
+        // Combinar ambas tablas
         this.combinedData = [...planifEstrategicaMapped, ...elementosTablaMapped];
-
-        console.log('estsos son los datos convinados : ', this.combinedData);
-        console.log('se compara con lo que tien ', this.planifEstrategica);
-            }
       
+        console.log('Datos combinados:', this.combinedData);
       
-
+        // Ordenar los datos combinados
+        this.combinedData.sort((a, b) => {
+          const comparisonByCode = this.compareCode(a.codigo, b.codigo);
+          if (comparisonByCode !== 0) {
+            return comparisonByCode;
+          }
+      
+          // Si los códigos son iguales, ordenar por tipo (sigla)
+          const typeWeightA = this.getTypeWeight(a.sigla);
+          const typeWeightB = this.getTypeWeight(b.sigla);
+          return typeWeightA - typeWeightB;
+        });
+      
+        console.log('Datos combinados y ordenados:', this.combinedData);
+      }
+      
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
     initAddPlanifEstrategica(modalScope: TemplateRef<any>, id_proy_elem_padre?: number): void{
@@ -1023,6 +1109,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.loadData();
     }
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
+  
     deleteIndicador(){
       console.log('Eliminando el ID:', this.id_proy_indicador);
       this.servIndicador.deleteIndicador(this.id_proy_indicador).subscribe(
@@ -1061,7 +1148,23 @@ export class PlanifEstrategicaComponent implements OnInit {
     this.getPlanifEstrategica();
     this.loadData()
   }
+  
   deletePlanificacionEstrategica() {
+    if (!this.planifEstrategicaSelected) {
+      console.warn('No hay un elemento seleccionado para eliminar');
+      return;
+    }
+  
+    // Validar si se puede eliminar el elemento seleccionado usando la validación canDeleteElement
+    const validationResult = this.canDeleteElement(this.planifEstrategicaSelected, this.combinedData);
+  
+    if (!validationResult.canDelete) {
+      // Si no se puede eliminar, mostrar el mensaje de advertencia
+      alert(validationResult.message);
+      return;
+    }
+  
+    // Proceder con la eliminación según el tipo de elemento
     if (this.planifEstrategicaSelected.id_proy_indicador) {
       console.log('Eliminando Indicador con ID:', this.planifEstrategicaSelected.id_proy_indicador);
       this.servIndicador.deleteIndicador(this.planifEstrategicaSelected.id_proy_indicador).subscribe(
@@ -1071,6 +1174,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         },
         (error) => {
           console.error('Error al eliminar el Indicador:', error);
+          alert('Error al eliminar el indicador');
         }
       );
     } else if (this.planifEstrategicaSelected.id_proy_elemento) {
@@ -1082,12 +1186,16 @@ export class PlanifEstrategicaComponent implements OnInit {
         },
         (error) => {
           console.error('Error al eliminar el Elemento:', error);
+          alert('Error al eliminar el elemento');
         }
       );
     } else {
       console.warn('No hay un Indicador o Elemento válido seleccionado.');
     }
   }
+  
+  
+  
   
   // Reinicia la selección y recarga los datos
   resetSelection() {
