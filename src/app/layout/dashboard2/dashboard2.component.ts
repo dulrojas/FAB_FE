@@ -1,12 +1,12 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
-import { servDashboard } from "../../servicios/dashboard";
-import { Chart } from 'chart.js/auto';
+import { ServDashboard } from "../../servicios/dashboard";
 import { environment } from '../../../environments/environment';
+import { Chart } from 'chart.js/auto';
 
 @Component({
     selector: 'app-dashboard2',
@@ -16,19 +16,19 @@ import { environment } from '../../../environments/environment';
     })
 
 export class Dashboard2Component implements OnInit {
-
-    dashboard2: any[] = [];
-    dashboard2Selected: any = null;
-    obligaciones: any[] = [];
-
-    constructor(
-        private modalService: NgbModal,
+  // Variables globales
+  dashboard2: any[] = [];
+  obligaciones: any[] = [];
+  assetsPath = environment.assetsPath;
+  
+  // ======= ======= CONSTRUCTOR ======= =======
+      constructor(
         private proyectoService: ProyectoService,
         private servicios: servicios,
-        private servDashboard: servDashboard,
+        private servDashboard: ServDashboard,
         private cdr: ChangeDetectorRef
-    ) {}
-    // ======= ======= HEADER SECTION ======= =======
+      ) {}
+  // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
     namePersonaReg: any = localStorage.getItem('userFullName');
@@ -38,367 +38,224 @@ export class Dashboard2Component implements OnInit {
       this.idProyecto = selectedPro.id_proyecto;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
-      this.currentPerProRol = selectedPro.rol;
+      this.currentPerProRol = selectedPro.rol; 
 
+      this.getDashboardData();
+      this.getProyectDateGaps();
       
     }
-
+  // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
+    // Contadores de Header
     headerDataNro01: any = 0;
     headerDataNro02: any = 0;
     headerDataNro03: any = 0;
     headerDataNro04: any = 0;
-    // ======= ======= ======= ======= =======
+  // ====== ======= ====== ====== ======= ====== INIT VIEW FUN ====== ======= ====== ====== ======= ======
+    ngOnInit() {
+      console.log("Estado inicial del componente:", this.proyectoScope);
+      this.getDashboardData();
+      this.getProyectDateGaps();
+         
+    } 
+  // ====== ======= ====== ====== ======= ====== GET DASBOARD DATA ====== ======= ====== ====== ======= ======  
+  // ====== Lógica para obtener datos del Dashboard ======
+  getDashboardData() {
+    this.servDashboard.getDashboardData(this.idProyecto).subscribe(
+      (data) => {
+        if (data && data[0]?.dato?.[0]) {
+        //TARJETA 1  
+          // Descargar archivo relacionado con el proyecto
+          this.downloadFile(this.idProyecto);
+          
+        //TARJETA 2 
+          // Actualizar datos del proyecto
+          this.proyectoScope = {
+            fecha_inicio: data[0].dato[0].fecha_inicio,
+            fecha_fin: data[0].dato[0].fecha_fin,
+            fecha_fin_ampliada: data[0].dato[0].fecha_fin_ampliada,
+            fecha_fin_real: data[0].dato[0].fecha_fin_real
+          };
+          // Llamar a la función para calcular y actualizar el periodo actual
+          this.calculatePeriodoActual();
 
-    proyectoScope: any = {};
-    currentDateGap: number = 0;
-    finalDateGap: number = 0;
-    realFinalDate: any = '';
-
-    assetsPath = environment.assetsPath;
-
+        //TARJETA 3
+        this.moneda_presupuesto = data[0].dato[0].moneda_presupuesto || 'Bs';
+        this.presupuesto_me = Number(data[0].dato[0].presupuesto_me) || 0;
+        this.presupuesto_mn = Number(data[0].dato[0].presupuesto_mn) || 0;
+        this.createPresupuestoChart();
+          
+        }
+      },
+      (error) => {
+        console.error('Error al obtener datos del dashboard:', error);
+      }
+    );
+  }
+  // ====== ======= ====== ====== ======= ====== PRIMERA TARGETA DE INFIORMACION Y IMAGEN ====== ======= ====== ====== ======= ======
+    // Variables para tarjeta 1
     imageSrc: any = null;
     defaultImageSrc: any = environment.defaultImageSrc;
-
-    ngOnInit() {
-      this.createDoughnutChart(); // Grafico Presupuesto
-      this.createDoughnutChart2024() // Grafico Presupuesto 2024
-      this.createRadarChart(); // Grafico Indicadores
-      this.createLearnDoughnutChart(); // Grafico Aprendizajes
-      this.getDashboardData();
-    }
-
-    getDashboardData(){
-      this.servDashboard.getDashboardData(this.idProyecto, "2024-12-03").subscribe(
-        (data) => {
-          //this.dashboardData = data[0].dato;
-          this.downloadFile(this.idProyecto);
-          console.log(data[0].dato[0]);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    }
-
-        getCurrentDateDaysGap(iniDate: any){
-            iniDate = (new Date(iniDate)).getTime();
-            return (Math.floor((new Date().getTime()-iniDate)/(1000*3600*24)));
-        }
-        getDateDaysGap(iniDate: any, endDate: any){
-            iniDate = new Date(iniDate).getTime();
-            endDate = new Date(endDate).getTime();
-            return (Math.floor((endDate-iniDate)/(1000*3600*24))+1);
-        }
-        getProyectDateGaps(){          
-            this.realFinalDate = this.proyectoScope.fecha_fin;
-            this.realFinalDate = (this.proyectoScope.fecha_fin_ampliada)?(this.proyectoScope.fecha_fin_ampliada):(this.realFinalDate);
-            this.realFinalDate = (this.proyectoScope.fecha_fin_real)?(this.proyectoScope.fecha_fin_real):(this.realFinalDate);
-    
-            this.currentDateGap = this.getCurrentDateDaysGap(this.proyectoScope.fecha_inicio);
-            this.finalDateGap = this.getDateDaysGap(this.proyectoScope.fecha_inicio, this.realFinalDate);
-    
-            this.currentDateGap = (this.currentDateGap <= this.finalDateGap)?(this.currentDateGap):(this.finalDateGap);
-        
-            this.countHeaderData();
-        }
-
-        // ====== ======= ======
-        getCurrentDateTime(): string {
-            const date: Date = new Date();
-            
-            const day: string = String(date.getDate()).padStart(2, '0');
-            const month: string = String(date.getMonth() + 1).padStart(2, '0');
-            const year: number = date.getFullYear();
-            
-            const hours: string = String(date.getHours()).padStart(2, '0');
-            const minutes: string = String(date.getMinutes()).padStart(2, '0');
-            const seconds: string = String(date.getSeconds()).padStart(2, '0');
-            
-            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-        }    
-
-    countHeaderData() {
-       
-        this.headerDataNro01 = this.obligaciones.length;
-        this.headerDataNro02 = this.obligaciones.filter((obligacion) => obligacion.estado === 'Cumplida').length;
-        this.headerDataNro03 = this.obligaciones.filter((obligacion) => obligacion.estado === 'Incumplida').length;
-        this.headerDataNro04 = this.obligaciones.filter((obligacion) => obligacion.estado === 'En proceso').length;
-      }
-      
-      // ====== ======= ====== Grafico Presupuesto ====== ======= ======
-      createDoughnutChart() {
-        const ctx: any = document.getElementById('doughnutChart') as HTMLCanvasElement;
-      
-        new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['Gastado', 'Restante'], // Etiquetas
-            datasets: [
-              {
-                label: 'Presupuesto',
-                data: [25, 75], // Porcentajes
-                backgroundColor: ['#BF5F3B', '#E0E0E0'], // Colores de la gráfica
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            cutout: '70%', // Hace el efecto de dona
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (tooltipItem) =>
-                    `${tooltipItem.label}: ${tooltipItem.raw}%`, // Muestra porcentajes
-                },
-              },
-              legend: {
-                display: false, // Oculta la leyenda
-              },
-            },
-          },
-          plugins: [
-            {
-              id: 'centerText', // Identificador del plugin
-              beforeDraw(chart: any) {
-                const width = chart.width;
-                const height = chart.height;
-                const ctx = chart.ctx;
-                ctx.restore();
-      
-                const fontSize = (height / 100).toFixed(2); // Ajusta el tamaño de la fuente
-                ctx.font = `${fontSize}em sans-serif`;
-                ctx.textBaseline = 'middle';
-      
-                const text = '25%'; // Texto al centro (porcentaje)
-                const textX = Math.round((width - ctx.measureText(text).width) / 2);
-                const textY = height / 2;
-      
-                ctx.fillStyle = '#000'; // Color del texto
-                ctx.fillText(text, textX, textY);
-                ctx.save();
-              },
-            },
-          ],
-        });
-      }
-
-      // ====== ======= ====== Grafico Presupuesto 2024 ====== ======= ======
-      createDoughnutChart2024() {
-        const ctx: any = document.getElementById('doughnutChart2024') as HTMLCanvasElement;
-      
-        new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['Gastado', 'Restante'], // Etiquetas
-            datasets: [
-              {
-                label: 'Presupuesto 2024',
-                data: [75, 25], // Porcentajes
-                backgroundColor: ['#BF5F3B', '#E0E0E0'], // Colores de la gráfica
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            cutout: '75%', // Hace el efecto de dona
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (tooltipItem) =>
-                    `${tooltipItem.label}: ${tooltipItem.raw}%`, // Muestra porcentajes
-                },
-              },
-              legend: {
-                display: false, // Oculta la leyenda
-              },
-            },
-          },
-          plugins: [
-            {
-              id: 'centerText', // Identificador del plugin
-              beforeDraw(chart: any) {
-                const width = chart.width;
-                const height = chart.height;
-                const ctx = chart.ctx;
-                ctx.restore();
-      
-                const fontSize = (height / 100).toFixed(2); // Ajusta el tamaño de la fuente
-                ctx.font = `${fontSize}em sans-serif`;
-                ctx.textBaseline = 'middle';
-      
-                const text = '75%'; // Texto al centro (porcentaje)
-                const textX = Math.round((width - ctx.measureText(text).width) / 2);
-                const textY = height / 2;
-      
-                ctx.fillStyle = '#000'; // Color del texto
-                ctx.fillText(text, textX, textY);
-                ctx.save();
-              },
-            },
-          ],
-        });
-      }
-
-      // ====== ======= ====== Grafico Indicadores ====== ======= ======
-      createRadarChart() {
-        const ctx: any = document.getElementById('radarChart') as HTMLCanvasElement;
-      
-        new Chart(ctx, {
-          type: 'radar',
-          data: {
-            labels: [
-              '1.0.0.1',
-              '1.0.0.2',
-              '1.0.0.3',
-              '1.0.0.4',
-              '1.0.0.5',
-              '1.0.0.6',
-              '1.0.0.7',
-              '1.1.0.1',
-              '1.1.1.1',
-              '1.1.1.2',
-              '1.1.1.3',
-            ],
-            datasets: [
-              {
-                label: 'Indicadores',
-                data: [100, 80, 60, 50, 70, 40, 90, 30, 100, 70, 50], // Datos para cada punto
-                borderColor: '#FF5722', // Color del borde
-                backgroundColor: 'rgba(255, 87, 34, 0.2)', // Color de relleno (transparente)
-                borderWidth: 2,
-                pointBackgroundColor: '#FF5722', // Color de los puntos
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            scales: {
-              r: {
-                angleLines: {
-                  color: '#e0e0e0', // Color de las líneas radiales
-                },
-                grid: {
-                  color: '#e0e0e0', // Color de las líneas de la cuadrícula
-                },
-                suggestedMin: 0, // Valor mínimo del eje
-                suggestedMax: 100, // Valor máximo del eje
-                ticks: {
-                  backdropColor: '#ffffff', // Fondo de los números en las líneas
-                  color: '#333333', // Color de los números
-                },
-                pointLabels: {
-                  color: '#333333', // Color de las etiquetas
-                  font: {
-                    size: 10, // Tamaño de fuente de las etiquetas
-                  },
-                },
-              },
-            },
-            plugins: {
-              legend: {
-                display: false, // Oculta la leyenda
-              },
-            },
-          },
-        });
-      }   
-
-      // ====== ======= ====== Grafico Aprendizajes ====== ======= ======
-      createLearnDoughnutChart() {
-        const ctx: any = document.getElementById('learnDoughnutChart') as HTMLCanvasElement;
-      
-        new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['Administrativos', 'Gerencia de Proyecto', 'Actores Claves', 'Otros'], // Etiquetas
-            datasets: [
-              {
-                label: 'Aprendizajes',
-                data: [2, 2, 1, 1], // Datos de cada segmento
-                backgroundColor: ['#6A1B9A', '#8E24AA', '#FFEB3B', '#E91E63'], // Colores
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            cutout: '70%', // Hace el efecto de dona
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (tooltipItem) =>
-                    `${tooltipItem.label}: ${tooltipItem.raw}`, // Muestra el valor
-                },
-              },
-              legend: {
-                display: false, // Oculta la leyenda integrada
-              },
-            },
-          },
-          plugins: [
-            {
-              id: 'centerText', // Plugin para el texto central
-              beforeDraw(chart: any) {
-                const width = chart.width;
-                const height = chart.height;
-                const ctx = chart.ctx;
-                ctx.restore();
-      
-                const fontSize = (height / 100).toFixed(2); // Tamaño dinámico
-                ctx.font = `${fontSize}em sans-serif`;
-                ctx.textBaseline = 'middle';
-      
-                const total = chart.data.datasets[0].data.reduce((a: number, b: number) => a + b, 0);
-                const text = `${total}`; // Total al centro
-                const textX = Math.round((width - ctx.measureText(text).width) / 2);
-                const textY = height / 2;
-      
-                ctx.fillStyle = '#6A1B9A'; // Color del texto
-                ctx.fillText(text, textX, textY);
-                ctx.save();
-              },
-            },
-          ],
-        });
-      }
-      
     // ======= ======= UPLOAD IMAGE FUN ======= =======
-    uploadFile(file: any, idRegistro: any, nombreRegistro: any){
-      this.servicios.uploadFile(file, "persona", "ruta_foto", "id_persona", nombreRegistro, idRegistro).subscribe(
-        (response) => {
-          //console.log('Archivo subido correctamente:', response);
-        },
-        (error) => {
-          console.error('Error al subir el archivo:', error);
-        }
-      );
-    }
-    // ======= ======= ======= ======= =======
-    // ======= ======= DOWNLOAD IMAGE FUN ======= =======
-    downloadFile(idRegistro: any){
-      this.servicios.downloadFile("proyecto", "ruta_imagen", "id_proyecto", idRegistro).subscribe(
-        (response: Blob) => {
-          if (response instanceof Blob) {
-            const url = window.URL.createObjectURL(response);
-            this.imageSrc = url;
-          } 
-          else {
-            //console.warn('La respuesta no es un Blob:', response);
-            this.imageSrc = null; 
+          uploadFile(file: any, idRegistro: any, nombreRegistro: any){
+            this.servicios.uploadFile(file, "persona", "ruta_foto", "id_persona", nombreRegistro, idRegistro).subscribe(
+              (response) => {
+                //console.log('Archivo subido correctamente:', response);
+              },
+              (error) => {
+                console.error('Error al subir el archivo:', error);
+              }
+            );
           }
-        },
-        (error) => {
-          if (error.status === 404) {
-            //console.warn('No se encontró imagen para el registro:', idRegistro);
-            this.imageSrc = null;
-          } else {
-            //console.error('Error al descargar la imagen:', error);
-          }
+        // ======= ======= DOWNLOAD IMAGE FUN ======= =======
+        downloadFile(idRegistro: any){
+          this.servicios.downloadFile("proyecto", "ruta_imagen", "id_proyecto", idRegistro).subscribe(
+            (response: Blob) => {
+              if (response instanceof Blob) {
+                const url = window.URL.createObjectURL(response);
+                this.imageSrc = url;
+              } 
+              else {
+                //console.warn('La respuesta no es un Blob:', response);
+                this.imageSrc = null; 
+              }
+            },
+            (error) => {
+              if (error.status === 404) {
+                //console.warn('No se encontró imagen para el registro:', idRegistro);
+                this.imageSrc = null;
+              } else {
+                //console.error('Error al descargar la imagen:', error);
+              }
+            }
+          );
         }
-      );
+
+  // ====== ======= ====== ====== SEGUNDA TARJETA DE FECHA DE INICIO-FIN Y PERIODO ACTUAL DEL PROYECTO ====== ======= ====== ====== 
+      // Variables para tarjeta 2
+      proyectoScope: any = {
+        fecha_inicio: '',
+        fecha_fin: '',
+        fecha_fin_ampliada: '',
+        fecha_fin_real: '',
+      };
+      currentDateGap: number = 0;
+      finalDateGap: number = 0;
+      realFinalDate: string = '';
+      periodoActual: string = ''; // Esta variable ya está presente pero se optimiza el cálculo.
+      getProyectDateGaps() {
+        // Paso 1: Asignar fecha final inicial desde `fecha_fin`
+        this.realFinalDate = this.proyectoScope.fecha_fin;
+        // Paso 2: Verificar y sobrescribir con `fecha_fin_ampliada` si está disponible
+        if (this.proyectoScope.fecha_fin_ampliada) {
+            this.realFinalDate = this.proyectoScope.fecha_fin_ampliada;
+        }
+        // Paso 3: Verificar y sobrescribir con `fecha_fin_real` si está disponible
+        if (this.proyectoScope.fecha_fin_real) {
+            this.realFinalDate = this.proyectoScope.fecha_fin_real;
+        }
+        // Paso 4: Actualizar el periodo actual formateado a DD/MM/AAAA
+        this.calculatePeriodoActual();
+        // Paso 5: Actualizar los contadores del header
+        this.countHeaderData();
+        }
+        calculatePeriodoActual() {
+          // Obtener la fecha actual
+          const today = new Date();
+          const day = today.getDate().toString().padStart(2, '0');  // Aseguramos 2 dígitos para el día
+          const month = (today.getMonth() + 1).toString().padStart(2, '0');  // El mes empieza desde 0, por eso sumamos 1
+          const year = today.getFullYear().toString(); // Año como cadena
+          // Actualizar la variable `periodoActual` con el formato DD/MM/AAAA de la fecha actual
+          this.periodoActual = `${day}/${month}/${year}`;
+          console.log("Periodo actual calculado:", this.periodoActual);
+        }
+
+  // ====== ======= ====== ====== TERCERA TARJETA DONA DE PRESUPUESTO DEL PROYECTO ====== ======= ====== ======   
+      moneda_presupuesto: string = '';
+      presupuesto_me: number = 0;
+      presupuesto_mn: number = 0;
+      chartPresupuesto: any;
+
+      calcularPorcentajePresupuesto(): number {
+        if (this.presupuesto_me === 0) return 0;
+        const porcentaje = (this.presupuesto_mn / this.presupuesto_me) * 100;
+        return Math.min(Math.round(porcentaje), 100);
+      }
+      
+      // Agregar este método para formatear números como moneda
+      formatearMoneda(valor: number): string {
+        return new Intl.NumberFormat('es-BO', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(valor);
+      }
+      
+      // Método para crear y actualizar el gráfico
+      createPresupuestoChart() {
+        const ctx: any = document.getElementById('presupuestoChart') as HTMLCanvasElement;
+        if (this.chartPresupuesto) {
+          this.chartPresupuesto.destroy();
+        }
+      
+        const porcentaje = this.calcularPorcentajePresupuesto();
+        const restante = 100 - porcentaje;
+      
+        this.chartPresupuesto = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Ejecutado', 'Restante'],
+            datasets: [{
+              data: [porcentaje, restante],
+              backgroundColor: ['#4CAF50', '#E0E0E0'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            cutout: '75%',
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (tooltipItem) => `${tooltipItem.label}: ${tooltipItem.raw}%`
+                }
+              },
+              legend: {
+                display: false
+              }
+            }
+          },
+          plugins: [{
+            id: 'centerText',
+            beforeDraw(chart: any) {
+              const { ctx, width, height } = chart;
+              ctx.restore();
+              
+              const fontSize = height / 8;
+              ctx.font = `bold ${fontSize}px sans-serif`;
+              ctx.textBaseline = 'middle';
+              ctx.textAlign = 'center';
+              
+              const text = `${porcentaje}%`;
+              ctx.fillStyle = '#000000';
+              ctx.fillText(text, width / 2, height / 2);
+              
+              ctx.save();
+            }
+          }]
+        });
+      }
+
+
+  // ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ======  ======= ======
+
+
+    // ====== Contar datos del header ======
+    countHeaderData(): void {
+      this.headerDataNro01 = this.obligaciones.length;
+      this.headerDataNro02 = this.obligaciones.filter((o) => o.estado === 'Cumplida').length;
+      this.headerDataNro03 = this.obligaciones.filter((o) => o.estado === 'Incumplida').length;
+      this.headerDataNro04 = this.obligaciones.filter((o) => o.estado === 'En proceso').length;
     }
-    // ======= ======= ======= ======= =======
+
+      
 
 }

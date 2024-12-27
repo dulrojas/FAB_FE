@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal,NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ProyectoService } from '../../services/proyectoData.service';
@@ -8,6 +8,8 @@ import { servicios } from "../../servicios/servicios";
 import { BeneficiariosService } from "../../servicios/Beneficiarios";
 import { AliadosService } from "../../servicios/aliados";
 import { servPersona } from "../../servicios/persona";
+import {OrganizacionesService} from "../../servicios/organizaciones"; 
+
 import { servPersonaRoles } from "../../servicios/personaRoles";
 import { ChangeDetectorRef } from '@angular/core';
 
@@ -48,6 +50,7 @@ export class BeneficiariosComponent implements OnInit {
   mainPage = 1;
   mainPageSize = 10;
   totalLength = 0;
+  previousIdProyecto: any;
 
   constructor(
     private modalService: NgbModal,
@@ -60,7 +63,8 @@ export class BeneficiariosComponent implements OnInit {
     private personaService: servPersona,
     private ubicaGeograficaService: servUbicaGeografica,
     private cdr: ChangeDetectorRef,
-    private servPersonaRoles: servPersona
+    private servPersonaRoles: servPersona,
+    private OrganizacionesService:OrganizacionesService
   ) {}
 
 
@@ -76,20 +80,23 @@ export class BeneficiariosComponent implements OnInit {
   aliadosTable: any[] = [];
   tiposConvenio: any[] = [];
   peronsaRegistro:any="";
+  
+ 
 
   // ======= ======= HEADER SECTION ======= =======
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
   idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
   namePersonaReg: any = localStorage.getItem('userFullName');
-  currentPerProRol: any = localStorage.getItem('currentPerProRol');
   @Output() selectionChange = new EventEmitter<any>();
-  onChildSelectionChange(selectedPro: any) {
-    this.idProyecto = selectedPro.id_proyecto;
+  onChildSelectionChange(selectedId: string) {
+    this.idProyecto = selectedId;
     localStorage.setItem('currentIdProy', (this.idProyecto).toString());
-    this.proyectoService.seleccionarProyecto(this.idProyecto);
-    this.currentPerProRol = selectedPro.rol;
-
-
+//    this.ngOnInit();
+    this.loadBeneficiarios();
+    this.loadAliados();
+    this.initForm();
+    // ======= *ADD A GETTER DOWN HERE* =======
+    // this.getLogros();
   }
 
   headerDataNro01: any = 0;
@@ -99,14 +106,14 @@ export class BeneficiariosComponent implements OnInit {
   // ======= ======= ======= ======= =======
 
   // ====== VARIABLES DE PAGINACIÓN ======
-  totalLengthBeneficiarios = 0;
-  currentPageBeneficiarios = 1;
   pageSizeBeneficiarios = 10;
-
-  totalLengthAliados = 0;
-  currentPageAliados = 1;
+  currentPageBeneficiarios = 1;
+  totalLengthBeneficiarios = 0;
+  
   pageSizeAliados = 10;
-
+  currentPageAliados = 1;
+  totalLengthAliados = 0;
+  
   ngOnInit(): void {
     this.loadBeneficiarios();
     this.initForm();
@@ -116,9 +123,12 @@ export class BeneficiariosComponent implements OnInit {
     this.initAliadosForm();
     this.loadAliados();
     this.loadConvenios();
-    this.countHeaderData();
-    this.cargarPersonaRoles();
+   
+    this.cargarPersonaRoles();        
+
   }
+
+  
 //obtenr actividades
 getActividades(): void {
   this.beneficiariosService.getActividades().subscribe(
@@ -134,7 +144,7 @@ getActividades(): void {
 }
 
 // inicializar formulario con los campos del beneficiario
-  private initForm(): void {
+   initForm(): void {
     this.beneficiariesForm = this.fb.group({
       id: [{ value: '', disabled: true }],
       fecha: [''],
@@ -156,15 +166,23 @@ getActividades(): void {
 
     
     
-      // ======= GET organizacion tipo =======
-  this.servicios.getParametricaByIdTipo(18).subscribe(
-    (data) => {
-      this. organizacionTipo = data[0].dato;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
+      // ======= GET organizacion para aliados  =======
+      this.OrganizacionesService.getOrganizacionByProyecto(this.idProyecto).subscribe(
+        (data) => {
+          if (data.length > 0 && data[0].res === "OK") {
+            this.organizacionTipo = data.map(item => item.dato);
+            console.log('Organizaciones tipo recibidas para aliados:', this.organizacionTipo);
+          } else {
+            console.warn('No se encontraron datos para el proyecto.');
+            this.organizacionTipo = [];
+          }
+        },
+        (error) => {
+          console.error('Error al obtener las organizaciones:', error);
+        }
+      );
+      
+   
   }
   
 
@@ -248,7 +266,7 @@ loadDepartamentos(): void {
           this.provincias = response[0].dato;
           console.log('Provincias recibidas:', this.provincias);
           this.provincias.forEach(provincia => {
-            this.ubicaGeograficaService.getUbicaciones(4, 1, provincia.orden).subscribe(
+            this.ubicaGeograficaService.getUbicaciones(4, 1, provincia.id_ubica_geo).subscribe(
               (response) => {
                 if (response[0]?.res === 'OK') {
                   this.municipios = this.municipios.concat(response[0].dato);
@@ -283,10 +301,12 @@ loadDepartamentos(): void {
       (response) => {
         if (response[0]?.res === 'OK') {
           this.tiposOrganizacion = response[0].dato.map((item: any) => ({
-            id: item.id_subtipo,
+            id: item.idp,
             nombre: item.descripcion_subtipo
+            
           }));
         }
+        console.log(' organizaciones tiporecibidads:  ',this.tiposOrganizacion)
       },
       (error) => console.error('Error al cargar tipos de organización:', error)
     );
@@ -302,13 +322,15 @@ loadDepartamentos(): void {
     );
   }
   loadBeneficiarios(): void {
-    this.beneficiariosService.getBeneficiarios().subscribe(
+    this.beneficiariosService.getBeneficiarios(this.idProyecto).subscribe(
       (response) => {
         console.log('Datos recibidos del servicio:', response);
-        console.log('nombre de la persona', this.namePersonaReg);  
+        console.log('nombre de la persona', this.namePersonaReg);
   
         if (response[0]?.res === 'OK') {
-          const rawBeneficiarios = response[0].dato || [];
+          const rawBeneficiarios = Array.isArray(response[0]?.dato) ? response[0].dato : [];
+  
+          console.log('Beneficiarios procesados:', rawBeneficiarios);
   
           this.beneficiariosTable = rawBeneficiarios.map((item: any) => ({
             id: item.id,
@@ -326,9 +348,8 @@ loadDepartamentos(): void {
           }));
   
           this.totalLengthBeneficiarios = this.beneficiariosTable.length;
+         this.countHeaderData();
   
-          // Llamada a countHeaderData después de cargar los beneficiarios
-          this.countHeaderData();
         } else {
           console.error('Respuesta inválida del servicio:', response);
         }
@@ -338,6 +359,7 @@ loadDepartamentos(): void {
       }
     );
   }
+  
   
   get paginatedBeneficiarios(): Beneficiario[] {
     const startIndex = (this.currentPageBeneficiarios - 1) * this.pageSizeBeneficiarios;
@@ -357,7 +379,7 @@ loadDepartamentos(): void {
 openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
   this.selectedBeneficiarios = beneficiario || null;
 
-  if (beneficiario) {
+  if (beneficiario) {// modo edición
     this.beneficiariesForm.patchValue({
       id: this.selectedBeneficiarios.id,
       fecha: beneficiario.fecha,
@@ -388,54 +410,88 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
      registeredBy: this.namePersonaReg 
 
    });
-    
+
   }
 
   document.querySelector('app-root')?.setAttribute('inert', 'true'); 
-  this.modalService.open(modal).result.finally(() => {
+  this.modalService.open(modal,{ size: 'xl' }).result.finally(() => {
     document.querySelector('app-root')?.removeAttribute('inert'); 
   });
 }
 
 
    // Guardar o actualizar beneficiario
-  onSubmit(): void {
-      if (!this.beneficiariesForm.valid) {
-          console.error('Formulario inválido:', this.beneficiariesForm.errors);
-          return;
-      }
+   onSubmit(): void {
+    if (!this.beneficiariesForm.valid) {
+        console.error('Formulario inválido:', this.beneficiariesForm.errors);
+        return;
+    }
+
+    const formValue = this.beneficiariesForm.getRawValue();
+    const organizacionData = {
+        p_id_organizacion: 2, 
+        p_id_proyecto: parseInt(this.idProyecto, 10),
+        p_id_institucion: 1 || null, 
+        p_idp_tipo_organizacion: formValue.tipoOrganizacion,
+        p_organizacion: formValue.organizacion,
+    };
+
+    console.log('Datos para crear organización:', organizacionData);
+
+    // Crear la organización antes de agregar el beneficiario
+    this.OrganizacionesService.addOrganizacion(organizacionData).subscribe(
+      (response) => {
+          console.log('Organización creada con éxito:', response);
   
-      const formValue = this.beneficiariesForm.getRawValue();
-      const beneficiarioData = {
-          id: formValue.id || null,
-          id_proyecto: parseInt(this.idProyecto,10),
-          fecha: formValue.fecha || null,
-          department: formValue.department || null,
-          municipio: formValue.municipio || null,
-          comunidad: formValue.comunidad || null,
-          tipoOrganizacion: formValue.tipoOrganizacion || null,
-          organizacion: formValue.organizacion || null,
-          actividad: formValue.actividad || null,
-          evento: formValue.evento || '',
-          mujeres: formValue.mujeres || 0,
-          hombres: formValue.hombres || 0,
-          total: (formValue.mujeres || 0) + (formValue.hombres || 0),
-          details: formValue.details || '',
-          registeredBy: this.idPersonaReg || null,
-      };
+          // Verificar si el response es un array
+          const organizacionResponse = Array.isArray(response) ? response[0] : response;
+          const organizacionId = organizacionResponse?.dato?.id;
   
-      console.log('Datos normalizados para enviar:', beneficiarioData);
+          if (!organizacionId) {
+              console.error('No se pudo obtener el ID de la organización creada');
+              alert('No se pudo crear la organización. Por favor, intenta de nuevo.');
+              return;
+          }
   
-      if (beneficiarioData.id) {
-          this.editBeneficiario(beneficiarioData);
-      } else {
+          // Una vez creada la organización, usar su ID para agregar el beneficiario
+          const beneficiarioData = {
+              id: formValue.id || null,
+              id_proyecto: parseInt(this.idProyecto, 10),
+              fecha: formValue.fecha || null,
+              department: formValue.department || null,
+              municipio: formValue.municipio || null,
+              comunidad: formValue.comunidad || null,
+              tipoOrganizacion: formValue.tipoOrganizacion || null,
+              organizacion: organizacionId, // Usar el ID de la organización creada
+              actividad: formValue.actividad || null,
+              evento: formValue.evento || '',
+              mujeres: formValue.mujeres || 0,
+              hombres: formValue.hombres || 0,
+              total: (formValue.mujeres || 0) + (formValue.hombres || 0),
+              details: formValue.details || '',
+              registeredBy: this.idPersonaReg || null,
+          };
+  
+          console.log('Datos normalizados para enviar beneficiario:', beneficiarioData);
           this.addBeneficiario(beneficiarioData);
+      },
+      (error) => {
+          console.error('Error al crear la organización:', error);
+          alert('No se pudo crear la organización. Por favor, intenta de nuevo.');
       }
-
-
-      this.loadBeneficiarios();
-  }
+  );
   
+}
+
+  
+  addOrganizacion(objOrganizacion:any){
+    this.OrganizacionesService.addOrganizacion(objOrganizacion).subscribe(
+            (response)=>{
+        console.log('respuesta del backeng ( creacion de organizacion)',response);
+      
+      }
+    );
+  }
   // Método para editar beneficiario
   editBeneficiario(beneficiarioData: any): void {
       this.beneficiariosService.editBeneficiario(beneficiarioData).subscribe(
@@ -507,7 +563,7 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
 /// ahora alido 
  // Abrir el modal para crear o editar un aliado
  loadAliados(): void {
-  this.aliadosService.getAliados().subscribe(
+  this.aliadosService.getAliadosByProyecto(this.idProyecto).subscribe(
     (response) => {
       if (response[0]?.res === 'OK') {
         const rawAliados = response[0].dato || [];
@@ -520,7 +576,7 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
           convenio: item.convenio || 'Sin convenio',
         }));
 
-   
+  
         this.totalLengthAliados = this.aliadosTable.length;
       } else {
         console.error('Respuesta inválida del servicio de aliados:', response);
@@ -528,6 +584,7 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
     },
     (error) => console.error('Error al cargar los aliados:', error)
   );
+  this.countHeaderData();
 }
 
 
@@ -557,7 +614,7 @@ openAliadoModal(modal: TemplateRef<any>, aliado?: any): void {
     });
   }
 
-  this.modalService.open(modal).result.finally(() => {
+  this.modalService.open(modal,{ size: 'xl' }).result.finally(() => {
     this.selectedAliados = null;
   });
 }
@@ -584,7 +641,7 @@ onSubmitAliadosForm(): void {
     referente: aliadoData.referentName || null,
     vinculo: aliadoData.resultsLink || null,
     convenio: aliadoData.convenio || null,
-    registeredBy: aliadoData.registeredBy || null
+    registeredBy: this.idPersonaReg || null
   };
 
   if (aliadoPayload.id) {
@@ -696,9 +753,10 @@ countHeaderData() {
   // Iterar sobre la tabla de beneficiarios
   this.beneficiariosTable.forEach((beneficiario) => {
     // Contar comunidades presentes en la lista de comunidades
-    if (this.comunidades.includes(beneficiario.comunidad)) {
-      this.headerDataNro04++;
+    if (beneficiario.comunidad && typeof beneficiario.comunidad === 'string') {
+      this.headerDataNro01 += 1;
     }
+
 
     // Contar beneficiarios que sean mujeres
     if (beneficiario.mujeres && typeof beneficiario.mujeres === 'number') {
@@ -710,13 +768,10 @@ countHeaderData() {
       this.headerDataNro03 += beneficiario.hombres;
     }
 
-    // Contar aliados (condición a ajustar según tus necesidades)
-    if (beneficiario.total !== undefined && typeof beneficiario.total === 'number') {
-      this.headerDataNro01++;
-    }
+    // Contar Aliados
+    this.headerDataNro04 = this.aliadosTable.length;
+ 
   });
 }
-
-
 
 }

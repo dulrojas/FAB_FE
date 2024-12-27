@@ -1,11 +1,10 @@
 // Importacion de modulos y componentes Principales
-import { Component, OnInit, TemplateRef, EventEmitter, Output} from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef} from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 // ======= ======= ======= SERVICES SECTION ======= ======= =======
 import { PlanifEstrategicaService } from '../../servicios/planifEstrategica';
-import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
 import { servIndicador } from '../../servicios/indicador';
@@ -32,15 +31,17 @@ export class PlanifEstrategicaComponent implements OnInit {
     mainPage = 1;
     mainPageSize = 10;
     totalLength = 0;
-    elementosTabla: any;
-    combinedData: any[];
-    periodos: any;
+  elementosTabla: any;
+  combinedData: any[];
+  periodos: any;
     periodosForm: any; // Add this line to define periodosForm
     editPeriodo = { periodo: '', valorEsperado: 0 }; // Valores iniciales
+
+
     
     constructor(
       private modalService: NgbModal,
-      private proyectoService: ProyectoService,
+      private cdr: ChangeDetectorRef,
       private ServPlanifEstrategica: PlanifEstrategicaService,
       private servicios: servicios,
       private servInstCategorias: servInstCategorias,
@@ -50,78 +51,74 @@ export class PlanifEstrategicaComponent implements OnInit {
       private proyElementosService: ElementosService
       
     ) {}
+
+        // ======= ======= HEADER SECTION ======= =======
+        idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+        idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+        namePersonaReg: any = localStorage.getItem('userFullName');
+        onChildSelectionChange(selectedId: string) {
+          this.idProyecto = selectedId;
+          localStorage.setItem('currentIdProy', (this.idProyecto).toString());
     
-    // ======= ======= HEADER SECTION ======= =======
-    idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
-    idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-    namePersonaReg: any = localStorage.getItem('userFullName');
-    currentPerProRol: any = localStorage.getItem('currentPerProRol');
-    @Output() selectionChange = new EventEmitter<any>();
-    onChildSelectionChange(selectedPro: any) {
-      this.idProyecto = selectedPro.id_proyecto;
-      localStorage.setItem('currentIdProy', (this.idProyecto).toString());
-      this.proyectoService.seleccionarProyecto(this.idProyecto);
-      this.currentPerProRol = selectedPro.rol;
+          this.getParametricas();
+          this.getPlanifEstrategica();
+          this.initPlanifEstrategicaModel();
+          this.planifEstrategicaSelected = null
+        }
+
+        headerDataNro01: any = 0;
+        headerDataNro02: any = 0;
+        headerDataNro03: any = 0;
+        headerDataNro04: any = 0;
+        // ======= ======= ======= ======= =======
+
+        // ======= ======= NGMODEL VARIABLES SECTION ======= =======
+        modalAction: any = "";
+        modalTitle: any = '';
+
+          //Variables PROY_ELEMENTO "Planificación Estratégica"
+          id_proy_elemento: any = "";
+          elemento: any = "";
+          nivel: any = "";
+          idp_estado: any = "";
+          peso: any = "";
+
+          // Variables PROY_INDICADOR 
+          id_proy_indicador: any = "";
+          id_proyecto: any = "";
+          id_proy_elem_padre: any = "";
+          codigo: any = "";
+          indicador: any = "";
+          descripcion: any = "";
+          comentario: any = "";
+          orden: any ;
+          linea_base: any = "";
+          medida: any = "";
+          meta_final: any = "";
+          medio_verifica: any = "";
+          id_estado: any = "";
+          inst_categoria_1: any ;
+          inst_categoria_2: any = "";
+          inst_categoria_3: any = "";
+
+          sigla: any = "";
+          color: any = "";
+          // Variables de Selección
+          componentes: any[] = [];
+          selectedParentCodigo: any = '';
+          planifCategoria: any[] = [];
+          planifSubCategoria: any[] = [];
+          planifTipoCategoria: any[] = [];
+          planifIDindAvance: any[] = [];
+          planifPeriodofecha: any[] = [];
+          planifMetaEsperada: any[] = [];
+
+          //LLAMADO PARA TABLA
+          planifEstrategicaTipo: any[] = [];
     
-      this.getParametricas();
-      this.getPlanifEstrategica();
-      this.initPlanifEstrategicaModel();
-      this.planifEstrategicaSelected = null
-    }
-
-      headerDataNro01: any = 0;
-      headerDataNro02: any = 0;
-      headerDataNro03: any = 0;
-      headerDataNro04: any = 0;
-      // ======= ======= ======= ======= =======
-
-      // ======= ======= NGMODEL VARIABLES SECTION ======= =======
-      modalAction: any = "";
-      modalTitle: any = '';
-
-        //Variables PROY_ELEMENTO "Planificación Estratégica"
-        id_proy_elemento: any = "";
-        elemento: any = "";
-        nivel: any = "";
-        idp_estado: any = "";
-        peso: any = "";
-
-        // Variables PROY_INDICADOR 
-        id_proy_indicador: any = "";
-        id_proyecto: any = "";
-        id_proy_elem_padre: any = "";
-        codigo: any = "";
-        indicador: any = "";
-        descripcion: any = "";
-        comentario: any = "";
-        orden: any ;
-        linea_base: any = "";
-        medida: any = "";
-        meta_final: any = "";
-        medio_verifica: any = "";
-        id_estado: any = "";
-        inst_categoria_1: any ;
-        inst_categoria_2: any = "";
-        inst_categoria_3: any = "";
-
-        sigla: any = "";
-        color: any = "";
-        // Variables de Selección
-        componentes: any[] = [];
-        selectedParentCodigo: any = '';
-        planifCategoria: any[] = [];
-        planifSubCategoria: any[] = [];
-        planifTipoCategoria: any[] = [];
-        planifIDindAvance: any[] = [];
-        planifPeriodofecha: any[] = [];
-        planifMetaEsperada: any[] = [];
-
-        //LLAMADO PARA TABLA
-        planifEstrategicaTipo: any[] = [];
-  
 
 
-  // ======= ======= ======= ======= ======= ======= =======
+    // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
     valComponente: any = false; 
 
@@ -416,8 +413,9 @@ export class PlanifEstrategicaComponent implements OnInit {
     // ======= ======= CHECKBOX CHANGED ======= =======
     checkboxChanged(planifEstrategicaSel: any) {
       console.log('Elemento seleccionado a revisar:', planifEstrategicaSel);
-    this.selectedIdProyIndicador=planifEstrategicaSel.id_proy_indicador;
-    console.log('ahora esl id elemento par avance es :', this.selectedIdProyIndicador)
+    this.selectedIdProyIndicador=planifEstrategicaSel.id_proy_indicador || planifEstrategicaSel.id_proy_elemento;
+    
+    console.log('ahora esl id  par avance es :', this.selectedIdProyIndicador)
       // Recorre todos los elementos y actualiza el estado de selección
       this.combinedData.forEach(planifEstrategica => {
         const isSameItem =
@@ -604,19 +602,41 @@ export class PlanifEstrategicaComponent implements OnInit {
     
       return newCode;
     }
-    
-      // Generar código para RE
     generarCodigoRE(parentCodigo: string): string {
-    const reElements = this.combinedData.filter(el => el.codigo.startsWith(parentCodigo) && el.id_proy_elem_padre === 2);
-    const lastRE = reElements.reduce((max, el) => {
-      const currentCode = el.codigo.split('.').map(Number);
-      if (currentCode[2] > max[2]) return currentCode;
-      return max;
-    }, [Number(parentCodigo.split('.')[0]), Number(parentCodigo.split('.')[1]), 0, 0]);
-    console.log('Último RE:', lastRE);
-    lastRE[2]++;
-    return `${lastRE[0]}.${lastRE[1]}.${lastRE[2]}.0`;
+      // Convertir el código del padre a un array de números para trabajar con los niveles
+      const parentCodeArray = parentCodigo.split('.').map(Number);
+    
+      // Filtrar elementos que coincidan con el prefijo del código del padre seleccionado
+      const reElements = this.combinedData.filter(el => {
+        const currentCodeArray = el.codigo.split('.').map(Number);
+        return (
+          currentCodeArray[0] === parentCodeArray[0] && // Mismo nivel 1
+          currentCodeArray[1] === parentCodeArray[1]    // Mismo nivel 2
+        );
+      });
+    
+      console.log('Elementos RE filtrados:', reElements);
+    
+      // Reducir para encontrar el último código válido en el tercer nivel (nivel 2 del array)
+      const lastRE = reElements.reduce((max, el) => {
+        const currentCodeArray = el.codigo.split('.').map(Number);
+        if (currentCodeArray[2] > max[2]) {
+          return currentCodeArray; // Actualizamos si el nivel 3 es mayor
+        }
+        return max;
+      }, [...parentCodeArray]); // Inicializamos con el código del padre convertido a números
+    
+      console.log('Último código RE encontrado:', lastRE);
+    
+      // Incrementar el tercer nivel del código
+      lastRE[2]++;
+    
+      // Generar y retornar el nuevo código en el formato correcto
+      return `${lastRE[0]}.${lastRE[1]}.${lastRE[2]}.0`;
     }
+    
+
+
     generarCodigoIN(parentCodigo: string): string {
     // Convertimos el código del padre a un array de números para la comparación
     const parentCodeArray = parentCodigo.split('.').map(Number);
@@ -777,28 +797,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     
       return childParts.length > parentParts.length; // El hijo tiene más niveles
     }
-    
-    canDeleteElement(element: any, combinedData: any[]): { canDelete: boolean, message: string } {
-      const elementCode = element.codigo; // Código del elemento a eliminar
-      const elementType = element.tipo;   // Tipo de elemento (OG, OE, RE)
-    
-      // Filtramos los elementos de tipo OG, OE, RE
-      if (['OG', 'OE', 'RE'].includes(elementType)) {
-        // Comprobamos si existe un hijo que tenga un código que empieza con el código del elemento actual
-        const hasChildren = combinedData.some(item => {
-          return item.codigo.startsWith(elementCode) && item.codigo !== elementCode;
-        });
-    
-        if (hasChildren) {
-          return { canDelete: false, message: `No puedes eliminar el elemento ${elementCode} porque tiene hijos debajo de él.` };
-        }
-      }
-    
-      // Si no tiene hijos, se puede eliminar
-      return { canDelete: true, message: `El elemento ${elementCode} puede ser eliminado.` };
-    }
-    
-    
+
 
     
 
@@ -997,7 +996,8 @@ export class PlanifEstrategicaComponent implements OnInit {
   }
   
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
-    initEditPlanifEstrategica(planifEstrategicaOGOERE: TemplateRef<any>, planifEstrategicaIN: TemplateRef<any>){
+    
+  initEditPlanifEstrategica(planifEstrategicaOGOERE: TemplateRef<any>, planifEstrategicaIN: TemplateRef<any>){
       if (!this.planifEstrategicaSelected) {
         console.error("No hay un elemento seleccionado para editar.");
         return;
@@ -1151,53 +1151,73 @@ export class PlanifEstrategicaComponent implements OnInit {
     this.getPlanifEstrategica();
     this.loadData()
   }
-  
-  deletePlanificacionEstrategica() {
-    if (!this.planifEstrategicaSelected) {
-      console.warn('No hay un elemento seleccionado para eliminar');
-      return;
+
+    
+    // Validar si un elemento tiene hijos activos
+    canDeleteElement(element: any, combinedData: any[]): { canDelete: boolean; message: string } {
+      if (!element) {
+        return { canDelete: false, message: 'No hay un elemento seleccionado.' };
+      }
+    
+      // Filtrar los hijos del elemento seleccionado
+      const hijos = combinedData.filter(el => el.id_proy_elem_padre === element.id_proy_elemento);
+    
+      if (hijos.length > 0) {
+        return { canDelete: false, message: 'No se puede eliminar este elemento porque tiene hijos activos.' };
+      }
+    
+      return { canDelete: true, message: '' };
     }
-  
-    // Validar si se puede eliminar el elemento seleccionado usando la validación canDeleteElement
-    const validationResult = this.canDeleteElement(this.planifEstrategicaSelected, this.combinedData);
-  
-    if (!validationResult.canDelete) {
-      // Si no se puede eliminar, mostrar el mensaje de advertencia
-      alert(validationResult.message);
-      return;
-    }
-  
-    // Proceder con la eliminación según el tipo de elemento
-    if (this.planifEstrategicaSelected.id_proy_indicador) {
-      console.log('Eliminando Indicador con ID:', this.planifEstrategicaSelected.id_proy_indicador);
-      this.servIndicador.deleteIndicador(this.planifEstrategicaSelected.id_proy_indicador).subscribe(
-        (data) => {
-          console.log('Indicador eliminado con éxito', data);
-          this.resetSelection();
-        },
-        (error) => {
-          console.error('Error al eliminar el Indicador:', error);
-          alert('Error al eliminar el indicador');
-        }
-      );
-    } else if (this.planifEstrategicaSelected.id_proy_elemento) {
-      console.log('Eliminando Elemento con ID:', this.planifEstrategicaSelected.id_proy_elemento);
-      this.proyElementosService.deleteElemento(this.planifEstrategicaSelected.id_proy_elemento).subscribe(
-        (data) => {
-          console.log('Elemento eliminado con éxito', data);
-          this.resetSelection();
-        },
-        (error) => {
-          console.error('Error al eliminar el Elemento:', error);
-          alert('Error al eliminar el elemento');
-        }
-      );
-    } else {
-      console.warn('No hay un Indicador o Elemento válido seleccionado.');
-    }
+
+  // Método para eliminar la planificación estratégica con validación de hijos activos
+deletePlanificacionEstrategica() {
+  if (!this.planifEstrategicaSelected) {
+    console.warn('No hay un elemento seleccionado para eliminar');
+    return;
   }
-  
-  
+
+  // Validar si se puede eliminar el elemento seleccionado
+  const validationResult = this.canDeleteElement(this.selectedIdProyIndicador, this.combinedData);
+
+  if (!validationResult.canDelete) {
+    // Si no se puede eliminar, mostrar el mensaje de advertencia
+    alert(validationResult.message);
+    return;
+  }
+
+  // Proceder con la eliminación según el tipo de elemento
+  if (this.planifEstrategicaSelected.id_proy_indicador) {
+    console.log('Eliminando Indicador con ID:', this.planifEstrategicaSelected.id_proy_indicador);
+    this.servIndicador.deleteIndicador(this.planifEstrategicaSelected.id_proy_indicador).subscribe(
+      (data) => {
+        console.log('Indicador eliminado con éxito', data);
+        this.resetSelection();
+        this.getPlanifEstrategica();
+        this.loadData();
+      },
+      (error) => {
+        console.error('Error al eliminar el Indicador:', error);
+        alert('Error al eliminar el indicador');
+      }
+    );
+  } else if (this.planifEstrategicaSelected.id_proy_elemento) {
+    console.log('Eliminando Elemento con ID:', this.planifEstrategicaSelected.id_proy_elemento);
+    this.proyElementosService.deleteElemento(this.planifEstrategicaSelected.id_proy_elemento).subscribe(
+      (data) => {
+        console.log('Elemento eliminado con éxito', data);
+        this.resetSelection();
+        this.getPlanifEstrategica();
+        this.loadData();
+      },
+      (error) => {
+        console.error('Error al eliminar el Elemento:', error);
+        alert('Error al eliminar el elemento');
+      }
+    );
+  } else {
+    console.warn('No hay un Indicador o Elemento válido seleccionado.');
+  }
+}
   
   
   // Reinicia la selección y recarga los datos

@@ -477,16 +477,15 @@
                         
                     </div>
                     <div class="col-xl-5 col-lg-5 mt-auto">
-                        <div class="d-flex justify-content-end" style="width: 100%;flex-direction: column;align-items: end;">
-                            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-                            <button type="button" class="btn btn-bg-1" [disabled]="planifEstrategicaForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
-                              <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
-                            </button>
-                            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                                <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                            </button>
-                        </div>
-                    </div>
+                      <div class="d-flex justify-content-end" style="width: 100%;flex-direction: column;align-items: end;">
+                          <button type="button" class="btn btn-bg-1" [disabled]="planifEstrategicaForm.invalid" (click)="onSubmit(); modal.close('Añadir')" style="width: 40%;">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                          </button>
+                          <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')" style="width: 40%;">
+                              <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                          </button>
+                      </div>
+                  </div>
                   </div>
                 </div>
               </div>

@@ -24,8 +24,31 @@ export class AliadosService {
     return this.http.post<any>(this.URL, params, { headers });
   }
 
+    // Obtener todos los aliados (C3) por proyecto
+    getAliadosByProyecto( idProyecto: any): Observable<any> {
+      const params =  {
+        "procedure_name": "sp_proy_aliados",
+        "body": {
+          "params": [
+            { "name": "p_accion", "value": "C3", "type": "string" },
+            { "name": "p_id_proy_aliado", "value":null, "type": "int" },
+            { "name": "p_id_proyecto", "value":idProyecto, "type": "int" },
+            { "name": "p_id_organizacion", "value":  null, "type": "int" },
+            { "name": "p_referente", "value": null, "type": "string" },
+            { "name": "p_vinculo", "value":  null, "type": "string" },
+            { "name": "p_idp_convenio", "value": null, "type": "string" },
+            { "name": "p_id_persona_reg", "value":  null, "type": "int" },
+            { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
+            { "name": "p_fecha", "value":  null, "type": "string" }
+          ]
+        }
+      };
+      const headers = new HttpHeaders({ ip: '127.0.0.1' }); 
+      return this.http.post<any>(this.URL, params, { headers });
+    }
   // Añadir un aliado (A1)
   addAliado(aliadoData: any): Observable<any> {
+    console.log('addAliado datos enviados a alidos', aliadoData);
     const params =          
         {
         "procedure_name": "sp_proy_aliados",
@@ -34,16 +57,17 @@ export class AliadosService {
             { "name": "p_accion", "value": "A1", "type": "string" },
             { "name": "p_id_proy_aliado", "value":null, "type": "int" },
             { "name": "p_id_proyecto", "value": aliadoData.id_proyecto || null, "type": "int" },
-            { "name": "p_id_organizacion", "value": aliadoData.institucion || null, "type": "int" },
+            { "name": "p_id_organizacion", "value": aliadoData.tipoOrganizacion || null, "type": "int" },
             { "name": "p_referente", "value": aliadoData.referente || null, "type": "string" },
             { "name": "p_vinculo", "value": aliadoData.vinculo || null, "type": "string" },
             { "name": "p_idp_convenio", "value": aliadoData.convenio || null, "type": "string" },
-            { "name": "p_id_persona_reg", "value":  null, "type": "int" },
-            { "name": "p_fecha_hora_reg", "value": aliadoData.fecha_hora_reg || new Date().toISOString(), "type": "string" },
+            { "name": "p_id_persona_reg", "value":  aliadoData.registeredBy, "type": "int" },
+            { "name": "p_fecha_hora_reg", "value":  new Date().toISOString(), "type": "string" },
             { "name": "p_fecha", "value": aliadoData.fecha || null, "type": "string" }
           ]
         }
       };
+      console.log('params datos enviados a alidos de  aliados ', params);
 
  
           
