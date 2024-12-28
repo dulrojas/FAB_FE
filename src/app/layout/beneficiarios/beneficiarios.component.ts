@@ -19,6 +19,7 @@ import { register } from 'module';
 interface Beneficiario {
   id: number;
   fecha: string;
+  departamento: string;
   municipio: string;
   comunidad: string;
   tipoOrganizacion: string;
@@ -51,6 +52,8 @@ export class BeneficiariosComponent implements OnInit {
   mainPageSize = 10;
   totalLength = 0;
   previousIdProyecto: any;
+  selectedOrganizacionId: any;
+  geografia: any;
 
   constructor(
     private modalService: NgbModal,
@@ -115,6 +118,7 @@ export class BeneficiariosComponent implements OnInit {
   totalLengthAliados = 0;
   
   ngOnInit(): void {
+    this.loadGeografica();
     this.loadBeneficiarios();
     this.initForm();
     this.getActividades();
@@ -148,7 +152,7 @@ getActividades(): void {
     this.beneficiariesForm = this.fb.group({
       id: [{ value: '', disabled: true }],
       fecha: [''],
-      department: [''],
+      departamento: [''],
       municipio: [''],
       comunidad: [''],
       tipoOrganizacion: [''],
@@ -243,56 +247,122 @@ private initAliadosForm(): void {
    
   });
 }
-loadDepartamentos(): void {
-    this.ubicaGeograficaService.getUbicaciones(2, 1, 1).subscribe(
+
+  loadGeografica():void{
+    this.ubicaGeograficaService.getUbicaGeografica().subscribe(
       (response) => {
+        console.log('Datos recibidos del servicio:', response);
         if (response[0]?.res === 'OK') {
-          this.departamentos = response[0].dato;
-          console.log('Departamentos recibidos :', this.departamentos); 
+          this.geografia = response[0].dato;
+          console.log('tpdas las obucaiones recibidas:', this.geografia);
+        } else {
+          console.error('Respuesta inválida del servicio:', response);
         }
       },
       (error) => console.error('Error al cargar departamentos:', error)
     );
   }
-  
-  onDepartamentoChange(p_orden_departamento: number): void {
-    console.log('Departamento seleccionado en el select: ', p_orden_departamento);
-    this.provincias = [];
-    this.municipios = [];
-    this.comunidades = [];
-    this.ubicaGeograficaService.getUbicaciones(3, 1, p_orden_departamento).subscribe(
-      (response) => {
-        if (response[0]?.res === 'OK') {
-          this.provincias = response[0].dato;
-          console.log('Provincias recibidas:', this.provincias);
-          this.provincias.forEach(provincia => {
-            this.ubicaGeograficaService.getUbicaciones(4, 1, provincia.id_ubica_geo).subscribe(
-              (response) => {
-                if (response[0]?.res === 'OK') {
-                  this.municipios = this.municipios.concat(response[0].dato);
-                  console.log('Municipios recibidos:', this.municipios);
-                }
-              },
-              (error) => console.error('Error al cargar municipios:', error)
-            );
-          });
-        }
-      },
-      (error) => console.error('Error al cargar provincias:', error)
-    );
+  loadDepartamentos(): void {
+   
+      this.ubicaGeograficaService.getUbicaciones(2, 1, 1).subscribe(
+        (response) => {
+          if (response[0]?.res === 'OK') {
+            this.departamentos = response[0].dato;
+            console.log('Departamentos recibidos :', this.departamentos); 
+          }
+        },
+        (error) => console.error('Error al cargar departamentos:', error)
+      );
+    }
+  getIdDepartamento(nombre:any): number | undefined {
+    const departamento =  this.geografia.find(muni => muni.nombre === nombre);
+    console.log(' vamos a  filtrar el departamento aqui : ',this.geografia)
+    return departamento ? departamento.id_ubica_geo : undefined;
   }
-  onMunicipioChange(p_orden_monucipio: number): void {
-    console.log('Municipio seleccionado en el select:', p_orden_monucipio);
-    this.ubicaGeograficaService.getUbicaciones(5, 1,p_orden_monucipio).subscribe(
-      (response) => {
-        if (response[0]?.res === 'OK') {
-          this.comunidades = response[0].dato;
-          console.log('comunidades  recibidos :', this.comunidades); 
-        }
-      },
-      (error) => console.error('Error al cargar comunidades:', error)
-    );
+  getIdMunicipio(nombre: any): number | undefined {
+    const municipio =  this.geografia.find(muni => muni.nombre === nombre);
+    console.log( ' para obtener eñ id del municipiooooo: ', this.geografia)
+    return municipio ? municipio.id_ubica_geo : undefined;
   }
+  getIdComunidad(nombre: string): number | undefined {  
+    const comunidad =  this.geografia.find(comu => comu.nombre === nombre);
+    return comunidad ? comunidad.id_ubica_geo : undefined;
+  }
+  getIdOrgamnizacion(nombre: string): number | undefined {  
+    const organizacion = this.tiposOrganizacion.find(orga => orga.organizacion === nombre);
+    return organizacion ? organizacion.id_organizacion : undefined;
+  }
+  onDepartamentoChange(p_orden_departamento: any): void {
+    console.log('nombre recibido de departamento : ', p_orden_departamento)
+    const idDepartamento = this.getIdDepartamento(p_orden_departamento);
+    console.log('Departamento seleccionado en el select: ', idDepartamento);
+
+    if (!idDepartamento) {
+        console.error('ID de departamento no encontrado');
+        this.provincias = [];
+        this.municipios = [];
+        this.comunidades = [];
+        return;
+    }
+
+    const nivelProvincia = 3; // Nivel correspondiente a las provincias
+    const nivelMunicipio = 4; // Nivel correspondiente a los municipios
+    const nivelComunidad = 5; // Nivel correspondiente a las comunidades
+    const ramaDeseada = 1; // Ajustar según el valor correcto para "rama"
+
+    // Filtrar provincias
+    this.provincias = this.geografia.filter(
+        (geo) =>
+            geo.nivel === nivelProvincia &&
+            geo.rama === ramaDeseada &&
+            geo.id_ubica_geo_padre === idDepartamento
+    );
+    console.log('Provincias filtradas:', this.provincias);
+
+    // Filtrar municipios basados en las provincias
+    const idProvincias = this.provincias.map(provincia => provincia.id_ubica_geo);
+    this.municipios = this.geografia.filter(
+        (geo) =>
+            geo.nivel === nivelMunicipio &&
+            geo.rama === ramaDeseada &&
+            idProvincias.includes(geo.id_ubica_geo_padre)
+    );
+    console.log('Municipios filtrados:', this.municipios);
+
+    // Filtrar comunidades basadas en los municipios
+    const idMunicipios = this.municipios.map(municipio => municipio.id_ubica_geo);
+    this.comunidades = this.geografia.filter(
+        (geo) =>
+            geo.nivel === nivelComunidad &&
+            geo.rama === ramaDeseada &&
+            idMunicipios.includes(geo.id_ubica_geo_padre)
+    );
+    console.log('Comunidades filtradas:', this.comunidades);
+}
+  onMunicipioChange(p_orden_monucipio: any): void {
+    const idMunicipio = this.getIdMunicipio(p_orden_monucipio);
+    console.log('Municipio seleccionado en el select:', idMunicipio);
+
+    if (!idMunicipio) {
+        console.error('ID de municipio no encontrado');
+        this.comunidades = [];
+        return;
+    }
+
+    // Filtrar las comunidades basándose en el nivel, rama y padre
+    const nivelDeseado = 5; // Nivel correspondiente a las comunidades
+    const ramaDeseada = 1; // Ajustar según el valor correcto para "rama"
+console.log('estas son las comunidades de donde se filtrarran :' , this.geografia)
+    this.comunidades = this.geografia.filter(
+        (geo) =>
+            geo.nivel === nivelDeseado &&
+            geo.rama === ramaDeseada &&
+            geo.id_ubica_geo_padre === idMunicipio
+    );
+
+    console.log('Comunidades filtradas:', this.comunidades);
+}
+
 
 
 
@@ -335,13 +405,14 @@ loadDepartamentos(): void {
           this.beneficiariosTable = rawBeneficiarios.map((item: any) => ({
             id: item.id,
             fecha: item.fecha,
-            municipio: item.municipio || 'Sin municipio',
-            comunidad: item.comunidad || 'Sin comunidad',
-            tipoOrganizacion: item.organizacion_tipo || 'Sin tipo',
-            organizacion: item.organizacion || 'Sin organización',
-            actividad: item.actividad || 'Sin actividad',
-            evento: item.titulo_evento || 'Sin evento',
-            details: item.evento_detalle || 'Sin detalles',
+            departamento:item.departamento,
+            municipio: item.municipio || null,
+            comunidad: item.comunidad ||null,
+            tipoOrganizacion: item.organizacion_tipo || null,
+            organizacion: item.organizacion || null,
+            actividad: item.actividad || null,
+            evento: item.titulo_evento ||null,
+            details: item.evento_detalle ||null,
             mujeres: item.mujeres || 0,
             hombres: item.hombres || 0,
             total: item.total || 0,
@@ -370,20 +441,46 @@ loadDepartamentos(): void {
 
   // Manejo de selección en la tabla
   checkboxChanged(selectedBeneficiario: Beneficiario): void {
+    // Actualizar selección en la tabla
     this.beneficiariosTable.forEach(b => (b.selected = b.id === selectedBeneficiario.id));
+
+    // Filtrar el ID de la organización por el nombre proporcionado
+    if (selectedBeneficiario.organizacion) {
+   
+        const organizacion = this.organizacionTipo.find(
+            org => org.organizacion === selectedBeneficiario.organizacion
+        );
+
+        if (organizacion) {
+          this.selectedOrganizacionId = organizacion.id_organizacion; // Asignar el ID de la organización
+          console.log('organizacion id  de bene es :', this.selectedOrganizacionId);
+        } else {
+            console.warn(
+                `No se encontró una organización con el nombre: ${selectedBeneficiario.organizacion}`
+            );
+            this.selectedOrganizacionId= null; // Manejo para casos donde no existe
+        }
+    }
+
+    // Actualizar el beneficiario seleccionado
     this.selectedBeneficiarios = selectedBeneficiario.selected ? selectedBeneficiario : null;
-  }
+
+    console.log('Beneficiario actualizado:', selectedBeneficiario);
+}
+
   
 
 // Método para abrir el modal en modo edición o creación
 openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
   this.selectedBeneficiarios = beneficiario || null;
+  console.log(' formulario antes de ser cargado al editar:',beneficiario)
 
   if (beneficiario) {// modo edición
     this.beneficiariesForm.patchValue({
       id: this.selectedBeneficiarios.id,
       fecha: beneficiario.fecha,
-      municipio: this.selectedBeneficiarios.municipio,
+   departamento:beneficiario.departamento,
+      municipio: beneficiario.municipio,
       comunidad: beneficiario.comunidad,
       tipoOrganizacion: beneficiario.tipoOrganizacion,
       organizacion: beneficiario.organizacion,
@@ -398,6 +495,8 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
 
 
     });
+   this.onDepartamentoChange(this.selectedBeneficiarios.departamento);
+this.onMunicipioChange(this.selectedBeneficiarios.municipio)
     console.log('datos cargados al formulario:', this.beneficiariesForm.value);
 
 
@@ -428,70 +527,87 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
     }
 
     const formValue = this.beneficiariesForm.getRawValue();
+    const isEditingOrganizacion = !!formValue.organizacion; // Verifica si hay una organización existente
+
+    // Usar el ID global de la organización
+    const organizacionId = this.selectedOrganizacionId || null;
+
+    console.log('ID de organización seleccionado:', organizacionId);
+
     const organizacionData = {
-        p_id_organizacion: 2, 
+        p_id_organizacion: organizacionId==null ?null:organizacionId ,
         p_id_proyecto: parseInt(this.idProyecto, 10),
-        p_id_institucion: 1 || null, 
-        p_idp_tipo_organizacion: formValue.tipoOrganizacion,
+        p_id_institucion: 1,
+        p_idp_tipo_organizacion: this.getIdTipoOrganizacion(formValue.tipoOrganizacion) ,
         p_organizacion: formValue.organizacion,
     };
 
-    console.log('Datos para crear organización:', organizacionData);
+    console.log('Datos para organización:', organizacionData);
 
-    // Crear la organización antes de agregar el beneficiario
-    this.OrganizacionesService.addOrganizacion(organizacionData).subscribe(
-      (response) => {
-          console.log('Organización creada con éxito:', response);
-  
-          // Verificar si el response es un array
-          const organizacionResponse = Array.isArray(response) ? response[0] : response;
-          const organizacionId = organizacionResponse?.dato?.id;
-  
-          if (!organizacionId) {
-              console.error('No se pudo obtener el ID de la organización creada');
-              alert('No se pudo crear la organización. Por favor, intenta de nuevo.');
-              return;
-          }
-  
-          // Una vez creada la organización, usar su ID para agregar el beneficiario
-          const beneficiarioData = {
-              id: formValue.id || null,
-              id_proyecto: parseInt(this.idProyecto, 10),
-              fecha: formValue.fecha || null,
-              department: formValue.department || null,
-              municipio: formValue.municipio || null,
-              comunidad: formValue.comunidad || null,
-              tipoOrganizacion: formValue.tipoOrganizacion || null,
-              organizacion: organizacionId, // Usar el ID de la organización creada
-              actividad: formValue.actividad || null,
-              evento: formValue.evento || '',
-              mujeres: formValue.mujeres || 0,
-              hombres: formValue.hombres || 0,
-              total: (formValue.mujeres || 0) + (formValue.hombres || 0),
-              details: formValue.details || '',
-              registeredBy: this.idPersonaReg || null,
-          };
-  
-          console.log('Datos normalizados para enviar beneficiario:', beneficiarioData);
-          this.addBeneficiario(beneficiarioData);
-      },
-      (error) => {
-          console.error('Error al crear la organización:', error);
-          alert('No se pudo crear la organización. Por favor, intenta de nuevo.');
-      }
-  );
-  
+    const organizacionObservable =  organizacionId!=null
+        ? this.OrganizacionesService.editOrganizacion(organizacionData) // Llamada para editar
+        : this.OrganizacionesService.addOrganizacion(organizacionData); // Llamada para crear
+
+    organizacionObservable.subscribe(
+        (response) => {
+            console.log(
+              organizacionId!=null ? 'Organización editada con éxito:' : 'Organización creada con éxito:',
+                response
+            );
+
+            const organizacionResponse = Array.isArray(response) ? response[0] : response;
+            const finalOrganizacionId = organizacionResponse?.dato?.id || organizacionId;
+
+            if (!finalOrganizacionId) {
+                console.error('No se pudo obtener el ID de la organización');
+                alert('Hubo un problema con la organización. Por favor, intenta de nuevo.');
+                return;
+            }
+
+            // Beneficiario
+            const isEditingBeneficiario = !!formValue.id; // Verifica si hay un beneficiario existente
+            const beneficiarioData = {
+                id: isEditingBeneficiario ? formValue.id : null,
+                id_proyecto: parseInt(this.idProyecto, 10),
+                fecha: formValue.fecha || null,
+                departamento: formValue.departamento || null,
+                municipio: this.getIdMunicipio(formValue.municipio) || null,
+                comunidad: this.getIdComunidad(formValue.comunidad) || null,
+                tipoOrganizacion: this.getIdTipoOrganizacion(formValue.tipoOrganizacion) || null,
+                organizacion: finalOrganizacionId,
+                actividad: this.getIdActividad(formValue.actividad) || null,
+                evento: formValue.evento || '',
+                mujeres: formValue.mujeres || 0,
+                hombres: formValue.hombres || 0,
+                total: (formValue.mujeres || 0) + (formValue.hombres || 0),
+                details: formValue.details || '',
+                registeredBy: this.idPersonaReg || null,
+            };
+
+            console.log('Datos normalizados para beneficiario:', beneficiarioData);
+
+            if (isEditingBeneficiario) {
+                this.editBeneficiario(beneficiarioData);
+            } else {
+                this.addBeneficiario(beneficiarioData);
+            }
+        },
+        (error) => {
+            console.error('Error al procesar la organización:', error);
+            alert('No se pudo procesar la organización. Por favor, intenta de nuevo.');
+        }
+    );
+}
+getIdTipoOrganizacion(nombre :any){
+  const tipoOrganizacion =  this.tiposOrganizacion.find(TOr => TOr.nombre === nombre);
+    return tipoOrganizacion ? tipoOrganizacion.id : undefined;
 }
 
+getIdActividad(nombre :any){
+  const getIdActividad =  this.actividades.find(acti => acti.actividad === nombre);
+    return getIdActividad ? getIdActividad.id_proy_actividad : undefined;
+}
   
-  addOrganizacion(objOrganizacion:any){
-    this.OrganizacionesService.addOrganizacion(objOrganizacion).subscribe(
-            (response)=>{
-        console.log('respuesta del backeng ( creacion de organizacion)',response);
-      
-      }
-    );
-  }
   // Método para editar beneficiario
   editBeneficiario(beneficiarioData: any): void {
       this.beneficiariosService.editBeneficiario(beneficiarioData).subscribe(
@@ -499,6 +615,7 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
               console.log('Respuesta del backend (edición):', response);
               if (response[0]?.res === 'OK') {
                   this.loadBeneficiarios();
+                  this.initForm();
                   this.modalService.dismissAll();
               } else {
                   console.error('Error en la respuesta del backend (edición):', response);
@@ -515,6 +632,7 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
               console.log('Respuesta del backend (creación):', response);
               if (response[0]?.res === 'OK') {
                   this.loadBeneficiarios();
+                this.initForm();
                   this.modalService.dismissAll();
               } else {
                   console.error('Error en la respuesta del backend (creación):', response);
@@ -570,10 +688,10 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
         this.aliadosTable = rawAliados.map((item: any) => ({
           id: item.id,
           fecha: item.fecha,
-          institucion: item.institucion || 'Sin institución',
-          referente: item.referente || 'Sin referente',
-          vinculo: item.vinculo || 'Sin vínculo',
-          convenio: item.convenio || 'Sin convenio',
+          institucion: item.institucion || null,
+          referente: item.referente ||null,
+          vinculo: item.vinculo || null,
+          convenio: item.convenio || null,
         }));
 
   
@@ -598,13 +716,14 @@ openAliadoModal(modal: TemplateRef<any>, aliado?: any): void {
     this.aliadosForm.patchValue({
       id: aliado.id,
       identificationDate: aliado.fecha,
-      tipoOrganizacion: aliado.tipoOrganizacion || null,
+      tipoOrganizacion: aliado.institucion || null,
       institution: aliado.institucion || null,
       referentName: aliado.referente || null,
       resultsLink: aliado.vinculo || null,
       convenio: aliado.convenio || null,
       registeredByAliado: this.namePersonaReg || null
     });
+    console.log(' datos cargados al formulario de aliados: ',this.aliadosForm.value )
     console.log('nombre de persoanregistro en alidados ',this.namePersonaReg);
     
   } else {
@@ -625,6 +744,14 @@ checkboxChangedAliado(selectedAliado: any): void {
   this.selectedAliados = selectedAliado.selected ? selectedAliado : null;
 }
 
+getIdOrgamnizacionesAliados(nombre: string): number | undefined {  
+  const organizacion = this.organizacionTipo.find(orga => orga.organizacion === nombre);
+  return organizacion ? organizacion.id_organizacion : undefined;
+}
+getIdConvenio(nombre: string): number | undefined {  
+  const convenio = this.tiposConvenio.find(conve => conve.descripcion === nombre);
+  return convenio ? convenio.id : undefined;
+}
 onSubmitAliadosForm(): void {
   if (!this.aliadosForm.valid) {
     console.error('Formulario inválido:', this.aliadosForm.errors);
@@ -636,13 +763,14 @@ onSubmitAliadosForm(): void {
     id: aliadoData.id || null,
     id_proyecto:this.idProyecto,
     fecha: aliadoData.identificationDate || null,
-    tipoOrganizacion: aliadoData.tipoOrganizacion || null,
+    tipoOrganizacion:this.getIdOrgamnizacionesAliados(aliadoData.tipoOrganizacion) || null,
     institucion: aliadoData.institution || null,
     referente: aliadoData.referentName || null,
     vinculo: aliadoData.resultsLink || null,
-    convenio: aliadoData.convenio || null,
+    convenio: this.getIdConvenio(aliadoData.convenio) || null,
     registeredBy: this.idPersonaReg || null
   };
+  console.log( 'datos de aliados normalizados ', aliadoPayload)
 
   if (aliadoPayload.id) {
     this.editAliado(aliadoPayload);
@@ -773,5 +901,8 @@ countHeaderData() {
  
   });
 }
+
+
+
 
 }

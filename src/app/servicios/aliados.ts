@@ -85,12 +85,12 @@ export class AliadosService {
             { "name": "p_accion", "value": "M1", "type": "string" },
             { "name": "p_id_proy_aliado", "value":aliadoData.id, "type": "int" },
             { "name": "p_id_proyecto", "value": aliadoData.id_proyecto || null, "type": "int" },
-            { "name": "p_id_organizacion", "value": aliadoData.institucion || null, "type": "int" },
+            { "name": "p_id_organizacion", "value": aliadoData.tipoOrganizacion || null, "type": "int" },
             { "name": "p_referente", "value": aliadoData.referente || null, "type": "string" },
             { "name": "p_vinculo", "value": aliadoData.vinculo || null, "type": "string" },
             { "name": "p_idp_convenio", "value": aliadoData.convenio || null, "type": "string" },
-            { "name": "p_id_persona_reg", "value":  null, "type": "int" },
-            { "name": "p_fecha_hora_reg", "value": aliadoData.fecha_hora_reg || new Date().toISOString(), "type": "string" },
+            { "name": "p_id_persona_reg", "value":  aliadoData.registeredBy, "type": "int" },
+            { "name": "p_fecha_hora_reg", "value":new Date().toISOString(), "type": "string" },
             { "name": "p_fecha", "value": aliadoData.fecha || null, "type": "string" }
           ]
         }

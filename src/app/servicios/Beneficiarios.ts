@@ -20,7 +20,7 @@ export class BeneficiariosService {
         "params": [
           { "name": "p_accion", "value": "C1", "type": "string" },
           { "name": "p_id_proy_beneficiario", "value": null, "type": "int" },
-          { "name": "p_id_proyecto", "value":id_proyecto, "type": "int" },
+          { "name": "", "value":id_proyecto, "type": "int" },
           { "name": "p_idp_organizacion_tipo", "value": null, "type": "int" }, 
           { "name": "p_id_organizacion", "value":null, "type": "int" },
           { "name": "p_id_tipo_geo_n3", "value": null, "type": "int" },
@@ -116,7 +116,7 @@ editBeneficiario(data: any): Observable<any> {
         { "name": "p_id_proy_beneficiario", "value": data.id, "type": "int" },
         { "name": "p_id_proyecto", "value": data.id_proyecto || null, "type": "int" },
         { "name": "p_idp_organizacion_tipo", "value": data.tipoOrganizacion || null, "type": "int" }, 
-        { "name": "p_id_organizacion", "value":null, "type": "int" },
+        { "name": "p_id_organizacion", "value":data.organizacion||null, "type": "int" },
         { "name": "p_id_tipo_geo_n3", "value": data.comunidad || null, "type": "int" },
         { "name": "p_mujeres", "value": data.mujeres || 0, "type": "int" },
         { "name": "p_hombres", "value": data.hombres || 0, "type": "int" },

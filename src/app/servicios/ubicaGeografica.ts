@@ -46,7 +46,7 @@ export class servUbicaGeografica{
       "body": {
         "params": [
     
-          { "name": "p_accion", "value": "C1", "type": "string" },
+          { "name": "p_accion", "value": "C2", "type": "string" },
           { "name": "p_id_ubica_geo", "value": null, "type": "int" },
           { "name": "p_idp_tipo_ubica_geo", "value": null, "type": "string" },
           { "name": "p_id_ubica_geo_padre", "value": ubica_geo_padre, "type": "int" },
@@ -63,6 +63,7 @@ export class servUbicaGeografica{
     const headers = new HttpHeaders({ 'ip': '127.0.0.1' });
     return this.http.post<any>(this.URL, params, { headers });
   }
+
 
 
 
