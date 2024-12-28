@@ -87,6 +87,14 @@ export class Dashboard2Component implements OnInit {
         // TARJETA 5: INDICADORES
           this.indicadores = data[0].dato[0].indicadores || [];
           this.createRadarChart();
+        // TARJETA 6: RIESGOS
+
+        // TARJETA 7: APRENDIZAJES
+          if (data[0].dato[0].aprendizajes) {
+            this.processAprendizajesData(data[0].dato[0].aprendizajes);
+          }
+        // TARJETA 8: ACTIVIDADES
+
         // TARJETA 9: LOGROS
           this.numeroLogros = data[0].dato[0].logros?.length || 0;
         // TARJETA 10: BENEFICIARIOS
@@ -273,14 +281,11 @@ export class Dashboard2Component implements OnInit {
     ejecutado_avance: 0
   };
   chartGestion: any;
-  
   calcularPorcentajeGestion(): number {
     if (this.presupuestoGestion.presupuesto_actividad === 0) return 0;
-    // Usamos ejecutado para calcular el porcentaje
     const porcentaje = (this.presupuestoGestion.ejecutado / this.presupuestoGestion.presupuesto_actividad) * 100;
     return Math.min(Math.round(porcentaje), 100);
   }
-  
   createGestionChart() {
     const ctx: any = document.getElementById('doughnutChart2024');
     if (!ctx) return;
@@ -288,31 +293,35 @@ export class Dashboard2Component implements OnInit {
     if (this.chartGestion) {
       this.chartGestion.destroy();
     }
-  
     const porcentaje = this.calcularPorcentajeGestion();
     const restante = 100 - porcentaje;
-  
     this.chartGestion = new Chart(ctx, {
       type: 'doughnut',
       data: {
         datasets: [{
           data: [porcentaje, restante],
-          backgroundColor: ['#D67600', '#E0E0E0'],  // Color naranja como la tarjeta 3
+          backgroundColor: ['#D67600', '#E0E0E0'],
           borderWidth: 0
         }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         cutout: '65%',
         plugins: {
           legend: {
-            display: false  // Ocultamos la leyenda como en la tarjeta 3
+            display: false
           },
           tooltip: {
             callbacks: {
               label: (tooltipItem) => `${tooltipItem.raw}%`
             }
+          }
+        },
+        layout: {
+          padding: {
+            top: 10,
+            bottom: 10
           }
         }
       },
@@ -321,7 +330,7 @@ export class Dashboard2Component implements OnInit {
         beforeDraw(chart) {
           const { ctx, width, height } = chart;
           ctx.restore();
-          const fontSize = Math.min(height / 8, 30);
+          const fontSize = Math.min(width / 8, height / 8, 24);
           ctx.font = `bold ${fontSize}px sans-serif`;
           ctx.textBaseline = 'middle';
           ctx.textAlign = 'center';
@@ -358,62 +367,85 @@ export class Dashboard2Component implements OnInit {
       }
 
       createRadarChart() {
-        const ctx: any = document.getElementById('radarChart') as HTMLCanvasElement;
-
+        const ctx: any = document.getElementById('radarChart');
         if (!ctx) return;
-
-        // Destruye el gráfico anterior si existe
+      
         if (this.chartIndicadores) {
           this.chartIndicadores.destroy();
         }
-
+      
         const { labels, data } = this.calcularPorcentajesIndicadores();
-
+      
         this.chartIndicadores = new Chart(ctx, {
           type: 'radar',
           data: {
             labels: labels,
-            datasets: [
-              {
-                label: 'Avance de Indicadores',
-                data: data,
-                borderColor: '#FF5722', // Color del borde
-                backgroundColor: 'rgba(255, 87, 34, 0.2)', // Color de relleno
-                borderWidth: 2,
-                pointBackgroundColor: '#FF5722', // Color de los puntos
-              },
-            ],
+            datasets: [{
+              label: 'Avance de Indicadores',
+              data: data,
+              borderColor: '#FF6B00',
+              backgroundColor: 'rgba(255, 120, 23, 0.2)',
+              borderWidth: 2,
+              pointBackgroundColor: '#FF6B00',
+              pointBorderColor: '#FF6B00',
+              pointHoverBackgroundColor: '#FF6B00',
+              pointHoverBorderColor: '#FF6B00',
+              pointRadius: 4,
+              pointHoverRadius: 5,
+            }]
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
               r: {
                 angleLines: {
-                  color: '#e0e0e0', // Color de las líneas radiales
+                  display: true,
+                  color: '#E0E0E0'
                 },
                 grid: {
-                  color: '#e0e0e0', // Color de las líneas de la cuadrícula
-                },
-                suggestedMin: 0, // Valor mínimo del eje
-                suggestedMax: 100, // Valor máximo del eje
-                ticks: {
-                  backdropColor: '#ffffff', // Fondo de los números en las líneas
-                  color: '#333333', // Color de los números
+                  color: '#E0E0E0'
                 },
                 pointLabels: {
-                  color: '#333333', // Color de las etiquetas
+                  color: '#666666',
                   font: {
-                    size: 10, // Tamaño de fuente de las etiquetas
-                  },
+                    size: 11,
+                    weight: '500'
+                  }
                 },
-              },
+                suggestedMin: 0,
+                suggestedMax: 100,
+                ticks: {
+                  stepSize: 20,
+                  backdropColor: 'transparent',
+                  color: '#666666',
+                  font: {
+                    size: 10
+                  }
+                },
+                beginAtZero: true
+              }
             },
             plugins: {
               legend: {
-                display: false, // Oculta la leyenda
+                display: false
               },
-            },
-          },
+              tooltip: {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                titleColor: '#333',
+                bodyColor: '#666',
+                borderColor: '#ddd',
+                borderWidth: 1,
+                padding: 10,
+                displayColors: false,
+                callbacks: {
+                  label: function(context) {
+                    return `${context.raw}%`;
+                  }
+                }
+              }
+            }
+          }
         });
       }
 
@@ -421,7 +453,129 @@ export class Dashboard2Component implements OnInit {
 
 
   // ====== ======= ====== ====== SEPTIMA TARJETA APRENDIZAJES ====== ======= ====== ======
-
+  chartAprendizajes: any;
+  aprendizajesData: any = {
+    administrativos: 0,
+    gerencia: 0,
+    actores: 0,
+    otros: 0
+  };
+  
+  // Method to process the aprendizajes data
+  processAprendizajesData(data: any[]) {
+    // Reset counters
+    this.aprendizajesData = {
+      administrativos: 0,
+      gerencia: 0,
+      actores: 0,
+      otros: 0
+    };
+  
+    // Count occurrences based on idp_aprendizaje_area
+    data.forEach(item => {
+      switch (item.idp_aprendizaje_area) {
+        case 1:
+          this.aprendizajesData.administrativos++;
+          break;
+        case 2:
+          this.aprendizajesData.gerencia++;
+          break;
+        case 3:
+          this.aprendizajesData.actores++;
+          break;
+        default:
+          this.aprendizajesData.otros++;
+          break;
+      }
+    });
+  
+    // Update the chart
+    this.createLearnDoughnutChart();
+  }
+  
+  // Updated chart creation method
+  createLearnDoughnutChart() {
+    const ctx: any = document.getElementById('learnDoughnutChart');
+    if (!ctx) return;
+    if (this.chartAprendizajes) {
+      this.chartAprendizajes.destroy();
+    }
+    const data = [
+      this.aprendizajesData.administrativos,
+      this.aprendizajesData.gerencia,
+      this.aprendizajesData.actores,
+      this.aprendizajesData.otros
+    ];
+    const total = data.reduce((a, b) => a + b, 0);
+    this.chartAprendizajes = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Administrativos', 'Gerencia de Proyecto', 'Actores Claves', 'Otros'],
+        datasets: [{
+          label: 'Aprendizajes',
+          data: data,
+          backgroundColor: ['#2a06f8', '#8E24AA', '#FFEB3B', '#E91E63'],
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%',
+        layout: {
+          padding: {
+            top: 10,
+            bottom: 10
+          }
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            titleColor: '#333',
+            bodyColor: '#666',
+            borderColor: '#ddd',
+            borderWidth: 1,
+            padding: 10,
+            callbacks: {
+              label: (context) => {
+                const value = context.raw as number;
+                const percentage = ((value / total) * 100).toFixed(1);
+                return `${context.label}: ${value} (${percentage}%)`;
+              }
+            }
+          },
+          legend: {
+            display: false
+          }
+        }
+      },
+      plugins: [{
+        id: 'centerText',
+        beforeDraw(chart: any) {
+          const { ctx, width, height } = chart;
+          ctx.restore();
+          
+          // Draw total number
+          const fontSize = Math.min(height / 6, 30);
+          ctx.font = `bold ${fontSize}px sans-serif`;
+          ctx.textBaseline = 'middle';
+          ctx.textAlign = 'center';
+          
+          const text = total.toString();
+          ctx.fillStyle = '#6A1B9A';
+          ctx.fillText(text, width / 2, height / 2);
+          
+          // Draw "Total" label
+          const labelFontSize = fontSize / 2;
+          ctx.font = `${labelFontSize}px sans-serif`;
+          ctx.fillStyle = '#666666';
+          ctx.fillText('Total', width / 2, height / 2 + fontSize);
+          
+          ctx.save();
+        }
+      }]
+    });
+  }
 
   // ====== ======= ====== ====== OCTAVA TARJETA ACTIVIDADES ====== ======= ====== ======
 

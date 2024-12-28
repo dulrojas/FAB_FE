@@ -109,7 +109,18 @@ h5.presupuesto {
         width: 100%;
         max-width: 400px;
         height: auto;
-        margin: 0 auto; // Centra la dona
+        margin: 0 auto;
     }
+    .chart-wrapper {
+        display: flex;
+        justify-content: center;
+        flex: 1; /* Se asegura de que el gráfico ocupe el espacio necesario */
+    }
+    .legend-wrapper {
+        flex: 1; /* Asegura que las leyendas ocupen el espacio restante */
+        font-size: 12px;
+        margin-left: 16px; /* Espacio entre el gráfico y la leyenda */
+    }
+    
     
       

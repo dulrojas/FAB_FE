@@ -84,7 +84,7 @@
                           <h5 class="presupuesto">{{moneda_presupuesto}} {{formatearMoneda(presupuesto_me)}}</h5>
                         </div>
                         <div class="col-md-6">
-                          <div class="chart-container" style="position: relative; height: 130px;">
+                          <div class="chart-container" style="position: relative; height: 140px;">
                             <canvas id="presupuestoChart"></canvas>
                           </div>
                         </div>
@@ -102,7 +102,7 @@
         <div class="col-xl-8 col-lg-8 d-flex align-items-start">
           <div class="row" style="display: flex; justify-content: center;">
             <!-- CUARTA TARJETA DE PRESUPUESTOS DE LA GESTION -->
-                <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                <div class="col-xl-4 col-lg-4 mt-3">
                   <div class="card">
                     <h6 class="card-title">PRESUPUESTO DE LA GESTION 2024</h6>
                     <div class="card-body" style="display: flex; justify-content: center;">
@@ -113,14 +113,16 @@
                         <h5 class="presupuesto" style="background-color: #ffffff; color: #000000;">
                           {{ presupuestoGestion.ejecutado | currency:'Bs':true:'1.0-2' }}</h5>
                       </div>
-                      <div style="position: relative; height: 130px; width: 200px; padding: 5%;">
-                        <canvas id="doughnutChart2024"></canvas>
+                      <div class="col-md-6">
+                        <div class="chart-container" style="position: relative;height: 140px;">
+                          <canvas id="doughnutChart2024"></canvas>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
             <!-- QUINTA TARJETA INDICADORES -->
-                <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                <div class="col-xl-4 col-lg-4 my-auto mt-3">
                   <div class="card">
                     <h6 class="card-title">INDICADORES</h6>
                     <div class="card-body" style="display: flex; justify-content: center;">
@@ -131,7 +133,7 @@
                   </div>
                 </div>
             <!-- SEXTA TARJETA DE RIESGOS -->
-                <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                <div class="col-xl-4 col-lg-4 my-auto mt-3">
                     <div class="card">
                         <h6 class="card-title">RIESGOS</h6>
                         <div class="card-body" style="display: flex; align-items:center; justify-content: center;">
@@ -167,28 +169,40 @@
                     </div>
                 </div>
             <!-- SEPTIMA TARJETA APRENDIZAJES -->
-                <div class="col-xl-5 col-lg-5 my-auto mt-4">
-                    <div class="card">
-                        <h6 class="card-title">APRENDIZAJES</h6>
-                        <div class="card-body" style="display: flex; justify-content: center;">
+                <div class="col-xl-5 col-lg-5 my-auto mt-2">
+                  <div class="card">
+                      <h6 class="card-title">APRENDIZAJES</h6>
+                      <div class="row">
+                        <div class="card-body" >
                             <!-- Gráfico -->
-                            <div style="position: relative; height: 200px; width: 200px;">
+                            <div class="chart-container" style="position: relative;height: 140px;">
                                 <canvas id="learnDoughnutChart"></canvas>
                             </div>
                             <!-- Leyenda -->
-                            <div>
-                                <div>
-                                    <h6><span class="legend-box" style="background-color: #2a06f8;"></span>Administrativos</h6>
-                                    <h6><span class="legend-box" style="background-color: #8E24AA;"></span>Gerencia de Proyecto</h6>
-                                    <h6><span class="legend-box" style="background-color: #FFEB3B;"></span>Actores Claves</h6>
-                                    <h6><span class="legend-box" style="background-color: #E91E63;"></span>Otros</h6>
+                            <div style="font-size: 12px; margin-left: 16px;">
+                                <div class="mb-1 d-flex align-items-center">
+                                    <span class="legend-box" style="width: 12px; height: 12px; margin-right: 8px; background-color: #8E24AA;"></span>
+                                    <span>Administrativos</span>
+                                </div>
+                                <div class="mb-1 d-flex align-items-center">
+                                    <span class="legend-box" style="width: 12px; height: 12px; margin-right: 8px; background-color: #2a06f8;"></span>
+                                    <span>Gerencia de Proyecto</span>
+                                </div>
+                                <div class="mb-1 d-flex align-items-center">
+                                    <span class="legend-box" style="width: 12px; height: 12px; margin-right: 8px; background-color: #FFEB3B;"></span>
+                                    <span>Actores Claves</span>
+                                </div>
+                                <div class="mb-1 d-flex align-items-center">
+                                    <span class="legend-box" style="width: 12px; height: 12px; margin-right: 8px; background-color: #E91E63;"></span>
+                                    <span>Otros</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>  
+                      </div>
+                  </div>
+                </div>                    
             <!-- OCTAVA TARJETA ACTIVIDADES -->
-                <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                <div class="col-xl-4 col-lg-4 my-auto mt-2">
                   <div class="card">
                       <h6 class="card-title">ACTIVIDADES</h6>
                       <div class="card-body" style="display: flex; align-items: center; justify-content: center;">
@@ -204,7 +218,7 @@
                   </div>
                 </div>
             <!-- NOVENA TARJETA LOGROS -->
-                <div class="col-xl-3 col-lg-3 my-auto mt-4">
+                <div class="col-xl-3 col-lg-3 my-auto mt-2">
                   <div class="card">
                       <h6 class="card-title">LOGROS</h6>
                       <div class="card-body">
@@ -216,7 +230,7 @@
                   </div>
                 </div>
             <!-- DECIMA TARJETA BENEFICIARIOS -->
-                <div class="col-xl-5 col-lg-5 my-auto mt-4">
+                <div class="col-xl-5 col-lg-5 my-auto mt-2">
                   <div class="card">
                       <h6 class="card-title">BENEFICIARIOS</h6>
                       <div class="card-body" style="display: flex;">
@@ -242,7 +256,7 @@
                   </div>
                 </div>
             <!-- UNDECIMA TARJETA DE SIGUIENTES OBLIGACIONES -->
-                <div class="col-xl-7 col-lg-7 my-auto mt-4">
+                <div class="col-xl-7 col-lg-7 my-auto mt-2">
                   <div class="card">
                       <h6 class="card-title">SIGUIENTES OBLIGACIONES</h6>
                       <!-- Contenedor blanco para la tabla -->
