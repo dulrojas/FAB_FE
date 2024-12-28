@@ -39,13 +39,13 @@
                                 <div class="col col-lg-6 col-md-6 my-auto">
                                     <h2 class="custom-info-proy-sub-title">Nombre corto del proyecto</h2>
                                     <input class="form-control custom-info-proy-input" type="text" 
-                                        id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto" [disabled]="buttonValidations.editar"/>
+                                        id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                                 <div class="col col-lg-6 col-md-6">
                                     <!-- ======= ======= ======= NOMBRE COMPLETO PROYECTO ======= ======= ======= -->
                                     <h2 class="custom-info-proy-sub-title">Nombre completo del proyecto</h2>
                                     <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" 
-                                        [(ngModel)]="proyectoScope.descrpcion" [disabled]="buttonValidations.editar"></textarea>
+                                        [(ngModel)]="proyectoScope.descrpcion" [disabled]="!buttonValidations.editMode"></textarea>
                                 </div>
                             </div>
                             <div class="row">
@@ -53,7 +53,7 @@
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Responsable de registro</h2>
                                     <select class="form-control custom-info-proy-input" id="id_person_resp" name="id_person_resp" 
-                                        [(ngModel)]="proyectoScope.id_person_resp" [disabled]="buttonValidations.editar">
+                                        [(ngModel)]="proyectoScope.id_person_resp" [disabled]="!buttonValidations.editMode">
                                         <option value="" disabled selected>Selecciona un responsable</option>
                                         <option *ngFor="let persona of personas" [value]="persona.id_persona">
                                             {{ persona.nombres +" "+ persona.apellido_1 +" "+((persona.apellido_2)?(persona.apellido_2):("")) }}
@@ -64,7 +64,7 @@
                                 <div class="col col-lg-3 col-md-3 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Unidad ejecutora</h2>
                                     <select class="form-control custom-info-proy-input" id="id_inst_unidad" name="id_inst_unidad" 
-                                        [(ngModel)]="proyectoScope.id_inst_unidad" [disabled]="buttonValidations.editar">
+                                        [(ngModel)]="proyectoScope.id_inst_unidad" [disabled]="!buttonValidations.editMode">
                                         <option value="" disabled selected>Selecciona una unidad</option>
                                         <option *ngFor="let unidad of unidades" [value]="unidad.id_inst_unidad">
                                             {{ unidad.unidad }}
@@ -75,7 +75,7 @@
                                 <div class="col col-md-6"> 
                                     <h2 class="custom-info-proy-sub-title">Notas adicionales</h2>
                                     <textarea class="form-control custom-info-proy-input" id="notas" name="notas" 
-                                        [(ngModel)]="proyectoScope.notas" [disabled]="buttonValidations.editar"></textarea>
+                                        [(ngModel)]="proyectoScope.notas" [disabled]="!buttonValidations.editMode"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -118,11 +118,11 @@
                                 <div class="col col-md-12">
                                     <span class="custom-info-proy-sub-title my-0">Guia</span>
                                     <!-- ======= ======= ======= PRINCIPAL ======= ======= ======= -->
-                                    <button type="button" class="btn" [class]="getObjBttnCSSClass(1)" (click)="onObjetivoButtonChange(1)" [disabled]="buttonValidations.editar">
+                                    <button type="button" class="btn" [class]="getObjBttnCSSClass(1)" (click)="onObjetivoButtonChange(1)" [disabled]="!buttonValidations.editMode">
                                         PRINCIPAL
                                     </button>
                                     <!-- ======= ======= ======= SIGNIFICATIVO ======= ======= ======= -->
-                                    <button type="button" class="btn" [class]="getObjBttnCSSClass(2)" (click)="onObjetivoButtonChange(2)" [disabled]="buttonValidations.editar">
+                                    <button type="button" class="btn" [class]="getObjBttnCSSClass(2)" (click)="onObjetivoButtonChange(2)" [disabled]="!buttonValidations.editMode">
                                         SIGNIFICATIVO
                                     </button>
                                 </div>
@@ -152,32 +152,32 @@
                         </button>
                         <!-- ======= ======= ======= EDITAR DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-1" 
-                            [disabled]="!buttonValidations.editar" (click)="enableEditMode()">
+                            [disabled]="!buttonValidations.editMode" (click)="enableEditMode()">
                             Editar
                         </button>
                         <!-- ======= ======= ======= REPORTE DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-2" (click)="openModal(activarProyectoModal)"
-                            [disabled]="(!buttonValidations.activar)||(!buttonValidations.editar)">
+                            [disabled]="(!buttonValidations.activar)||(buttonValidations.editMode)">
                             Activar
                         </button>
                         <!-- ======= ======= ======= EVALUACION DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-2" (click)="openModal(evaluarProyectoModal)"
-                            [disabled]="(!buttonValidations.evalcuaion)||(!buttonValidations.editar)">
+                            [disabled]="(!buttonValidations.evalcuaion)||(buttonValidations.editMode)">
                             Evaluación
                         </button>
                         <!-- ======= ======= ======= CONCLUIR CANCELAR DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-2" (click)="openModal(concluirCancelarProyectoModal)"
-                            [disabled]="(!buttonValidations.concluirCancelar)||(!buttonValidations.editar)">
+                            [disabled]="(!buttonValidations.concluirCancelar)||(buttonValidations.editMode)">
                             Concluir/Cancelar
                         </button>
                         <!-- ======= ======= ======= ANADIR DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-2" (click)="openModal(aniadirProyectoModal)"
-                            [disabled]="(!buttonValidations.aniadir)||(!buttonValidations.editar)">
+                            [disabled]="(!buttonValidations.aniadir)||(buttonValidations.editMode)">
                             Añadir
                         </button>
                         <!-- ======= ======= ======= ELIMINAR DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-2" (click)="openModal(eliminarProyectoModal)"
-                            [disabled]="(!buttonValidations.eliminar)||(!buttonValidations.editar)">
+                            [disabled]="(!buttonValidations.eliminar)||(buttonValidations.editMode)">
                             Eliminar
                         </button>
                     </div>
@@ -200,7 +200,7 @@
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_convenio" name="fecha_convenio" 
-                                        [(ngModel)]="proyectoScope.fecha_convenio" [disabled]="buttonValidations.editar"/>
+                                        [(ngModel)]="proyectoScope.fecha_convenio" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= DESEMBOLSO DATE ======= ======= ======= -->
@@ -210,7 +210,7 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_desembolso_1" name="fecha_desembolso_1" [(ngModel)]="proyectoScope.fecha_desembolso_1" [disabled]="buttonValidations.editar"/>
+                                        id="fecha_desembolso_1" name="fecha_desembolso_1" [(ngModel)]="proyectoScope.fecha_desembolso_1" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= INICIO REAL DATE ======= ======= ======= -->
@@ -221,7 +221,7 @@
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_inicio" name="fecha_inicio" [(ngModel)]="proyectoScope.fecha_inicio" 
-                                        (change)="getProyectDateGaps()" [disabled]="buttonValidations.editar"/>
+                                        (change)="getProyectDateGaps()" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= FIN PLANIFICADO DATE ======= ======= ======= -->
@@ -232,7 +232,7 @@
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_fin" name="fecha_fin" [(ngModel)]="proyectoScope.fecha_fin" 
-                                        (change)="getProyectDateGaps()" [disabled]="buttonValidations.editar"/>
+                                        (change)="getProyectDateGaps()" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                             </div>
                         </div>
@@ -244,7 +244,7 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <select class="form-control custom-info-proy-input" id="idp_periodo_evaluacion" name="idp_periodo_evaluacion" 
-                                        [(ngModel)]="proyectoScope.idp_periodo_evaluacion" [disabled]="buttonValidations.editar">
+                                        [(ngModel)]="proyectoScope.idp_periodo_evaluacion" [disabled]="!buttonValidations.editMode">
                                         <option value="" disabled selected>Selecciona un elemento</option>
                                         <option *ngFor="let periodo of periodos" [value]="periodo.id_subtipo">
                                             {{ periodo.descripcion_subtipo }}
@@ -260,7 +260,7 @@
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_evaluacion_1" name="fecha_evaluacion_1" 
-                                        [(ngModel)]="proyectoScope.fecha_evaluacion_1" [disabled]="buttonValidations.editar"/>
+                                        [(ngModel)]="proyectoScope.fecha_evaluacion_1" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
@@ -272,7 +272,7 @@
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_fin_ampliada" name="fecha_fin_ampliada" 
                                         [(ngModel)]="proyectoScope.fecha_fin_ampliada" 
-                                        (change)="getProyectDateGaps()" [disabled]="buttonValidations.editar"/>
+                                        (change)="getProyectDateGaps()" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
@@ -315,19 +315,19 @@
                                     <label class="custom-info-proy-sub-title" for="">Moneda</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="moneda_presupuesto" name="moneda_presupuesto" 
-                                        [(ngModel)]="proyectoScope.moneda_presupuesto" [disabled]="buttonValidations.editar"/>
+                                        [(ngModel)]="proyectoScope.moneda_presupuesto" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                                 <div class="col col-md-12">
                                     <label class="custom-info-proy-sub-title" for="">Total</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="presupuesto_me" name="presupuesto_me" 
-                                        [(ngModel)]="proyectoScope.presupuesto_me" [disabled]="buttonValidations.editar"/>
+                                        [(ngModel)]="proyectoScope.presupuesto_me" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                                 <div class="col col-md-12">
                                     <label class="custom-info-proy-sub-title" for="">Total (Bs)</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="presupuesto_mn" name="presupuesto_mn" 
-                                        [(ngModel)]="proyectoScope.presupuesto_mn" [disabled]="buttonValidations.editar"/>
+                                        [(ngModel)]="proyectoScope.presupuesto_mn" [disabled]="!buttonValidations.editMode"/>
                                 </div>
                             </div>
                         </div>
@@ -339,17 +339,17 @@
                                 <div class="col col-md-12 text-end">
                                     <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initAddFinanciadores(presupuestoFormModal)"
-                                        [disabled]="((financiadoresSelected)||(buttonValidations.editar))">
+                                        [disabled]="((financiadoresSelected)||(!buttonValidations.editMode))">
                                         <i class="fa fa-plus" aria-hidden="true"></i>
                                     </button>
                                     <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initEditFinanciadores(presupuestoFormModal)"
-                                        [disabled]="((!financiadoresSelected)||(buttonValidations.editar))">
+                                        [disabled]="((!financiadoresSelected)||(!buttonValidations.editMode))">
                                         <i class="fa fa-caret-up" aria-hidden="true"></i>
                                     </button>
                                     <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initDeleteFinanciadores(deletePresupuestoModal)"
-                                        [disabled]="((!financiadoresSelected)||(buttonValidations.editar))">
+                                        [disabled]="((!financiadoresSelected)||(!buttonValidations.editMode))">
                                         <i class="fa fa-minus" aria-hidden="true"></i>
                                     </button>
                                 </div>
@@ -371,7 +371,7 @@
                                                 <td>
                                                     <input type="checkbox" [(ngModel)]="financiador.selected"
                                                         id="checkbox-{{ i }}" name="checkbox-{{ i }}"
-                                                        (change)="finanCheckboxChanged(financiador)" [disabled]="buttonValidations.editar"/>
+                                                        (change)="finanCheckboxChanged(financiador)" [disabled]="!buttonValidations.editMode"/>
                                                 </td>
                                                 <td>{{ financiador.id_proy_finan }}</td>
                                                 <td>{{ getInstitucionName(financiador.id_institucion_fin) }}</td>
@@ -401,7 +401,7 @@
                             <div class="row">
                                 <div class="col col-md-12 text-end">
                                     <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
-                                        (click)="initUbicaGeo(geograficoFormModal)" [disabled]="buttonValidations.editar">
+                                        (click)="initUbicaGeo(geograficoFormModal)" [disabled]="!buttonValidations.editMode">
                                         <i class="fa fa-tree" aria-hidden="true"></i>
                                     </button>
                                 </div>
@@ -427,7 +427,7 @@
                                     <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
                                     <h2 class="custom-info-proy-sub-title">Otras</h2>
                                     <textarea class="form-control custom-info-proy-input" id="ubica_geo_otros" name="ubica_geo_otros" 
-                                        [(ngModel)]="proyectoScope.ubica_geo_otros" [disabled]="buttonValidations.editar"></textarea>
+                                        [(ngModel)]="proyectoScope.ubica_geo_otros" [disabled]="!buttonValidations.editMode"></textarea>
                                 </div>
                             </div>
                             
@@ -451,7 +451,7 @@
                                         </td>
                                         <td>
                                             <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
-                                                [(ngModel)]="item.selected" (change)="ubiInfCheckboxChanged(item)" [disabled]="buttonValidations.editar"/>
+                                                [(ngModel)]="item.selected" (change)="ubiInfCheckboxChanged(item)" [disabled]="!buttonValidations.editMode"/>
                                         </td>
                                         <td>
                                             {{ item.nombre }}
@@ -479,19 +479,19 @@
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
                                 (click)="initAddObligaciones(obligacionesFormModal)"
-                                [disabled]="((obligacionesSelected)||(buttonValidations.editar))">
+                                [disabled]="((obligacionesSelected)||(!buttonValidations.editMode))">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
                             </button>
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
                                 (click)="initEditObligaciones(obligacionesFormModal)"
-                                [disabled]="((!obligacionesSelected)||(buttonValidations.editar))">
+                                [disabled]="((!obligacionesSelected)||(!buttonValidations.editMode))">
                                 <i class="fa fa-caret-up" aria-hidden="true"></i>
                             </button>
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
                                 (click)="initDeleteObligacion(deleteObligacionModal)"
-                                [disabled]="((!obligacionesSelected)||(buttonValidations.editar))">
+                                [disabled]="((!obligacionesSelected)||(!buttonValidations.editMode))">
                                 <i class="fa fa-minus" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -514,7 +514,7 @@
                                         <td class="custom-fit-col">
                                             <input type="checkbox" [(ngModel)]="obligacion.selected"
                                                 id="checkbox-{{ i }}" name="checkbox-{{ i }}"
-                                                (change)="obligaCheckboxChanged(obligacion)" [disabled]="buttonValidations.editar"/>
+                                                (change)="obligaCheckboxChanged(obligacion)" [disabled]="!buttonValidations.editMode"/>
                                         </td>
                                         <td class="custom-fit-col">{{ obligacion.id_proy_obliga }}</td>
                                         <td>{{ obligacion.obligacion }}</td>

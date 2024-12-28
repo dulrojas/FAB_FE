@@ -463,10 +463,12 @@ export class InfProyectoComponent implements OnInit {
     buttonValidations: any = {};
     enableEditMode(){
       this.buttonValidations.editar = false;
+      this.buttonValidations.editMode = true;
       this.buttonValidations.grabarCancelar = true;
     }
     disableEditMode(){
       this.buttonValidations.editar = true;
+      this.buttonValidations.editMode = false;
       this.buttonValidations.grabarCancelar = false;
 
       this.getInformacionProyecto();
@@ -478,6 +480,7 @@ export class InfProyectoComponent implements OnInit {
       this.buttonValidations = {
         "grabarCancelar": false,
         "editar": false,
+        "editMode": false,
         "activar": false,
         "evaluacion": false,
         "concluirCancelar": false,

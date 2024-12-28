@@ -1,113 +1,126 @@
 <div [@routerTransition]>
-    <!-- Sección del Encabezado -->
     <div class="row col-md-12">
-        <!-- Bloque de Encabezado -->
         <div class="col col-md-6 align-items-center custom-body-header">
-            <!-- Componente personalizado para el encabezado -->
             <app-bodyHeader 
                 (selectionChange)="onChildSelectionChange($event)">
             </app-bodyHeader>
         </div>
-        <!-- Bloque de Tarjetas de Estadísticas -->
         <div class="col col-md-6 text-center">
-            <!-- Fila para organizar las tarjetas -->
-                <div class="row">
-                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                        {{headerDataNro01}} Ejecucion Presupuestaria
-                    </div>
-                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                        {{headerDataNro02}} Ejecucion Periodo
-                    </div>
-                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                        {{headerDataNro03}} Actividades Pendientes
-                    </div>
-                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                        {{headerDataNro04}} Actividades Retrasadas
-                    </div>
+            <div class="row">
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                    {{headerDataNro01}} Ejecucion Presupuestaria
                 </div>
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                    {{headerDataNro02}} Ejecucion Periodo
+                </div>
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                    {{headerDataNro03}} Actividades Pendientes
+                </div>
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                    {{headerDataNro04}} Actividades Retrasadas
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="row col-xl-12 mb-3 mt-4">
-        <div class="col col-xl-2 col-lg-2 "></div>
-            <div class="row col col-xl-10 col-lg-10 card card-body custom-card">
-                <h2 class="title" style="color: #4E8646;">Ejecucion Financiera</h2>
-                    <div class="row col col-xl-12 col-lg-12 flex-lg-row justify-content-end align-content-end">
-                        <!-- Graficos -->
-                        <div class="row col col-xl-6 col-lg-6 ">
-                            <div class="row col-lg-6 col-lg-6 d-flex align-items-center text-center">
-                                    <div class="text-lg-start">
-                                        <!-- Presupuesto -->
-                                        <h5 class="text-center">Presupuesto del Periodo</h5>
-                                        <h5 class="presupuesto">Bs 2000,000.00</h5>
-                                        <!-- Ejecutado -->
-                                        <h5 class="text-center">Ejecutado</h5>
-                                        <h5 class="presupuesto" style="background-color: #ffffff; color: #000000;">150,000.00</h5>
-                                    </div>
-                                    <div style="position: relative; height: 150px; width: 200px; margin: auto;">
-                                        <canvas id="doughnutChart"></canvas>
-                                    </div>
+    <!-- ======= ======= ======= EJECUCION SECTION ======= ======= ======= -->
+    <div class="row mb-3 mt-4">
+        <div class="col col-xl-12 col-lg-12">
+            <div class="card card-body custom-card">
+                <div class="row">
+                    <div class="col col-md-7 col-lg-7 custom-actividad-right-sep">
+                        <div class="row">
+                            <div class="col col-md-12 col-lg-12">
+                                <h2 class="custom-view-title">Ejecucion Financiera</h2>
                             </div>
-                            <div class="row col-lg-6 col-lg-6 d-flex align-items-center text-center"> 
-                                    <div class="text-lg-start">
-                                        <h5 class="text-center">Presupuesto de la Gestion 2024</h5>
-                                        <h5 class="presupuesto">Bs 2000,000.00</h5>
-                                        <h5 class="text-center">Ejecutado</h5>
-                                        <h5 class="presupuesto" style="background-color: #ffffff; color: #000000;">150,000.00</h5>
-                                    </div>
-                                    <div style="position: relative; height: 150px; width: 200px; margin: auto;">
-                                        <canvas id="doughnutChart2024"></canvas>
-                                    </div>
+                            <!-- ======= ======= PROYECTO SECTION ======= ======= -->
+                            <div class="col col-md-3 col-lg-3">
+                                <label class="custom-actividad-sub-title">Presupuesto del proyecto</label>
+                                <input class="form-control" type="text" 
+                                    id="presupuestoProy" name="presupuestoProy" [(ngModel)]="presupuestoProy" disabled/>
+                                <label class="custom-actividad-sub-title">Ejecutado</label>
+                                <input class="form-control custom-actividad-input-bg-3" type="text" 
+                                    id="ejecutadoProy" name="ejecutadoProy" [(ngModel)]="ejecutadoProy" disabled/>
                             </div>
-                        </div> 
-                        <!-- Separador -->
-                        <div class="col-auto">
-                            <div style="width: 1px; height: 100%; background-color: #4E8646;"></div>
+                            <div class="col col-md-3 col-lg-3">
+                                <canvas id="doughnutChartProyecto"></canvas>
+                            </div>
+                            <!-- ======= ======= ======= ======= ======= -->
+                            <!-- ======= ======= GESTION SECTION ======= ======= -->
+                            <div class="col col-md-3 col-lg-3">
+                                <label class="custom-actividad-sub-title">Presupuesto de la Gestion {{ gestion }}</label>
+                                <input class="form-control" type="text" 
+                                    id="presupuestoGest" name="presupuestoGest" [(ngModel)]="presupuestoGest" disabled/>
+                                <label class="custom-actividad-sub-title">Ejecutado</label>
+                                <input class="form-control custom-actividad-input-bg-3" type="text" 
+                                    id="ejecutadoGest" name="ejecutadoGest" [(ngModel)]="ejecutadoGest" disabled/>
+                            </div>
+                            <div class="col col-md-3 col-lg-3">
+                                <canvas id="doughnutChartGestion"></canvas>
+                            </div>
+                            <!-- ======= ======= ======= ======= ======= -->
                         </div>
-                        <!-- Tabla Declaraciones -->
-                        <div class="col col-xl-3 col-lg-3">
-                            <h5 class="text-center">Declaraciones de Ejecucion</h5>
+                    </div>
+                    <div class="col col-md-5 col-lg-5">
+                        <div class="row">
+                            <!-- ======= ======= DECLARACION SECTION ======= ======= -->
+                            <div class="col col-md-6 col-lg-6 custom-actividad-right-sep">
+                                <label class="custom-actividad-sub-title">Declaraciones de Ejecucion</label>
                                 <div class=" table-responsive">                                 
-                                    <!-- Tabla Declaraciones -->
                                     <table class="table custom-table table-striped table-bordered">
                                         <thead>
                                             <tr>
                                                 <th></th>
-                                                <th style="text-align: center;">#</th>
+                                                <th style="text-align: center;">ID</th>
                                                 <th style="text-align: center;">Declaración</th>
                                                 <th style="text-align: center;">Ejecución</th>                                            
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let row of declaraciones ; let i = index">
+                                            <tr *ngFor="let presuAvance of presuAvances; let i = index">
                                                 <td>
                                                     <input type="checkbox" 
-                                                        [(ngModel)]="planifEstrategica.selected" 
+                                                        [(ngModel)]="presuAvance.selected" 
                                                         (change)="checkboxChanged(planifEstrategica)">
                                                 </td>
-                                                <td style="text-align:end;">{{ row.id }}</td>
-                                                <td style="text-align: center;">{{row.documento}}</td>
-                                                <td style="text-align:end;">{{row.ejecucion}}</td>
+                                                <td>
+                                                    {{ presuAvance.id_proy_presu_avance }}
+                                                </td>
+                                                <td>
+                                                    {{ ((presuAvance.fecha_hora).slice(0,10)) }}
+                                                </td>
+                                                <td>
+                                                    {{ presuAvance.monto_avance.slice(1)}}
+                                                </td>
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                            <!-- ======= ======= ======= ======= ======= -->
+                            <!-- ======= ======= EJECUTADO SECTION ======= ======= -->
+                            <div class="col col-md-6 col-lg-6">
+                                <label class="custom-actividad-sub-title">Nuevo Ejecutado</label>
+                                <input class="form-control" type="text" 
+                                    id="montoNuevoEjecutado" name="montoNuevoEjecutado" 
+                                    placeholder="Ingrese el monto ejecutado" [(ngModel)]="montoNuevoEjecutado"/>
+                                <label class="custom-actividad-sub-title">Motivo</label>
+                                <textarea class="form-control" type="text" 
+                                    id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
+                                    placeholder="Ingrese el motivo de ejecucion" [(ngModel)]="motivoNuevoEjecutado">
+                                </textarea>
+                                <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
+                                    (click)="initAddActividad(actividad)">
+                                    <i aria-hidden="true"></i> Añadir
+                                </button>
+                            </div>
+                            <!-- ======= ======= ======= ======= ======= -->
                         </div>
-                        <!-- Separador -->
-                        <div class="col-auto">
-                            <div style="width: 1px; height: 100%; background-color: #4E8646;"></div>
-                        </div>
-                        <!-- Nueva Ejecucion -->
-                    <!-- Nueva Ejecución -->
-                        <div class="col-lg-2">
-                            <h5 class="text-center ">Nuevo Ejecutado</h5>
-                            <h5 class="presupuesto mb-3 p-2 w-100" style="background-color: #ffffff; border: 1px solid #ddd;">Bs 250,000.00</h5>
-                            <!-- <h5 class="text-center">Motivo</h5>
-                            <h5 class="presupuesto mb-3 p-2 w-100" style="background-color: #ffffff; border: 1px solid #ddd;">Gastos de representación</h5> -->
-                            <button class="btn btn-success w-100" style="background-color: #4E8646;">Añadir</button>
-                        </div> 
-            </div>  
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
 
     <!-- Gantt -->
     <div class="card mb-3" style="margin-top: 10px;">
@@ -118,20 +131,14 @@
             <!-- Botones de Acción -->
             <div class="row">
             <div class="col col-xl-12 col-lg-12 text-end">
-                <button
-                type="button"
-                class="btn btn-view-bg-1"
-                (click)="initAddActividad(actividad)"
-                >
-                <i aria-hidden="true"></i> Añadir
+                <button type="button" class="btn btn-view-bg-1"
+                    (click)="initAddActividad(actividad)">
+                    <i aria-hidden="true"></i> Añadir
                 </button>
-                <button
-                type="button"
-                class="btn btn-view-bg-1"
-                (click)="initEditActividad(actividad)"
-                [disabled]=""
-                >
-                <i aria-hidden="true"></i> Avance
+                <button type="button" class="btn btn-view-bg-1"
+                    (click)="initEditActividad(actividad)"
+                    [disabled]="">
+                    <i aria-hidden="true"></i> Avance
                 </button>
             </div>
             </div>
@@ -164,7 +171,7 @@
             <div class="gantt-timeline-container">
 
               <div class="timeline">
-                <h5 class="text-center" style="background-color: #4E8646;color: #ffffff;">2024</h5>
+                <label class="text-center" style="background-color: #4E8646;color: #ffffff;">2024</label>
                 <div class="timeline-header">
                   <span class="month">Ene</span>
                   <span class="month">Feb</span>

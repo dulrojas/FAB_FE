@@ -40,6 +40,27 @@ export class servicios{
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= GET PRESUPUESTO EJECUTADO ======= ======= =======
+  getPresupuestoEjecutadoByIdProy(idProy: any): Observable<any> {
+    const params = {
+      "procedure_name": "sp_proy_presupuesto_ejecutado",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "C1","type": "string"},
+          {"name": "p_id_proyecto","value": idProy,"type": "int"},
+          {"name": "p_fecha_gestion","value": "2024-11-29","type": "string"}
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET UNIDADES ======= ======= =======
   getUnidades(): Observable<any> {
     const params = {

@@ -6,45 +6,30 @@ import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servActividad } from "../../servicios/actividad";
 import { servActAvance } from "../../servicios/actividadAvance";
+import { servPresupuesto } from "../../servicios/presupuesto";
+import { servPresuAvance } from "../../servicios/presuAvance";
 
-
-import { Chart } from 'chart.js/auto'; // Importación de Chart.js
+import { Chart } from 'chart.js/auto';
 
 @Component({
     selector: 'app-actividades',
     templateUrl: './actividad.component.html',
-    styleUrls: ['./actividad.component.scss'],
+    styleUrls: ['../../../styles/styles.scss'],
     animations: [routerTransition()]
 })
 
 export class ActividadComponent implements OnInit {
-  meses = ['En', 'Fe', 'Ma', 'Ab', 'My', 'Ju', 'Jl', 'Ag', 'Se', 'Oc', 'No', 'Di'];
-  seleccionados: number[] = []; // Días seleccionados
-
-  toggleCheckbox(dia: number): void {
-    if (this.seleccionados.includes(dia)) {
-      // Si el día ya está seleccionado, lo eliminamos
-      this.seleccionados = this.seleccionados.filter(d => d !== dia);
-      console.log(`Día ${dia} deseleccionado. Seleccionados: ${this.seleccionados}`);
-    } else {
-      // Si el día no está seleccionado, lo agregamos
-      this.seleccionados.push(dia);
-      console.log(`Día ${dia} seleccionado. Seleccionados: ${this.seleccionados}`);
-    }
-  }
-
-  actividades: any[] = [];
-  tareas: any[] = [];
-  links: any[] = [];
-  mainPage = 1;
-  mainPageSize = 10;
-  totalLength = 0;
+    mainPage = 1;
+    mainPageSize = 10;
+    totalLength = 0;
     constructor(
       private modalService: NgbModal,
       private proyectoService: ProyectoService,
       private servicios: servicios,
       private servActividad: servActividad,
-      private servActAvance: servActAvance
+      private servActAvance: servActAvance,
+      private servPresupuesto: servPresupuesto,
+      private servPresuAvance: servPresuAvance
     ) {}
 
     // ======= ======= HEADER SECTION ======= =======
@@ -59,6 +44,7 @@ export class ActividadComponent implements OnInit {
       this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.currentPerProRol = selectedPro.rol;
 
+      this.getActividades();
     }
 
     headerDataNro01: any = 0;
@@ -84,66 +70,191 @@ export class ActividadComponent implements OnInit {
     fecha_fin: any = "";
     resultado: any = "";
     idp_actividad_estado: any = "";
-    
 
-    // ======= ======= NGMODEL VARIABLES SECTION ======= =======
-    modalAction: any = "";
-    modalTitle: any = "";
+    monto: any = 0;
+    periodo: any = "";
+    presupuestoProy: any = 0;
+    ejecutadoProy: any = 0;
+    gestion: any = "";
+    presupuestoGest: any = 0;
+    ejecutadoGest: any = 0;
+
+    actividades: any[] = [];
+    presuAvances: any[] = [];
+
+    tareas: any[] = [];
+    links: any[] = [];
+
+    meses = ['En', 'Fe', 'Ma', 'Ab', 'My', 'Ju', 'Jl', 'Ag', 'Se', 'Oc', 'No', 'Di'];
+    seleccionados: number[] = [];
+    
+    // ====== ======= ====== CHARTS CONFIG SECTION ====== ======= ======
+    chartLabels: any = [
+      "Ejecutado",
+      "Restante"
+    ];
+    chartBgColors: any = [
+      "#BF5F3B",
+      "#FFFFFF"
+    ];
+    // ====== ======= ====== ======= ====== ======= ======
+    // ====== ======= ====== PRESUPUESTO PROYECTO SECTION ====== ======= ======
+    createDoughnutChartProyecto() {
+      const ctx: any = document.getElementById('doughnutChartProyecto') as HTMLCanvasElement;
+
+      let porcentajeGrafico = parseFloat((100*(this.ejecutadoProy / this.presupuestoProy)).toFixed(2));
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: this.chartLabels,
+          datasets: [
+            {
+              label: 'Presupuesto del proyecto',
+              data: [
+                porcentajeGrafico, 
+                100 - porcentajeGrafico
+              ],
+              backgroundColor: this.chartBgColors,
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          cutout: '75%',
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (tooltipItem) =>
+                  `${tooltipItem.label}: ${tooltipItem.raw}%`,
+              },
+            },
+            legend: {
+              display: false,
+            },
+          },
+        },
+        plugins: [
+          {
+            id: 'centerText',
+            beforeDraw(chart: any) {
+              const width = chart.width;
+              const height = chart.height;
+              const ctx = chart.ctx;
+              ctx.restore();
+    
+              const fontSize = (height / 100).toFixed(2);
+              ctx.font = `${fontSize}em sans-serif`;
+              ctx.textBaseline = 'middle';
+    
+              const text = porcentajeGrafico+'%';
+              const textX = Math.round((width - ctx.measureText(text).width) / 2);
+              const textY = height / 2;
+    
+              ctx.fillStyle = '#000';
+              ctx.fillText(text, textX, textY);
+              ctx.save();
+            },
+          },
+        ],
+      });
+    }
+    // ====== ======= ====== ======= ====== ======= ======
+    // ====== ======= ====== PRESUPUESTO GESTION SECTION ====== ======= ======
+    createDoughnutChartGestion() {
+      const ctx: any = document.getElementById('doughnutChartGestion') as HTMLCanvasElement;
+
+      let porcentajeGrafico = parseFloat((100*(this.ejecutadoGest / this.presupuestoGest)).toFixed(2));
+    
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: this.chartLabels,
+          datasets: [
+            {
+              label: 'Presupuesto del proyecto',
+              data: [
+                porcentajeGrafico, 
+                100 - porcentajeGrafico
+              ],
+              backgroundColor: this.chartBgColors,
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          cutout: '75%',
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (tooltipItem) =>
+                  `${tooltipItem.label}: ${tooltipItem.raw}%`,
+              },
+            },
+            legend: {
+              display: false,
+            },
+          },
+        },
+        plugins: [
+          {
+            id: 'centerText',
+            beforeDraw(chart: any) {
+              const width = chart.width;
+              const height = chart.height;
+              const ctx = chart.ctx;
+              ctx.restore();
+    
+              const fontSize = (height / 100).toFixed(2);
+              ctx.font = `${fontSize}em sans-serif`;
+              ctx.textBaseline = 'middle';
+    
+              const text = porcentajeGrafico+'%';
+              const textX = Math.round((width - ctx.measureText(text).width) / 2);
+              const textY = height / 2;
+    
+              ctx.fillStyle = '#000';
+              ctx.fillText(text, textX, textY);
+              ctx.save();
+            },
+          },
+        ],
+      });
+    }
+    // ====== ======= ====== ======= ====== ======= ======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
-      this.getActividad();
-      this.createDoughnutChart();
-      this.createDoughnutChart2024();
-      
-    }
-    // ======= ======= ======= ======= =======
-    jsonToString(json: object): string {
-      return JSON.stringify(json);
-    }
-    stringToJson(jsonString: string): object {
-      return JSON.parse(jsonString);
-    }
-    getDescripcionSubtipo(idRegistro: any, paramList: any): string{
-      const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
-      return subtipo ? subtipo.descripcion_subtipo : 'Null';
-    }
-    getCurrentDateTime(): string {
-      const date: Date = new Date();
-      
-      const day: string = String(date.getDate()).padStart(2, '0');
-      const month: string = String(date.getMonth() + 1).padStart(2, '0');
-      const year: number = date.getFullYear();
-      
-      const hours: string = String(date.getHours()).padStart(2, '0');
-      const minutes: string = String(date.getMinutes()).padStart(2, '0');
-      const seconds: string = String(date.getSeconds()).padStart(2, '0');
-      
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    }
-    // ======= ======= ======= ======= =======
-    // ======= ======= GET PARAMETRICAS ======= =======
-    getParametricas(){
+      this.getPresupuestoEjecutado();
+      this.getPresuAvance();
+      this.getActividades();
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OPEN MODALS FUN ======= =======
+    modalAction: any = "";
+    modalTitle: any = "";
+
     private modalRef: NgbModalRef | null = null;
-        openModal(content: TemplateRef<any>) {
-          this.modalRef = this.modalService.open(content, { size: 'xl' });
-        }
-    
-        closeModal() {
-          if (this.modalRef) {
-            this.modalRef.close(); 
-            this.modalRef = null;
-          }
-        }
-    // ======= ======= ======= ======= =======
-    // ======= ======= GET MODAL TITLE FUN ======= =======
+    openModal(content: TemplateRef<any>) {
+      this.modalRef = this.modalService.open(content, { size: 'xl' });
+    }
+    closeModal() {
+      if (this.modalRef) {
+        this.modalRef.close(); 
+        this.modalRef = null;
+      }
+    }
     getModalTitle(modalAction: any){
       this.modalTitle = (modalAction == "add")?("Añadir Actividad"):(this.modalTitle);
       this.modalTitle = (modalAction == "edit")?("Editar Actividad"):(this.modalTitle);
       return this.modalTitle;
+    }
+    // ======= ======= ======= ======= =======
+
+    // ======= ======= GET PARAMETRICAS ======= =======
+    getParametricas(){
     }
     // ======= ======= ======= ======= =======
     actividadSelected: any = null;
@@ -159,7 +270,21 @@ export class ActividadComponent implements OnInit {
       })
     }
 
-    // ======= ======= INIT PERSONA ROLES NGMODEL ======= =======
+    // ======= ======= ACTIVIDADES FUN ======= =======
+    parseAmountStrToFloat(amount: any): number {
+      amount = amount.replace(',', '');
+      amount = parseFloat(amount);
+
+      return amount;
+    }
+    parseAmountFloatToStr(amount: any): string {
+      amount = amount.toFixed(2);
+      amount = amount.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+      return amount;
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= INIT ACTIVIDAD NGMODEL ======= =======
     initActividadModel(){
       this.modalTitle = "";
 
@@ -185,22 +310,63 @@ export class ActividadComponent implements OnInit {
       });
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= GET PERSONAS ======= =======
-    getActividad(){
+    // ======= ======= GET PRESUPUESTO EJECUTADO ======= =======
+    getPresupuestoEjecutado(){
+      this.servicios.getPresupuestoEjecutadoByIdProy(this.idProyecto).subscribe(
+        (data) => {
+          let dataReq = data[0].dato[0];
+
+          dataReq.presupuesto_mn = this.parseAmountStrToFloat(dataReq.presupuesto_mn.slice(1));
+
+          dataReq.pro_act_ava_ejecutado = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado.slice(1));
+          dataReq.pro_pre_ava_ejecutado = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado.slice(1));
+
+          dataReq.pro_act_presupuesto_gestion = this.parseAmountStrToFloat(dataReq.pro_act_presupuesto_gestion.slice(1))
+          dataReq.pro_act_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado_gestion.slice(1))
+          dataReq.pro_pre_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado_gestion.slice(1))
+
+          this.monto = 0;
+    
+          this.presupuestoProy = dataReq.presupuesto_mn;
+          this.ejecutadoProy = dataReq.pro_act_ava_ejecutado + dataReq.pro_pre_ava_ejecutado;
+    
+          this.gestion = dataReq.gestion_actual;
+          this.presupuestoGest = dataReq.pro_act_presupuesto_gestion;
+          this.ejecutadoGest = dataReq.pro_act_ava_ejecutado_gestion + dataReq.pro_pre_ava_ejecutado_gestion;
+          
+          this.createDoughnutChartProyecto();
+          this.createDoughnutChartGestion();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= GET PRESU AVANCE ======= =======
+    getPresuAvance(){
+      this.servPresuAvance.getPresuAvanceByIdProy(this.idProyecto).subscribe(
+        (data) => {
+          this.presuAvances = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= GET ACTIVIDADES ======= =======
+    getActividades(){
       this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
         (data) => {
           this.actividades = data[0].dato;
+
           this.actividades.forEach((actividad)=>{
-            this.servActAvance.getActAvanceByIdAct(actividad.id_proy_actividad).subscribe(
-              (data) =>{
-                actividad.actAvances = data[0].dato;
-              },
-              (error) => {
-                console.error(error);
-              }
-            );
+            actividad.presupuesto = (actividad.presupuesto)?(this.parseAmountStrToFloat(actividad.presupuesto.slice(1))):(0);
           });
-          console.log ('estas son las actividades : ',this.actividades);
+          
           this.countHeaderData();
         },
         (error) => {
@@ -240,7 +406,7 @@ export class ActividadComponent implements OnInit {
 
       this.servActividad.addActividad(objActividad).subscribe(
         (data) => {
-          this.getActividad();
+          this.getActividades();
         },
         (error) => {
           console.error(error);
@@ -270,7 +436,7 @@ export class ActividadComponent implements OnInit {
 
       this.servActividad.editActividad(objActividad).subscribe(
         (data) => {
-          this.getActividad();
+          this.getActividades();
         },
         (error) => {
           console.error(error);
@@ -294,122 +460,4 @@ export class ActividadComponent implements OnInit {
       }
     }
     // ======= ======= ======= ======= =======
-
-    // ====== ======= ====== Primer Grafico Ejecucucion financiera ====== ======= ======
-        createDoughnutChart() {
-        const ctx: any = document.getElementById('doughnutChart') as HTMLCanvasElement;
-
-        new Chart(ctx, {
-                type: 'doughnut',
-          data: {
-            labels: ['Gastado', 'Restante'], // Etiquetas
-            datasets: [
-              {
-                label: 'Presupuesto 2024',
-                data: [25, 75], // Porcentajes
-                backgroundColor: ['#BF5F3B', '#E0E0E0'], // Colores de la gráfica
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            cutout: '75%', // Hace el efecto de dona
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (tooltipItem) =>
-                    `${tooltipItem.label}: ${tooltipItem.raw}%`, // Muestra porcentajes
-                },
-              },
-              legend: {
-                display: false, // Oculta la leyenda
-              },
-            },
-          },
-          plugins: [
-            {
-              id: 'centerText', // Identificador del plugin
-              beforeDraw(chart: any) {
-                const width = chart.width;
-                const height = chart.height;
-                const ctx = chart.ctx;
-                ctx.restore();
-      
-                const fontSize = (height / 100).toFixed(2); // Ajusta el tamaño de la fuente
-                ctx.font = `${fontSize}em sans-serif`;
-                ctx.textBaseline = 'middle';
-      
-                const text = '25%'; // Texto al centro (porcentaje)
-                const textX = Math.round((width - ctx.measureText(text).width) / 2);
-                const textY = height / 2;
-      
-                ctx.fillStyle = '#000'; // Color del texto
-                ctx.fillText(text, textX, textY);
-                ctx.save();
-              },
-            },
-          ],
-        });
-      }
-
-    // ====== ======= ====== Segundo Grafico Ejecucucion financiera 2024 ====== ======= ======
-       createDoughnutChart2024() {
-        const ctx: any = document.getElementById('doughnutChart2024') as HTMLCanvasElement;
-      
-        new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['Gastado', 'Restante'], // Etiquetas
-            datasets: [
-              {
-                label: 'Presupuesto 2024',
-                data: [75, 25], // Porcentajes
-                backgroundColor: ['#BF5F3B', '#E0E0E0'], // Colores de la gráfica
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            cutout: '75%', // Hace el efecto de dona
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (tooltipItem) =>
-                    `${tooltipItem.label}: ${tooltipItem.raw}%`, // Muestra porcentajes
-                },
-              },
-              legend: {
-                display: false, // Oculta la leyenda
-              },
-            },
-          },
-          plugins: [
-            {
-              id: 'centerText', // Identificador del plugin
-              beforeDraw(chart: any) {
-                const width = chart.width;
-                const height = chart.height;
-                const ctx = chart.ctx;
-                ctx.restore();
-      
-                const fontSize = (height / 100).toFixed(2); // Ajusta el tamaño de la fuente
-                ctx.font = `${fontSize}em sans-serif`;
-                ctx.textBaseline = 'middle';
-      
-                const text = '75%'; // Texto al centro (porcentaje)
-                const textX = Math.round((width - ctx.measureText(text).width) / 2);
-                const textY = height / 2;
-      
-                ctx.fillStyle = '#000'; // Color del texto
-                ctx.fillText(text, textX, textY);
-                ctx.save();
-              },
-            },
-          ],
-        });
-      }
-
-    
 }

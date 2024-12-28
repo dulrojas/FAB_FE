@@ -502,6 +502,131 @@ select.form-control {
 }
 
 // ======= ======= ======= ======= =======
+// ======= ======= CUSTOM ACTIVIDADES ======= =======
+.custom-actividad-title{
+    font-size: 1rem;
+    font-weight: bold;
+    color: $primary-color;
+}
+
+.custom-actividad-sub-title{
+    font-size: 1rem;
+    font-weight: bold;
+    color: $primary-color;
+}
+
+.custom-actividad-right-sep{
+    border-right: solid 3px;
+    border-color: $primary-color;
+
+    padding-right: 5px;
+}
+
+.custom-actividad-input{
+    font-size: 1rem;
+}
+
+.custom-actividad-input-bg-3{
+    background-color: $third-color;
+
+    font-size: 1rem;
+    color: $txt-2-color;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 10px;
+  border-radius: 2px;
+}
+
+.gantt-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+    
+.gantt-sidebar {
+  width: 30%;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+    
+.task {
+  margin-bottom: 15px;
+  background-color: #fafafa;
+  padding: 10px;
+  border-radius: 8px;
+}
+    
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+    
+.task-details {
+  font-size: 14px;
+  color: #555;
+}
+    
+.progress {
+  font-size: 14px;
+  color: #888;
+}
+    
+.gantt-timeline-container {
+  width: 65%;
+  padding-left: 20px;
+}
+    
+.timeline {
+  position: relative;
+}
+    
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+    
+.progress-bar-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+}
+    
+.progress-bar {
+  height: 25px;
+  border-radius: 5px;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+    
+.progress-bar:hover {
+  filter: brightness(1.2);
+}
+// ======= ======= ======= ======= =======
 .custom-text-color-1{
     color: $primary-color;
 }
