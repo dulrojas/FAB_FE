@@ -18,7 +18,6 @@ import { Chart } from 'chart.js/auto';
 export class Dashboard2Component implements OnInit {
   // Variables globales
   dashboard2: any[] = [];
-  obligaciones: any[] = [];
   assetsPath = environment.assetsPath;
   
   // ======= ======= CONSTRUCTOR ======= =======
@@ -40,9 +39,7 @@ export class Dashboard2Component implements OnInit {
       this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.currentPerProRol = selectedPro.rol; 
 
-      this.getDashboardData();
-      this.getProyectDateGaps();
-      
+      this.getDashboardData();      
     }
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
     // Contadores de Header
@@ -52,10 +49,7 @@ export class Dashboard2Component implements OnInit {
     headerDataNro04: any = 0;
   // ====== ======= ====== ====== ======= ====== INIT VIEW FUN ====== ======= ====== ====== ======= ======
     ngOnInit() {
-      console.log("Estado inicial del componente:", this.proyectoScope);
-      this.getDashboardData();
-      this.getProyectDateGaps();
-         
+      this.getDashboardData();         
     } 
   // ====== ======= ====== ====== ======= ====== GET DASBOARD DATA ====== ======= ====== ====== ======= ======  
   // ====== Lógica para obtener datos del Dashboard ======
@@ -66,24 +60,42 @@ export class Dashboard2Component implements OnInit {
         //TARJETA 1  
           // Descargar archivo relacionado con el proyecto
           this.downloadFile(this.idProyecto);
-          
+          this.projectInfo = {
+            proyecto: data[0].dato[0].proyecto || 'Sin nombre del proyecto',
+            descripcion: data[0].dato[0].descrpcion || 'Sin descripción disponible'
+          };          
         //TARJETA 2 
-          // Actualizar datos del proyecto
           this.proyectoScope = {
             fecha_inicio: data[0].dato[0].fecha_inicio,
             fecha_fin: data[0].dato[0].fecha_fin,
             fecha_fin_ampliada: data[0].dato[0].fecha_fin_ampliada,
             fecha_fin_real: data[0].dato[0].fecha_fin_real
           };
-          // Llamar a la función para calcular y actualizar el periodo actual
           this.calculatePeriodoActual();
-
         //TARJETA 3
-        this.moneda_presupuesto = data[0].dato[0].moneda_presupuesto || 'Bs';
-        this.presupuesto_me = Number(data[0].dato[0].presupuesto_me) || 0;
-        this.presupuesto_mn = Number(data[0].dato[0].presupuesto_mn) || 0;
-        this.createPresupuestoChart();
-          
+          this.moneda_presupuesto = data[0].dato[0].moneda_presupuesto || 'Bs';      
+          this.presupuesto_me = this.parseMonetaryValue(data[0].dato[0].presupuesto_me) || 0;
+          this.presupuesto_mn = this.parseMonetaryValue(data[0].dato[0].presupuesto_mn) || 0;
+          this.createPresupuestoChart();
+        // TARJETA 4: PRESUPUESTOS DE LA GESTION
+          this.presupuestoGestion = {
+            ejecutado: this.parseMonetaryValue(data[0].dato[0].ejecutado) || 0,
+            presupuesto_actividad: this.parseMonetaryValue(data[0].dato[0].presupuesto_actividad) || 0,
+            ejecutado_avance: this.parseMonetaryValue(data[0].dato[0].ejecutado_avance) || 0
+          };
+          this.createGestionChart();
+        // TARJETA 5: INDICADORES
+          this.indicadores = data[0].dato[0].indicadores || [];
+          this.createRadarChart();
+        // TARJETA 9: LOGROS
+          this.numeroLogros = data[0].dato[0].logros?.length || 0;
+        // TARJETA 10: BENEFICIARIOS
+          const beneficiarios = data[0].dato[0].beneficiarios || [];
+          this.numeroMujeres = beneficiarios.reduce((sum, b) => sum + (b.mujeres || 0), 0);
+          this.numeroHombres = beneficiarios.reduce((sum, b) => sum + (b.hombres || 0), 0);
+          this.totalBeneficiarios = this.numeroMujeres + this.numeroHombres;
+        // TARJETA 11: SIGUIENTES OBLIGACIONES
+          this.obligaciones = data[0].dato[0].obligaciones || [];  
         }
       },
       (error) => {
@@ -95,11 +107,17 @@ export class Dashboard2Component implements OnInit {
     // Variables para tarjeta 1
     imageSrc: any = null;
     defaultImageSrc: any = environment.defaultImageSrc;
+    projectInfo: {
+      proyecto: string;
+      descripcion: string;
+    } = {
+      proyecto: '',
+      descripcion: ''
+    };
     // ======= ======= UPLOAD IMAGE FUN ======= =======
           uploadFile(file: any, idRegistro: any, nombreRegistro: any){
             this.servicios.uploadFile(file, "persona", "ruta_foto", "id_persona", nombreRegistro, idRegistro).subscribe(
               (response) => {
-                //console.log('Archivo subido correctamente:', response);
               },
               (error) => {
                 console.error('Error al subir el archivo:', error);
@@ -115,23 +133,19 @@ export class Dashboard2Component implements OnInit {
                 this.imageSrc = url;
               } 
               else {
-                //console.warn('La respuesta no es un Blob:', response);
                 this.imageSrc = null; 
               }
             },
             (error) => {
               if (error.status === 404) {
-                //console.warn('No se encontró imagen para el registro:', idRegistro);
                 this.imageSrc = null;
-              } else {
-                //console.error('Error al descargar la imagen:', error);
               }
             }
           );
         }
 
   // ====== ======= ====== ====== SEGUNDA TARJETA DE FECHA DE INICIO-FIN Y PERIODO ACTUAL DEL PROYECTO ====== ======= ====== ====== 
-      // Variables para tarjeta 2
+    // Variables para tarjeta 2
       proyectoScope: any = {
         fecha_inicio: '',
         fecha_fin: '',
@@ -141,7 +155,8 @@ export class Dashboard2Component implements OnInit {
       currentDateGap: number = 0;
       finalDateGap: number = 0;
       realFinalDate: string = '';
-      periodoActual: string = ''; // Esta variable ya está presente pero se optimiza el cálculo.
+      periodoActual: string = '';
+
       getProyectDateGaps() {
         // Paso 1: Asignar fecha final inicial desde `fecha_fin`
         this.realFinalDate = this.proyectoScope.fecha_fin;
@@ -165,97 +180,272 @@ export class Dashboard2Component implements OnInit {
           const month = (today.getMonth() + 1).toString().padStart(2, '0');  // El mes empieza desde 0, por eso sumamos 1
           const year = today.getFullYear().toString(); // Año como cadena
           // Actualizar la variable `periodoActual` con el formato DD/MM/AAAA de la fecha actual
-          this.periodoActual = `${day}/${month}/${year}`;
-          console.log("Periodo actual calculado:", this.periodoActual);
+          this.periodoActual = `${day}/${month}/${year}`;         
         }
 
   // ====== ======= ====== ====== TERCERA TARJETA DONA DE PRESUPUESTO DEL PROYECTO ====== ======= ====== ======   
+      // Variables para tarjeta 3
       moneda_presupuesto: string = '';
       presupuesto_me: number = 0;
       presupuesto_mn: number = 0;
       chartPresupuesto: any;
-
       calcularPorcentajePresupuesto(): number {
         if (this.presupuesto_me === 0) return 0;
         const porcentaje = (this.presupuesto_mn / this.presupuesto_me) * 100;
         return Math.min(Math.round(porcentaje), 100);
       }
-      
-      // Agregar este método para formatear números como moneda
       formatearMoneda(valor: number): string {
         return new Intl.NumberFormat('es-BO', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         }).format(valor);
       }
-      
+      private parseMonetaryValue(value: string): number {
+        if (!value) return 0;
+        return Number(value.replace(/[^0-9.-]+/g, ''));
+      }      
       // Método para crear y actualizar el gráfico
       createPresupuestoChart() {
-        const ctx: any = document.getElementById('presupuestoChart') as HTMLCanvasElement;
+        const ctx: any = document.getElementById('presupuestoChart');
+        if (!ctx) return;    
         if (this.chartPresupuesto) {
-          this.chartPresupuesto.destroy();
-        }
-      
+            this.chartPresupuesto.destroy();
+        }    
         const porcentaje = this.calcularPorcentajePresupuesto();
-        const restante = 100 - porcentaje;
-      
+        const restante = 100 - porcentaje;    
         this.chartPresupuesto = new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['Ejecutado', 'Restante'],
-            datasets: [{
-              data: [porcentaje, restante],
-              backgroundColor: ['#4CAF50', '#E0E0E0'],
-              borderWidth: 0
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [porcentaje, restante],
+                    backgroundColor: ['#D67600', '#E0E0E0'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true, 
+                cutout: '65%',
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: (tooltipItem) => `${tooltipItem.label}: ${tooltipItem.raw}%`
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            },
+            plugins: [{
+                id: 'centerText',
+                beforeDraw(chart) {
+                    const { ctx, width, height } = chart;
+                    ctx.restore();
+                    const fontSize = Math.min(height / 8, 30);
+                    ctx.font = `bold ${fontSize}px sans-serif`;
+                    ctx.textBaseline = 'middle';
+                    ctx.textAlign = 'center';    
+                    const text = `${porcentaje}%`;
+                    ctx.fillStyle = '#000000';
+                    ctx.fillText(text, width / 2, height / 2);    
+                    ctx.save();
+                }
             }]
+        });
+    }
+  // ====== ======= ====== ====== CUARTA TARJETA DE PRESUPUESTOS DE LA GESTION ====== ======= ====== ======
+  // Variables para la cuarta tarjeta
+  presupuestoGestion: {
+    ejecutado: number;
+    presupuesto_actividad: number;
+    ejecutado_avance: number;
+  } = {
+    ejecutado: 0,
+    presupuesto_actividad: 0,
+    ejecutado_avance: 0
+  };
+  chartGestion: any;
+  
+  calcularPorcentajeGestion(): number {
+    if (this.presupuestoGestion.presupuesto_actividad === 0) return 0;
+    // Usamos ejecutado para calcular el porcentaje
+    const porcentaje = (this.presupuestoGestion.ejecutado / this.presupuestoGestion.presupuesto_actividad) * 100;
+    return Math.min(Math.round(porcentaje), 100);
+  }
+  
+  createGestionChart() {
+    const ctx: any = document.getElementById('doughnutChart2024');
+    if (!ctx) return;
+  
+    if (this.chartGestion) {
+      this.chartGestion.destroy();
+    }
+  
+    const porcentaje = this.calcularPorcentajeGestion();
+    const restante = 100 - porcentaje;
+  
+    this.chartGestion = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [porcentaje, restante],
+          backgroundColor: ['#D67600', '#E0E0E0'],  // Color naranja como la tarjeta 3
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%',
+        plugins: {
+          legend: {
+            display: false  // Ocultamos la leyenda como en la tarjeta 3
+          },
+          tooltip: {
+            callbacks: {
+              label: (tooltipItem) => `${tooltipItem.raw}%`
+            }
+          }
+        }
+      },
+      plugins: [{
+        id: 'centerText',
+        beforeDraw(chart) {
+          const { ctx, width, height } = chart;
+          ctx.restore();
+          const fontSize = Math.min(height / 8, 30);
+          ctx.font = `bold ${fontSize}px sans-serif`;
+          ctx.textBaseline = 'middle';
+          ctx.textAlign = 'center';
+          const text = `${porcentaje}%`;
+          ctx.fillStyle = '#000000';
+          ctx.fillText(text, width / 2, height / 2);
+          ctx.save();
+        }
+      }]
+    });
+  }
+  // ====== ======= ====== ====== QUINTA TARJETA INDICADORES ====== ======= ====== ======
+  // Variables para la quinta tarjeta
+      indicadores: {
+        id_indicador: number;
+        meta_final: string;
+        valor_reportado: string;
+      }[] = [];
+      chartIndicadores: any;
+
+      calcularPorcentajesIndicadores(): { labels: string[]; data: number[] } {
+        const labels: string[] = [];
+        const data: number[] = [];
+
+        this.indicadores.forEach((indicador) => {
+          const meta = this.parseMonetaryValue(indicador.meta_final);
+          const reportado = this.parseMonetaryValue(indicador.valor_reportado);
+
+          labels.push(`Indicador ${indicador.id_indicador}`);
+          data.push(meta > 0 ? Math.min((reportado / meta) * 100, 100) : 0); // Porcentaje (máximo 100)
+        });
+
+        return { labels, data };
+      }
+
+      createRadarChart() {
+        const ctx: any = document.getElementById('radarChart') as HTMLCanvasElement;
+
+        if (!ctx) return;
+
+        // Destruye el gráfico anterior si existe
+        if (this.chartIndicadores) {
+          this.chartIndicadores.destroy();
+        }
+
+        const { labels, data } = this.calcularPorcentajesIndicadores();
+
+        this.chartIndicadores = new Chart(ctx, {
+          type: 'radar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Avance de Indicadores',
+                data: data,
+                borderColor: '#FF5722', // Color del borde
+                backgroundColor: 'rgba(255, 87, 34, 0.2)', // Color de relleno
+                borderWidth: 2,
+                pointBackgroundColor: '#FF5722', // Color de los puntos
+              },
+            ],
           },
           options: {
             responsive: true,
-            cutout: '75%',
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (tooltipItem) => `${tooltipItem.label}: ${tooltipItem.raw}%`
-                }
+            scales: {
+              r: {
+                angleLines: {
+                  color: '#e0e0e0', // Color de las líneas radiales
+                },
+                grid: {
+                  color: '#e0e0e0', // Color de las líneas de la cuadrícula
+                },
+                suggestedMin: 0, // Valor mínimo del eje
+                suggestedMax: 100, // Valor máximo del eje
+                ticks: {
+                  backdropColor: '#ffffff', // Fondo de los números en las líneas
+                  color: '#333333', // Color de los números
+                },
+                pointLabels: {
+                  color: '#333333', // Color de las etiquetas
+                  font: {
+                    size: 10, // Tamaño de fuente de las etiquetas
+                  },
+                },
               },
+            },
+            plugins: {
               legend: {
-                display: false
-              }
-            }
+                display: false, // Oculta la leyenda
+              },
+            },
           },
-          plugins: [{
-            id: 'centerText',
-            beforeDraw(chart: any) {
-              const { ctx, width, height } = chart;
-              ctx.restore();
-              
-              const fontSize = height / 8;
-              ctx.font = `bold ${fontSize}px sans-serif`;
-              ctx.textBaseline = 'middle';
-              ctx.textAlign = 'center';
-              
-              const text = `${porcentaje}%`;
-              ctx.fillStyle = '#000000';
-              ctx.fillText(text, width / 2, height / 2);
-              
-              ctx.save();
-            }
-          }]
         });
       }
 
+  // ====== ======= ====== ====== SEXTA TARJETA DE RIESGOS ====== ======= ====== ======
+
+
+  // ====== ======= ====== ====== SEPTIMA TARJETA APRENDIZAJES ====== ======= ====== ======
+
+
+  // ====== ======= ====== ====== OCTAVA TARJETA ACTIVIDADES ====== ======= ====== ======
+
+
+  // ====== ======= ====== ====== NOVENA TARJETA LOGROS ====== ======= ====== ======
+    // Variables para la novena tarjeta
+       numeroLogros: number = 0;
+
+  // ====== ======= ====== ====== DECIMA TARJETA BENEFICIARIOS ====== ======= ====== ======
+    // Variables para la décima tarjeta
+      numeroMujeres: number = 0;
+      numeroHombres: number = 0;
+      totalBeneficiarios: number = 0;
+
+  // ====== ======= ====== ====== UNDECIMA TARJETA DE SIGUIENTES OBLIGACIONES ====== ======= ====== ======
+    // Variables para la undécima tarjeta
+      obligaciones: any[] = [];   
 
   // ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ======  ======= ======
-
-
     // ====== Contar datos del header ======
     countHeaderData(): void {
       this.headerDataNro01 = this.obligaciones.length;
       this.headerDataNro02 = this.obligaciones.filter((o) => o.estado === 'Cumplida').length;
       this.headerDataNro03 = this.obligaciones.filter((o) => o.estado === 'Incumplida').length;
       this.headerDataNro04 = this.obligaciones.filter((o) => o.estado === 'En proceso').length;
-    }
-
-      
-
+    }  
 }

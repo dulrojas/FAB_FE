@@ -3,7 +3,7 @@
     <div class="row col-md-12">
         <!-- Bloque de Encabezado -->
         <div class="col col-md-6 align-items-center custom-body-header">
-            <!-- Componente personalizado para el encabezado -->
+            <!-- Componente personalizado para el encabezado No Modificar-->
             <app-bodyHeader 
             (selectionChange)="onChildSelectionChange($event)">
             </app-bodyHeader>
@@ -24,24 +24,24 @@
                     <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
                         {{headerDataNro04}} Actividades Planificadas
                     </div>
-                </div>
+                </div>            
         </div>
     </div>
-
+    <!-- ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ======= ====== -->
     <!--  Sección de Tarjetas de Información -->
     <div class="row" style="display: flex; justify-content: center;">
-        
-        <div class="col-xl-3 col-lg-3 my-auto mt-4">
-            <!-- MANEJO COMUNITARIO DE FUEGO -->
+      <!-- ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ======= ====== -->
+        <div class="col-xl-3 col-lg-3 mt-3">          
+            <!-- PRIMERA TARGETA DE INFIORMACION Y IMAGEN -->
             <div class="card">
-                <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="(imageSrc)||(defaultImageSrc)" alt="Imagen de Manejo Comunitario de Fuego">                
-                <h6 class="card-title">MANEJO COMUNITARIO DE FUEGO</h6>
-                <p class="card-text">Contribuimos al fortalecimiento de capacidades locales y la gobernanza para el Manejo Integral del Fuego y la
-                    reducción de riesgos de incendios forestales de manera participativa y articulada con (40) comunidades indígenas y campesinas,
-                     (cuatro) gobiernos subnacionales y (seis) áreas protegidas de la Chiquitania, Chaco, Pantanal y la Amazonía Norte de Bolivia.</p>
+                <img class="col col-lg-12 col-md-12 custom_logro_img" 
+                [src]="imageSrc || defaultImageSrc" 
+                [alt]="projectInfo.proyecto">                
+                <h6 class="card-title">{{projectInfo.proyecto | uppercase}}</h6>
+                <p class="card-text">{{projectInfo.descripcion}}</p>
             </div>
                 <!-- LINEA DE SEPARACION-->
-                <div class="custom-form-separator my-3" style="border-color: #4E8646;border-width: 2px; align-items: center;"></div>
+                <div class="custom-form-separator my-3" style="border-color: #4E8646;border-width: 3px;"></div>
                     <!-- SEGUNDA TARJETA DE FECHA DE INICIO-FIN Y PERIODO ACTUAL DEL PROYECTO -->
                     <div class="card">
                         <div class="card-body p-3">
@@ -74,7 +74,7 @@
                         </div>
                       </div>
                     <!-- LINEA DE SEPARACION-->
-                    <div class="custom-form-separator my-3" style="border-color: #4E8646;border-width: 2px; align-items: center;"></div> 
+                    <div class="custom-form-separator my-3" style="border-color: #4E8646;border-width: 3px;"></div> 
                     <!-- TERCERA TARJETA DONA DE PRESUPUESTO DEL PROYECTO -->
                     <div class="card">
                       <h6 class="card-title">PRESUPUESTO DEL PROYECTO</h6>
@@ -84,18 +84,191 @@
                           <h5 class="presupuesto">{{moneda_presupuesto}} {{formatearMoneda(presupuesto_me)}}</h5>
                         </div>
                         <div class="col-md-6">
-                          <div class="chart-container" style="position: relative; height: 200px;">
+                          <div class="chart-container" style="position: relative; height: 130px;">
                             <canvas id="presupuestoChart"></canvas>
                           </div>
                         </div>
                       </div>
                     </div>
-                                      
-
-
-
-                      
+                    <!-- LINEA DE SEPARACION-->
+                    <div class="custom-form-separator my-3" style="border-color: #4E8646;border-width: 3px;"></div>                                      
         </div>
-        
+      <!-- ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ======= ====== --> 
+        <!-- Línea vertical -->
+        <div class="col-auto mt-4">
+          <div style="width: 1px; height: 100%; background-color: #4E8646;"></div>
+        </div> 
+      <!-- ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ======= ====== --> 
+        <div class="col-xl-8 col-lg-8 d-flex align-items-start">
+          <div class="row" style="display: flex; justify-content: center;">
+            <!-- CUARTA TARJETA DE PRESUPUESTOS DE LA GESTION -->
+                <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                  <div class="card">
+                    <h6 class="card-title">PRESUPUESTO DE LA GESTION 2024</h6>
+                    <div class="card-body" style="display: flex; justify-content: center;">
+                      <div class="text-center">
+                        <h6>Presupuesto del Periodo</h6>
+                        <h5 class="presupuesto">{{ presupuestoGestion.presupuesto_actividad | currency:'Bs':true:'1.0-2' }}</h5>
+                        <h6>Ejecutado</h6>
+                        <h5 class="presupuesto" style="background-color: #ffffff; color: #000000;">
+                          {{ presupuestoGestion.ejecutado | currency:'Bs':true:'1.0-2' }}</h5>
+                      </div>
+                      <div style="position: relative; height: 130px; width: 200px; padding: 5%;">
+                        <canvas id="doughnutChart2024"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            <!-- QUINTA TARJETA INDICADORES -->
+                <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                  <div class="card">
+                    <h6 class="card-title">INDICADORES</h6>
+                    <div class="card-body" style="display: flex; justify-content: center;">
+                      <div style="position:relative; height: 200px; width: 250px;">
+                        <canvas id="radarChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            <!-- SEXTA TARJETA DE RIESGOS -->
+                <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                    <div class="card">
+                        <h6 class="card-title">RIESGOS</h6>
+                        <div class="card-body" style="display: flex; align-items:center; justify-content: center;">
+                            <!-- Impacto-->
+                            <div>
+                                <h6 class="card-title mb-0" style="transform: rotate(270deg);">Impacto</h6>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-center">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td class="bg-warning text-center">0</td>
+                                                <td class="bg-darwar text-center">2</td>
+                                                <td class="bg-danger text-center">1</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bg-warsuc text-white text-center">1</td>
+                                                <td class="bg-warning text-center">0</td>
+                                                <td class="bg-darwar text-center">0</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bg-success text-white text-center">0</td>
+                                                <td class="bg-warsuc text-white text-center">0</td>
+                                                <td class="bg-warning text-center">1</td>
+                                            </tr>                                           
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h6 class="card-title">Probabilidad</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!-- SEPTIMA TARJETA APRENDIZAJES -->
+                <div class="col-xl-5 col-lg-5 my-auto mt-4">
+                    <div class="card">
+                        <h6 class="card-title">APRENDIZAJES</h6>
+                        <div class="card-body" style="display: flex; justify-content: center;">
+                            <!-- Gráfico -->
+                            <div style="position: relative; height: 200px; width: 200px;">
+                                <canvas id="learnDoughnutChart"></canvas>
+                            </div>
+                            <!-- Leyenda -->
+                            <div>
+                                <div>
+                                    <h6><span class="legend-box" style="background-color: #2a06f8;"></span>Administrativos</h6>
+                                    <h6><span class="legend-box" style="background-color: #8E24AA;"></span>Gerencia de Proyecto</h6>
+                                    <h6><span class="legend-box" style="background-color: #FFEB3B;"></span>Actores Claves</h6>
+                                    <h6><span class="legend-box" style="background-color: #E91E63;"></span>Otros</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+            <!-- OCTAVA TARJETA ACTIVIDADES -->
+                <div class="col-xl-4 col-lg-4 my-auto mt-4">
+                  <div class="card">
+                      <h6 class="card-title">ACTIVIDADES</h6>
+                      <div class="card-body" style="display: flex; align-items: center; justify-content: center;">
+                          <div class="col-xl-6 col-lg-6">
+                          <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="assetsPath+'images/Actividades.jpg'" alt="Actividades">
+                          </div>
+                          <div class="col-xl-6 col-lg-6">
+                              <h4 style="color: #f60404;">1-Vencida</h4>
+                              <h4 style="color: #fff700;">2-Por Vencer</h4>
+                              <h4 style="color: #95ff00;">3-Vigentes</h4>
+                          </div>
+                      </div> 
+                  </div>
+                </div>
+            <!-- NOVENA TARJETA LOGROS -->
+                <div class="col-xl-3 col-lg-3 my-auto mt-4">
+                  <div class="card">
+                      <h6 class="card-title">LOGROS</h6>
+                      <div class="card-body">
+                          <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="assetsPath+'images/Logros.jpg'" alt="Logros">
+                          <h4 class="text-center">
+                            <strong>{{ numeroLogros }}</strong>
+                          </h4>
+                      </div>
+                  </div>
+                </div>
+            <!-- DECIMA TARJETA BENEFICIARIOS -->
+                <div class="col-xl-5 col-lg-5 my-auto mt-4">
+                  <div class="card">
+                      <h6 class="card-title">BENEFICIARIOS</h6>
+                      <div class="card-body" style="display: flex;">
+                          <div>
+                              <h3 class="text-center">BENEFICIARIOS ALCANZADOS</h3>
+                              <div style="display: flex; align-items: center; justify-content: center;">
+                                  <div>
+                                      <img class="col col-lg-12 col-md-12 card-img-top same-size-img custom_logro_img" [src]="assetsPath+'images/Hombre.png'" alt="Logros">                                  
+                                      <h3 class="text-center">{{ numeroHombres }}</h3>
+                                  </div>
+                                  <div>
+                                      <img class="col col-lg-12 col-md-12 card-img-top same-size-img custom_logro_img" [src]="assetsPath+'images/Mujer.png'" alt="Logros">
+                                      <h3 class="text-center">{{ numeroMujeres }}</h3>
+                                  </div>
+                              </div>
+                          </div>
+                          <div>
+                              <h3 class="text-center" style="color: #f67d04;">ACTORES CLAVE</h3>
+                              <img class="col col-lg-12 col-md-12 card-img-top same-size-img custom_logro_img" [src]="assetsPath+'images/ActoresClave.jpg'" alt="ActoresClave">
+                              <h3 class="text-center" style="color: #f67d04;">{{ totalBeneficiarios }}</h3>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            <!-- UNDECIMA TARJETA DE SIGUIENTES OBLIGACIONES -->
+                <div class="col-xl-7 col-lg-7 my-auto mt-4">
+                  <div class="card">
+                      <h6 class="card-title">SIGUIENTES OBLIGACIONES</h6>
+                      <!-- Contenedor blanco para la tabla -->
+                      <div class="card">                       
+                              <!-- Tabla Obligaciones -->
+                              <table class="table custom-table table-striped table-bordered">
+                                  <thead>
+                                    <tr>
+                                      <th>Documentos o Informes</th>
+                                      <th>Compromiso</th>
+                                      <th style="text-align: center;">Fecha Obligacion</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr *ngFor="let obligacion of obligaciones">
+                                          <td>{{ obligacion.obligacion}}</td>
+                                          <td>{{obligacion.institucion_exige}}</td>
+                                          <td style="text-align: center;">{{ obligacion.fecha_obligacion | date: 'dd-MM-yyyy' }}</td>
+                                  </tbody>
+                              </table>
+                      </div>
+                  </div>
+                </div>
+            <!-- ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ======= ====== -->       
+          </div>
+        </div>
+      <!-- ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ======= ====== --> 
     </div>
 </div>

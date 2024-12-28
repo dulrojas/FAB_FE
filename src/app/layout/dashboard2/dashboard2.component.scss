@@ -104,5 +104,12 @@ h5.presupuesto {
         margin-right: 10px;
         border-radius: 2px;
       }
-
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        margin: 0 auto; // Centra la dona
+    }
+    
       
