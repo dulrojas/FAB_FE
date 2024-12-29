@@ -2,7 +2,9 @@
     <!-- Encabezado -->
     <div class="row col-md-12">
         <div class="col col-md-6 align-items-center custom-body-header">
-            <app-bodyHeader (selectionChange)="onChildSelectionChange($event)"> </app-bodyHeader>
+            <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader>
         </div>
 
         <!-- Tarjetas de Estadísticas -->
@@ -227,7 +229,7 @@
                                     <div class="col col-xl-1 col-lg-1 mt-auto">
                                         <button
                                             type="button"
-                                            (click)="openModal(beneficiaUBIModal)"
+                                            (click)="openModalUbicaciones(beneficiaUBIModal);"
                                             style="
                                                 background-color: #d67600;
                                                 color: white;
@@ -307,7 +309,7 @@
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
                                     <button
                                         type="button"
-                                        (click)="openModal(listaBeneficiariesModal)"
+                                        (click)="openModal(listaBeneficiariesModal, null, true)"
                                         style="
                                             background-color: #d67600;
                                             color: white;
@@ -369,41 +371,58 @@
     <h4 class="modal-title">Ubicación Geográfica</h4>
   </div>
   <div class="modal-body">
-    <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmitLocation()">
-      <div class="row">
-        <div class="col-12 mt-3">
-          <label class="d-flex justify-content-center" for="department">DEPARTAMENTO</label>
-          <select class="form-control mt-2" (change)="onDepartamentoChange($event.target.value)">
-            <option value="" selected>Seleccione un departamento</option>
-            <option *ngFor="let depto of departamentos" [value]="depto.id_ubica_geo">
-              {{ depto.nombre }}
-            </option>
-          </select>
+    <form [formGroup]="beneficiariesFormUbicacion" (ngSubmit)="saveLocationSelection()">
+        <div class="col col-xl-3 col-lg-3 mt-auto">
+            <label for="departamento">Departamento</label>
+            <select
+                class="form-control"
+                formControlName="departamento"
+                (change)="onDepartamentoChange($event.target.value)"
+            >
+                <option value="" selected>Seleccione un departamento</option>
+                <option *ngFor="let depto of departamentos" [value]="depto.nombre">
+                    {{ depto.nombre }}
+                </option>
+            </select>
         </div>
-        <div class="col-12 mt-3">
-          <label class="d-flex justify-content-center" for="municipio">MUNICIPIO</label>
-          <select class="form-control mt-2" (change)="onMunicipioChange($event.target.value)">
-            <option value="" selected>Seleccione un Municipio</option>
-            <option *ngFor="let muni of municipios" [value]="muni.id_ubica_geo">
-              {{ muni.nombre }}
-            </option>
-          </select>
+
+        <div class="col col-xl-4 col-lg-4 mt-auto">
+            <label for="municipio">Municipio</label>
+            <select
+                class="form-control"
+                formControlName="municipio"
+                [disabled]="!municipios.length"
+                (change)="onMunicipioChange($event.target.value)"
+            >
+                <option value="" selected>Seleccione un municipio</option>
+                <option *ngFor="let muni of municipios" [value]="muni.nombre">
+                    {{ muni.nombre }}
+                </option>
+            </select>
         </div>
-        <div class="col-12 mt-3">
-          <label class="d-flex justify-content-center" for="comunidad">COMUNIDAD</label>
-          <select class="form-control mt-2" (change)="onComunidadChange($event.target.value)">
-            <option value="" selected>Seleccione una Comunidad</option>
-            <option *ngFor="let comunidad of comunidades" [value]="comunidad.orden">
-              {{ comunidad.nombre }}
-            </option>
-          </select>
+
+        <div class="col col-xl-3 col-lg-3 mt-auto">
+            <label for="comunidad">Comunidad</label>
+            <select
+                class="form-control"
+                formControlName="comunidad"
+               
+            >
+                <option value="" selected>Seleccione una comunidad</option>
+                <option
+                    *ngFor="let comunidad of comunidades"
+                    [value]="comunidad.nombre"
+                >
+                    {{ comunidad.nombre }}
+                </option>
+            </select>
         </div>
-      </div>
+
       <div class="modal-footer mt-2">
         <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
           <i class="fa fa-times"></i> Cancelar
         </button>
-        <button type="button" class="btn btn-bg-1" (click)="saveLocationSelection(modal)">
+        <button type="button" class="btn btn-bg-1" (click)="saveLocationSelection();modal.close('Cerrar')">
           <i class="fa fa-check"></i> Guardar
         </button>
       </div>

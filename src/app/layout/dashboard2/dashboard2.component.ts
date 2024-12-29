@@ -103,7 +103,10 @@ export class Dashboard2Component implements OnInit {
           this.numeroHombres = beneficiarios.reduce((sum, b) => sum + (b.hombres || 0), 0);
           this.totalBeneficiarios = this.numeroMujeres + this.numeroHombres;
         // TARJETA 11: SIGUIENTES OBLIGACIONES
-          this.obligaciones = data[0].dato[0].obligaciones || [];  
+          this.obligaciones = data[0].dato[0].obligaciones || [];
+          
+        // Actualizar los contadores del header
+        this.countHeaderData(data[0].dato[0]);  
         }
       },
       (error) => {
@@ -179,7 +182,7 @@ export class Dashboard2Component implements OnInit {
         // Paso 4: Actualizar el periodo actual formateado a DD/MM/AAAA
         this.calculatePeriodoActual();
         // Paso 5: Actualizar los contadores del header
-        this.countHeaderData();
+        this.countHeaderData(this.proyectoScope);
         }
         calculatePeriodoActual() {
           // Obtener la fecha actual
@@ -460,122 +463,117 @@ export class Dashboard2Component implements OnInit {
     actores: 0,
     otros: 0
   };
-  
-  // Method to process the aprendizajes data
+
   processAprendizajesData(data: any[]) {
-    // Reset counters
     this.aprendizajesData = {
       administrativos: 0,
       gerencia: 0,
       actores: 0,
       otros: 0
     };
-  
-    // Count occurrences based on idp_aprendizaje_area
     data.forEach(item => {
       switch (item.idp_aprendizaje_area) {
-        case 1:
+        case 1:  // Administrativa
           this.aprendizajesData.administrativos++;
           break;
-        case 2:
+        case 2:  // Gerencia del proyecto
           this.aprendizajesData.gerencia++;
           break;
-        case 3:
+        case 7:  // Actores clave
           this.aprendizajesData.actores++;
           break;
-        default:
+        default: // All other areas go to "otros"
           this.aprendizajesData.otros++;
           break;
       }
     });
-  
-    // Update the chart
     this.createLearnDoughnutChart();
   }
   
-  // Updated chart creation method
   createLearnDoughnutChart() {
-    const ctx: any = document.getElementById('learnDoughnutChart');
-    if (!ctx) return;
-    if (this.chartAprendizajes) {
-      this.chartAprendizajes.destroy();
-    }
-    const data = [
-      this.aprendizajesData.administrativos,
-      this.aprendizajesData.gerencia,
-      this.aprendizajesData.actores,
-      this.aprendizajesData.otros
-    ];
-    const total = data.reduce((a, b) => a + b, 0);
-    this.chartAprendizajes = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Administrativos', 'Gerencia de Proyecto', 'Actores Claves', 'Otros'],
-        datasets: [{
-          label: 'Aprendizajes',
-          data: data,
-          backgroundColor: ['#2a06f8', '#8E24AA', '#FFEB3B', '#E91E63'],
-          borderWidth: 0,
-        }]
+  const ctx: any = document.getElementById('learnDoughnutChart');
+  if (!ctx) return;
+
+  if (this.chartAprendizajes) {
+    this.chartAprendizajes.destroy();
+  }
+
+  const data = [
+    this.aprendizajesData.administrativos,
+    this.aprendizajesData.gerencia,
+    this.aprendizajesData.actores,
+    this.aprendizajesData.otros
+  ];
+  
+  const total = data.reduce((a, b) => a + b, 0);
+  const labels = ['Administrativos', 'Gerencia', 'ActoresClaves', 'Otros'];
+  const colors = ['#2a06f8', '#8E24AA', '#FFEB3B', '#E91E63'];
+
+  this.chartAprendizajes = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: colors,
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      cutout: '65%',
+      layout: {
+        padding: 5
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '65%',
-        layout: {
-          padding: {
-            top: 10,
-            bottom: 10
+      plugins: {
+        tooltip: {
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          titleColor: '#333',
+          bodyColor: '#666',
+          borderColor: '#ddd',
+          borderWidth: 1,
+          padding: 8,
+          callbacks: {
+            label: (context) => {
+              const value = context.raw as number;
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `${context.label}: ${value} (${percentage}%)`;
+            }
           }
         },
-        plugins: {
-          tooltip: {
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            titleColor: '#333',
-            bodyColor: '#666',
-            borderColor: '#ddd',
-            borderWidth: 1,
-            padding: 10,
-            callbacks: {
-              label: (context) => {
-                const value = context.raw as number;
-                const percentage = ((value / total) * 100).toFixed(1);
-                return `${context.label}: ${value} (${percentage}%)`;
-              }
-            }
-          },
-          legend: {
-            display: false
-          }
+        legend: {
+          display: false
         }
-      },
-      plugins: [{
-        id: 'centerText',
-        beforeDraw(chart: any) {
-          const { ctx, width, height } = chart;
-          ctx.restore();
-          
-          // Draw total number
-          const fontSize = Math.min(height / 6, 30);
-          ctx.font = `bold ${fontSize}px sans-serif`;
-          ctx.textBaseline = 'middle';
-          ctx.textAlign = 'center';
-          
-          const text = total.toString();
-          ctx.fillStyle = '#6A1B9A';
-          ctx.fillText(text, width / 2, height / 2);
-          
-          // Draw "Total" label
-          const labelFontSize = fontSize / 2;
-          ctx.font = `${labelFontSize}px sans-serif`;
-          ctx.fillStyle = '#666666';
-          ctx.fillText('Total', width / 2, height / 2 + fontSize);
-          
-          ctx.save();
-        }
-      }]
-    });
-  }
+      }
+    },
+    plugins: [{
+      id: 'centerText',
+      beforeDraw(chart: any) {
+        const { ctx, width, height } = chart;
+        ctx.restore();
+        
+        // Draw total number
+        const fontSize = Math.min(width / 8, height / 8, 24);
+        ctx.font = `bold ${fontSize}px sans-serif`;
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        
+        const text = total.toString();
+        ctx.fillStyle = '#6A1B9A';
+        ctx.fillText(text, width / 2, height / 2);
+        
+        // Draw "Total" label
+        const labelFontSize = fontSize / 2;
+        ctx.font = `${labelFontSize}px sans-serif`;
+        ctx.fillStyle = '#666666';
+        ctx.fillText('Total', width / 2, height / 2 + fontSize);
+        
+        ctx.save();
+      }
+    }]
+  });
+}
 
   // ====== ======= ====== ====== OCTAVA TARJETA ACTIVIDADES ====== ======= ====== ======
 
@@ -596,10 +594,11 @@ export class Dashboard2Component implements OnInit {
 
   // ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ======  ======= ======
     // ====== Contar datos del header ======
-    countHeaderData(): void {
-      this.headerDataNro01 = this.obligaciones.length;
-      this.headerDataNro02 = this.obligaciones.filter((o) => o.estado === 'Cumplida').length;
-      this.headerDataNro03 = this.obligaciones.filter((o) => o.estado === 'Incumplida').length;
-      this.headerDataNro04 = this.obligaciones.filter((o) => o.estado === 'En proceso').length;
+    private countHeaderData(data: any) {
+      // Asumiendo que estos datos vienen en la respuesta del servidor
+      this.headerDataNro01 = data.objetivos_especificos?.length || 0;
+      this.headerDataNro02 = data.resultados?.length || 0;
+      this.headerDataNro03 = data.indicadores?.length || 0;
+      this.headerDataNro04 = data.actividades_planificadas?.length || 0;
     }  
 }

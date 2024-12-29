@@ -1,9 +1,10 @@
 // Importacion de modulos y componentes Principales
-import { Component, OnInit, TemplateRef, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output , ChangeDetectorRef } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 // ======= ======= ======= SERVICES SECTION ======= ======= =======
+import { ProyectoService } from '../../services/proyectoData.service';
 import { PlanifEstrategicaService } from '../../servicios/planifEstrategica';
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
@@ -41,6 +42,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     
     constructor(
       private modalService: NgbModal,
+      private proyectoService: ProyectoService,
       private cdr: ChangeDetectorRef,
       private ServPlanifEstrategica: PlanifEstrategicaService,
       private servicios: servicios,
@@ -52,14 +54,18 @@ export class PlanifEstrategicaComponent implements OnInit {
       
     ) {}
 
-        // ======= ======= HEADER SECTION ======= =======
-        idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
-        idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-        namePersonaReg: any = localStorage.getItem('userFullName');
-        onChildSelectionChange(selectedId: string) {
-          this.idProyecto = selectedId;
-          localStorage.setItem('currentIdProy', (this.idProyecto).toString());
-    
+      // ======= ======= HEADER SECTION ======= =======
+      idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+      idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+      namePersonaReg: any = localStorage.getItem('userFullName');
+      currentPerProRol: any = localStorage.getItem('currentPerProRol');
+      @Output() selectionChange = new EventEmitter<any>();
+      onChildSelectionChange(selectedPro: any) {
+      this.idProyecto = selectedPro.id_proyecto;
+      localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+      this.proyectoService.seleccionarProyecto(this.idProyecto);
+      this.currentPerProRol = selectedPro.rol;
+
           this.getParametricas();
           this.getPlanifEstrategica();
           this.initPlanifEstrategicaModel();
@@ -1020,10 +1026,10 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.meta_final = this.planifEstrategicaSelected.meta_final;
       this.medio_verifica = this.planifEstrategicaSelected.medio_verifica;
       this.id_estado = this.planifEstrategicaSelected.id_estado;
-        this.inst_categoria_1 = this.planifEstrategicaSelected.inst_categoria_1;
+      this.inst_categoria_1 = this.planifEstrategicaSelected.inst_categoria_1;
       this.inst_categoria_2 = this.planifEstrategicaSelected.inst_categoria_2;
       this.inst_categoria_3 = this.planifEstrategicaSelected.inst_categoria_3;
-
+console.log(' la categorisa  insta_categria_1 es :', this.planifEstrategicaSelected)
       this.sigla = this.planifEstrategicaSelected.sigla;
       this.color = this.planifEstrategicaSelected.color;
 
@@ -1043,6 +1049,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
     editIndicador(){
+    
       const objIndicador = {
         p_id_proy_indicador: this.id_proy_indicador,
         p_id_proyecto: parseInt(this.idProyecto, 10)|| null,
@@ -1061,6 +1068,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_inst_categoria_2: parseInt(this.inst_categoria_2,10),
         p_inst_categoria_3: parseInt(this.inst_categoria_3,10)
       };
+     
       this.servIndicador.editIndicador(objIndicador).subscribe(
         (data) => {
           this.getPlanifEstrategica();

@@ -9,7 +9,7 @@ import { BeneficiariosService } from "../../servicios/Beneficiarios";
 import { AliadosService } from "../../servicios/aliados";
 import { servPersona } from "../../servicios/persona";
 import {OrganizacionesService} from "../../servicios/organizaciones"; 
-
+import {servListBenef} from "../../servicios/ListBeneficiarios";
 import { servPersonaRoles } from "../../servicios/personaRoles";
 import { ChangeDetectorRef } from '@angular/core';
 
@@ -46,6 +46,7 @@ export class BeneficiariosComponent implements OnInit {
   selectedBeneficiarios: Beneficiario | null = null;
   selectedAliados: any=null;
   beneficiariesForm: FormGroup;
+  beneficiariesFormUbicacion:FormGroup;
   aliadosForm: FormGroup;
 
   mainPage = 1;
@@ -67,7 +68,8 @@ export class BeneficiariosComponent implements OnInit {
     private ubicaGeograficaService: servUbicaGeografica,
     private cdr: ChangeDetectorRef,
     private servPersonaRoles: servPersona,
-    private OrganizacionesService:OrganizacionesService
+    private OrganizacionesService:OrganizacionesService,
+    private servListBenef:servListBenef
   ) {}
 
 
@@ -90,10 +92,13 @@ export class BeneficiariosComponent implements OnInit {
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
   idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
   namePersonaReg: any = localStorage.getItem('userFullName');
+  currentPerProRol: any = localStorage.getItem('currentPerProRol');
   @Output() selectionChange = new EventEmitter<any>();
-  onChildSelectionChange(selectedId: string) {
-    this.idProyecto = selectedId;
+  onChildSelectionChange(selectedPro: any) {
+    this.idProyecto = selectedPro.id_proyecto;
     localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+    this.proyectoService.seleccionarProyecto(this.idProyecto);
+    this.currentPerProRol = selectedPro.rol;
 //    this.ngOnInit();
     this.loadBeneficiarios();
     this.loadAliados();
@@ -128,7 +133,7 @@ export class BeneficiariosComponent implements OnInit {
     this.loadAliados();
     this.loadConvenios();
    
-    this.cargarPersonaRoles();        
+    
 
   }
 
@@ -167,7 +172,12 @@ getActividades(): void {
      
 
     });
+this.beneficiariesFormUbicacion=this.fb.group({
 
+  departamento: [''],
+  municipio: [''],
+  comunidad: ['']
+});
     
     
       // ======= GET organizacion para aliados  =======
@@ -192,25 +202,51 @@ getActividades(): void {
 
   planifData: any[] = []; // Datos originales del API
   tablaPersonas: any[] = []; // Datos procesados para la tabla
-  
-  cargarPersonaRoles() {
-    this.servPersonaRoles.getPersonas().subscribe((response: any) => {
-      if (response[0]?.res === 'OK') {
-        this.planifData = response[0]?.dato || [];
-        this.tablaPersonas = this.planifData.map((persona, index) => ({
-          id: index + 1,
-          comunidad: persona.id_inst_unidad || 'N/A',
-          docIden: persona.nro_documento || 'Sin documento',
-          nombreCompleto: `${persona.nombres || ''} ${persona.apellido_1 || ''} ${persona.apellido_2 || ''}`.trim(),
-          rangoEdad: this.calcularRangoEdad(persona.fecha_nacimiento),
-          sexo: persona.sexo || 'N/A',
-        }));
-        console.log('Datos transformados:', this.tablaPersonas);
-        this.cdr.detectChanges(); // Actualiza manualmente la vista
-      }
-    });
+  getComunidad(id: any): any {
+    console.log('El id recibido es:', id);
+    const comunidad = this.geografia.find(muni => muni.id_ubica_geo === Number(id));
+    if (comunidad) {
+      console.log('Nombre de la comunidad es:', comunidad.nombre);
+      return comunidad.nombre;
+    } else {
+      console.warn(`No se encontró la comunidad con id: ${id}`);
+      return 'Desconocida'; 
+    }
   }
   
+cargarPersona(id_beneficiario: any) {
+  this.servListBenef.getlistBeneficiariosByBene(id_beneficiario).subscribe(
+    (response: any) => {
+      if (Array.isArray(response) && response.length > 0 && response[0]?.res === 'OK') {
+        this.planifData = response[0]?.dato || [];
+
+        this.tablaPersonas = this.planifData.map((persona, index) => ({
+          id: index + 1,
+          comunidad:this.getComunidad(persona.comunidad) || 'N/A', // Validación de campo comunidad
+          docIden: persona?.num_doc_identidad || 'Sin documento', // Validación de documento de identidad
+          nombreCompleto: persona?.nombre || 'Sin nombre', // Validación de nombre
+          rangoEdad: persona?.idp_rango_edad || 'Sin rango', // Validación de rango de edad
+          sexo: persona?.es_hombre !== undefined 
+            ? (persona.es_hombre ? 'Hombre' : 'Mujer') 
+            : 'N/A',
+        }));
+
+        console.log('Datos transformados:', this.tablaPersonas);
+
+        // Asegúrate de marcar la vista para detección de cambios si estás fuera de ciclos de Angular
+        this.cdr.detectChanges();
+      } else {
+        console.error('Error en la respuesta o datos no disponibles:', response);
+        this.tablaPersonas = []; 
+      }
+    },
+    (error) => {
+      console.error('Error al cargar los datos:', error);
+      this.tablaPersonas = []; 
+    }
+  );
+}
+
   // Función para obtener el nombre completo de una persona
   obtenerNombreCompleto(persona: any): string {
     const nombres = persona.nombres || '';
@@ -468,56 +504,71 @@ console.log('estas son las comunidades de donde se filtrarran :' , this.geografi
     console.log('Beneficiario actualizado:', selectedBeneficiario);
 }
 
-  
-
-// Método para abrir el modal en modo edición o creación
-openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario): void {
-  this.selectedBeneficiarios = beneficiario || null;
-  console.log(' formulario antes de ser cargado al editar:',beneficiario)
-
-  if (beneficiario) {// modo edición
-    this.beneficiariesForm.patchValue({
-      id: this.selectedBeneficiarios.id,
-      fecha: beneficiario.fecha,
-   departamento:beneficiario.departamento,
-      municipio: beneficiario.municipio,
-      comunidad: beneficiario.comunidad,
-      tipoOrganizacion: beneficiario.tipoOrganizacion,
-      organizacion: beneficiario.organizacion,
-      actividad: beneficiario.actividad,
-      evento: beneficiario.evento,
-      mujeres: beneficiario.mujeres,
-      hombres: beneficiario.hombres,
-      total: beneficiario.total,
-      details: beneficiario.details,
- 
-      registeredBy: this.namePersonaReg // Asignar el nombre 
-
-
-    });
-   this.onDepartamentoChange(this.selectedBeneficiarios.departamento);
-this.onMunicipioChange(this.selectedBeneficiarios.municipio)
-    console.log('datos cargados al formulario:', this.beneficiariesForm.value);
-
-
-  } else {
-
-    this.beneficiariesForm.reset();
-    // ASIGNAr el nombre de la persona que registra al formulario
-    console.log('Nombre de la persona registrada primer verificacion:', this.namePersonaReg);
-    this.beneficiariesForm.patchValue({
-     registeredBy: this.namePersonaReg 
-
-   });
-
-  }
-
-  document.querySelector('app-root')?.setAttribute('inert', 'true'); 
-  this.modalService.open(modal,{ size: 'xl' }).result.finally(() => {
-    document.querySelector('app-root')?.removeAttribute('inert'); 
+openModalUbicaciones(modal: TemplateRef<any>){
+  this.beneficiariesFormUbicacion.reset();
+  // Abrir el modal
+  document.querySelector('app-root')?.setAttribute('inert', 'true');
+  this.modalService.open(modal, { size: 'xl' }).result.finally(() => {
+    document.querySelector('app-root')?.removeAttribute('inert');
   });
 }
 
+// Método para abrir el modal en modo edición o creación
+openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario, isListModal: boolean = false): void {
+  if (!isListModal) { // Solo modificar el formulario si no es el modal de lista
+    this.selectedBeneficiarios = beneficiario || null;
+    console.log('Formulario antes de ser cargado al editar:', beneficiario);
+
+    if (beneficiario) { // Modo edición
+      this.beneficiariesForm.patchValue({
+        id: this.selectedBeneficiarios.id,
+        fecha: beneficiario.fecha,
+        departamento: beneficiario.departamento,
+        municipio: beneficiario.municipio,
+        comunidad: beneficiario.comunidad,
+        tipoOrganizacion: beneficiario.tipoOrganizacion,
+        organizacion: beneficiario.organizacion,
+        actividad: beneficiario.actividad,
+        evento: beneficiario.evento,
+        mujeres: beneficiario.mujeres,
+        hombres: beneficiario.hombres,
+        total: beneficiario.total,
+        details: beneficiario.details,
+        registeredBy: this.namePersonaReg, // Asignar el nombre
+      });
+      this.cargarPersona(this.selectedBeneficiarios.id);
+      this.onDepartamentoChange(this.selectedBeneficiarios.departamento);
+      this.onMunicipioChange(this.selectedBeneficiarios.municipio);
+      console.log('Datos cargados al formulario:', this.beneficiariesForm.value);
+    } else { // Modo creación
+      this.beneficiariesForm.reset();
+      console.log('Nombre de la persona registrada (verificación):', this.namePersonaReg);
+      this.beneficiariesForm.patchValue({
+        registeredBy: this.namePersonaReg,
+      });
+    }
+  }
+
+  // Abrir el modal
+  document.querySelector('app-root')?.setAttribute('inert', 'true');
+  this.modalService.open(modal, { size: 'xl' }).result.finally(() => {
+    document.querySelector('app-root')?.removeAttribute('inert');
+  });
+}
+
+saveLocationSelection() : void{
+const formV=this.beneficiariesFormUbicacion.getRawValue();
+const ubicaionData={
+  departamento:formV.departamento,
+  municipio:formV.municipio,
+  comunidad:formV.comunidad
+}
+this.beneficiariesForm.patchValue({
+  departamento:formV.departamento,
+  municipio:formV.municipio,
+  comunidad:formV.comunidad
+})
+}
 
    // Guardar o actualizar beneficiario
    onSubmit(): void {
@@ -901,8 +952,5 @@ countHeaderData() {
  
   });
 }
-
-
-
 
 }
