@@ -43,7 +43,9 @@ export class ActividadComponent implements OnInit {
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.currentPerProRol = selectedPro.rol;
-
+      
+      this.getPresupuestoEjecutado();
+      this.getPresuAvance();
       this.getActividades();
     }
 
@@ -52,11 +54,6 @@ export class ActividadComponent implements OnInit {
     headerDataNro03: any = 0;
     headerDataNro04: any = 0;
     // ======= ======= ======= ======= =======
-
-    declaraciones: any = [];
-    nuevoEjecutado: any = [];
-    motivo: any = [];
-
     id_proy_actividad: any = "";
     id_proyecto: any = "";
     id_proy_elemento_padre: any = "";
@@ -71,7 +68,6 @@ export class ActividadComponent implements OnInit {
     resultado: any = "";
     idp_actividad_estado: any = "";
 
-    monto: any = 0;
     periodo: any = "";
     presupuestoProy: any = 0;
     ejecutadoProy: any = 0;
@@ -79,14 +75,16 @@ export class ActividadComponent implements OnInit {
     presupuestoGest: any = 0;
     ejecutadoGest: any = 0;
 
+    doughnutChartProy: any = null;
+    doughnutChartGest: any = null;
+
+    montoNuevoEjecutado: any = null;
+    motivoNuevoEjecutado: any = null;
+
     actividades: any[] = [];
     presuAvances: any[] = [];
 
-    tareas: any[] = [];
-    links: any[] = [];
-
     meses = ['En', 'Fe', 'Ma', 'Ab', 'My', 'Ju', 'Jl', 'Ag', 'Se', 'Oc', 'No', 'Di'];
-    seleccionados: number[] = [];
     
     // ====== ======= ====== CHARTS CONFIG SECTION ====== ======= ======
     chartLabels: any = [
@@ -102,9 +100,14 @@ export class ActividadComponent implements OnInit {
     createDoughnutChartProyecto() {
       const ctx: any = document.getElementById('doughnutChartProyecto') as HTMLCanvasElement;
 
+      if(this.doughnutChartProy) {
+        this.doughnutChartProy.destroy();
+        this.doughnutChartProy = null;
+      }
+
       let porcentajeGrafico = parseFloat((100*(this.ejecutadoProy / this.presupuestoProy)).toFixed(2));
 
-      new Chart(ctx, {
+      this.doughnutChartProy = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: this.chartLabels,
@@ -165,9 +168,14 @@ export class ActividadComponent implements OnInit {
     createDoughnutChartGestion() {
       const ctx: any = document.getElementById('doughnutChartGestion') as HTMLCanvasElement;
 
+      if(this.doughnutChartGest) {
+        this.doughnutChartGest.destroy();
+        this.doughnutChartGest = null;
+      }
+
       let porcentajeGrafico = parseFloat((100*(this.ejecutadoGest / this.presupuestoGest)).toFixed(2));
     
-      new Chart(ctx, {
+      this.doughnutChartGest = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: this.chartLabels,
@@ -283,6 +291,14 @@ export class ActividadComponent implements OnInit {
 
       return amount;
     }
+    onChangedMontoNuevoEjecutado(){
+      if(/[a-zA-Z]/.test(this.montoNuevoEjecutado)) {
+        this.montoNuevoEjecutado = "0.00";
+        return;
+      }
+      this.montoNuevoEjecutado = this.parseAmountStrToFloat(this.montoNuevoEjecutado);
+      this.montoNuevoEjecutado = this.parseAmountFloatToStr(this.montoNuevoEjecutado);
+    }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT ACTIVIDAD NGMODEL ======= =======
     initActividadModel(){
@@ -325,8 +341,6 @@ export class ActividadComponent implements OnInit {
           dataReq.pro_act_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado_gestion.slice(1))
           dataReq.pro_pre_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado_gestion.slice(1))
 
-          this.monto = 0;
-    
           this.presupuestoProy = dataReq.presupuesto_mn;
           this.ejecutadoProy = dataReq.pro_act_ava_ejecutado + dataReq.pro_pre_ava_ejecutado;
     
@@ -344,11 +358,30 @@ export class ActividadComponent implements OnInit {
 
     }
     // ======= ======= ======= ======= =======
+    valMontoNuevoEjecutado: any = true;
+    validateMontoNuevoEjecutado(){
+      if((this.montoNuevoEjecutado)&&((this.parseAmountStrToFloat(this.montoNuevoEjecutado))>0)){
+        this.valMontoNuevoEjecutado = true;
+      }
+      else{
+        this.valMontoNuevoEjecutado = false;
+      }
+    }
+
+    valMotivoNuevoEjecutado: any = true;
+    validateMotivoNuevoEjecutado(){
+      if((this.motivoNuevoEjecutado)&&(this.motivoNuevoEjecutado.length < 100)){
+        this.valMotivoNuevoEjecutado = true;
+      }
+      else{
+        this.valMotivoNuevoEjecutado = false;
+      }
+    }
     // ======= ======= GET PRESU AVANCE ======= =======
     getPresuAvance(){
       this.servPresuAvance.getPresuAvanceByIdProy(this.idProyecto).subscribe(
         (data) => {
-          this.presuAvances = data[0].dato;
+          this.presuAvances = (data[0].dato)?(data[0].dato):([]);
         },
         (error) => {
           console.error(error);
@@ -357,11 +390,43 @@ export class ActividadComponent implements OnInit {
 
     }
     // ======= ======= ======= ======= =======
+    // ======= ======= ADD PRESU AVANCE ======= =======
+    addPresuAvance(){
+      this.validateMontoNuevoEjecutado();
+      this.validateMotivoNuevoEjecutado();
+
+      let valPreAva = this.valMontoNuevoEjecutado && this.valMotivoNuevoEjecutado;
+
+      if(valPreAva){  
+        let objPresuAvance = {
+          p_id_proy_presu_avance: null,
+          p_id_proy_presupuesto: 1,
+          p_monto_avance: this.parseAmountStrToFloat(this.montoNuevoEjecutado),
+          p_id_persona: this.idPersonaReg,
+          p_fecha_hora: null,
+          p_motivo: this.motivoNuevoEjecutado,
+          p_id_proyecto: 0
+        };
+
+        this.servPresuAvance.addPresuAvance(objPresuAvance).subscribe(
+          (data) => {
+            this.montoNuevoEjecutado = null;
+            this.motivoNuevoEjecutado = null;
+
+            this.getPresuAvance();
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      }
+    }
+    // ======= ======= ======= ======= =======
     // ======= ======= GET ACTIVIDADES ======= =======
     getActividades(){
       this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
         (data) => {
-          this.actividades = data[0].dato;
+          this.actividades = (data[0].dato)?(data[0].dato):([]);
 
           this.actividades.forEach((actividad)=>{
             actividad.presupuesto = (actividad.presupuesto)?(this.parseAmountStrToFloat(actividad.presupuesto.slice(1))):(0);

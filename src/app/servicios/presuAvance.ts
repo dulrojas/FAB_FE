@@ -48,9 +48,9 @@ export class servPresuAvance{
           {"name": "p_id_proy_presupuesto","value": obj.p_id_proy_presupuesto,"type": "int"},
           {"name": "p_monto_avance","value": obj.p_monto_avance,"type": "int"}, 
           {"name": "p_id_persona","value": obj.p_id_persona,"type": "int"}, 
-          {"name": "p_fecha_hora","value": obj.p_fecha_hora,"type": "string"},
+          {"name": "p_fecha_hora","value": null,"type": "string"},
           {"name": "p_motivo","value": obj.p_motivo,"type": "string"}, 
-          {"name": "p_id_proyecto","value": obj.p_id_proyecto,"type": "int"}
+          {"name": "p_id_proyecto","value": null,"type": "int"}
         ]
       }
     };
