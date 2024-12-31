@@ -1,26 +1,24 @@
 import { Component, OnInit, TemplateRef, EventEmitter, Output} from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-
-// ======= ======= SERVICES SECTION ======= =======
 import { ProyectoService } from '../../services/proyectoData.service';
+
+// ======= ======= SERVICES SECTION ======= ======= 
 import { servIndicador} from '../../servicios/indicador';
 import {servIndicadorAvance} from '../../servicios/indicadorAvance';
 import {servInstCategorias} from '../../servicios/instCategoria';
-import { servAprendizaje } from "../../servicios/aprendizajes";
+import {PlanifEstrategicaService} from '../../servicios/planifEstrategica';
+import {MetoElementosService} from '../../servicios/metoElementos';
 import { servicios } from "../../servicios/servicios";
-import {servProyectos} from '../../servicios/proyectos';
-
-
-
+// ======= ======= ======= ======= ======= ======= =======  ======= =======
 @Component({
   selector: 'app-ejec-estrategica',
- //  templateUrl: './ejecucuion.html',
   templateUrl: './ejecEstrategica.component.html',
   styleUrls: ['./ejecEstrategica.component.scss'],
   animations: [routerTransition()]
 })
-
+// ======= ======= ======= ======= ======= ======= =======  ======= =======
 export class EjecEstrategicaComponent implements OnInit {
   // ======= ======= VARIABLES SECTION ======= =======
   ejecEstrategica: any[] = [];
@@ -36,13 +34,13 @@ export class EjecEstrategicaComponent implements OnInit {
     private servIndicador: servIndicador,
     private servIndicadorAvance: servIndicadorAvance,
     private servInstCategorias: servInstCategorias,
-    private servAprendizaje: servAprendizaje,
-    private servProyectos: servProyectos,
+    private planifEstrategicaService: PlanifEstrategicaService,
+    private metoElementosService: MetoElementosService,
     private servicios: servicios
   ) {}
 
 
-  // ======= ======= HEADER SECTION ======= =======
+  // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
   idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
   namePersonaReg: any = localStorage.getItem('userFullName');
@@ -59,6 +57,7 @@ export class EjecEstrategicaComponent implements OnInit {
       this.initEjecEstrategicaModel();
       this.ejecEstrategicaSelected = null;
     }
+  // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
   // ======= ======= ======= CONTADOR =======  ======= =======
       headerDataNro01: any = 0;
       headerDataNro02: any = 0;
@@ -133,44 +132,28 @@ export class EjecEstrategicaComponent implements OnInit {
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
   
   // ======= ======= GET PARAMETRICAS ======= =======
-  getParametricas(){
-    // ======= GET METO ELEMENTOS =======
-    this.servAprendizaje.getMetoElementos(this.idProyecto).subscribe(
-      (data) => {
-        this.componentes = data[0].dato;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-
-    this.servInstCategorias.getCategoriaById(1).subscribe(
-      (data: any) => {
-        this.ejecCategoria = data[0]?.dato || []; 
-      },
-      (error) => {
-        console.error("Error al cargar categorías:", error);
-      }
-    );
-
-    this.servInstCategorias.getCategoriaById(2).subscribe(
-      (data: any) => {
-        this.ejecSubCategoria = data[0]?.dato || []; 
-      },
-      (error) => {
-        console.error("Error al cargar categorías:", error);
-      }
-    );
-
-    this.servInstCategorias.getCategoriaById(3).subscribe(
-      (data: any) => {
-        this.ejecTipoCategoria = data[0]?.dato || []; 
-      },
-      (error) => {
-        console.error("Error al cargar categorías:", error);
-      }
-    );
+  getParametricas(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      forkJoin([
+        this.servInstCategorias.getCategoriaById(1),
+        this.servInstCategorias.getCategoriaById(2),
+        this.servInstCategorias.getCategoriaById(3),
+      ]).subscribe(
+        ([categoria1, categoria2, categoria3]: any) => {
+          this.ejecCategoria = categoria1[0]?.dato || [];
+          this.ejecSubCategoria = categoria2[0]?.dato || [];
+          this.ejecTipoCategoria = categoria3[0]?.dato || [];
+          resolve();
+        },
+        (error) => {
+          console.error("Error al cargar categorías:", error);
+          reject(error);
+        }
+      );
+    });
   }
+  
+  
  
   // ======= ======= ======= ======= ======= ======= =======  ======= =======        
   private modalRefs: NgbModalRef[] = [];
@@ -220,7 +203,7 @@ export class EjecEstrategicaComponent implements OnInit {
   }
  
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
-     // Tipo botones de la tabla de planifEstrategica
+     // Tipo botones de la tabla de planifEstrategica cambiar por meto elementos
      elementosMap = {
       1: { sigla: 'OG', color: '#D45B49' }, // Objetivo General
       2: { sigla: 'OE', color: '#F58634' }, // Objetivo Específico
@@ -371,6 +354,9 @@ export class EjecEstrategicaComponent implements OnInit {
   
       this.sigla = this.ejecEstrategicaSelected.sigla;
       this.color = this.ejecEstrategicaSelected.color;
+
+      // Buscar el elemento padre
+    this.getPlanifEstrategica();
   
       this.openModal(modalScope);
     } else {
@@ -569,6 +555,91 @@ initAddIndicadorAvance(modalScope: TemplateRef<any>) {
   this.initIndicadoresAvanceModel();
   this.modalTitle = "Añadir avance";
   this.openModal(modalScope);
+}
+
+
+// Variables para el elemento padre
+elementoPadre: any = null;
+codigoPadre: string = '';
+descripcionPadre: string = '';
+abuelo: any = null;
+codigoAbuelo: string = '';
+descripcionAbuelo: string = '';
+tipoAbuelo: string = '';
+siglaAbuelo: string = '';
+colorAbuelo: string = '';
+
+getPlanifEstrategica() {
+  const params = {
+    p_accion: 'C1',
+    p_id_proyecto: this.idProyecto,
+    p_id_proy_elemento: null,
+    p_id_meto_elemento: null,
+    p_id_proy_elem_padre: null,
+    p_codigo: null,
+    p_elemento: null,
+    p_descripcion: null,
+    p_comentario: null,
+    p_nivel: null,
+    p_orden: null,
+    p_idp_estado: null,
+    p_peso: null
+  };
+
+  this.planifEstrategicaService.getAllPlanifElements().subscribe(
+    (data: any) => {
+      if (data && data[0]?.dato) {
+        this.procesarDatosPlanifEstrategica(data[0].dato);
+      }
+    },
+    (error) => {
+      console.error('Error al obtener datos de planificación estratégica:', error);
+    }
+  );
+}
+
+procesarDatosPlanifEstrategica(datos: any[]) {
+  // Si tenemos un código de indicador seleccionado
+  if (this.codigo) {
+    // Encontrar el padre basado en el código
+    this.elementoPadre = this.encontrarElementoPadre(datos, this.codigo);
+    
+    if (this.elementoPadre) {
+      this.codigoPadre = this.elementoPadre.codigo;
+      this.descripcionPadre = this.elementoPadre.descripcion;
+      // Obtener detalles del abuelo
+      this.abuelo = this.encontrarElementoPadre(datos, this.codigoPadre);
+      if (this.abuelo) {
+        this.codigoAbuelo = this.abuelo.codigo;
+        this.descripcionAbuelo = this.abuelo.descripcion;
+        this.tipoAbuelo = this.getElementoNombre(this.abuelo.tipo); // Supongamos que hay un campo `tipo`
+        this.siglaAbuelo = this.abuelo.sigla;
+        this.colorAbuelo = this.abuelo.color;
+      }
+    }
+  }
+}
+
+encontrarElementoPadre(elementos: any[], codigoHijo: string): any {
+  // Dividir el código en sus partes (ejemplo: "1.2.3.0" -> ["1", "2", "3", "0"])
+  const partesCodigoHijo = codigoHijo.split('.');
+  
+  // Si el código tiene menos de 2 partes, no tiene padre
+  if (partesCodigoHijo.length < 2) return null;
+  
+  // Construir el código del padre eliminando el último número no cero
+  const partesCodigoPadre = [...partesCodigoHijo];
+  for (let i = partesCodigoPadre.length - 1; i >= 0; i--) {
+    if (partesCodigoPadre[i] !== '0') {
+      partesCodigoPadre[i] = '0';
+      break;
+    }
+  }
+  
+  const codigoPadre = partesCodigoPadre.join('.');
+  
+  // Buscar el elemento padre en el array de elementos
+  return elementos.find(elem => elem.codigo === codigoPadre);
 }
 
 
