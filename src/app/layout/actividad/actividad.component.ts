@@ -84,6 +84,20 @@ export class ActividadComponent implements OnInit {
     actividades: any[] = [];
     presuAvances: any[] = [];
 
+    actividadesTest: any[] = [
+      {
+        codigo: "Res 1.0.0.2",
+        childs: [
+          {
+            id_proy_elem_padre: 1,
+            proy_elem_padre: "Capacitacion",
+            codigo: "1.0.1.2",
+            actividad: "Capacitacion",
+          },
+        ]
+      }
+    ];
+
     meses = ['En', 'Fe', 'Ma', 'Ab', 'My', 'Ju', 'Jl', 'Ag', 'Se', 'Oc', 'No', 'Di'];
     
     // ====== ======= ====== CHARTS CONFIG SECTION ====== ======= ======

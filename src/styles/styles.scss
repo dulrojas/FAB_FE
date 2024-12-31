@@ -227,6 +227,56 @@ select.form-control {
         border-color: $secondary-color;
       }
 }
+.custom-form-actividades-checkbox{
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+
+    & + label {
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+        user-select: none;
+  
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          height: 20px;
+          width: 20px;
+          border: 2px solid $primary-color;
+          background-color: $txt-2-color;
+          transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+      }
+  
+      // Estado marcado
+      &:checked + label:before {
+        background-color: $primary-color;
+        border-color: $primary-color;
+      }
+  
+      // El check visual (simple línea)
+      &:checked + label:after {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+        width: 6px;
+        height: 12px;
+        border: solid $txt-2-color;
+        border-width: 0 2px 2px 0;
+      }
+  
+      & + label:hover:before {
+        border-color: $secondary-color;
+      }
+}
 .custom-form-lable-checkbox{
     color: $secondary-color;
     font-size: 1rem;
@@ -523,11 +573,31 @@ select.form-control {
 }
 
 .custom-actividad-presu-avance-table{
-    max-height: 80%;
+    max-height: 200px;
 }
 
 .custom-actividad-input{
     font-size: 1rem;
+}
+
+.custom-actividad-header{
+
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+
+    background-color: $primary-color;
+
+    font-size: 1rem;
+    color: $txt-2-color;
+    font-weight: bold;
+}
+
+.custom-vertical-text{
+    color: $txt-2-color;
+    font-weight: bold;
+
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
 }
 
 .custom-actividad-input-bg-3{
