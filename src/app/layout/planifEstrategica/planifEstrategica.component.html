@@ -231,7 +231,7 @@
                                     >
                                         <option value="">Seleccionar padre</option>
                                         <option *ngFor="let parent of validParents" [value]="parent.codigo">
-                                            {{ parent.nombre }} ({{ parent.codigo }})
+                                           ({{ parent.codigo }})
                                         </option>
                                     </select>
                                 </div>
@@ -245,10 +245,11 @@
                                         id="codigo"
                                         name="codigo"
                                         [(ngModel)]="codigo"
-                                        [readonly]="false"
+                                        [readonly]="true"
                                         placeholder="Ingresa el Código"
                                     />
                                 </div>
+                    
 
                                 <!-- Nombre -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -376,7 +377,7 @@
                                         id="codigo"
                                         name="codigo"
                                         [(ngModel)]="codigo"
-                                        [readonly]="false"
+                                        [readonly]="true"
                                         placeholder="Ingresa el Código"
                                     />
                                 </div>

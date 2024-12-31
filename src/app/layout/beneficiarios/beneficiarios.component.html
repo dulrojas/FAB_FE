@@ -2,9 +2,7 @@
     <!-- Encabezado -->
     <div class="row col-md-12">
         <div class="col col-md-6 align-items-center custom-body-header">
-            <app-bodyHeader 
-                (selectionChange)="onChildSelectionChange($event)">
-            </app-bodyHeader>
+            <app-bodyHeader (selectionChange)="onChildSelectionChange($event)"> </app-bodyHeader>
         </div>
 
         <!-- Tarjetas de Estadísticas -->
@@ -372,6 +370,7 @@
   </div>
   <div class="modal-body">
     <form [formGroup]="beneficiariesFormUbicacion" (ngSubmit)="saveLocationSelection()">
+        <div class="row g-3">
         <div class="col col-xl-3 col-lg-3 mt-auto">
             <label for="departamento">Departamento</label>
             <select
@@ -417,8 +416,8 @@
                 </option>
             </select>
         </div>
-
-      <div class="modal-footer mt-2">
+        </div>
+        <div class="modal-footer mt-2 d-flex justify-content-center">
         <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
           <i class="fa fa-times"></i> Cancelar
         </button>
@@ -431,7 +430,7 @@
 </ng-template>
  
  
- 
+
 
 
 
@@ -596,9 +595,9 @@
                     <div class="row mt-3">
                         <!-- institucion u organizacion -->
                         <div class="col col-xl-6 col-lg-6 mt-auto">
-                            <label for="tipoOrganizacion">Institucion/Organizacion</label>
+                            <label for="tipoOrganizacion">Institución/Organización</label>
                             <select class="form-control"  formControlName="tipoOrganizacion"id="tipoOrganizacion" name="tipoOrganizacion">
-                                <option value="" disabled selected>Seleccione un tipo de organización</option>
+                                <option value="" disabled selected>Seleccione una organización</option>
                                 <option *ngFor="let tipo of organizacionTipo" [value]="tipo.organizacion">
                                     {{ tipo.organizacion }}
                                 </option>
@@ -608,7 +607,7 @@
                         <div class="col col-xl-2 col-lg-2 mt-auto">
                             <button
                                 type="button"
-                                (click)="openModal()"
+                                (click)="openModal(organizacionModal)"
                                 style="
                                     background-color: #d67600;
                                     color: white;
@@ -644,7 +643,7 @@
                         <div class="col-md-6">
                             <label for="convenio">Convenio</label>
                             <select class="form-control" formControlName="convenio" id="convenio" name="convenio">
-                                <option value="" disabled selected>Seleccione un convenio</option>
+                                
                                 <option *ngFor="let convenio of tiposConvenio" [value]="convenio.descripcion">
                                     {{ convenio.descripcion }}
                                 </option>
@@ -682,6 +681,65 @@
         </form>
     </div>
 </ng-template>
+
+<!-- === nodale para creea una nueva organizacion  -->
+<ng-template #organizacionModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Añadir una nueva organización</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="organizacionForm" (ngSubmit)="saveLocationSelection()">
+            <div class="row g-3">
+                <!-- Institución -->
+                <div class="col col-xl-6 col-lg-6 mt-auto">      
+                    <label for="id_institucion" class="form-label">Institución</label>
+                    <select
+                        class="form-select"
+                        formControlName="id_institucion"
+                    >
+                        
+                        <option *ngFor="let inst of instituciones" [value]="inst.id_institucion">
+                            {{ inst.institucion }}
+                        </option>
+                    </select>
+                </div>
+        
+                <!-- Tipo de Organización -->
+                <div class="col col-xl-6 col-lg-6 mt-auto">
+                    <label for="id_tipo_organizacion">Tipo de Organización</label>
+                    <select class="form-control" formControlName="id_tipo_organizacion">
+                        <option *ngFor="let tipo of tiposOrganizacion" [value]="tipo.nombre">
+                            {{ tipo.nombre }}
+                        </option>
+                    </select>
+                </div>
+        
+                <!-- Nombre de la Organización -->
+                <div class="col col-xl-6 col-lg-6 mt-auto">
+                    <label for="organizacion">Nombre de la Organización</label>
+                    <input
+                        type="text"
+                        formControlName="organizacion"
+                        class="form-control"
+                        placeholder="Ingresa el Nombre de la Organización"
+                    />
+                </div>
+            </div>
+        
+            <div class="modal-footer mt-2 d-flex justify-content-center"> 
+                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                  <i class="fa fa-times"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-bg-1" (click)="onSubmitOrganize();modal.close('Cerrar')">
+                  <i class="fa fa-check"></i> Guardar
+                </button>
+            </div>
+        </form>
+        
+    </div>
+</ng-template>
+
+   
 <!-- ====== ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
 <ng-template #deleteBeneficiarioModal let-modal>
     <div class="modal-header">

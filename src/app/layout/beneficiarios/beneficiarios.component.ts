@@ -10,6 +10,7 @@ import { AliadosService } from "../../servicios/aliados";
 import { servPersona } from "../../servicios/persona";
 import {OrganizacionesService} from "../../servicios/organizaciones"; 
 import {servListBenef} from "../../servicios/ListBeneficiarios";
+import {servInstituciones} from "../../servicios/instituciones";
 import { servPersonaRoles } from "../../servicios/personaRoles";
 import { ChangeDetectorRef } from '@angular/core';
 
@@ -48,13 +49,15 @@ export class BeneficiariosComponent implements OnInit {
   beneficiariesForm: FormGroup;
   beneficiariesFormUbicacion:FormGroup;
   aliadosForm: FormGroup;
-
+  organizacionForm: FormGroup;
   mainPage = 1;
   mainPageSize = 10;
   totalLength = 0;
   previousIdProyecto: any;
   selectedOrganizacionId: any;
   geografia: any;
+  instituciones: any;
+ 
 
   constructor(
     private modalService: NgbModal,
@@ -69,7 +72,8 @@ export class BeneficiariosComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private servPersonaRoles: servPersona,
     private OrganizacionesService:OrganizacionesService,
-    private servListBenef:servListBenef
+    private servListBenef:servListBenef,
+    private servInstituciones:servInstituciones
   ) {}
 
 
@@ -92,13 +96,10 @@ export class BeneficiariosComponent implements OnInit {
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
   idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
   namePersonaReg: any = localStorage.getItem('userFullName');
-  currentPerProRol: any = localStorage.getItem('currentPerProRol');
   @Output() selectionChange = new EventEmitter<any>();
-  onChildSelectionChange(selectedPro: any) {
-    this.idProyecto = selectedPro.id_proyecto;
+  onChildSelectionChange(selectedId: string) {
+    this.idProyecto = selectedId;
     localStorage.setItem('currentIdProy', (this.idProyecto).toString());
-    this.proyectoService.seleccionarProyecto(this.idProyecto);
-    this.currentPerProRol = selectedPro.rol;
 //    this.ngOnInit();
     this.loadBeneficiarios();
     this.loadAliados();
@@ -130,9 +131,10 @@ export class BeneficiariosComponent implements OnInit {
     this.loadDepartamentos();
     this.loadTiposOrganizacion();
     this.initAliadosForm();
+    this.initOrganizacionForm();
     this.loadAliados();
     this.loadConvenios();
-   
+    this.loadInstitucion();
     
 
   }
@@ -281,6 +283,15 @@ private initAliadosForm(): void {
     convenio: ['',],
     registeredByAliado: [{ value: '' ,disabled: true }] // Este campo es solo lectura
    
+  });
+}
+private initOrganizacionForm():void{
+  this.organizacionForm=this.fb.group({
+    id_organizzacion:[''],
+    id_institucion:[''],
+    id_proyecto:[''],
+    id_tipo_organizacion:[''],
+    organizacion:['']
   });
 }
 
@@ -649,6 +660,34 @@ this.beneficiariesForm.patchValue({
         }
     );
 }
+loadInstitucion():void{
+  this.servInstituciones.getInstituciones().subscribe(
+    (response) => {
+      if (response[0]?.res === 'OK') {
+        this.instituciones = response[0].dato;
+      console.log('instituciones ************* recibidos :', this.instituciones); 
+      }
+    },
+    (error) => console.error('Error al cargar departamentos:', error)
+  );
+
+}
+onSubmitOrganize(): void {
+  const formValue = this.organizacionForm.getRawValue();
+  const organizacionData = {
+    p_id_organizacion: null,
+    p_id_proyecto: parseInt(this.idProyecto, 10),
+    p_id_institucion: parseInt(formValue.id_institucion, 10),
+    p_idp_tipo_organizacion: this.getIdTipoOrganizacion(formValue.id_tipo_organizacion),
+    p_organizacion: formValue.organizacion,
+  };
+
+
+    console.log('Se envió el ', organizacionData);
+    this.OrganizacionesService.addOrganizacion(organizacionData).subscribe();
+    this.ngOnInit()
+  this.loadBeneficiarios();
+}
 getIdTipoOrganizacion(nombre :any){
   const tipoOrganizacion =  this.tiposOrganizacion.find(TOr => TOr.nombre === nombre);
     return tipoOrganizacion ? tipoOrganizacion.id : undefined;
@@ -952,5 +991,8 @@ countHeaderData() {
  
   });
 }
+
+
+
 
 }
