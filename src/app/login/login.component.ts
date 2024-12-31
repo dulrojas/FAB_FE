@@ -61,6 +61,10 @@ export class LoginComponent implements OnInit {
     
                 localStorage.setItem('isLoggedin', 'true');
                 localStorage.setItem('currentIdPer', userData.id_persona.toString());
+                localStorage.setItem(
+                    'userFullName', 
+                    (userData.nombres+" "+userData.apellido_1+((userData.apellido_2)?(" "+userData.apellido_2):("")))
+                );
     
                 try {
                     const personaRolesResponse = await lastValueFrom(

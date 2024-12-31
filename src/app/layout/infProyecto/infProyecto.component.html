@@ -39,7 +39,8 @@
                                 <div class="col col-lg-6 col-md-6 my-auto">
                                     <h2 class="custom-info-proy-sub-title">Nombre corto del proyecto</h2>
                                     <input class="form-control custom-info-proy-input" type="text" 
-                                        id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto" [disabled]="!buttonValidations.editMode"/>
+                                        id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto" 
+                                        [disabled]="!buttonValidations.editMode"/>
                                 </div>
                                 <div class="col col-lg-6 col-md-6">
                                     <!-- ======= ======= ======= NOMBRE COMPLETO PROYECTO ======= ======= ======= -->
@@ -152,7 +153,7 @@
                         </button>
                         <!-- ======= ======= ======= EDITAR DATE ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-1" 
-                            [disabled]="!buttonValidations.editMode" (click)="enableEditMode()">
+                            [disabled]="!buttonValidations.editar" (click)="enableEditMode()">
                             Editar
                         </button>
                         <!-- ======= ======= ======= REPORTE DATE ======= ======= ======= -->
