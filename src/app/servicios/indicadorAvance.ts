@@ -156,4 +156,30 @@ export class servIndicadorAvance {
 
         return this.http.post<any>(this.URL, params, { headers });
   }
+
+  deleteIndicadorAvanceByIndicador(idAvance: number): Observable<any> {
+    const params = {
+      "procedure_name": "sp_indicador_avance",
+      "body": {
+        "params": [
+          { "name": "p_accion", "value": "D2", "type": "string" },
+          { "name": "p_id_proy_indica_avance", "value": null, "type": "int" },
+          { "name": "p_id_proy_indicador", "value": idAvance, "type": "int" },
+          { "name": "p_fecha_reportar", "value": null, "type": "string" },
+          { "name": "p_valor_esperado", "value": null, "type": "numeric" },
+          { "name": "p_fecha_hora_reporte", "value": null, "type": "string" },
+          { "name": "p_id_persona_reporte", "value": null, "type": "int" },
+          { "name": "p_valor_reportado", "value": null, "type": "numeric" },
+          { "name": "p_comentarios", "value": null, "type": "string" },
+          { "name": "p_ruta_evidencia", "value": null, "type": "string" }
+        ]
+      }
+    };
+    const ip = sessionStorage.getItem('ip') || '';
+        const headers = new HttpHeaders({
+          'ip': "127.0.0.1"
+        });
+
+        return this.http.post<any>(this.URL, params, { headers });
+  }
 }

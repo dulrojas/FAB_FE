@@ -81,7 +81,7 @@
                       <div class="card-body" style="display: flex; justify-content: center;">
                         <div class="text-center">
                           <h6>Presupuesto del Proyecto</h6>
-                          <h5 class="presupuesto">{{moneda_presupuesto}} {{formatearMoneda(presupuesto_me)}}</h5>
+                          <h5 class="presupuesto">{{moneda_presupuesto}} {{formatearMoneda(presupuesto_mn)}}</h5>
                         </div>
                         <div class="col-md-6">
                           <div class="chart-container" style="position: relative; height: 140px;">
@@ -104,14 +104,17 @@
             <!-- CUARTA TARJETA DE PRESUPUESTOS DE LA GESTION -->
                 <div class="col-xl-4 col-lg-4 mt-3">
                   <div class="card">
-                    <h6 class="card-title">PRESUPUESTO DE LA GESTION 2024</h6>
+                    <h6 class="card-title">PRESUPUESTO DE LA GESTIÓN {{gestionActual}}</h6>
                     <div class="card-body" style="display: flex; justify-content: center;">
                       <div class="text-center">
                         <h6>Presupuesto del Periodo</h6>
-                        <h5 class="presupuesto">{{ presupuestoGestion.presupuesto_actividad | currency:'Bs':true:'1.0-2' }}</h5>
+                        <h5 class="presupuesto mb-3">
+                          {{moneda_presupuesto}}{{ formatearMoneda(presupuestoGestion.presupuesto_actividad) }}
+                        </h5>
                         <h6>Ejecutado</h6>
                         <h5 class="presupuesto" style="background-color: #ffffff; color: #000000;">
-                          {{ presupuestoGestion.ejecutado | currency:'Bs':true:'1.0-2' }}</h5>
+                          {{moneda_presupuesto}}{{ formatearMoneda(presupuestoGestion.ejecutado) }}
+                        </h5>
                       </div>
                       <div class="col-md-6">
                         <div class="chart-container" style="position: relative;height: 140px;">

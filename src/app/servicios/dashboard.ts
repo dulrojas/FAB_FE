@@ -13,13 +13,16 @@ export class ServDashboard {
 
   // ======= ======= ======= GET DASHBOARD DATA ======= =======
   getDashboardData(idProyecto: number): Observable<any> {
+    const fechaActual = new Date();
+    const fechaFormateada = `${fechaActual.getFullYear()}-12-31`;
+    
     const params = {
       "procedure_name": "sp_dashboards",
       "body": {
         "params": [
           { "name": "p_accion", "value": "C1", "type": "string" },
           { "name": "p_id_proyecto", "value": idProyecto, "type": "int" },
-          { "name": "p_ip", "value": null, "type": "string" }
+          { "name": "p_fecha_gestion", "value": fechaFormateada, "type": "string" }
         ]
       }
     };

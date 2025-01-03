@@ -155,11 +155,11 @@
                         <td>
                             <button
                                 class="dynamic-button mb-auto"
-                                [style.backgroundColor]="planifEstrategica.color"
+                                [style.backgroundColor]="getColorElemento(planifEstrategica.id_meto_elemento)"
                                 [style.color]="'#ffffff'"
                                 [style.marginLeft]="getMargin(planifEstrategica)"
                             >
-                                {{ planifEstrategica.sigla }}
+                                {{ getSiglaElemento(planifEstrategica.id_meto_elemento) }}
                             </button>
                         </td>
                         <td>{{ planifEstrategica.codigo }}</td>
@@ -214,8 +214,8 @@
                                     />
                                 </div>
                                 <div class="col col-xl-1 col-lg-1 mt-auto">
-                                    <label class="btn-view-bg-3" [style.backgroundColor]="getColorElemento(id_proy_elem_padre)">{{
-                                        getSiglaElemento(id_proy_elem_padre)
+                                    <label class="btn-view-bg-3" [style.backgroundColor]="color">{{
+                                        sigla
                                     }}</label>
                                 </div>
                                 <!-- Padre y Código -->

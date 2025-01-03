@@ -6,6 +6,7 @@ import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { ServDashboard } from "../../servicios/dashboard";
 import { environment } from '../../../environments/environment';
+import { PlanifEstrategicaService } from '../../servicios/planifEstrategica';
 import { Chart } from 'chart.js/auto';
 
 @Component({
@@ -25,6 +26,7 @@ export class Dashboard2Component implements OnInit {
         private proyectoService: ProyectoService,
         private servicios: servicios,
         private servDashboard: ServDashboard,
+        private planifEstrategicaService: PlanifEstrategicaService,
         private cdr: ChangeDetectorRef
       ) {}
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
@@ -74,7 +76,6 @@ export class Dashboard2Component implements OnInit {
           this.calculatePeriodoActual();
         //TARJETA 3
           this.moneda_presupuesto = data[0].dato[0].moneda_presupuesto || 'Bs';      
-          this.presupuesto_me = this.parseMonetaryValue(data[0].dato[0].presupuesto_me) || 0;
           this.presupuesto_mn = this.parseMonetaryValue(data[0].dato[0].presupuesto_mn) || 0;
           this.createPresupuestoChart();
         // TARJETA 4: PRESUPUESTOS DE LA GESTION
@@ -115,7 +116,33 @@ export class Dashboard2Component implements OnInit {
         console.error('Error al obtener datos del dashboard:', error);
       }
     );
+    this.planifEstrategicaService.getAllPlanifElements().subscribe(
+      (data) => {
+        console.log('Datos recibidos del servicio:', data);
+        if (data && data[0]?.dato) {
+          const elementos = data[0].dato;
+  
+          const elementosProyecto = elementos.filter((elem: any) => elem.id_proyecto === this.idProyecto);
+          console.log('Elementos filtrados por proyecto:', elementosProyecto);
+  
+          const conteoPlanificacion = elementosProyecto.filter((elem: any) => elem.id_meto_elemento === 2).length;
+          const conteoResultados = elementosProyecto.filter((elem: any) => elem.id_meto_elemento === 3).length;
+  
+          console.log('Conteo planificación:', conteoPlanificacion, 'Conteo resultados:', conteoResultados);
+  
+          this.headerDataNro01 = conteoPlanificacion;
+          this.headerDataNro02 = conteoResultados;
+  
+          console.log('Valor final headerDataNro01:', this.headerDataNro01);
+          console.log('Valor final headerDataNro02:', this.headerDataNro02);
+        }
+      },
+      (error) => {
+        console.error('Error al obtener datos de planificación estratégica:', error);
+      }
+    );
   }
+  
   // ====== ======= ====== ====== ======= ====== PRIMERA TARGETA DE INFIORMACION Y IMAGEN ====== ======= ====== ====== ======= ======
     // Variables para tarjeta 1
     imageSrc: any = null;
@@ -199,12 +226,12 @@ export class Dashboard2Component implements OnInit {
   // ====== ======= ====== ====== TERCERA TARJETA DONA DE PRESUPUESTO DEL PROYECTO ====== ======= ====== ======   
       // Variables para tarjeta 3
       moneda_presupuesto: string = '';
-      presupuesto_me: number = 0;
       presupuesto_mn: number = 0;
+      presupuesto_ejecutado: number = 0;
       chartPresupuesto: any;
       calcularPorcentajePresupuesto(): number {
-        if (this.presupuesto_me === 0) return 0;
-        const porcentaje = (this.presupuesto_mn / this.presupuesto_me) * 100;
+        if (this.presupuesto_mn === 0) return 0;
+        const porcentaje = (this.presupuesto_ejecutado / this.presupuesto_mn) * 100;
         return Math.min(Math.round(porcentaje), 100);
       }
       formatearMoneda(valor: number): string {
@@ -216,163 +243,171 @@ export class Dashboard2Component implements OnInit {
       private parseMonetaryValue(value: string): number {
         if (!value) return 0;
         return Number(value.replace(/[^0-9.-]+/g, ''));
-      }      
+      }
+      procesarDatosPresupuesto(data: any) {
+        // Obtener y convertir el presupuesto total
+        this.presupuesto_mn = this.parseMonetaryValue(data.presupuesto_mn);
+        
+        // Calcular el total ejecutado sumando ambos valores
+        const ejecutadoActividad = this.parseMonetaryValue(data.pro_act_ava_ejecutado);
+        const ejecutadoPre = this.parseMonetaryValue(data.pro_pre_ava_ejecutado);
+        this.presupuesto_ejecutado = ejecutadoActividad + ejecutadoPre;
+        
+        // Crear el gráfico con los nuevos datos
+        this.createPresupuestoChart();
+      }     
       // Método para crear y actualizar el gráfico
       createPresupuestoChart() {
         const ctx: any = document.getElementById('presupuestoChart');
         if (!ctx) return;    
+      
         if (this.chartPresupuesto) {
-            this.chartPresupuesto.destroy();
+          this.chartPresupuesto.destroy();
         }    
+      
         const porcentaje = this.calcularPorcentajePresupuesto();
         const restante = 100 - porcentaje;    
+      
         this.chartPresupuesto = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: [porcentaje, restante],
-                    backgroundColor: ['#D67600', '#E0E0E0'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true, 
-                cutout: '65%',
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: (tooltipItem) => `${tooltipItem.label}: ${tooltipItem.raw}%`
-                        }
-                    },
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            padding: 20,
-                            font: {
-                                size: 12
-                            }
-                        }
-                    }
-                }
-            },
-            plugins: [{
-                id: 'centerText',
-                beforeDraw(chart) {
-                    const { ctx, width, height } = chart;
-                    ctx.restore();
-                    const fontSize = Math.min(height / 8, 30);
-                    ctx.font = `bold ${fontSize}px sans-serif`;
-                    ctx.textBaseline = 'middle';
-                    ctx.textAlign = 'center';    
-                    const text = `${porcentaje}%`;
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(text, width / 2, height / 2);    
-                    ctx.save();
-                }
+          type: 'doughnut',
+          data: {
+            datasets: [{
+              data: [porcentaje, restante],
+              backgroundColor: ['#D67600', '#E0E0E0'],
+              borderWidth: 0
             }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true, 
+            cutout: '65%',
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (tooltipItem) => `${tooltipItem.label}: ${tooltipItem.raw}%`
+                }
+              },
+              legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                  padding: 20,
+                  font: {
+                    size: 12
+                  }
+                }
+              }
+            }
+          },
+          plugins: [{
+            id: 'centerText',
+            beforeDraw(chart) {
+              const { ctx, width, height } = chart;
+              ctx.restore();
+              const fontSize = Math.min(height / 8, 30);
+              ctx.font = `bold ${fontSize}px sans-serif`;
+              ctx.textBaseline = 'middle';
+              ctx.textAlign = 'center';    
+              const text = `${porcentaje}%`;
+              ctx.fillStyle = '#000000';
+              ctx.fillText(text, width / 2, height / 2);    
+              ctx.save();
+            }
+          }]
         });
-    }
+      }
   // ====== ======= ====== ====== CUARTA TARJETA DE PRESUPUESTOS DE LA GESTION ====== ======= ====== ======
   // Variables para la gestión del presupuesto
-gestionActual: string = '2024';
-presupuestoGestion: {
-  ejecutado: number;
-  presupuesto_actividad: number;
-  porcentaje_ejecutado: number;
-  ejecutado_formateado: string;
-  presupuesto_formateado: string;
-} = {
-  ejecutado: 0,
-  presupuesto_actividad: 0,
-  porcentaje_ejecutado: 0,
-  ejecutado_formateado: '',
-  presupuesto_formateado: ''
-};
-chartGestion: any;
-
-// Función para procesar los datos del presupuesto
-procesarDatosPresupuesto(data: any) {
-  // Convertir strings de moneda a números
-  const ejecutado = this.convertirMonedaANumero(data.pro_act_ava_ejecutado);
-  const presupuesto = this.convertirMonedaANumero(data.pro_act_presupuesto_gestion);
-
-  this.presupuestoGestion = {
-    ejecutado: ejecutado,
-    presupuesto_actividad: presupuesto,
-    porcentaje_ejecutado: presupuesto > 0 ? (ejecutado / presupuesto) * 100 : 0,
-    ejecutado_formateado: this.formatearMoneda(ejecutado),
-    presupuesto_formateado: this.formatearMoneda(presupuesto)
+  gestionActual: string = '';
+  presupuestoGestion: {
+    ejecutado: number;
+    presupuesto_actividad: number;
+    porcentaje_ejecutado: number;
+    ejecutado_formateado: string;
+    presupuesto_formateado: string;
+  } = {
+    ejecutado: 0,
+    presupuesto_actividad: 0,
+    porcentaje_ejecutado: 0,
+    ejecutado_formateado: '',
+    presupuesto_formateado: ''
   };
-
-  this.createGestionChart();
-}
-
-// Función auxiliar para convertir string de moneda a número
-convertirMonedaANumero(moneda: string): number {
-  if (!moneda) return 0;
-  return Number(moneda.replace(/[^0-9.-]+/g, '')) || 0;
-}
-
-// Función para crear el gráfico de dona
-createGestionChart() {
-  const ctx: any = document.getElementById('doughnutChart2024');
-  if (!ctx) return;
-
-  if (this.chartGestion) {
-    this.chartGestion.destroy();
+  chartGestion: any;
+  procesarDatosPresupuestoGestion(data: any) {
+    // Obtener la gestión actual
+    this.gestionActual = data.gestion_actual || new Date().getFullYear().toString();
+    
+    // Obtener y convertir el presupuesto de la gestión
+    const presupuestoGestion = this.parseMonetaryValue(data.pro_act_presupuesto_gestion);
+    
+    // Calcular el total ejecutado sumando ambos valores
+    const ejecutadoActividad = this.parseMonetaryValue(data.pro_act_ava_ejecutado_gestion);
+    const ejecutadoPre = this.parseMonetaryValue(data.pro_pre_ava_ejecutado_gestion);
+    const ejecutadoTotal = ejecutadoActividad + ejecutadoPre;
+  
+    // Actualizar el objeto presupuestoGestion
+    this.presupuestoGestion = {
+      ejecutado: ejecutadoTotal,
+      presupuesto_actividad: presupuestoGestion,
+      porcentaje_ejecutado: presupuestoGestion > 0 ? (ejecutadoTotal / presupuestoGestion) * 100 : 0,
+      ejecutado_formateado: this.formatearMoneda(ejecutadoTotal),
+      presupuesto_formateado: this.formatearMoneda(presupuestoGestion)
+    };
+  
+    // Crear el gráfico con los nuevos datos
+    this.createGestionChart();
   }
-
-  const porcentaje = Math.min(Math.round(this.presupuestoGestion.porcentaje_ejecutado), 100);
-  const restante = 100 - porcentaje;
-
-  this.chartGestion = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Ejecutado', 'Restante'],
-      datasets: [{
-        data: [porcentaje, restante],
-        backgroundColor: ['#FF6B00', '#E0E0E0'],
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '75%',
-      plugins: {
-        legend: {
-          display: false
-        },
-        tooltip: {
-          callbacks: {
-            label: (tooltipItem) => `${tooltipItem.label}: ${tooltipItem.raw}%`
+  // Función para crear el gráfico de dona
+  createGestionChart() {
+    const ctx: any = document.getElementById('doughnutChart2024');
+    if (!ctx) return;
+  
+    if (this.chartGestion) {
+      this.chartGestion.destroy();
+    }
+  
+    const porcentaje = Math.min(Math.round(this.presupuestoGestion.porcentaje_ejecutado), 100);
+    const restante = 100 - porcentaje;
+  
+    this.chartGestion = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [porcentaje, restante],
+          backgroundColor: ['#D67600', '#E0E0E0'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%',
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: false
           }
         }
-      }
-    },
-    plugins: [{
-      id: 'centerText',
-      beforeDraw(chart: any) {
-        const { ctx, width, height } = chart;
-        ctx.restore();
-
-        // Dibujar el porcentaje
-        const fontSize = Math.min(width / 6, height / 3);
-        ctx.font = `bold ${fontSize}px sans-serif`;
-        ctx.textBaseline = 'middle';
-        ctx.textAlign = 'center';
-
-        const text = `${porcentaje}%`;
-        ctx.fillStyle = porcentaje > 0 ? '#FF6B00' : '#666666';
-        ctx.fillText(text, width / 2, height / 2);
-
-        ctx.save();
-      }
-    }]
-  });
-}
+      },
+      plugins: [{
+        id: 'centerText',
+        beforeDraw(chart: any) {
+          const { ctx, width, height } = chart;
+          ctx.restore();
+          const fontSize = Math.min(height / 8, 30);
+          ctx.font = `bold ${fontSize}px sans-serif`;
+          ctx.textBaseline = 'middle';
+          ctx.textAlign = 'center';
+          const text = `${porcentaje}%`;
+          ctx.fillStyle = '#000000';
+          ctx.fillText(text, width / 2, height / 2);
+          ctx.save();
+        }
+      }]
+    });
+  }
   // ====== ======= ====== ====== QUINTA TARJETA INDICADORES ====== ======= ====== ======
   // Variables para la quinta tarjeta
       indicadores: {
@@ -803,11 +838,11 @@ createGestionChart() {
       if (!data) return;
     
       // Objetivos Específicos (del proyecto)
-      this.headerDataNro01 = data.objetivos?.filter((obj: any) => 
-        obj.tipo_objetivo === 'Específico').length || 0;
+      this.headerDataNro01 = this.headerDataNro01 ?? 0;
+      console.log('Valor final headerDataNro01:', this.headerDataNro01);
     
       // Resultados (resultados esperados del proyecto)
-      this.headerDataNro02 = data.resultados?.length || 0;
+      this.headerDataNro02 = this.headerDataNro02 ?? 0;
     
       // Indicadores (del proyecto)
       this.headerDataNro03 = data.indicadores?.length || 0;
