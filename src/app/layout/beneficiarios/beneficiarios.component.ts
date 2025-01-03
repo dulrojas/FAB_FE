@@ -90,16 +90,17 @@ export class BeneficiariosComponent implements OnInit {
   tiposConvenio: any[] = [];
   peronsaRegistro:any="";
   
- 
-
   // ======= ======= HEADER SECTION ======= =======
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
-  idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-  namePersonaReg: any = localStorage.getItem('userFullName');
-  @Output() selectionChange = new EventEmitter<any>();
-  onChildSelectionChange(selectedId: string) {
-    this.idProyecto = selectedId;
-    localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+    idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+    namePersonaReg: any = localStorage.getItem('userFullName');
+    currentPerProRol: any = localStorage.getItem('currentPerProRol');
+    @Output() selectionChange = new EventEmitter<any>();
+    onChildSelectionChange(selectedPro: any) {
+      this.idProyecto = selectedPro.id_proyecto;
+      localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+      this.proyectoService.seleccionarProyecto(this.idProyecto);
+      this.currentPerProRol = selectedPro.rol;
 //    this.ngOnInit();
     this.loadBeneficiarios();
     this.loadAliados();

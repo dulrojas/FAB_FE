@@ -143,25 +143,25 @@
                             </div>
                             <div>
                                 <div class="d-flex justify-content-center">
-                                    <table class="table table-bordered">
-                                        <tbody>
-                                            <tr>
-                                                <td class="bg-warning text-center">0</td>
-                                                <td class="bg-darwar text-center">2</td>
-                                                <td class="bg-danger text-center">1</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="bg-warsuc text-white text-center">1</td>
-                                                <td class="bg-warning text-center">0</td>
-                                                <td class="bg-darwar text-center">0</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="bg-success text-white text-center">0</td>
-                                                <td class="bg-warsuc text-white text-center">0</td>
-                                                <td class="bg-warning text-center">1</td>
-                                            </tr>                                           
-                                        </tbody>
-                                    </table>
+                                  <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td class="bg-warning text-center">{{riskMatrix[0][0]}}</td>
+                                            <td class="bg-darwar text-center">{{riskMatrix[0][1]}}</td>
+                                            <td class="bg-danger text-center">{{riskMatrix[0][2]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-warsuc text-white text-center">{{riskMatrix[1][0]}}</td>
+                                            <td class="bg-warning text-center">{{riskMatrix[1][1]}}</td>
+                                            <td class="bg-darwar text-center">{{riskMatrix[1][2]}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-success text-white text-center">{{riskMatrix[2][0]}}</td>
+                                            <td class="bg-warsuc text-white text-center">{{riskMatrix[2][1]}}</td>
+                                            <td class="bg-warning text-center">{{riskMatrix[2][2]}}</td>
+                                        </tr>
+                                    </tbody>
+                                  </table>
                                 </div>
                                 <h6 class="card-title">Probabilidad</h6>
                             </div>
@@ -169,9 +169,9 @@
                     </div>
                 </div>
             <!-- SEPTIMA TARJETA APRENDIZAJES -->
-                <div class="col-xl-5 col-lg-5 my-auto mt-3">
-                  <div class="card h-100">
-                    <h6 class="card-title px-3 pt-3 mb-0">APRENDIZAJES</h6>
+                <div class="col-xl-5 col-lg-5 mt-3">
+                  <div class="card">
+                    <h6 class="card-title">APRENDIZAJES</h6>
                     <div class="card-body d-flex flex-row align-items-center p-3">
                       <!-- Columna del gráfico -->
                       <div class="chart-wrapper" style="width: 50%; min-width: 140px;">
@@ -180,48 +180,46 @@
                       
                       <!-- Columna de la leyenda -->
                       <div class="legend-wrapper ms-3" style="width: 50%;">
-                        <div class="legend-item mb-2 d-flex align-items-center">
-                          <span class="legend-box" style="background-color: #2a06f8;"></span>
-                          <span class="legend-text">Administrativos</span>
-                        </div>
-                        <div class="legend-item mb-2 d-flex align-items-center">
-                          <span class="legend-box" style="background-color: #8E24AA;"></span>
-                          <span class="legend-text">Gerencia de Proyecto</span>
-                        </div>
-                        <div class="legend-item mb-2 d-flex align-items-center">
-                          <span class="legend-box" style="background-color: #FFEB3B;"></span>
-                          <span class="legend-text">Actores Claves</span>
-                        </div>
-                        <div class="legend-item mb-2 d-flex align-items-center">
-                          <span class="legend-box" style="background-color: #E91E63;"></span>
-                          <span class="legend-text">Otros</span>
+                        <div class="legend-item d-flex align-items-center" *ngFor="let item of aprendizajesData | keyvalue">
+                          <ng-container *ngIf="item.value > 0">
+                            <span class="legend-box" [style.background-color]="getColor(item.key)"></span>
+                            <span class="legend-text">{{getLabelName(item.key)}} <!--({{item.value}})--></span>
+                          </ng-container>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>                    
             <!-- OCTAVA TARJETA ACTIVIDADES -->
-                <div class="col-xl-4 col-lg-4 my-auto mt-3">
+                <div class="col-xl-4 col-lg-4 mt-3">
                   <div class="card">
-                      <h6 class="card-title">ACTIVIDADES</h6>
-                      <div class="card-body" style="display: flex; align-items: center; justify-content: center;">
-                          <div class="col-xl-6 col-lg-6">
-                          <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="assetsPath+'images/Actividades.jpg'" alt="Actividades">
+                    <h6 class="card-title">ACTIVIDADES</h6>
+                    <div class="card-body" style="display: flex; align-items: center; justify-content: center;">
+                      <div class="col-6">
+                        <img class="img-fluid" [src]="assetsPath+'images/Actividades.jpg'" alt="Actividades">
+                      </div>
+                      <div class="col-xl-6 col-lg-6">
+                        <div class="d-flex flex-column">
+                          <div class="d-flex align-items-center">                            
+                            <span class="text-danger">{{actividadesConteo.vencidas}} Vencidas</span>
                           </div>
-                          <div class="col-xl-6 col-lg-6">
-                              <h4 style="color: #f60404;">1-Vencida</h4>
-                              <h4 style="color: #fff700;">2-Por Vencer</h4>
-                              <h4 style="color: #95ff00;">3-Vigentes</h4>
+                          <div class="d-flex align-items-center">                            
+                            <span class="text-warning">{{actividadesConteo.porVencer}} Por Vencer</span>
                           </div>
-                      </div> 
+                          <div class="d-flex align-items-center">                            
+                            <span class="text-success">{{actividadesConteo.vigentes}} Vigentes</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div> 
                   </div>
                 </div>
             <!-- NOVENA TARJETA LOGROS -->
-                <div class="col-xl-3 col-lg-3 my-auto mt-3">
+                <div class="col-xl-3 col-lg-3 mt-3">
                   <div class="card">
                       <h6 class="card-title">LOGROS</h6>
                       <div class="card-body">
-                          <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="assetsPath+'images/Logros.jpg'" alt="Logros">
+                          <img class="img-fluid" [src]="assetsPath+'images/Logros.jpg'" alt="Logros">
                           <h4 class="text-center">
                             <strong>{{ numeroLogros }}</strong>
                           </h4>

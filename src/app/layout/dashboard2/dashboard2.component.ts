@@ -78,23 +78,25 @@ export class Dashboard2Component implements OnInit {
           this.presupuesto_mn = this.parseMonetaryValue(data[0].dato[0].presupuesto_mn) || 0;
           this.createPresupuestoChart();
         // TARJETA 4: PRESUPUESTOS DE LA GESTION
-          this.presupuestoGestion = {
-            ejecutado: this.parseMonetaryValue(data[0].dato[0].ejecutado) || 0,
-            presupuesto_actividad: this.parseMonetaryValue(data[0].dato[0].presupuesto_actividad) || 0,
-            ejecutado_avance: this.parseMonetaryValue(data[0].dato[0].ejecutado_avance) || 0
-          };
+          this.procesarDatosPresupuesto(data[0].dato[0]);
           this.createGestionChart();
         // TARJETA 5: INDICADORES
           this.indicadores = data[0].dato[0].indicadores || [];
           this.createRadarChart();
-        // TARJETA 6: RIESGOS
-
-        // TARJETA 7: APRENDIZAJES
+        // TARJETA 6: RIESGOS          
+          if (data[0].dato[0].riesgos) {
+            this.riesgos = data[0].dato[0].riesgos;
+            this.processRiskData(this.riesgos);
+          }
+        // TARJETA 7: APRENDIZAJES MOSTRAR LOS 9 
           if (data[0].dato[0].aprendizajes) {
             this.processAprendizajesData(data[0].dato[0].aprendizajes);
           }
         // TARJETA 8: ACTIVIDADES
-
+          if (data[0].dato[0].actividades) {
+            this.actividades = data[0].dato[0].actividades;
+            this.processActivityStatus(this.actividades);
+          }
         // TARJETA 9: LOGROS
           this.numeroLogros = data[0].dato[0].logros?.length || 0;
         // TARJETA 10: BENEFICIARIOS
@@ -206,7 +208,7 @@ export class Dashboard2Component implements OnInit {
         return Math.min(Math.round(porcentaje), 100);
       }
       formatearMoneda(valor: number): string {
-        return new Intl.NumberFormat('es-BO', {
+        return new Intl.NumberFormat('es-BO', {      
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         }).format(valor);
@@ -273,82 +275,109 @@ export class Dashboard2Component implements OnInit {
         });
     }
   // ====== ======= ====== ====== CUARTA TARJETA DE PRESUPUESTOS DE LA GESTION ====== ======= ====== ======
-  // Variables para la cuarta tarjeta
-  presupuestoGestion: {
-    ejecutado: number;
-    presupuesto_actividad: number;
-    ejecutado_avance: number;
-  } = {
-    ejecutado: 0,
-    presupuesto_actividad: 0,
-    ejecutado_avance: 0
+  // Variables para la gestión del presupuesto
+gestionActual: string = '2024';
+presupuestoGestion: {
+  ejecutado: number;
+  presupuesto_actividad: number;
+  porcentaje_ejecutado: number;
+  ejecutado_formateado: string;
+  presupuesto_formateado: string;
+} = {
+  ejecutado: 0,
+  presupuesto_actividad: 0,
+  porcentaje_ejecutado: 0,
+  ejecutado_formateado: '',
+  presupuesto_formateado: ''
+};
+chartGestion: any;
+
+// Función para procesar los datos del presupuesto
+procesarDatosPresupuesto(data: any) {
+  // Convertir strings de moneda a números
+  const ejecutado = this.convertirMonedaANumero(data.pro_act_ava_ejecutado);
+  const presupuesto = this.convertirMonedaANumero(data.pro_act_presupuesto_gestion);
+
+  this.presupuestoGestion = {
+    ejecutado: ejecutado,
+    presupuesto_actividad: presupuesto,
+    porcentaje_ejecutado: presupuesto > 0 ? (ejecutado / presupuesto) * 100 : 0,
+    ejecutado_formateado: this.formatearMoneda(ejecutado),
+    presupuesto_formateado: this.formatearMoneda(presupuesto)
   };
-  chartGestion: any;
-  calcularPorcentajeGestion(): number {
-    if (this.presupuestoGestion.presupuesto_actividad === 0) return 0;
-    const porcentaje = (this.presupuestoGestion.ejecutado / this.presupuestoGestion.presupuesto_actividad) * 100;
-    return Math.min(Math.round(porcentaje), 100);
+
+  this.createGestionChart();
+}
+
+// Función auxiliar para convertir string de moneda a número
+convertirMonedaANumero(moneda: string): number {
+  if (!moneda) return 0;
+  return Number(moneda.replace(/[^0-9.-]+/g, '')) || 0;
+}
+
+// Función para crear el gráfico de dona
+createGestionChart() {
+  const ctx: any = document.getElementById('doughnutChart2024');
+  if (!ctx) return;
+
+  if (this.chartGestion) {
+    this.chartGestion.destroy();
   }
-  createGestionChart() {
-    const ctx: any = document.getElementById('doughnutChart2024');
-    if (!ctx) return;
-  
-    if (this.chartGestion) {
-      this.chartGestion.destroy();
-    }
-    const porcentaje = this.calcularPorcentajeGestion();
-    const restante = 100 - porcentaje;
-    this.chartGestion = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        datasets: [{
-          data: [porcentaje, restante],
-          backgroundColor: ['#D67600', '#E0E0E0'],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        cutout: '65%',
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            callbacks: {
-              label: (tooltipItem) => `${tooltipItem.raw}%`
-            }
-          }
-        },
-        layout: {
-          padding: {
-            top: 10,
-            bottom: 10
-          }
-        }
-      },
-      plugins: [{
-        id: 'centerText',
-        beforeDraw(chart) {
-          const { ctx, width, height } = chart;
-          ctx.restore();
-          const fontSize = Math.min(width / 8, height / 8, 24);
-          ctx.font = `bold ${fontSize}px sans-serif`;
-          ctx.textBaseline = 'middle';
-          ctx.textAlign = 'center';
-          const text = `${porcentaje}%`;
-          ctx.fillStyle = '#000000';
-          ctx.fillText(text, width / 2, height / 2);
-          ctx.save();
-        }
+
+  const porcentaje = Math.min(Math.round(this.presupuestoGestion.porcentaje_ejecutado), 100);
+  const restante = 100 - porcentaje;
+
+  this.chartGestion = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Ejecutado', 'Restante'],
+      datasets: [{
+        data: [porcentaje, restante],
+        backgroundColor: ['#FF6B00', '#E0E0E0'],
+        borderWidth: 0
       }]
-    });
-  }
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '75%',
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: (tooltipItem) => `${tooltipItem.label}: ${tooltipItem.raw}%`
+          }
+        }
+      }
+    },
+    plugins: [{
+      id: 'centerText',
+      beforeDraw(chart: any) {
+        const { ctx, width, height } = chart;
+        ctx.restore();
+
+        // Dibujar el porcentaje
+        const fontSize = Math.min(width / 6, height / 3);
+        ctx.font = `bold ${fontSize}px sans-serif`;
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+
+        const text = `${porcentaje}%`;
+        ctx.fillStyle = porcentaje > 0 ? '#FF6B00' : '#666666';
+        ctx.fillText(text, width / 2, height / 2);
+
+        ctx.save();
+      }
+    }]
+  });
+}
   // ====== ======= ====== ====== QUINTA TARJETA INDICADORES ====== ======= ====== ======
   // Variables para la quinta tarjeta
       indicadores: {
         id_indicador: number;
+        codigo: string;
         meta_final: string;
         valor_reportado: string;
       }[] = [];
@@ -362,7 +391,7 @@ export class Dashboard2Component implements OnInit {
           const meta = this.parseMonetaryValue(indicador.meta_final);
           const reportado = this.parseMonetaryValue(indicador.valor_reportado);
 
-          labels.push(`Indicador ${indicador.id_indicador}`);
+          labels.push(`${indicador.codigo}`);
           data.push(meta > 0 ? Math.min((reportado / meta) * 100, 100) : 0); // Porcentaje (máximo 100)
         });
 
@@ -453,36 +482,103 @@ export class Dashboard2Component implements OnInit {
       }
 
   // ====== ======= ====== ====== SEXTA TARJETA DE RIESGOS ====== ======= ====== ======
+      riesgos: {
+        id_riesgo: number;
+        impacto: string;
+        probabilidad: string;
+        nivel: string;
+      }[] = [];
 
+      // Matriz para almacenar los conteos de riesgos
+      riskMatrix: number[][] = [
+        [0, 0, 0], // Fila 1 (Impacto 3)
+        [0, 0, 0], // Fila 2 (Impacto 2)
+        [0, 0, 0]  // Fila 3 (Impacto 1)
+      ];
+
+      // Método para procesar los datos de riesgos
+      processRiskData(riesgos: any[]) {
+        // Reiniciar la matriz
+        this.riskMatrix = [
+          [0, 0, 0],
+          [0, 0, 0],
+          [0, 0, 0]
+        ];
+
+        // Procesar cada riesgo
+        riesgos.forEach(riesgo => {
+          // Convertir strings a números
+          const impacto = parseInt(riesgo.impacto);
+          const probabilidad = parseInt(riesgo.probabilidad);
+          const nivel = parseInt(riesgo.nivel);
+
+          // Calcular índices para la matriz (restamos 1 porque los índices empiezan en 0)
+          const impactoIndex = 3 - impacto; // Invertimos para que coincida con la visualización
+          const probabilidadIndex = probabilidad - 1;
+
+          // Incrementar el contador en la posición correspondiente
+          if (impactoIndex >= 0 && impactoIndex < 3 && probabilidadIndex >= 0 && probabilidadIndex < 3) {
+            this.riskMatrix[impactoIndex][probabilidadIndex]++;
+          }
+        });
+      }
+  
 
   // ====== ======= ====== ====== SEPTIMA TARJETA APRENDIZAJES ====== ======= ====== ======
   chartAprendizajes: any;
   aprendizajesData: any = {
     administrativos: 0,
     gerencia: 0,
+    estrategia: 0,
+    planificacion: 0,
+    tecnicos: 0,
+    contexto: 0,
     actores: 0,
+    conflictos: 0,
     otros: 0
   };
-
+  
   processAprendizajesData(data: any[]) {
+    // Reiniciar los contadores
     this.aprendizajesData = {
       administrativos: 0,
       gerencia: 0,
+      estrategia: 0,
+      planificacion: 0,
+      tecnicos: 0,
+      contexto: 0,
       actores: 0,
+      conflictos: 0,
       otros: 0
     };
+  
     data.forEach(item => {
       switch (item.idp_aprendizaje_area) {
-        case 1:  // Administrativa
+        case 1:
           this.aprendizajesData.administrativos++;
           break;
-        case 2:  // Gerencia del proyecto
+        case 2:
           this.aprendizajesData.gerencia++;
           break;
-        case 7:  // Actores clave
+        case 3:
+          this.aprendizajesData.estrategia++;
+          break;
+        case 4:
+          this.aprendizajesData.planificacion++;
+          break;
+        case 5:
+          this.aprendizajesData.tecnicos++;
+          break;
+        case 6:
+          this.aprendizajesData.contexto++;
+          break;
+        case 7:
           this.aprendizajesData.actores++;
           break;
-        default: // All other areas go to "otros"
+        case 8:
+          this.aprendizajesData.conflictos++;
+          break;
+        case 9:
           this.aprendizajesData.otros++;
           break;
       }
@@ -491,92 +587,201 @@ export class Dashboard2Component implements OnInit {
   }
   
   createLearnDoughnutChart() {
-  const ctx: any = document.getElementById('learnDoughnutChart');
-  if (!ctx) return;
-
-  if (this.chartAprendizajes) {
-    this.chartAprendizajes.destroy();
-  }
-
-  const data = [
-    this.aprendizajesData.administrativos,
-    this.aprendizajesData.gerencia,
-    this.aprendizajesData.actores,
-    this.aprendizajesData.otros
-  ];
+    const ctx: any = document.getElementById('learnDoughnutChart');
+    if (!ctx) return;
   
-  const total = data.reduce((a, b) => a + b, 0);
-  const labels = ['Administrativos', 'Gerencia', 'ActoresClaves', 'Otros'];
-  const colors = ['#2a06f8', '#8E24AA', '#FFEB3B', '#E91E63'];
-
-  this.chartAprendizajes = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: data,
-        backgroundColor: colors,
-        borderWidth: 0,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      cutout: '65%',
-      layout: {
-        padding: 5
+    if (this.chartAprendizajes) {
+      this.chartAprendizajes.destroy();
+    }
+  
+    const data = [
+      this.aprendizajesData.administrativos,
+      this.aprendizajesData.gerencia,
+      this.aprendizajesData.estrategia,
+      this.aprendizajesData.planificacion,
+      this.aprendizajesData.tecnicos,
+      this.aprendizajesData.contexto,
+      this.aprendizajesData.actores,
+      this.aprendizajesData.conflictos,
+      this.aprendizajesData.otros
+    ];
+  
+    const labels = [
+      'Administrativa',
+      'Gerencia del proyecto',
+      'Estrategia institucional',
+      'Planificación y monitoreo',
+      'Aspectos técnicos',
+      'Contexto externo',
+      'Actores claves',
+      'Gestión de conflictos',
+      'Otra'
+    ];
+  
+    const colors = [
+      '#2196F3', // Azul
+      '#9C27B0', // Púrpura
+      '#FF9800', // Naranja
+      '#4CAF50', // Verde
+      '#F44336', // Rojo
+      '#00BCD4', // Cian
+      '#FFC107', // Ámbar
+      '#795548', // Marrón
+      '#607D8B'  // Gris azulado
+    ];
+  
+    // Filtrar solo los datos que tienen valores mayores a 0
+    const filteredData = data.map((value, index) => ({
+      value,
+      label: labels[index],
+      color: colors[index]
+    })).filter(item => item.value > 0);
+  
+    this.chartAprendizajes = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: filteredData.map(item => item.label),
+        datasets: [{
+          data: filteredData.map(item => item.value),
+          backgroundColor: filteredData.map(item => item.color),
+          borderWidth: 0,
+        }]
       },
-      plugins: {
-        tooltip: {
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          titleColor: '#333',
-          bodyColor: '#666',
-          borderColor: '#ddd',
-          borderWidth: 1,
-          padding: 8,
-          callbacks: {
-            label: (context) => {
-              const value = context.raw as number;
-              const percentage = ((value / total) * 100).toFixed(1);
-              return `${context.label}: ${value} (${percentage}%)`;
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        cutout: '65%',
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            titleColor: '#333',
+            bodyColor: '#666',
+            borderColor: '#ddd',
+            borderWidth: 1,
+            padding: 8,
+            callbacks: {
+              label: (context) => {
+                const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+                const value = context.raw as number;
+                const percentage = ((value / total) * 100).toFixed(1);
+                return `${context.label}: ${value} (${percentage}%)`;
+              }
             }
           }
-        },
-        legend: {
-          display: false
         }
-      }
-    },
-    plugins: [{
-      id: 'centerText',
-      beforeDraw(chart: any) {
-        const { ctx, width, height } = chart;
-        ctx.restore();
-        
-        // Draw total number
-        const fontSize = Math.min(width / 8, height / 8, 24);
-        ctx.font = `bold ${fontSize}px sans-serif`;
-        ctx.textBaseline = 'middle';
-        ctx.textAlign = 'center';
-        
-        const text = total.toString();
-        ctx.fillStyle = '#6A1B9A';
-        ctx.fillText(text, width / 2, height / 2);
-        
-        // Draw "Total" label
-        const labelFontSize = fontSize / 2;
-        ctx.font = `${labelFontSize}px sans-serif`;
-        ctx.fillStyle = '#666666';
-        ctx.fillText('Total', width / 2, height / 2 + fontSize);
-        
-        ctx.save();
-      }
-    }]
-  });
-}
+      },
+      plugins: [{
+        id: 'centerText',
+        beforeDraw(chart: any) {
+          const { ctx, width, height } = chart;
+          ctx.restore();
+          
+          const total = chart.data.datasets[0].data.reduce((a: number, b: number) => a + b, 0);
+          
+          const fontSize = Math.min(width / 8, height / 8, 24);
+          ctx.font = `bold ${fontSize}px sans-serif`;
+          ctx.textBaseline = 'middle';
+          ctx.textAlign = 'center';
+          
+          ctx.fillStyle = '#333';
+          ctx.fillText(total.toString(), width / 2, height / 2);
+          
+          const labelFontSize = fontSize / 2;
+          ctx.font = `${labelFontSize}px sans-serif`;
+          ctx.fillStyle = '#666';
+          ctx.fillText('Total', width / 2, height / 2 + fontSize);
+          
+          ctx.save();
+        }
+      }]
+    });
+  }
+
+  getColor(key: string): string {
+    const colorMap: { [key: string]: string } = {
+      'administrativos': '#2196F3',
+      'gerencia': '#9C27B0',
+      'estrategia': '#FF9800',
+      'planificacion': '#4CAF50',
+      'tecnicos': '#F44336',
+      'contexto': '#00BCD4',
+      'actores': '#FFC107',
+      'conflictos': '#795548',
+      'otros': '#607D8B'
+    };
+    return colorMap[key] || '#607D8B';
+  }
+  
+  getLabelName(key: string): string {
+    const labelMap: { [key: string]: string } = {
+      'administrativos': 'Administrativa',
+      'gerencia': 'Gerencia del proyecto',
+      'estrategia': 'Estrategia institucional',
+      'planificacion': 'Planificación y monitoreo',
+      'tecnicos': 'Aspectos técnicos',
+      'contexto': 'Contexto externo',
+      'actores': 'Actores claves',
+      'conflictos': 'Gestión de conflictos',
+      'otros': 'Otra'
+    };
+    return labelMap[key] || key;
+  }
 
   // ====== ======= ====== ====== OCTAVA TARJETA ACTIVIDADES ====== ======= ====== ======
-
+  actividades: {
+    id_proy_actividad: number;
+    idp_actividad_estado: number | null;
+    fecha_inicio: string;
+    fecha_fin: string;
+  }[] = [];
+  
+  actividadesConteo = {
+    vencidas: 0,
+    porVencer: 0,
+    vigentes: 0
+  };
+  
+  processActivityStatus(actividades: any[]) {
+    // Reiniciar contadores
+    this.actividadesConteo = {
+      vencidas: 0,
+      porVencer: 0,
+      vigentes: 0
+    };
+  
+    // Obtener la fecha actual
+    const today = new Date();
+    const fechaActual = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    ); // Sin horas para evitar problemas de comparación
+  
+    actividades.forEach(actividad => {
+      const { idp_actividad_estado, fecha_fin } = actividad;
+  
+      // Validar que el estado y la fecha fin sean válidos
+      if (idp_actividad_estado === 1 && fecha_fin) {
+        const fechaFin = new Date(fecha_fin);
+        const diferenciaDias = Math.floor((fechaFin.getTime() - fechaActual.getTime()) / (1000 * 60 * 60 * 24));
+  
+        if (fechaActual > fechaFin) {
+          // Actividad vencida
+          this.actividadesConteo.vencidas++;
+        } else if (diferenciaDias > 0 && diferenciaDias <= 7) {
+          // Por vencer
+          this.actividadesConteo.porVencer++;
+        } else if (diferenciaDias > 7) {
+          // Vigente
+          this.actividadesConteo.vigentes++;
+        }
+      }
+    });
+  }
+  
 
   // ====== ======= ====== ====== NOVENA TARJETA LOGROS ====== ======= ====== ======
     // Variables para la novena tarjeta
@@ -595,10 +800,20 @@ export class Dashboard2Component implements OnInit {
   // ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ======  ======= ======
     // ====== Contar datos del header ======
     private countHeaderData(data: any) {
-      // Asumiendo que estos datos vienen en la respuesta del servidor
-      this.headerDataNro01 = data.objetivos_especificos?.length || 0;
+      if (!data) return;
+    
+      // Objetivos Específicos (del proyecto)
+      this.headerDataNro01 = data.objetivos?.filter((obj: any) => 
+        obj.tipo_objetivo === 'Específico').length || 0;
+    
+      // Resultados (resultados esperados del proyecto)
       this.headerDataNro02 = data.resultados?.length || 0;
+    
+      // Indicadores (del proyecto)
       this.headerDataNro03 = data.indicadores?.length || 0;
-      this.headerDataNro04 = data.actividades_planificadas?.length || 0;
-    }  
+    
+      // Actividades Planificadas (actividades en estado planificado)
+      this.headerDataNro04 = data.actividades?.filter((act: any) => 
+        act.idp_actividad_estado === 1).length || 0;
+    }
 }
