@@ -155,15 +155,15 @@
                         <td>
                             <button
                                 class="dynamic-button mb-auto"
-                                [style.backgroundColor]="getColor(planifEstrategica.id_proy_elem_padre)"
+                                [style.backgroundColor]="planifEstrategica.color"
                                 [style.color]="'#ffffff'"
-                                [style.marginLeft]="getMargin(planifEstrategica.id_proy_elem_padre)"
+                                [style.marginLeft]="getMargin(planifEstrategica)"
                             >
-                                {{ getSigla(planifEstrategica.id_proy_elem_padre) }}
+                                {{ planifEstrategica.sigla }}
                             </button>
                         </td>
                         <td>{{ planifEstrategica.codigo }}</td>
-                        <td>{{ planifEstrategica.indicador }}</td>
+                        <td>{{ planifEstrategica.indicador }} {{planifEstrategica.elemento}}</td>
                         <td>{{ planifEstrategica.linea_base }}</td>
                         <td>{{ planifEstrategica.medida }}</td>
                         <td>{{ planifEstrategica.meta_final }}</td>
@@ -214,8 +214,8 @@
                                     />
                                 </div>
                                 <div class="col col-xl-1 col-lg-1 mt-auto">
-                                    <label class="btn-view-bg-3" [ngStyle]="{ 'background-color': color }">{{
-                                        getSigla(id_proy_elem_padre)
+                                    <label class="btn-view-bg-3" [style.backgroundColor]="getColorElemento(id_proy_elem_padre)">{{
+                                        getSiglaElemento(id_proy_elem_padre)
                                     }}</label>
                                 </div>
                                 <!-- Padre y Código -->
@@ -231,7 +231,7 @@
                                     >
                                         <option value="">Seleccionar padre</option>
                                         <option *ngFor="let parent of validParents" [value]="parent.codigo">
-                                           ({{ parent.codigo }})
+                                            ({{ parent.codigo }})
                                         </option>
                                     </select>
                                 </div>
@@ -249,7 +249,6 @@
                                         placeholder="Ingresa el Código"
                                     />
                                 </div>
-                    
 
                                 <!-- Nombre -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -263,9 +262,7 @@
                                         [(ngModel)]="indicador"
                                         required
                                     />
-                                    <span class="custom-alert-message" *ngIf="!valIndicador"
-                                        >Ingrese el nombre del Elemento</span
-                                    >
+                             
                                 </div>
                                 <!-- Descripción -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -279,9 +276,7 @@
                                         [(ngModel)]="descripcion"
                                         required
                                     />
-                                    <span class="custom-alert-message" *ngIf="!valDescripcion"
-                                        >Ingrese una descripción</span
-                                    >
+                             
                                 </div>
                                 <!-- Comentario -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -295,9 +290,7 @@
                                         [(ngModel)]="comentario"
                                         required
                                     />
-                                    <span class="custom-alert-message" *ngIf="!valComentario"
-                                        >Ingrese un comentario</span
-                                    >
+                                 
                                 </div>
                             </div>
                         </div>
@@ -342,10 +335,8 @@
                                         readonly
                                     />
                                 </div>
-                                <div class="col col-xl-1 col-lg-1 mt-auto">
-                                    <label class="btn-view-bg-3" [ngStyle]="{ 'background-color': color }">{{
-                                        sigla
-                                    }}</label>
+                                                             <div class="col col-xl-1 col-lg-1 mt-auto">
+                                  <label class="btn-view-bg-3" [style.backgroundColor]="'#FDC82F'"> IN </label>
                                 </div>
 
                                 <div class="col col-xl-2 col-lg-2 mt-auto"></div>
@@ -363,7 +354,7 @@
                                     >
                                         <option value="">Seleccionar padre</option>
                                         <option *ngFor="let parent of validParents" [value]="parent.codigo">
-                                             ({{ parent.codigo }})
+                                            ({{ parent.codigo }})
                                         </option>
                                     </select>
                                 </div>
@@ -390,7 +381,7 @@
                                         id="inst_categoria_1"
                                         name="inst_categoria_1"
                                         [(ngModel)]="inst_categoria_1"
-                                        (change)="ValidateCategoria()"
+                                       
                                     >
                                         <option value="" disabled selected>Seleccione una categoría</option>
                                         <option
@@ -400,9 +391,7 @@
                                             {{ categoria.nombre }}
                                         </option>
                                     </select>
-                                    <span class="custom-alert-message" *ngIf="!valCategoria">
-                                        Debe elegir una Categoría
-                                    </span>
+                                  
                                 </div>
 
                                 <!-- SubCategoría -->
@@ -413,7 +402,7 @@
                                         id="inst_categoria_2"
                                         name="inst_categoria_2"
                                         [(ngModel)]="inst_categoria_2"
-                                        (change)="ValidateSubCategoria()"
+                                      
                                     >
                                         <option value="" disabled selected>Seleccione una SubCategoría</option>
                                         <option
@@ -423,9 +412,7 @@
                                             {{ categoria.nombre }}
                                         </option>
                                     </select>
-                                    <span class="custom-alert-message" *ngIf="!valSubCategoria">
-                                        Debe elegir una SubCategoría
-                                    </span>
+                               
                                 </div>
 
                                 <!-- Tipo -->
@@ -436,7 +423,7 @@
                                         id="inst_categoria_3"
                                         name="inst_categoria_3"
                                         [(ngModel)]="inst_categoria_3"
-                                        (change)="ValidateTipoCategoria()"
+                                     
                                     >
                                         <option value="" disabled selected>Seleccione un Tipo</option>
                                         <option
@@ -446,9 +433,7 @@
                                             {{ categoria.nombre }}
                                         </option>
                                     </select>
-                                    <span class="custom-alert-message" *ngIf="!valTipoCategoria">
-                                        Debe elegir una Tipo
-                                    </span>
+                              
                                 </div>
 
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -462,9 +447,7 @@
                                         [(ngModel)]="indicador"
                                         (change)="ValidateIndicador()"
                                     />
-                                    <span class="custom-alert-message" *ngIf="!valIndicador"
-                                        >Ingrese el el Nombre del Elemento</span
-                                    >
+                                
                                 </div>
 
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -476,11 +459,9 @@
                                         name="descripcion"
                                         placeholder="Ingresa una Descripcion"
                                         [(ngModel)]="descripcion"
-                                        (change)="ValidateDescripcion()"
+                                     
                                     />
-                                    <span class="custom-alert-message" *ngIf="!valDescripcion"
-                                        >Debe ingresar una Descripción</span
-                                    >
+                                 
                                 </div>
 
                                 <!-- Línea base, Medida y Meta Final -->
@@ -493,11 +474,9 @@
                                         name="linea_base"
                                         placeholder="Ingresa una Línea base"
                                         [(ngModel)]="linea_base"
-                                        (change)="ValidateLineaBase()"
+                                        
                                     />
-                                    <span class="custom-alert-message" *ngIf="!ValidateLineaBase"
-                                        >Debe ingresar una Línea base</span
-                                    >
+                                   
                                 </div>
 
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
@@ -509,11 +488,9 @@
                                         name="medida"
                                         placeholder="Ingresa un Medida"
                                         [(ngModel)]="medida"
-                                        (change)="ValidateMedida()"
+                                      
                                     />
-                                    <span class="custom-alert-message" *ngIf="!ValidateMedida"
-                                        >Debe ingresar una Medida</span
-                                    >
+                                 
                                 </div>
 
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
@@ -525,11 +502,9 @@
                                         name="meta_final"
                                         placeholder="Ingresa una Meta Final"
                                         [(ngModel)]="meta_final"
-                                        (change)="ValidateMetaFinal()"
+                                        
                                     />
-                                    <span class="custom-alert-message" *ngIf="!ValidateMetaFinal"
-                                        >Debe ingresar una Meta Final</span
-                                    >
+                              
                                 </div>
 
                                 <!-- Medio de verificación -->
@@ -542,11 +517,9 @@
                                         name="medio_verifica"
                                         placeholder="Ingresa un Medio de verificación"
                                         [(ngModel)]="medio_verifica"
-                                        (change)="ValidateMedioVerifica()"
+                                       
                                     />
-                                    <span class="custom-alert-message" *ngIf="!ValidateMedioVerifica"
-                                        >Debe ingresar un Medio de verificación</span
-                                    >
+                               
                                 </div>
 
                                 <div class="row">
@@ -561,11 +534,9 @@
                                                 name="comentario"
                                                 placeholder="Ingresa un comentario"
                                                 [(ngModel)]="comentario"
-                                                (change)="ValidateComentario()"
+                                               
                                             />
-                                            <span class="custom-alert-message" *ngIf="!valComentario"
-                                                >Debe ingresar un Comentario</span
-                                            >
+                                       
                                         </div>
                                     </div>
                                     <div class="row">
@@ -638,7 +609,6 @@
     </div>
 </ng-template>
 
-
 <!-- Formulario de Edición -->
 <ng-template #editAvanceModal let-modal>
     <div class="modal-header">
@@ -670,18 +640,8 @@
                     required
                 />
             </div>
-            
-            <div class="form-group">
-                <label for="editIdPersonaReporte">ID Persona que Reportó:</label>
-                <input
-                    type="number"
-                    id="editIdPersonaReporte"
-                    class="form-control"
-                    [(ngModel)]="editAvance.id_persona_reporte"
-                    name="id_persona_reporte"
-                    required
-                />
-            </div>
+
+    
             <div class="form-group">
                 <label for="editValorReportado">Valor Reportado:</label>
                 <input
@@ -690,7 +650,8 @@
                     id="editValorReportado"
                     class="form-control"
                     [(ngModel)]="editAvance.valor_reportado"
-                    name="valor_reportado" readonly
+                    name="valor_reportado"
+                    readonly
                 />
             </div>
             <div class="form-group">
@@ -703,15 +664,35 @@
                     maxlength="255"
                 ></textarea>
             </div>
+         
+           
+                <div
+                    class="d-flex justify-content-center"
+                    style="width: 100%; flex-direction: row; align-items: center; margin-top:20px"
+                >
+                    <button
+                        type="button"
+                        class="btn btn-bg-1"
+                     
+                        (click)="onEditAvanceSubmit(); modal.dismiss('Cerrar')"
+                        style="width:20%"
+                    >
+                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-bg-3"
+                        (click)="modal.close('Cerrar')"
+                        style="width: 20%"
+                    >
+                        <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                    </button>
+                </div>
             
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cerrar')">Cancelar</button>
-                <button type="button" class="btn btn-primary" (click)="onEditAvanceSubmit();modal.dismiss('Cerrar')">Guardar Cambios</button>
-            </div>
+            
         </form>
     </div>
 </ng-template>
-
 
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
 <!-- ======= ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
