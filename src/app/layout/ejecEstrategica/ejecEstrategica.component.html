@@ -144,16 +144,14 @@
                 <!-- ======= ======= TIPO - SUBTIPO - CODIGO ======= ======= -->
                 <div class="row col col-xl-12 col-lg-12 mt-auto">
                   <!-- ======= ======= TIPO ======= ======= -->
-                  <div class="col col-xl-3 col-lg-3">
-                    <label for="id_proy_elem_padre">Tipo</label>
-                    <input class="form-control" type="text" id="id_proy_elem_padre" name="id_proy_elem_padre"
-                      [disabled]="!editMode" [value]="getElementoNombre(id_proy_elem_padre)" disabled />
-                  </div>
+                  <div class="col col-xl-3 col-lg-3 mt-auto">
+                    <label for="id_proy_elem_padre">Elemento</label>
+                    <input type="text" class="form-control" id="id_proy_elem_padre"
+                        [value]="getElementoNombre(id_proy_elem_padre)" disabled />
+                 </div>                  
                   <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                   <div class="col col-xl-1 col-lg-1 mt-auto">
-                    <div class="col col-xl-1 col-lg-1 mt-auto">
-                      <label class="btn-view-bg-3" [ngStyle]="{ 'background-color': '#' + color }">{{ sigla }}</label>
-                    </div>
+                    <label class="btn-view-bg-3" [style.backgroundColor]="'#FDC82F'"> IN </label>
                   </div>
                   <!-- ======= ======= Espacio ======= ======= -->
                   <div class="col col-xl-6 col-lg-6"></div>
@@ -168,40 +166,58 @@
                 <div class="row col col-xl-12 col-lg-12 mt-2">
                   <!-- ======= ======= CATEGORIA ======= ======= -->
                   <!-- CATEGORÍA -->
-                  <div class="col col-xl-4 col-lg-4 mt-auto">
-                    <label for="inst_categoria_1">Categoría</label>
-                    <select
-                      class="form-control"
-                      id="inst_categoria_1"
-                      name="inst_categoria_1"
-                      [(ngModel)]="inst_categoria_1"
-                      [disabled]="!editMode"
-                    >
-                      <option *ngFor="let categoria of ejecCategoria" [value]="categoria.id_inst_categoria">
-                        {{ categoria.nombre }}
-                      </option>
-                    </select>
-                  </div>
+                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                      <label for="inst_categoria_1">Categoría</label>
+                      <select
+                          class="form-control"
+                          id="inst_categoria_1"
+                          name="inst_categoria_1"
+                          [(ngModel)]="inst_categoria_1"
+                          [disabled]="!editMode">
+                          <option value="" disabled selected>Seleccione una categoría</option>
+                          <option
+                              *ngFor="let categoria of ejecCategoria"
+                              [value]="categoria.id_inst_categoria">
+                              {{ categoria.nombre }}
+                          </option>
+                      </select>
+                    </div>                  
 
                   <!-- SUBCATEGORÍA -->
-                  <div class="col col-xl-4 col-lg-4 mt-auto">
-                    <label for="inst_categoria_2">SubCategoría</label>
-                    <select class="form-control" id="inst_categoria_2" name="inst_categoria_2" [(ngModel)]="inst_categoria_2" [disabled]="!editMode">
-                      <option *ngFor="let categoria of ejecSubCategoria" [value]="categoria.id_inst_categoria">
-                        {{ categoria.nombre }}
-                      </option>
-                    </select>
-                  </div>
+                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                      <label for="inst_categoria_2">SubCategoría</label>
+                      <select
+                          class="form-control"
+                          id="inst_categoria_2"
+                          name="inst_categoria_2"
+                          [(ngModel)]="inst_categoria_2"
+                          [disabled]="!editMode">
+                          <option value="" disabled selected>Seleccione una SubCategoría</option>
+                          <option
+                              *ngFor="let categoria of ejecSubCategoria"
+                              [value]="categoria.id_inst_categoria">
+                              {{ categoria.nombre }}
+                          </option>
+                      </select>                
+                    </div>
 
                   <!-- TIPO -->
                   <div class="col col-xl-4 col-lg-4 mt-auto">
                     <label for="tipoIndicador">Tipo</label>
-                    <select class="form-control" id="inst_categoria_3" name="inst_categoria_3" [(ngModel)]="inst_categoria_3" [disabled]="!editMode">
-                      <option *ngFor="let categoria of ejecTipoCategoria" [value]="categoria.id_inst_categoria">
-                        {{ categoria.nombre }}
-                      </option>
-                    </select>
-                  </div>
+                    <select
+                        class="form-control"
+                        id="inst_categoria_3"
+                        name="inst_categoria_3"
+                        [(ngModel)]="inst_categoria_3"                     
+                        [disabled]="!editMode">
+                        <option value="" disabled selected>Seleccione un Tipo</option>
+                        <option
+                            *ngFor="let categoria of ejecTipoCategoria"
+                            [value]="categoria.id_inst_categoria">
+                            {{ categoria.nombre }}
+                        </option>
+                    </select>              
+                  </div>                  
                 </div>
                 <!-- ======= ======= NOMBRE-"INDICADOR" - DESCRIPCION ======= ======= -->
                 <div class="row col col-xl-12 col-lg-12 mt-2">
@@ -229,18 +245,23 @@
                         <label for="codigoPadre">Código Padre</label>
                         <input class="form-control" type="text" id="codigoPadre" 
                                name="codigoPadre" [(ngModel)]="codigoPadre"
-                               [disabled]="true" readonly />
+                               [disabled]="true" disabled />
                       </div>
                       <!-- Tipo -->
-                      <div class="col col-xl-2 col-lg-2">
-                        <label for="tipoPadre">Tipo</label>
-                        <input type="text" class="form-control" id="tipoPadre" [value]="getElementoNombre(elementoPadre?.tipo)" readonly />
-                      </div>
+                      <div class="col col-xl-3 col-lg-3 mt-auto">
+                        <label for="id_proy_elem_padre">Elemento</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="id_proy_elem_padre"
+                            [value]="getElementoNombre(id_proy_elem_padre)"
+                            disabled />
+                    </div>
                       <!-- Componente -->
-                      <div class="col col-xl-1 col-lg-1">
-                        <label class="btn-view-bg-3" [ngStyle]="{ 'background-color': '#' + elementoPadre?.color }">
-                          {{ elementoPadre?.sigla }}
-                        </label>
+                      <div class="col col-xl-1 col-lg-1 mt-auto">
+                        <label class="btn-view-bg-3" [style.backgroundColor]="color">{{
+                            sigla
+                        }}</label>
                       </div>
                       <!-- Abuelo -->
                       <div class="col col-xl-3 col-lg-3">
@@ -307,6 +328,7 @@
                           <th style="text-align: center">Progreso</th>
                           <th style="text-align: center">Notas</th>
                           <th style="text-align: center">Evidencia</th>
+                          <th style="text-align: center"></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -350,6 +372,16 @@
                               target="_blank">{{ this.indicadoresAvance[i]?.ruta_evidencia }}</a>
                             <span *ngIf="!item.ruta_evidencia">Sin evidencia</span>
                           </td>
+
+                          <!-- Botón de edición -->
+                          <td>
+                            <button
+                                type="button"
+                                class="btn btn-link"
+                                (click)="openEditPeriodoModal(editAvanceModal, id)">
+                                ...
+                            </button>
+                        </td>
                         </tr>
                       </tbody>
                     </table>
@@ -375,6 +407,91 @@
     </form>               
   </div>
 </ng-template>
-
           
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+ <!-- Formulario de Edición -->
+<ng-template #editAvanceModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Editar Avance de Indicador</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cerrar')"></button>
+  </div>
+  <div class="modal-body">
+      <form #editAvanceForm="ngForm" (ngSubmit)="onEditSubmit()">
+          <div class="form-group">
+              <label for="editFechaReportar">Fecha a Reportar:</label>
+              <input
+                  type="date"
+                  id="editFechaReportar"
+                  class="form-control"
+                  [(ngModel)]="editAvance.fecha_reportar"
+                  name="fecha_reportar"
+                  required
+              />
+          </div>
+          <div class="form-group">
+              <label for="editValorEsperado">Valor Esperado:</label>
+              <input
+                  type="number"
+                  step="0.01"
+                  id="editValorEsperado"
+                  class="form-control"
+                  [(ngModel)]="editAvance.valor_esperado"
+                  name="valor_esperado"
+                  required
+              />
+          </div>
+
+  
+          <div class="form-group">
+              <label for="editValorReportado">Valor Reportado:</label>
+              <input
+                  type="number"
+                  step="0.01"
+                  id="editValorReportado"
+                  class="form-control"
+                  [(ngModel)]="editAvance.valor_reportado"
+                  name="valor_reportado"
+                  readonly
+              />
+          </div>
+          <div class="form-group">
+              <label for="editComentarios">Comentarios:</label>
+              <textarea
+                  id="editComentarios"
+                  class="form-control"
+                  [(ngModel)]="editAvance.comentarios"
+                  name="comentarios"
+                  maxlength="255"
+              ></textarea>
+          </div>
+       
+         
+              <div
+                  class="d-flex justify-content-center"
+                  style="width: 100%; flex-direction: row; align-items: center; margin-top:20px"
+              >
+                  <button
+                      type="button"
+                      class="btn btn-bg-1"
+                   
+                      (click)="onEditAvanceSubmit(); modal.dismiss('Cerrar')"
+                      style="width:20%"
+                  >
+                      <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                  </button>
+                  <button
+                      type="button"
+                      class="btn btn-bg-3"
+                      (click)="modal.close('Cerrar')"
+                      style="width: 20%"
+                  >
+                      <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                  </button>
+              </div>
+          
+          
+      </form>
+  </div>
+</ng-template>
+
 <!-- ======= ======= ======= ======= ======= ======= ======= -->

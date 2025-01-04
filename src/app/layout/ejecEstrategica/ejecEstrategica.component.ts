@@ -8,8 +8,10 @@ import { ProyectoService } from '../../services/proyectoData.service';
 import { servIndicador} from '../../servicios/indicador';
 import {servIndicadorAvance} from '../../servicios/indicadorAvance';
 import {servInstCategorias} from '../../servicios/instCategoria';
+import { ElementosService } from '../../servicios/elementos';
 import {PlanifEstrategicaService} from '../../servicios/planifEstrategica';
 import {MetoElementosService} from '../../servicios/metoElementos';
+import { servActAvance } from '../../servicios/actividadAvance';
 import { servicios } from "../../servicios/servicios";
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
 @Component({
@@ -36,6 +38,8 @@ export class EjecEstrategicaComponent implements OnInit {
     private servInstCategorias: servInstCategorias,
     private planifEstrategicaService: PlanifEstrategicaService,
     private metoElementosService: MetoElementosService,
+    private servActAvance: servActAvance,
+    protected proyElementosService: ElementosService,
     private servicios: servicios
   ) {}
 
@@ -66,7 +70,12 @@ export class EjecEstrategicaComponent implements OnInit {
   // ======= ======= NGMODEL VARIABLES SECTION ======= =======
       modalAccion: any = '';
       modalTitle: any = '';
-
+      //Variables PROY_ELEMENTO "Planificación Estratégica"
+      id_proy_elemento: any = "";
+      elemento: any = "";
+      nivel: any = "";
+      idp_estado: any = "";
+      peso: any = "";
       // VARIABLES PROY_INDICADOR 
       id_proy_indicador: any = "";
       id_proyecto: any = "";
@@ -88,6 +97,26 @@ export class EjecEstrategicaComponent implements OnInit {
       sigla: any = "";
       color: any = "";
 
+    // variables 
+        periodos: any;
+        periodosForm: any; // Add this line to define periodosForm
+        editPeriodo = { periodo: '', valorEsperado: 0 }; // Valores iniciales
+        metoElementoData: any[] = [];
+        datosAliados: any;
+        editAvance: {
+          id_proy_indica_avance: any,
+          id_proy_indicador: any,  // Asegúrate de que el campo correcto sea id_proy_indicador
+          fecha_reportar: any,  // Asegúrate de que se cargue correctamente
+          fecha_hora_reporte: any,
+          valor_reportado: any,  // Eliminar símbolo de dólar y coma si la hay
+          valor_esperado: any,  // Lo mismo para valor_esperado
+          id_persona_reporte: any,
+          comentarios: any,  // Cargar comentarios si existen
+          ruta_evidencia: any,
+        };
+        planifIDindAvance: any[] = [];
+        planifPeriodofecha: any[] = [];
+        planifMetaEsperada: any[] = [];
     // Variables de Selección
       componentes: any[] = [];
       ejecCategoria: any[] = [];
@@ -95,12 +124,17 @@ export class EjecEstrategicaComponent implements OnInit {
       ejecTipoCategoria: any[] = [];  
       ejecEstrategicaAvances: any[] = [];
 
+      elementosTabla: any[] = [];
+      planifEstrategica: any[] = [];
+
   // ======= ======= INIT VIEW FUN ======= =======
   ngOnInit(): void {
     this.getParametricas();
     this.getEjecEstrategica();
     this.getIndicadoresAvance();
-    
+    this.loadMetoElemento();
+    this.getParametricas(); 
+    this.loadData();   
   }
   // ======= ======= ======= ======= =======  ======= ======= =======  =======
   jsonToString(json: object): string {
@@ -132,27 +166,65 @@ export class EjecEstrategicaComponent implements OnInit {
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
   
   // ======= ======= GET PARAMETRICAS ======= =======
-  getParametricas(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      forkJoin([
-        this.servInstCategorias.getCategoriaById(1),
-        this.servInstCategorias.getCategoriaById(2),
-        this.servInstCategorias.getCategoriaById(3),
-      ]).subscribe(
-        ([categoria1, categoria2, categoria3]: any) => {
-          this.ejecCategoria = categoria1[0]?.dato || [];
-          this.ejecSubCategoria = categoria2[0]?.dato || [];
-          this.ejecTipoCategoria = categoria3[0]?.dato || [];
-          resolve();
-        },
-        (error) => {
-          console.error("Error al cargar categorías:", error);
-          reject(error);
-        }
-      );
-    });
+  getParametricas() {
+    this.servInstCategorias.getCategoriaById(1).subscribe(
+      (data: any) => {
+        this.ejecCategoria = data[0]?.dato || [];
+      },
+      (error) => {
+        console.error("Error al cargar categorías:", error);
+      }
+    );
+
+    this.servInstCategorias.getCategoriaById(2).subscribe(
+      (data: any) => {
+        this.ejecSubCategoria = data[0]?.dato || [];
+      },
+      (error) => {
+        console.error("Error al cargar categorías:", error);
+      }
+    );
+
+    this.servInstCategorias.getCategoriaById(3).subscribe(
+      (data: any) => {
+        this.ejecTipoCategoria = data[0]?.dato || [];
+      },
+      (error) => {
+        console.error("Error al cargar categorías:", error);
+      }
+    );
   }
-  
+  loadMetoElemento() {
+    this.metoElementosService.getMetoElementosByMetodologia(2).subscribe(
+      (data: any) => {
+        this.metoElementoData = (data[0]?.dato) ? data[0].dato : [];
+        console.log('meto elementos cargados:', this.metoElementoData);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  loadData(): void {
+    this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(
+      (data: any) => {
+        this.planifEstrategica = (data[0].dato) ? data[0].dato : [];        
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+
+    this.proyElementosService.getElementosByProyecto(this.idProyecto).subscribe(
+      (data: any) => {
+        this.elementosTabla = (data[0].dato) ? data[0].dato : [];        
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
   
  
   // ======= ======= ======= ======= ======= ======= =======  ======= =======        
@@ -167,6 +239,10 @@ export class EjecEstrategicaComponent implements OnInit {
       if (this.modalRefs.length > 0) {
         const modalRef = this.modalRefs.pop();
         modalRef?.close();
+      }
+      if (this.modalRef) {
+        this.modalRef.close();
+        this.modalRef = null;
       }
     }
 
@@ -203,32 +279,90 @@ export class EjecEstrategicaComponent implements OnInit {
   }
  
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
-     // Tipo botones de la tabla de planifEstrategica cambiar por meto elementos
-     elementosMap = {
-      1: { sigla: 'OG', color: '#D45B49' }, // Objetivo General
-      2: { sigla: 'OE', color: '#F58634' }, // Objetivo Específico
-      3: { sigla: 'RE', color: '#F7B529' }, // Resultado Estratégico
-      4: { sigla: 'IN', color: '#FBD468' }  // Indicador
-    };
-    
-    // Método para obtener la sigla
-    getSigla(id_proy_elem_padre: number): string {
-      return this.elementosMap[id_proy_elem_padre]?.sigla || '';
+
+    /** ===  seleccion de color sigla magin  */
+    getColorElemento(idMeto: number | null): string {
+      if (idMeto == null) {
+          return '#FDC82F'; 
+      }
+      const color = this.metoElementoData.find((compo: any) => compo.nivel === idMeto);
+
+
+      return color? `#${color?.color}` : '#000000';
     }
-    
-    // Método para obtener el color
-    getColor(id_proy_elem_padre: number): string {
-      const color = this.elementosMap[id_proy_elem_padre]?.color;
-      return color ? color : '#000000'; 
+    getColorIndicador(idPadreElemento: number): string {
+      if (idPadreElemento == null) {
+        return '#000000'; 
+    }
+    const padre =this.elementosTabla.find((compo: any) => compo.id_proy_elemento === idPadreElemento);
+
+    const color = this.metoElementoData.find((compo: any) => compo.nivel === padre.id_proy_elem_padre);
+
+    this.color=`#${color?.color}`;
+    return color? `#${color?.color}` : '#000000';
+    }
+
+    getSiglaElemento( idMeto:number): string {
+      if (idMeto == null) {
+        return 'IN'; 
+    }
+    const sigla = this.metoElementoData.find((compo: any) => compo.nivel === idMeto);
+
+    return sigla? sigla.sigla : 'IN';
     }
     
     getElementoNombre(id_proy_elem_padre: number): string {
-      const elemento = this.componentes.find(comp => comp.id_meto_elemento === id_proy_elem_padre);
-      return elemento ? elemento.meto_elemento : '';
+      const elemento = this.metoElementoData.find(comp => comp.nivel === id_proy_elem_padre);
+      return elemento ? elemento.meto_elemento : 'Nombre no disponible';
     }
-    
+
+    validParents: any[] = [];
+  tipo: string = '';
+
+
+  // Filtrar padres válidos en función del tipo del elemento a crear
+  getValidParents(tipo: string): any[] {
+    if (!this.elementosTabla || !Array.isArray(this.elementosTabla)) {
+      console.error("combinedData no está disponible o no es un array válido");
+      return [];
+    }
+
+    console.log('Tipo recibido en getValidParents:', tipo);
+    switch (tipo) {
+      case 'OG': // Objetivo General no tiene padres válidos (es la raíz)
+        return [];
+
+      case 'OE': // Objetivo Específico solo puede tener como padre un OG
+        return this.elementosTabla.filter(el => el.id_meto_elemento === 1);
+
+      case 'RE': // Resultado Estratégico puede tener como padre un OG o un OE
+        return this.elementosTabla.filter(el => el.id_meto_elemento === 1 || el.id_meto_elemento === 2);
+
+      case 'IN': // Indicador puede tener como padre un OG, OE o RE
+        return this.elementosTabla.filter(el =>
+          el.id_meto_elemento === 1 ||
+          el.id_meto_elemento === 2 ||
+          el.id_meto_elemento === 3
+        );
+
+      default:
+        return [];
+    }
+  }
+
+  // Validar si un padre seleccionado es válido para el tipo actual
+  validarPadre(tipo: string, parentCodigo: string): boolean {
+    if (!parentCodigo || !tipo) {
+      console.error("parentCodigo o tipo no definidos correctamente");
+      return false;
+    }
+
+    const validParents = this.getValidParents(tipo);
+    return validParents.some(parent => parent.codigo === parentCodigo);
+  }
+
     getUltimoAvance(idProyIndicador: number): any {
-  if (!this.ejecEstrategicaAvances) return null;
+    if (!this.ejecEstrategicaAvances) return null;
   
   const avancesIndicador = this.ejecEstrategicaAvances.filter(
     avance => avance.id_proy_indicador === idProyIndicador
@@ -641,6 +775,98 @@ encontrarElementoPadre(elementos: any[], codigoHijo: string): any {
   // Buscar el elemento padre en el array de elementos
   return elementos.find(elem => elem.codigo === codigoPadre);
 }
+
+// ======= ======= GET PARAMETRICAS ======= =======
+  
+isEditing: boolean = false; // Indica si el formulario está en modo de edición
+selectedIdProyIndicador: number | null = null; // Almacena el ID seleccionado
+
+cargarIndicadoresAvance() {
+ 
+  this.selectedIdProyIndicador; // Almacena el ID seleccionado
+  this.isEditing = true; // Activa el modo de edición
+
+  console.log('Cargando datos para el ID seleccionado:', this.selectedIdProyIndicador);
+
+  this.servIndicadorAvance.getIndicadoresAvanceById(this.selectedIdProyIndicador).subscribe(
+    (response: any) => {
+      this.datosAliados = response[0]?.dato || [];
+      console.log('Datos obtenidos:', this.datosAliados);
+
+      // Extraer los valores necesarios
+      this.planifIDindAvance = this.datosAliados.map((item: any) => item.id_proy_indica_avance);
+      this.planifPeriodofecha = this.datosAliados.map((item: any) => item.fecha_reportar);
+      this.planifMetaEsperada = this.datosAliados.map((item: any) => item.valor_esperado);
+      console.log('IDs de avance:', this.planifIDindAvance);
+    },
+    (error) => {
+      console.error('Error al cargar los datos:', error);
+    }
+  );
+}
+
+openEditPeriodoModal(content: any, id: number) {
+  const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
+
+  if (avanceData) {
+    this.editAvance = {
+      id_proy_indica_avance: avanceData.id_proy_indica_avance,
+      id_proy_indicador: avanceData.id_proy_indicador || null,  // Asegúrate de que el campo correcto sea id_proy_indicador
+      fecha_reportar: avanceData.fecha_reportar || '',  // Asegúrate de que se cargue correctamente
+      fecha_hora_reporte: new Date().toISOString(),
+      valor_reportado: parseFloat(avanceData.valor_reportado.replace('$', '').replace(',', '')) || 0,  // Eliminar símbolo de dólar y coma si la hay
+      valor_esperado: parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', '')) || 0,  // Lo mismo para valor_esperado
+      id_persona_reporte: avanceData.id_persona_reporte || null,
+      comentarios: avanceData.comentarios || '',  // Cargar comentarios si existen
+      ruta_evidencia: avanceData.ruta_evidencia || '',  // Cargar la ruta de evidencia si existe
+    };
+    console.log('Datos de avance a cargar al formulario:', this.editAvance);
+
+  } else {
+    console.warn('No se encontraron datos para el ID especificado:', id);
+  }
+
+  this.modalService.open(content, { size: 'lg', backdrop: 'static' });
+}
+
+onEditAvanceSubmit() {
+  // Crear el objeto con los datos editados
+  const avanceEditado = {
+    p_id_proy_indicador_avance: this.editAvance.id_proy_indica_avance,
+    p_id_proy_indicador: this.editAvance.id_proy_indicador,
+    p_fecha_reportar: this.editAvance.fecha_reportar,
+    p_fecha_hora_reporte: this.editAvance.fecha_hora_reporte,
+    p_valor_reportado: this.editAvance.valor_reportado,
+    p_valor_esperado: this.editAvance.valor_esperado,
+    p_id_persona_reporte: this.editAvance.id_persona_reporte,
+    p_comentarios: this.editAvance.comentarios,
+    p_ruta_evidencia: this.editAvance.ruta_evidencia,
+  };
+
+  // Lógica para guardar los cambios
+  console.log('Datos editados:', avanceEditado);
+
+  // Llamar al servicio para actualizar los datos
+  this.servIndicadorAvance.editIndicadorAvance(avanceEditado).subscribe(
+    (response) => {
+      console.log('Actualización exitosa:', response);
+
+    },
+    (error) => {
+      console.error('Error al actualizar:', error);
+    }
+  );
+  this.cargarIndicadoresAvance();
+}
+
+
+cerrarFormulario() {
+  this.isEditing = false; // Desactiva el modo de edición
+  this.selectedIdProyIndicador = null; // Limpia el ID seleccionado
+}
+
+// ======= ======= ======= ======= ======= ======= =======  ======= =======        
+private modalRef: NgbModalRef | null = null;
 
 
 }

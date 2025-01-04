@@ -1,5 +1,5 @@
 // Importacion de modulos y componentes Principales
-import { Component, OnInit, TemplateRef, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef, EventEmitter, Output} from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ProyectoService } from '../../services/proyectoData.service';
@@ -30,13 +30,14 @@ import { subscribe } from 'diagnostics_channel';
 export class PlanifEstrategicaComponent implements OnInit {
   // ======= ======= VARIABLES SECTION ======= =======
   planifEstrategica: any[] = [];
+
   // ======= ======= VARIABLES PAGINACION ======= =======
   mainPage = 1;
   mainPageSize = 10;
   totalLength = 0;
   elementosTabla: any;
   combinedData: any[] = [];
-  // ======= ======= ======= ======= ======= ======= =======
+
   periodos: any;
   periodosForm: any; // Add this line to define periodosForm
   editPeriodo = { periodo: '', valorEsperado: 0 }; // Valores iniciales
@@ -53,21 +54,24 @@ export class PlanifEstrategicaComponent implements OnInit {
     comentarios: any,  // Cargar comentarios si existen
     ruta_evidencia: any,
   };
-  // ============ counter  variables section ====== =====
+
+// ============ counter  variables section ====== =====
   headerDataNro01: any = 0;
   headerDataNro02: any = 0;
   headerDataNro03: any = 0;
   headerDataNro04: any = 0;
+
   // ======= ======= NGMODEL VARIABLES SECTION ======= =======
   modalAction: any = "";
   modalTitle: any = '';
+
   //Variables PROY_ELEMENTO "Planificación Estratégica"
   id_proy_elemento: any = "";
   elemento: any = "";
   nivel: any = "";
   idp_estado: any = "";
   peso: any = "";
-  // ======= ======= ======= ======= ======= ======= =======
+
   // Variables PROY_INDICADOR 
   id_proy_indicador: any = "";
   id_proyecto: any = "";
@@ -85,7 +89,7 @@ export class PlanifEstrategicaComponent implements OnInit {
   inst_categoria_1: any;
   inst_categoria_2: any = "";
   inst_categoria_3: any = "";
- // ======= ======= ======= ======= ======= ======= =======
+
   sigla: any = "";
   color: any = "";
   // Variables de Selección
@@ -97,13 +101,17 @@ export class PlanifEstrategicaComponent implements OnInit {
   planifIDindAvance: any[] = [];
   planifPeriodofecha: any[] = [];
   planifMetaEsperada: any[] = [];
+
   //LLAMADO PARA TABLA
   planifEstrategicaTipo: any[] = [];
+
+  // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
   valComponente: any = false;
+
   constructor(
     protected modalService: NgbModal,
-    protected proyectoService: ProyectoService,
+     private proyectoService: ProyectoService,
     protected cdr: ChangeDetectorRef,
     protected ServPlanifEstrategica: PlanifEstrategicaService,
     protected servicios: servicios,
@@ -117,23 +125,22 @@ export class PlanifEstrategicaComponent implements OnInit {
   ) { }
     // ======= ======= HEADER SECTION ======= =======
     idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
-       idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-       namePersonaReg: any = localStorage.getItem('userFullName');
-       currentPerProRol: any = localStorage.getItem('currentPerProRol');
-       @Output() selectionChange = new EventEmitter<any>();
-       onChildSelectionChange(selectedPro: any) {
-         this.idProyecto = selectedPro.id_proyecto;
-         localStorage.setItem('currentIdProy', (this.idProyecto).toString());
-         this.proyectoService.seleccionarProyecto(this.idProyecto);
-         this.currentPerProRol = selectedPro.rol;
-
+      idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+      namePersonaReg: any = localStorage.getItem('userFullName');
+      currentPerProRol: any = localStorage.getItem('currentPerProRol');
+      @Output() selectionChange = new EventEmitter<any>();
+      onChildSelectionChange(selectedPro: any) {
+        this.idProyecto = selectedPro.id_proyecto;
+        localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+        this.proyectoService.seleccionarProyecto(this.idProyecto);
+        this.currentPerProRol = selectedPro.rol;
       this.ngOnInit()
       // this.getParametricas();
       // this.getPlanifEstrategica();
       this.initPlanifEstrategicaModel();
       this.planifEstrategicaSelected = null
     }
-  // ======= ======= ======= ======= ======= ======= =======
+
   ngOnInit(): void {
     this.loadMetoElemento();
     this.getParametricas();
@@ -144,15 +151,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     this.countHeaderData();
   }
   getParametricas() {
-      // ======= GET METO ELEMENTOS =======
-      // this.servApredizaje.getMetoElementos(this.idProyecto).subscribe(
-      //   (data) => {
-      //     this.componentes = data[0].dato;
-      //   },
-      //   (error) => {
-      //     console.error(error);
-      //   }
-      // );
+
     this.servInstCategorias.getCategoriaById(1).subscribe(
       (data: any) => {
         this.planifCategoria = data[0]?.dato || [];
@@ -229,7 +228,6 @@ export class PlanifEstrategicaComponent implements OnInit {
     );
   }
 
-
   // == ====== section validator  =====
   ValidateComponente() {
     if (this.id_proy_elem_padre) {
@@ -254,6 +252,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     this.initEditPlanifEstrategica(planifEstrategicaOGOERE, planifEstrategicaIN);
     this.cargarIndicadoresAvance();
   }
+
 
   // ======= ======= ======= ======= =======  ======= ======= =======  =======
   jsonToString(json: object): string {
@@ -435,12 +434,13 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
     this.ValidateComponente();
   }
- 
+
   getElementoNombre(id_proy_elem_padre: number): string {
     const elemento = this.metoElementoData.find(comp => comp.nivel === id_proy_elem_padre);
     return elemento ? elemento.meto_elemento : 'Nombre no disponible';
   }
 
+  // ======= ======= ======= ======= ======= ======= =======  ======= ======= 
   // ======= ======= JERARQUIA DE PADRE ======= =======
   validParents: any[] = [];
   tipo: string = '';
@@ -486,6 +486,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     const validParents = this.getValidParents(tipo);
     return validParents.some(parent => parent.codigo === parentCodigo);
   }
+
 
   // Método para manejar cambios en el tipo y filtrar padres válidos
   onParentChange(): void {
@@ -591,6 +592,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     return `${lastRE[0]}.${lastRE[1]}.${lastRE[2]}.0`;
   }
 
+
+
   generarCodigoIN(parentCodigo: string): string {
     // Convertimos el código del padre a un array de números para la comparación
     const parentCodeArray = parentCodigo.split('.').map(Number);
@@ -672,6 +675,10 @@ export class PlanifEstrategicaComponent implements OnInit {
     console.log(`Elemento movido ${direccion}. Nuevo orden:`, this.combinedData);
   }
 
+  /**
+   * Verifica si el movimiento respeta la jerarquía.
+   * Un hijo no puede estar encima de su padre y viceversa.
+   */
   private puedeMover(codigoHijo: number[], codigoPadre: number[]): boolean {
    // console.log('Comparando:', codigoHijo, codigoPadre);
     for (let i = 0; i < codigoPadre.length; i++) {
@@ -685,6 +692,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
     return true; // Igualdad entre códigos
   }
+
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======  
 
@@ -712,6 +720,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
   }
 
+
+
   isParentCode(parentCode: string, childCode: string): boolean {
     const parentParts = parentCode.split('.').map(Number);
     const childParts = childCode.split('.').map(Number);
@@ -725,10 +735,13 @@ export class PlanifEstrategicaComponent implements OnInit {
     return childParts.length > parentParts.length; // El hijo tiene más niveles
   }
 
+
+
+
   // ======= ======= INIT PLANIFICACION ESTRATEGICA NGMODEL ======= =======
   initPlanifEstrategicaModel() {
     this.modalTitle = "";
-    this.selectedParentCodigo="";
+this.selectedParentCodigo="";
     this.id_proy_indicador = 0;
     this.id_proyecto = "";
     this.id_proy_elem_padre = "";
@@ -750,59 +763,66 @@ export class PlanifEstrategicaComponent implements OnInit {
     this.color = null;
 
     this.valComponente = true;
+
+
+
   }
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
+
+ 
+
   checkIfDataLoaded(): any {
     if (this.planifEstrategica && this.elementosTabla) {
       this.combinePlanifEstrategicaAndElementos();
     }
   }
 
-  /** ===  seleccion de color sigla magin  */
-  getColorElemento(idMeto: number | null): string {
-    if (idMeto == null) {
-        return '#FDC82F'; 
-    }
-    const color = this.metoElementoData.find((compo: any) => compo.nivel === idMeto);
-
-
-    return color? `#${color?.color}` : '#000000';
+/** ===  seleccion de color sigla magin  */
+getColorElemento(idMeto: number | null): string {
+  if (idMeto == null) {
+      return '#FDC82F'; 
   }
-  getColorIndicador(idPadreElemento: number): string {
-    if (idPadreElemento == null) {
-      return '#000000'; 
-  }
-  const padre =this.elementosTabla.find((compo: any) => compo.id_proy_elemento === idPadreElemento);
+  const color = this.metoElementoData.find((compo: any) => compo.nivel === idMeto);
 
-  const color = this.metoElementoData.find((compo: any) => compo.nivel === padre.id_proy_elem_padre);
 
-  this.color=`#${color?.color}`;
   return color? `#${color?.color}` : '#000000';
+}
+getColorIndicador(idPadreElemento: number): string {
+  if (idPadreElemento == null) {
+    return '#000000'; 
+}
+const padre =this.elementosTabla.find((compo: any) => compo.id_proy_elemento === idPadreElemento);
+
+const color = this.metoElementoData.find((compo: any) => compo.nivel === padre.id_proy_elem_padre);
+
+this.color=`#${color?.color}`;
+return color? `#${color?.color}` : '#000000';
+}
+
+getSiglaElemento( idMeto:number): string {
+  if (idMeto == null) {
+    return 'IN'; 
+}
+const sigla = this.metoElementoData.find((compo: any) => compo.nivel === idMeto);
+
+return sigla? sigla.sigla : 'IN';
+}
+  // Método para calcular el margen dinámico (espaciado)
+getMargin(planifEstr: any): string {
+if(planifEstr.tipo== 'Elemento'){
+  switch (planifEstr.id_meto_elemento) {
+    case 1: return '0';      // Sin margen adicional
+    case 2: return '40px';   // Espaciado medio
+    case 3: return '80px';   // Espaciado más amplio  // Espaciado al final
+    default: return '120px';     // Por defecto, sin margen
   }
 
-  getSiglaElemento( idMeto:number): string {
-    if (idMeto == null) {
-      return 'IN'; 
-  }
-  const sigla = this.metoElementoData.find((compo: any) => compo.nivel === idMeto);
-
-  return sigla? sigla.sigla : 'IN';
-  }
-    // Método para calcular el margen dinámico (espaciado)
-  getMargin(planifEstr: any): string {
-  if(planifEstr.tipo== 'Elemento'){
-    switch (planifEstr.id_meto_elemento) {
-      case 1: return '0';      // Sin margen adicional
-      case 2: return '40px';   // Espaciado medio
-      case 3: return '80px';   // Espaciado más amplio  // Espaciado al final
-      default: return '120px';     // Por defecto, sin margen
-    }
-
-  }else{
-  return '120px'
-  }
+}else{
+ return '120px'
+}
    
   }
+
 
   combinePlanifEstrategicaAndElementos(): any {
     // Mapear datos de planifEstrategica
@@ -848,6 +868,8 @@ export class PlanifEstrategicaComponent implements OnInit {
       color:this.getColorElemento(item.id_meto_elemento),
       sigla:this.getSiglaElemento(item.id_meto_elemento),
       peso: item.peso,
+
+
 
    //   sigla: this.getSigla(item.id_proy_elem_padre), // Asegúrate de que `getSigla` devuelve correctamente el valor para `RE`.
     }));
@@ -1070,7 +1092,10 @@ if( this.planifEstrategicaSelected.tipo=='Elemento')
     if(this.verificPadre(this.id_proy_elemento|| this.id_proy_indicador,this.planifEstrategicaSelected.tipo )  )
     {
      this.openModal(modalScope);
-    } 
+    }
+  
+
+       
     this.ngOnInit();
   }
 
@@ -1253,6 +1278,7 @@ if( this.planifEstrategicaSelected.tipo=='Elemento')
     }
   }
 
+
   // Reinicia la selección y recarga los datos
   resetSelection() {
     this.planifEstrategicaSelected = null;
@@ -1260,6 +1286,7 @@ if( this.planifEstrategicaSelected.tipo=='Elemento')
     this.getPlanifEstrategica();
     this.loadData();
   }
+
 
   countHeaderData(): void {
     this.headerDataNro01=0;
@@ -1288,6 +1315,7 @@ if( this.planifEstrategicaSelected.tipo=='Elemento')
       }
     });
   }
+
 
   // ======= ======= SUBMIT FORM ======= =======
   onSubmit(): void {
@@ -1365,4 +1393,6 @@ if( this.planifEstrategicaSelected.tipo=='Elemento')
     }
     this.ngOnInit();
   }
+
+
 }
