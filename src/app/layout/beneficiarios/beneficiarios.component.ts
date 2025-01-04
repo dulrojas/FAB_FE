@@ -101,12 +101,19 @@ export class BeneficiariosComponent implements OnInit {
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.currentPerProRol = selectedPro.rol;
-//    this.ngOnInit();
-    this.loadBeneficiarios();
-    this.loadAliados();
-    this.initForm();
-    // ======= *ADD A GETTER DOWN HERE* =======
-    // this.getLogros();
+      this.ngOnInit();
+      this.loadGeografica();
+      this.loadBeneficiarios();
+      this.initForm();
+      this.getActividades();
+      this.loadDepartamentos();
+      this.loadTiposOrganizacion();
+      this.initAliadosForm();
+      this.initOrganizacionForm();
+      this.loadAliados();
+      this.loadConvenios();
+      this.loadInstitucion();
+
   }
 
   headerDataNro01: any = 0;

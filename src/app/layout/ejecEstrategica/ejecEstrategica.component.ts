@@ -62,6 +62,11 @@ export class EjecEstrategicaComponent implements OnInit {
     localStorage.setItem('currentIdProy', (this.idProyecto).toString());
     this.proyectoService.seleccionarProyecto(this.idProyecto);
     this.currentPerProRol = selectedPro.rol;
+
+    this.getEjecucionEstrategicaData();
+    this.loadMetoElementos();
+    this.loadCategorias();
+    
     }
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
   // ======= ======= ======= CONTADOR =======  ======= =======
