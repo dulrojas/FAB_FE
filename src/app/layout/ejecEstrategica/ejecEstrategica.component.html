@@ -33,7 +33,7 @@
       <div class="d-flex justify-content-between align-items-center">
         <!-- Titulo de la Tabla -->
         <h2 class="title" style="color: #4e8646">Ejecución Estratégica</h2>
-        <!-- Botones Reportar -->
+        <!-- Botone Reportar -->
         <div class="row">
           <div class="col col-xl-12 col-lg-12 text-end">
             <button type="button" class="btn btn-view-bg-1" (click)="initEditEjecEstrategica(ejecEstrategicaFormModal)"
@@ -141,6 +141,7 @@
           <div class="card">
             <div class="card-body custom-card">
               <div class="row">
+                <!-- CONECTA CON PROY_INDICADOR -->
                 <!-- ======= ======= TIPO - SUBTIPO - CODIGO ======= ======= -->
                 <div class="row col col-xl-12 col-lg-12 mt-auto">
                   <!-- ======= ======= TIPO ======= ======= -->
@@ -169,36 +170,38 @@
                     <div class="col col-xl-4 col-lg-4 mt-auto">
                       <label for="inst_categoria_1">Categoría</label>
                       <select
-                          class="form-control"
-                          id="inst_categoria_1"
-                          name="inst_categoria_1"
-                          [(ngModel)]="inst_categoria_1"
-                          [disabled]="!editMode">
-                          <option value="" disabled selected>Seleccione una categoría</option>
-                          <option
-                              *ngFor="let categoria of ejecCategoria"
-                              [value]="categoria.id_inst_categoria">
-                              {{ categoria.nombre }}
-                          </option>
-                      </select>
+                        class="form-control"
+                        id="inst_categoria_1"
+                        name="inst_categoria_1"
+                        [(ngModel)]="inst_categoria_1"
+                        (change)="onCategoria1Change()"
+                        [disabled]="!editMode">
+                        <option value="" disabled selected>Seleccione una categoría</option>
+                        <option
+                            *ngFor="let categoria of ejecCategoria"
+                            [value]="categoria.id_inst_categoria">
+                            {{ categoria.nombre }}
+                        </option>
+                    </select>
                     </div>                  
 
                   <!-- SUBCATEGORÍA -->
                     <div class="col col-xl-4 col-lg-4 mt-auto">
                       <label for="inst_categoria_2">SubCategoría</label>
                       <select
-                          class="form-control"
-                          id="inst_categoria_2"
-                          name="inst_categoria_2"
-                          [(ngModel)]="inst_categoria_2"
-                          [disabled]="!editMode">
-                          <option value="" disabled selected>Seleccione una SubCategoría</option>
-                          <option
-                              *ngFor="let categoria of ejecSubCategoria"
-                              [value]="categoria.id_inst_categoria">
-                              {{ categoria.nombre }}
-                          </option>
-                      </select>                
+                        class="form-control"
+                        id="inst_categoria_2"
+                        name="inst_categoria_2"
+                        [(ngModel)]="inst_categoria_2"
+                        (change)="onCategoria2Change()"
+                        [disabled]="!editMode">
+                        <option value="" disabled selected>Seleccione una SubCategoría</option>
+                        <option
+                            *ngFor="let categoria of ejecSubCategoria"
+                            [value]="categoria.id_inst_categoria">
+                            {{ categoria.nombre }}
+                        </option>
+                    </select>               
                     </div>
 
                   <!-- TIPO -->
@@ -234,13 +237,13 @@
                       [(ngModel)]="descripcion" [disabled]="!editMode" />
                   </div>
                 </div>
-                <!-- ======= ======= PROY ELEMENTOS ======= ======= -->
+                <!-- CONECTA CON PROY_ELEMENTOS -->
                 <div class="row col col-xl-12 col-lg-12 mt-2">
                   Padre
                   <!-- Padre -->
                   <div class="col-12 mt-2 mb-2 p-2" style="border: 1px solid white">
                     <div class="row">
-                      <!-- Código -->
+                      <!-- Código hacer una funcion que indetifique el codigo indicador de la tabla y busque en proy_elementos al padre -->
                       <div class="col col-xl-3 col-lg-3">
                         <label for="codigoPadre">Código Padre</label>
                         <input class="form-control" type="text" id="codigoPadre" 
@@ -263,7 +266,7 @@
                             sigla
                         }}</label>
                       </div>
-                      <!-- Abuelo -->
+                      <!-- Abuelo este se conectara al codigo del Objetivo General que es el padre de todos el abuelo como tal por eso -->
                       <div class="col col-xl-3 col-lg-3">
                         <label for="codigoAbuelo">Abuelo</label>
                         <input class="form-control" type="text" id="codigoAbuelo" 
@@ -280,6 +283,7 @@
                     </div>
                   </div>
                 </div>
+                <!-- CONECTA CON PROY_INDICADOR -->
                 <!-- ======= ======= LINEA BASE - MEDIDA - META FINAL - MEDIO VERIFICA ======= ======= -->
                 <div class="row col col-xl-12 col-lg-12 mt-2">
                   <!-- Linea base -->

@@ -16,8 +16,7 @@ console.log( ' elemento reciido en el form corto : ', elemento);
 const params =  {
     "procedure_name": "sp_proy_elementos",
     "body": {
-      "params": [
-        
+      "params": [        
         { "name": "p_accion", "value": "A1", "type": "string" },
         { "name": "p_id_proy_elemento", "value": null, "type": "int" },
         { "name": "p_id_proyecto", "value": elemento.id_proyecto || null, "type": "int" },
@@ -83,8 +82,7 @@ editElemento(elemento: any): Observable<any> {
     const params = {
         "procedure_name": "sp_proy_elementos",
         "body": {
-          "params": [
-      
+          "params": [      
             { "name": "p_accion", "value": "C1", "type": "string" },
             { "name": "p_id_proy_elemento", "value": null, "type": "int" },
             { "name": "p_id_proyecto", "value": null, "type": "int" },
