@@ -145,11 +145,10 @@ export class PlanifEstrategicaComponent implements OnInit {
     this.loadMetoElemento();
     this.getParametricas();
     this.getPlanifEstrategica(); 
-
     this.loadData();
-
     this.countHeaderData();
   }
+  
   getParametricas() {
 
     this.servInstCategorias.getCategoriaById(1).subscribe(

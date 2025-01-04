@@ -10,7 +10,6 @@ import {servIndicadorAvance} from '../../servicios/indicadorAvance';
 import {servInstCategorias} from '../../servicios/instCategoria';
 import {ElementosService } from '../../servicios/elementos';
 import {MetoElementosService} from '../../servicios/metoElementos';
-import { servActAvance } from '../../servicios/actividadAvance';
 import { servicios } from "../../servicios/servicios";
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
 @Component({
@@ -47,7 +46,6 @@ export class EjecEstrategicaComponent implements OnInit {
     private servInstCategorias: servInstCategorias,
     private ElementosService: ElementosService,    
     private metoElementosService: MetoElementosService,
-    private servActAvance: servActAvance,
     protected proyElementosService: ElementosService,
     private servicios: servicios
   ) {}
@@ -130,19 +128,22 @@ export class EjecEstrategicaComponent implements OnInit {
       this.ejecEstrategicaTable = this.indicadoresData.map(indicador => {
         // Buscar el elemento correspondiente
         const elemento = this.elementosData.find(elem => 
-          elem.id_proy_elem_padre === indicador.id_proy_elem_padre
-        );
+          elem.id_proy_elemento === indicador.id_proy_elem_padre
+        );       
         
         // Buscar el avance correspondiente
-        const avance = this.indicadoresAvance.find(av => 
-          av.id_proy_indicador === indicador.id_proy_indicador
-        );
+        const metoElemento = elemento ? this.metoElementosData.find(meto => 
+          meto.id_meto_elemento === elemento.id_meto_elemento
+        ) : null;
   
         return {
           ...indicador,
           ...elemento,
-          selected: false, // Para el checkbox
-          avance: avance || null
+          metoElemento: metoElemento,
+          selected: false,
+          avance: this.indicadoresAvance.find(av => 
+            av.id_proy_indicador === indicador.id_proy_indicador
+          ) || null
         };
       });
   
@@ -304,22 +305,63 @@ export class EjecEstrategicaComponent implements OnInit {
 
   // Función para obtener el nombre del elemento
   getElementoNombre(id_elemento: number): string {
+    // Buscar el elemento en elementosData
     const elemento = this.elementosData.find(
       elem => elem.id_proy_elemento === id_elemento
     );
     
     if (elemento) {
+      // Buscar el meto_elemento correspondiente
       const metoElemento = this.metoElementosData.find(
         meto => meto.id_meto_elemento === elemento.id_meto_elemento
       );
       
       if (metoElemento) {
-        return `${elemento.elemento} (${metoElemento.meto_elemento})`;
+        // Retornar solo el meto_elemento
+        return metoElemento.meto_elemento;
       }
-      return elemento.elemento;
     }
     return '';
   }
+  getElementoPadre(id_proy_elem_padre: number): string {
+  const elemento = this.elementosData.find(
+    elem => elem.id_proy_elemento === id_proy_elem_padre
+  );
+  
+  if (elemento) {
+    const metoElemento = this.metoElementosData.find(
+      meto => meto.id_meto_elemento === elemento.id_meto_elemento
+    );
+    
+    return metoElemento ? metoElemento.meto_elemento : '';
+  }
+  return '';
+}
+
+// Función para obtener el componente del elemento padre
+getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string } {
+  const elemento = this.elementosData.find(
+    elem => elem.id_proy_elemento === id_proy_elem_padre
+  );
+  
+  if (elemento) {
+    const metoElemento = this.metoElementosData.find(
+      meto => meto.id_meto_elemento === elemento.id_meto_elemento
+    );
+    
+    if (metoElemento) {
+      return {
+        sigla: metoElemento.sigla,
+        color: metoElemento.color ? '#' + metoElemento.color : '#FDC82F'
+      };
+    }
+  }
+  
+  return {
+    sigla: '',
+    color: '#FDC82F'
+  };
+}
 
   // Función para manejar el envío del formulario
   onSubmit(form: NgForm) {
@@ -346,40 +388,219 @@ export class EjecEstrategicaComponent implements OnInit {
   }
 
   // Cargar datos de meto_elementos
-loadMetoElementos() {
-  this.metoElementosService.getAllMetoElementos().subscribe(
-    (response) => {
-      if (response && response[0]?.dato) {
-        this.metoElementosData = response[0].dato;
-        // Actualizar los datos del elemento seleccionado si existe
-        if (this.ejecEstrategicaSelected) {
-          this.updateElementoData();
+  loadMetoElementos() {
+    this.metoElementosService.getAllMetoElementos().subscribe(
+      (response) => {
+        if (response && response[0]?.dato) {
+          // Filtrar solo los meto_elementos con id_metodologia = 2
+          this.metoElementosData = response[0].dato.filter(
+            (meto: any) => meto.id_metodologia === 2
+          );
+          
+          // Actualizar los datos si hay un elemento seleccionado
+          if (this.ejecEstrategicaSelected) {
+            this.updateElementoData();
+          }
         }
+      },
+      (error) => {
+        console.error('Error al cargar meto_elementos:', error);
       }
-    },
-    (error) => {
-      console.error('Error al cargar meto_elementos:', error);
-    }
-  );
-}
+    );
+  }
 
 // Función para actualizar los datos del elemento con meto_elementos
 updateElementoData() {
+  // Buscar el elemento padre
   const elemento = this.elementosData.find(
     elem => elem.id_proy_elemento === this.id_proy_elem_padre
   );
   
   if (elemento) {
-    // Buscar el meto_elemento correspondiente
+    // Buscar el meto_elemento correspondiente, filtrando por id_metodologia = 2
     const metoElemento = this.metoElementosData.find(
-      meto => meto.id_meto_elemento === elemento.id_meto_elemento
+      meto => meto.id_meto_elemento === elemento.id_meto_elemento && 
+              meto.id_metodologia === 2
     );
     
     if (metoElemento) {
+      // Actualizar sigla y color desde meto_elemento
       this.sigla = metoElemento.sigla;
-      this.color = '#' + metoElemento.color;
+      this.color = metoElemento.color ? '#' + metoElemento.color : '#FDC82F';
+    } else {
+      // Valores por defecto si no encuentra meto_elemento
+      this.sigla = 'IN';
+      this.color = '#FDC82F';
     }
   }
-}
+  }
+  getComponenteInfo(id_elemento: number): { sigla: string, color: string } {
+    // Buscar el elemento
+    const elemento = this.elementosData.find(
+      elem => elem.id_proy_elemento === id_elemento
+    );
+    
+    if (elemento) {
+      // Buscar el meto_elemento correspondiente
+      const metoElemento = this.metoElementosData.find(
+        meto => meto.id_meto_elemento === elemento.id_meto_elemento
+      );
+      
+      if (metoElemento) {
+        return {
+          sigla: metoElemento.sigla,
+          color: metoElemento.color ? '#' + metoElemento.color : '#FDC82F'
+        };
+      }
+    }
+    
+    // Valores por defecto
+    return {
+      sigla: 'IN',
+      color: '#FDC82F'
+    };
+  }
+
+  // ======= ======= VARIABLES PARA PERIODOS ======= =======
+  periodoEvaluacion: string = 'ME'; // Valor por defecto
+  periodosEvaluacion: any[] = [];
+  fechaInicio: Date;
+  fechaFin: Date;
+  fechaFinAmpliada: Date;
+
+
+  loadPeriodosEvaluacion() {
+    this.servicios.getParametricaByIdTipo(10).subscribe(
+      (response) => {
+        if (response && response.dato) {
+          this.periodosEvaluacion = response.dato;
+          // Actualizar el select de medida
+          this.updateMedidaSelect();
+        }
+      },
+      (error) => {
+        console.error('Error al cargar periodos:', error);
+      }
+    );
+  }
+  
+  // Actualizar el select de medida con los periodos disponibles
+  updateMedidaSelect() {
+    const periodos = this.periodosEvaluacion.map(p => ({
+      value: p.descripcion_subtipo.split(' - ')[0],
+      label: p.descripcion_subtipo
+    }));
+    // Actualizar el modelo de medida
+    this.medida = periodos[0].value;
+  }
+  
+  // Generar fechas según periodicidad
+  generateFechas(periodicidad: string, fechaInicio: Date, fechaFin: Date): Date[] {
+    const fechas: Date[] = [];
+    let currentDate = new Date(fechaInicio);
+    
+    while (currentDate <= fechaFin) {
+      fechas.push(new Date(currentDate));
+      
+      switch (periodicidad) {
+        case 'ME':
+          currentDate.setMonth(currentDate.getMonth() + 1);
+          break;
+        case 'BI':
+          currentDate.setMonth(currentDate.getMonth() + 2);
+          break;
+        case 'TR':
+          currentDate.setMonth(currentDate.getMonth() + 3);
+          break;
+        case 'CU':
+          currentDate.setMonth(currentDate.getMonth() + 4);
+          break;
+        case 'SE':
+          currentDate.setMonth(currentDate.getMonth() + 6);
+          break;
+        case 'AN':
+          currentDate.setFullYear(currentDate.getFullYear() + 1);
+          break;
+        case 'FA':
+          // Fechas específicas mayo-diciembre
+          fechas.length = 0; // Limpiar array
+          fechas.push(new Date(currentDate.getFullYear(), 4, 31)); // Mayo
+          fechas.push(new Date(currentDate.getFullYear(), 11, 31)); // Diciembre
+          return fechas;
+      }
+    }
+    return fechas;
+  }
+  
+  // Generar registros de avance
+  generateAvanceRecords(indicadorId: number) {
+    const fechas = this.generateFechas(
+      this.medida,
+      this.fechaInicio,
+      this.fechaFinAmpliada || this.fechaFin
+    );
+  
+    const avances = fechas.map((fecha, index) => ({
+      id_proy_indica_avance: null,
+      id_proy_indicador: indicadorId,
+      fecha_reportar: fecha,
+      valor_reportado: null,
+      valor_esperado: this.calcularValorEsperado(index, fechas.length)
+    }));
+    return avances;
+  }
+  
+  // Calcular valor esperado
+  calcularValorEsperado(index: number, total: number): number {
+    if (index === 0) return parseFloat(this.linea_base);
+    if (index === total - 1) return parseFloat(this.meta_final);
+    
+    // Calcular progreso esperado entre línea base y meta final
+    const incremento = (parseFloat(this.meta_final) - parseFloat(this.linea_base)) / (total - 1);
+    return parseFloat(this.linea_base) + (incremento * index);
+  }
+  
+  // Abrir modal de edición de avance
+  openEditPeriodoModal(modal: any, avanceId: number) {
+    const avance = this.indicadoresAvance.find(a => a.id_proy_indica_avance === avanceId);
+    
+    if (avance) {
+      // Verificar si el período ya culminó
+      const fechaActual = new Date();
+      const fechaReporte = new Date(avance.fecha_reportar);
+      
+      if (fechaReporte < fechaActual) {
+        console.log('Este período ya no puede ser editado');
+        return;
+      }
+      
+      // Abrir modal con los datos del avance
+      this.modalService.open(modal, { size: 'lg' });
+    }
+  }
+  
+  // Guardar cambios en el avance
+  saveAvance(avance: any) {
+    // Aquí implementarías la llamada al servicio para guardar los cambios
+    this.servIndicadorAvance.editIndicadorAvance(avance).subscribe(
+      (response) => {
+        console.log('Avance actualizado exitosamente');
+        this.modalService.dismissAll();
+        this.getEjecucionEstrategicaData(); // Recargar datos
+      },
+      (error) => {
+        console.error('Error al actualizar avance:', error);
+      }
+    );
+  }
+  
+  // Convertir valor a número para la barra de progreso
+  convertToNumber(value: any): number {
+    if (!value) return 0;
+    if (typeof value === 'string') {
+      value = value.replace('$', '').replace(',', '');
+    }
+    return parseFloat(value);
+  }
 
 }

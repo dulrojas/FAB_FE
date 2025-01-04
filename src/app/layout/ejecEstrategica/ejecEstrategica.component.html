@@ -146,13 +146,19 @@
                 <div class="row col col-xl-12 col-lg-12 mt-auto">
                   <!-- ======= ======= TIPO ======= ======= -->
                   <div class="col col-xl-3 col-lg-3 mt-auto">
-                    <label for="id_proy_elem_padre">Elemento</label>
-                    <input type="text" class="form-control" id="id_proy_elem_padre"
-                        [value]="getElementoNombre(id_proy_elem_padre)" disabled />
-                 </div>                  
+                    <label for="elemento_indicador">Tipo</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="elemento_indicador"
+                           value="Indicador" 
+                           disabled />
+                 </div>                    
                   <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                   <div class="col col-xl-1 col-lg-1 mt-auto">
-                    <label class="btn-view-bg-3" [style.backgroundColor]="'#FDC82F'"> IN </label>
+                    <label class="btn-view-bg-3" 
+                           [style.backgroundColor]="'#FDC82F'">
+                        IN
+                    </label>
                   </div>
                   <!-- ======= ======= Espacio ======= ======= -->
                   <div class="col col-xl-6 col-lg-6"></div>
@@ -252,19 +258,19 @@
                       </div>
                       <!-- Tipo -->
                       <div class="col col-xl-3 col-lg-3 mt-auto">
-                        <label for="id_proy_elem_padre">Elemento</label>
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="id_proy_elem_padre"
-                            [value]="getElementoNombre(id_proy_elem_padre)"
-                            disabled />
-                    </div>
+                        <label for="elemento_padre">Elemento</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="elemento_padre"
+                               [value]="getElementoPadre(id_proy_elem_padre)" 
+                               disabled />
+                      </div>
                       <!-- Componente -->
                       <div class="col col-xl-1 col-lg-1 mt-auto">
-                        <label class="btn-view-bg-3" [style.backgroundColor]="color">{{
-                            sigla
-                        }}</label>
+                        <label class="btn-view-bg-3" 
+                               [style.backgroundColor]="getComponentePadre(id_proy_elem_padre).color">
+                            {{ getComponentePadre(id_proy_elem_padre).sigla }}
+                        </label>
                       </div>
                       <!-- Abuelo este se conectara al codigo del Objetivo General que es el padre de todos el abuelo como tal por eso -->
                       <div class="col col-xl-3 col-lg-3">
