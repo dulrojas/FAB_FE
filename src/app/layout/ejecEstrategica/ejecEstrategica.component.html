@@ -79,7 +79,7 @@
                   <input type="checkbox" [(ngModel)]="ejecEstrategica.selected"
                     (change)="checkboxChanged(ejecEstrategica)" id="checkbox-{{ i }}" name="checkbox-{{ i }}" />
                 </td>
-                <!-- CODIGO -->
+                <!-- CODIGO DEL INDICADOR -->
                 <td>{{ ejecEstrategica.codigo }}</td>
                 <!-- NOMBRE DEL INDICADOR -->
                 <td>{{ ejecEstrategica.indicador }}</td>
@@ -144,7 +144,7 @@
                 <!-- CONECTA CON PROY_INDICADOR -->
                 <!-- ======= ======= TIPO - SUBTIPO - CODIGO ======= ======= -->
                 <div class="row col col-xl-12 col-lg-12 mt-auto">
-                  <!-- ======= ======= TIPO ======= ======= -->
+                  <!-- ======= ======= TIPO DE ELEMENTO PARA INDICADOR EN ESTE CASO SOLO LLAMA A INDICADOR ======= ======= -->
                   <div class="col col-xl-3 col-lg-3 mt-auto">
                     <label for="elemento_indicador">Tipo</label>
                     <input type="text" 
@@ -249,14 +249,14 @@
                   <!-- Padre -->
                   <div class="col-12 mt-2 mb-2 p-2" style="border: 1px solid white">
                     <div class="row">
-                      <!-- Código hacer una funcion que indetifique el codigo indicador de la tabla y busque en proy_elementos al padre -->
+                      <!-- CODIGO ESTE LLAMA AL CODIGO DEL PADRE DEL INDICADOR -->
                       <div class="col col-xl-3 col-lg-3">
                         <label for="codigoPadre">Código Padre</label>
                         <input class="form-control" type="text" id="codigoPadre" 
                                name="codigoPadre" [(ngModel)]="codigoPadre"
                                [disabled]="true" disabled />
                       </div>
-                      <!-- Tipo -->
+                      <!-- TIPO ESTE LLAMARA AL ELEMENTO QUE ES EL PADRE DEL INDICADOR-->
                       <div class="col col-xl-3 col-lg-3 mt-auto">
                         <label for="elemento_padre">Elemento</label>
                         <input type="text" 
@@ -269,10 +269,10 @@
                       <div class="col col-xl-1 col-lg-1 mt-auto">
                         <label class="btn-view-bg-3" 
                                [style.backgroundColor]="getComponentePadre(id_proy_elem_padre).color">
-                            {{ getComponentePadre(id_proy_elem_padre).sigla }}
+                          {{ getComponentePadre(id_proy_elem_padre).sigla }}
                         </label>
                       </div>
-                      <!-- Abuelo este se conectara al codigo del Objetivo General que es el padre de todos el abuelo como tal por eso -->
+                      <!-- ABUELO ESTE LLAMARA AL OBJETIVO GENERAL DEL QUE FORME PARTE EL INDICADOR YA QUE ES DE EL QUE PARTEN LOS HIJOS POR ESO EL ES EL ABUELO SE PUEDE DECIR  -->
                       <div class="col col-xl-3 col-lg-3">
                         <label for="codigoAbuelo">Abuelo</label>
                         <input class="form-control" type="text" id="codigoAbuelo" 
@@ -348,7 +348,7 @@
 
                           <!-- Periodo   this.indicadoresAvance[] -->
                           <td style="text-align: center">
-                            {{ this.indicadoresAvance[i]?.fecha_hora_reporte }}
+                            {{ item.fecha_reportar | date:'dd/MM/yyyy' }}
                           </td>
 
                           <!-- Valor esperado -->
@@ -359,16 +359,10 @@
                             }}
                           </td>
 
-                          <!-- Progreso con barra de progreso -->
+                          <!-- Progreso -->
                           <td style="text-align: center">
-                            <div class="progress" style="height: 20px; width: 100%">
-                              <div class="progress-bar bg-success" role="progressbar" 
-                              [style.width.%]="convertToNumber(this.indicadoresAvance[i]?.valor_esperado)" 
-                              [attr.aria-valuenow]="convertToNumber(this.indicadoresAvance[i]?.valor_reportado )" 
-                              aria-valuemin="0" aria-valuemax="100">
-                              </div>
-                            </div>
-                            <span>{{ this.indicadoresAvance[i]?.valor_reportado }}%</span>
+                            {{ convertToNumber(this.indicadoresAvance[i]?.valor_reportado)
+                            | number:'1.0-2' }}
                           </td>
 
                           <!-- Notas -->
@@ -384,14 +378,11 @@
                           </td>
 
                           <!-- Botón de edición -->
-                          <td>
-                            <button
-                                type="button"
-                                class="btn btn-link"
-                                (click)="openEditPeriodoModal(editAvanceModal, id)">
-                                ...
+                          <td style="text-align: center">
+                            <button class="btn btn-link" (click)="openEditPeriodoModal(editAvanceModal, item)">
+                              <i class="fa fa-ellipsis-h"></i>
                             </button>
-                        </td>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -474,7 +465,17 @@
                   maxlength="255"
               ></textarea>
           </div>
-       
+          <div class="form-group mb-3">
+            <label for="editEvidencia">Evidencia:</label>
+            <input
+              type="file"
+              id="editEvidencia"
+              class="form-control"
+              (change)="onFileSelected($event)"
+              accept=".pdf,.doc,.docx,.xls,.xlsx"
+            />
+            <small class="text-muted">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX</small>
+          </div>
          
               <div
                   class="d-flex justify-content-center"

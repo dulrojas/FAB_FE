@@ -1,4 +1,5 @@
 import { Component, OnInit, TemplateRef, EventEmitter, Output} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { NgForm } from '@angular/forms';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -65,8 +66,7 @@ export class EjecEstrategicaComponent implements OnInit {
 
     this.getEjecucionEstrategicaData();
     this.loadMetoElementos();
-    this.loadCategorias();
-    
+    this.loadCategorias();    
     }
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
   // ======= ======= ======= CONTADOR =======  ======= =======
@@ -92,11 +92,8 @@ export class EjecEstrategicaComponent implements OnInit {
         if (data && data[0]?.dato?.[0]) {
           this.datosIndicador = data[0].dato;
           this.indicadoresData = this.datosIndicador;
-          this.combinarDatos(); // Llamar a función para combinar datos
+          this.combinarDatos();
         }
-      },
-      (error) => {
-        console.error('Error al obtener datos del Indicador:', error);
       }
     );
   
@@ -130,29 +127,28 @@ export class EjecEstrategicaComponent implements OnInit {
   // Función para combinar los datos
   combinarDatos() {
     if (this.indicadoresData.length > 0 && this.elementosData.length > 0) {
-      this.ejecEstrategicaTable = this.indicadoresData.map(indicador => {
-        // Buscar el elemento correspondiente
-        const elemento = this.elementosData.find(elem => 
-          elem.id_proy_elemento === indicador.id_proy_elem_padre
-        );       
-        
-        // Buscar el avance correspondiente
-        const metoElemento = elemento ? this.metoElementosData.find(meto => 
-          meto.id_meto_elemento === elemento.id_meto_elemento
-        ) : null;
+      this.ejecEstrategicaTable = this.indicadoresData
+        .filter(indicador => this.isIndicadorActivo(indicador.id_estado))
+        .map(indicador => {
+          const avanceIndicador = this.indicadoresAvance.find(
+            avance => avance.id_proy_indicador === indicador.id_proy_indicador
+          );
   
-        return {
-          ...indicador,
-          ...elemento,
-          metoElemento: metoElemento,
-          selected: false,
-          avance: this.indicadoresAvance.find(av => 
-            av.id_proy_indicador === indicador.id_proy_indicador
-          ) || null
-        };
-      });
+          const elemento = this.elementosData.find(
+            elem => elem.id_proy_elemento === indicador.id_proy_elem_padre && 
+                   this.isElementoActivo(elem.idp_estado)
+          );
+  
+          return {
+            ...indicador,
+            elemento: elemento,
+            avance: avanceIndicador || null,
+            selected: false
+          };
+        });
   
       this.totalLength = this.ejecEstrategicaTable.length;
+      this.countHeaderData();
     }
   }
   calculateAvancePer(item: any): number {
@@ -218,14 +214,15 @@ export class EjecEstrategicaComponent implements OnInit {
       this.sigla = this.ejecEstrategicaSelected.sigla;
       this.color = '#' + this.ejecEstrategicaSelected.color;
 
-      // Buscar datos del padre en elementosData
-      const elementoPadre = this.elementosData.find(
-        elem => elem.id_proy_elemento === this.id_proy_elem_padre
-      );
+     // Buscar el elemento padre
+    const elementoPadre = this.elementosData.find(
+      elem => elem.id_proy_elemento === this.id_proy_elem_padre
+    );
 
-      if (elementoPadre) {
-        this.codigoPadre = elementoPadre.codigo;
-        this.descripcionPadre = elementoPadre.descripcion;
+
+    if (elementoPadre) {
+      this.codigoPadre = elementoPadre.codigo;
+      this.descripcionPadre = elementoPadre.descripcion;
 
         // Buscar el abuelo (elemento padre del padre)
         const elementoAbuelo = this.elementosData.find(
@@ -328,42 +325,64 @@ export class EjecEstrategicaComponent implements OnInit {
     }
     return '';
   }
+  // Función para verificar si un elemento está activo
+  isElementoActivo(idp_estado: number): boolean {
+    return idp_estado === 1;
+  }
+
+  // Función para verificar si un indicador está activo
+  isIndicadorActivo(id_estado: number): boolean {
+    return id_estado === 1;
+  }
+
   getElementoPadre(id_proy_elem_padre: number): string {
-  const elemento = this.elementosData.find(
-    elem => elem.id_proy_elemento === id_proy_elem_padre
-  );
-  
-  if (elemento) {
-    const metoElemento = this.metoElementosData.find(
-      meto => meto.id_meto_elemento === elemento.id_meto_elemento
+    console.log('ID elemento padre:', id_proy_elem_padre); // Para debugging
+    console.log('Elementos disponibles:', this.elementosData); // Para debugging
+    
+    const elementoPadre = this.elementosData.find(
+      elem => elem.id_proy_elemento === id_proy_elem_padre && this.isElementoActivo(elem.idp_estado)
     );
     
-    return metoElemento ? metoElemento.meto_elemento : '';
+    if (elementoPadre && elementoPadre.id_meto_elemento) {
+      console.log('Elemento padre encontrado:', elementoPadre); // Para debugging
+      console.log('Meto elementos disponibles:', this.metoElementosData); // Para debugging
+      
+      // Asegurarnos de que metoElementosData está cargado
+      if (this.metoElementosData && this.metoElementosData.length > 0) {
+        const metoElemento = this.metoElementosData.find(
+          meto => meto.id_meto_elemento === elementoPadre.id_meto_elemento
+        );
+        
+        console.log('Meto elemento encontrado:', metoElemento); // Para debugging
+        return metoElemento ? metoElemento.meto_elemento : 'No encontrado';
+      }
+    }
+    return 'No encontrado';
   }
-  return '';
-}
+  
 
 // Función para obtener el componente del elemento padre
 getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string } {
-  const elemento = this.elementosData.find(
-    elem => elem.id_proy_elemento === id_proy_elem_padre
+  const elementoPadre = this.elementosData.find(
+    elem => elem.id_proy_elemento === id_proy_elem_padre && this.isElementoActivo(elem.idp_estado)
   );
   
-  if (elemento) {
+  if (elementoPadre) {
     const metoElemento = this.metoElementosData.find(
-      meto => meto.id_meto_elemento === elemento.id_meto_elemento
+      meto => meto.id_meto_elemento === elementoPadre.id_meto_elemento
     );
     
     if (metoElemento) {
       return {
         sigla: metoElemento.sigla,
-        color: metoElemento.color ? '#' + metoElemento.color : '#FDC82F'
+        color: '#' + metoElemento.color // Añadimos el # al color
       };
     }
   }
   
+  // Valores por defecto
   return {
-    sigla: '',
+    sigla: 'IN',
     color: '#FDC82F'
   };
 }
@@ -566,8 +585,10 @@ updateElementoData() {
   }
   
   // Abrir modal de edición de avance
-  openEditPeriodoModal(modal: any, avanceId: number) {
-    const avance = this.indicadoresAvance.find(a => a.id_proy_indica_avance === avanceId);
+  openEditPeriodoModal(modal: any, idAvance: number) {
+    const avance = this.indicadoresAvance.find(
+      a => a.id_proy_indica_avance === idAvance
+    );
     
     if (avance) {
       // Verificar si el período ya culminó
@@ -580,6 +601,7 @@ updateElementoData() {
       }
       
       // Abrir modal con los datos del avance
+      this.editAvance = { ...avance };
       this.modalService.open(modal, { size: 'lg' });
     }
   }
@@ -606,6 +628,96 @@ updateElementoData() {
       value = value.replace('$', '').replace(',', '');
     }
     return parseFloat(value);
+  }
+
+  // Variables para el manejo de avances
+  editAvance: any = {
+    id_proy_indica_avance: null,
+    fecha_reportar: '',
+    valor_esperado: 0,
+    valor_reportado: 0,
+    comentarios: '',
+    ruta_evidencia: ''
+  };
+  selectedFile: File | null = null;
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
+  
+  // Función para calcular el progreso
+calculateProgress(reportado: number, esperado: number): number {
+  if (!esperado) return 0;
+  const progress = (reportado / esperado) * 100;
+  return Math.min(progress, 100); // No permitir que supere el 100%
+}
+
+// Función para guardar los cambios del avance
+async onEditAvanceSubmit() {
+  try {
+    // Si hay un archivo seleccionado, primero subimos el archivo
+    if (this.selectedFile) {
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      
+      // Aquí deberías tener un servicio para subir archivos
+    }
+
+    // Luego actualizamos el avance
+    this.servIndicadorAvance.editIndicadorAvance(this.editAvance).subscribe(
+      (response) => {
+        this.getEjecucionEstrategicaData();
+        this.modalService.dismissAll();
+        this.selectedFile = null;
+      },
+      (error) => {
+        console.error('Error al actualizar el avance:', error);
+      }
+    );
+  } catch (error) {
+    console.error('Error al procesar la actualización:', error);
+  }
+}
+
+
+
+
+
+
+
+  countHeaderData() {
+    if (this.ejecEstrategicaTable && this.ejecEstrategicaTable.length > 0) {
+      // Total de indicadores
+      this.headerDataNro01 = this.ejecEstrategicaTable.length;
+  
+      // Contadores para las diferentes métricas
+      this.headerDataNro02 = this.ejecEstrategicaTable.filter(item => {
+        if (item.avance?.valor_reportado && item.avance?.valor_esperado) {
+          const reportado = parseFloat(item.avance.valor_reportado.replace('$', ''));
+          const esperado = parseFloat(item.avance.valor_esperado.replace('$', ''));
+          return reportado >= esperado;
+        }
+        return false;
+      }).length;
+  
+      // Indicadores sin avance
+      this.headerDataNro03 = this.ejecEstrategicaTable.filter(item => 
+        !item.avance?.valor_reportado || 
+        parseFloat(item.avance.valor_reportado.replace('$', '')) === 0
+      ).length;
+  
+      // Meta final cumplida
+      this.headerDataNro04 = this.ejecEstrategicaTable.filter(item => {
+        if (item.avance?.valor_reportado && item.meta_final) {
+          const reportado = parseFloat(item.avance.valor_reportado.replace('$', ''));
+          const metaFinal = parseFloat(item.meta_final.replace('$', ''));
+          return reportado >= metaFinal;
+        }
+        return false;
+      }).length;
+    }
   }
 
 }
