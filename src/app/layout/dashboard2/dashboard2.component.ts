@@ -41,7 +41,9 @@ export class Dashboard2Component implements OnInit {
       this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.currentPerProRol = selectedPro.rol; 
 
-      this.getDashboardData();      
+      this.getDashboardData();
+      this.selectionChange.emit(selectedPro);
+            
     }
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
     // Contadores de Header
