@@ -109,11 +109,11 @@
                       <div class="text-center">
                         <h6>Presupuesto del Periodo</h6>
                         <h5 class="presupuesto mb-3">
-                          {{moneda_presupuesto}}{{ formatearMoneda(presupuestoGestion.presupuesto_actividad) }}
+                          {{moneda_presupuesto}}{{presupuestoGestion.presupuesto_formateado}}
                         </h5>
                         <h6>Ejecutado</h6>
                         <h5 class="presupuesto" style="background-color: #ffffff; color: #000000;">
-                          {{moneda_presupuesto}}{{ formatearMoneda(presupuestoGestion.ejecutado) }}
+                          {{moneda_presupuesto}}{{presupuestoGestion.ejecutado_formateado}}
                         </h5>
                       </div>
                       <div class="col-md-6">

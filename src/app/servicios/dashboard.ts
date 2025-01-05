@@ -14,7 +14,10 @@ export class ServDashboard {
   // ======= ======= ======= GET DASHBOARD DATA ======= =======
   getDashboardData(idProyecto: number): Observable<any> {
     const fechaActual = new Date();
-    const fechaFormateada = `${fechaActual.getFullYear()}-12-31`;
+    const año = fechaActual.getFullYear();
+    const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
+    const dia = String(fechaActual.getDate()).padStart(2, '0');
+    const fechaFormateada = `${año}-${mes}-${dia}`;
     
     const params = {
       "procedure_name": "sp_dashboards",
