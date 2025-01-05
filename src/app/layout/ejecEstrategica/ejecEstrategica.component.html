@@ -69,12 +69,12 @@
                 <th style="background-color: #699762; text-align: center">Avance Per.</th>
                 <th>Meta Final</th>
                 <th>Avance</th>
-                <th>Descripcion</th>
+                <th>Descripción</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr *ngFor="let ejecEstrategica of ejecEstrategicaTable; let i = index">
+               <tr *ngFor="let ejecEstrategica of ejecEstrategicaTable; let i = index">
                 <td>
                   <input type="checkbox" [(ngModel)]="ejecEstrategica.selected"
                     (change)="checkboxChanged(ejecEstrategica)" id="checkbox-{{ i }}" name="checkbox-{{ i }}" />
@@ -84,33 +84,32 @@
                 <!-- NOMBRE DEL INDICADOR -->
                 <td>{{ ejecEstrategica.indicador }}</td>
                 <!-- FECHA A REPORTAR -->                
-                <td>{{this.indicadoresAvance[i]?.fecha_reportar || '-'}}</td>
+                <td>{{ ejecEstrategica.avance?.fecha_reportar | date:'dd/MM/yyyy' || '-' }}</td>
                 <!-- PROGRESO SE CONECTA A VALOR REPORTADO-->
-                <td>{{ this.indicadoresAvance[i]?.valor_reportado || '-' }}</td>
+                <td>{{ ejecEstrategica.avance?.valor_reportado || '-' }}</td>
                 <!-- MEDIDA -->
                 <td>{{ ejecEstrategica.medida }}</td>
                 <!-- NOTAS SE CONECTA A COMENTARIOS DE IND.AVANCE -->
-                <td>{{ this.indicadoresAvance[i]?.comentarios || '-' }}</td>
+                <td>{{ ejecEstrategica.avance?.comentarios || '-' }}</td>
                 <!-- META PER SE CONECTA A VALOR ESPERADO -->
-                <td>{{ this.indicadoresAvance[i]?.valor_esperado || '-' }}</td>
-                <!-- “Avance Per.”, pone un gráfico equivalente a un avance porcentual entre la “Meta Per” que es el “valor_esperado” de anterior pantalla y “Progreso” (valor_reportado). -->
+                <td>{{ ejecEstrategica.avance?.valor_esperado || '-' }}</td>
+                <!-- AVANCE PORCENTUAL -->
                 <td>
                   <div class="progress-container">
                     <div class="progress-text">{{ calculateAvancePer(ejecEstrategica) }}%</div>
                     <div class="progress-bar per" 
-                         [style.width]="calculateAvancePer(ejecEstrategica) + '%'">
+                        [style.width]="calculateAvancePer(ejecEstrategica) + '%'">
                     </div>
                   </div>
                 </td>
                 <!-- META FINAL -->
                 <td>{{ ejecEstrategica.meta_final }}</td>
-
-                <!-- “Avance”, pone un gráfico equivalente a un avance porcentual entre “valor_reportado” y “meta_final”. -->
+                <!-- AVANCE TOTAL -->
                 <td>
                   <div class="progress-container">
                     <div class="progress-text">{{ calculateAvanceTotal(ejecEstrategica) }}%</div>
                     <div class="progress-bar total" 
-                         [style.width]="calculateAvanceTotal(ejecEstrategica) + '%'">
+                        [style.width]="calculateAvanceTotal(ejecEstrategica) + '%'">
                     </div>
                   </div>
                 </td>
@@ -238,7 +237,7 @@
                   </div>
                   <!-- DESCRIPCION -->
                   <div class="col col-xl-12 col-lg-12 mt-auto">
-                    <label for="descripcion">Descripcion</label>
+                    <label for="descripcion">Descripción</label>
                     <input class="form-control" type="text" id="descripcion" name="descripcion"
                       [(ngModel)]="descripcion" [disabled]="!editMode" />
                   </div>
@@ -378,10 +377,12 @@
                           </td>
 
                           <!-- Botón de edición -->
-                          <td style="text-align: center">
-                            <button class="btn btn-link" (click)="openEditPeriodoModal(editAvanceModal, item)">
+                          <td style="text-align: center">                            
+                            <button 
+                              class="btn btn-link" 
+                              (click)="openEditAvanceModal(editAvanceModal, item)">
                               <i class="fa fa-ellipsis-h"></i>
-                            </button>
+                            </button>                            
                           </td>
                         </tr>
                       </tbody>
@@ -410,14 +411,14 @@
 </ng-template>
           
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
- <!-- Formulario de Edición -->
+ <!-- Formulario de Edición para reporte llama a los datos de proy:indicador_avance-->
 <ng-template #editAvanceModal let-modal>
   <div class="modal-header">
       <h4 class="modal-title">Editar Avance de Indicador</h4>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cerrar')"></button>
   </div>
   <div class="modal-body">
-      <form #editAvanceForm="ngForm" (ngSubmit)="onEditSubmit()">
+    <form #editAvanceForm="ngForm" (ngSubmit)="onEditSubmit()">
           <div class="form-group">
               <label for="editFechaReportar">Fecha a Reportar:</label>
               <input
@@ -474,7 +475,7 @@
               (change)="onFileSelected($event)"
               accept=".pdf,.doc,.docx,.xls,.xlsx"
             />
-            <small class="text-muted">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX</small>
+            <small class="text-muted">Formatos permitidos: PDF, DOC</small>
           </div>
          
               <div

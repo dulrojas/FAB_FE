@@ -1,5 +1,4 @@
 import { Component, OnInit, TemplateRef, EventEmitter, Output} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { NgForm } from '@angular/forms';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -27,13 +26,15 @@ export class EjecEstrategicaComponent implements OnInit {
   datosIndicador: any[] = [];
   indicadoresData: any[] = [];
   // ======= ======= VARIABLES INDICADOR AVANCE ======= =======
-  indicadoresAvance: any[] = [];
+  datosIndicadoresAvance: any[] = [];
+  indicadoresAvance: any[] = []; 
   // ======= ======= VARIABLES ELEMENTOS ======= =======
   elementosData: any[] = [];
   ejecEstrategicaTable: any[] = [];
   // ======= ======= VARIABLES METO ELEMENTOS ======= =======
   metoElementosData: any[] = [];
   selectedMetoElemento: any = null;
+  elementosCompletos: any[] = [];
   // ======= ======= VARIABLES PAGINACION ======= =======
     mainPage = 1;
     mainPageSize = 10;
@@ -67,6 +68,7 @@ export class EjecEstrategicaComponent implements OnInit {
     this.getEjecucionEstrategicaData();
     this.loadMetoElementos();
     this.loadCategorias();    
+
     }
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
   // ======= ======= ======= CONTADOR =======  ======= =======
@@ -82,6 +84,8 @@ export class EjecEstrategicaComponent implements OnInit {
     this.getEjecucionEstrategicaData();
     this.loadMetoElementos();
     this.loadCategorias();
+    this.loadPeriodosEvaluacion();
+    
   }
   // ======= ======= COMBINACION DE DATOS LLAMADOS PARA LA TABLA PRINCIPAL ======= =======
 
@@ -101,8 +105,9 @@ export class EjecEstrategicaComponent implements OnInit {
     this.servIndicadorAvance.getIndicadoresAvance().subscribe(
       (data) => {
         if (data && data[0]?.dato?.[0]) {
-          this.indicadoresAvance = data[0].dato;
-          this.combinarDatos(); // Llamar a función para combinar datos
+          this.datosIndicadoresAvance = data[0].dato; // Guardamos los datos originales
+          this.indicadoresAvance = [...this.datosIndicadoresAvance]; // Hacemos una copia
+          this.combinarDatos();
         }
       },
       (error) => {
@@ -127,29 +132,50 @@ export class EjecEstrategicaComponent implements OnInit {
   // Función para combinar los datos
   combinarDatos() {
     if (this.indicadoresData.length > 0 && this.elementosData.length > 0) {
-      this.ejecEstrategicaTable = this.indicadoresData
-        .filter(indicador => this.isIndicadorActivo(indicador.id_estado))
-        .map(indicador => {
-          const avanceIndicador = this.indicadoresAvance.find(
-            avance => avance.id_proy_indicador === indicador.id_proy_indicador
-          );
+      // Primero filtramos los indicadores activos
+      const indicadoresActivos = this.indicadoresData.filter(
+        indicador => this.isIndicadorActivo(indicador.id_estado)
+      );
   
-          const elemento = this.elementosData.find(
-            elem => elem.id_proy_elemento === indicador.id_proy_elem_padre && 
-                   this.isElementoActivo(elem.idp_estado)
-          );
+      this.ejecEstrategicaTable = indicadoresActivos.map(indicador => {
+        // Buscamos todos los avances relacionados con este indicador
+        const avancesIndicador = this.datosIndicadoresAvance.filter(
+          avance => avance.id_proy_indicador === indicador.id_proy_indicador
+        );
   
-          return {
-            ...indicador,
-            elemento: elemento,
-            avance: avanceIndicador || null,
-            selected: false
-          };
-        });
+        // Tomamos el último avance registrado (ordenado por fecha)
+        const ultimoAvance = avancesIndicador.length > 0 ? 
+          avancesIndicador.sort((a, b) => 
+            new Date(b.fecha_reportar).getTime() - new Date(a.fecha_reportar).getTime()
+          )[0] : null;
+  
+        const elemento = this.elementosData.find(
+          elem => elem.id_proy_elemento === indicador.id_proy_elem_padre && 
+                 this.isElementoActivo(elem.idp_estado)
+        );
+  
+        return {
+          ...indicador,
+          elemento: elemento,
+          avance: ultimoAvance,
+          avances: avancesIndicador, // Guardamos todos los avances
+          selected: false
+        };
+      });
   
       this.totalLength = this.ejecEstrategicaTable.length;
       this.countHeaderData();
     }
+  }
+  getElementoInfo(id_elemento: number) {
+    const elemento = this.elementosCompletos?.find(
+      elem => elem.id_proy_elemento === id_elemento
+    );
+    return elemento?.metoInfo || { 
+      sigla: 'IN', 
+      color: '#FDC82F',
+      descripcion: 'No encontrado'
+    };
   }
   calculateAvancePer(item: any): number {
     if (!item.avance?.valor_reportado || !item.avance?.valor_esperado) return 0;
@@ -336,25 +362,17 @@ export class EjecEstrategicaComponent implements OnInit {
   }
 
   getElementoPadre(id_proy_elem_padre: number): string {
-    console.log('ID elemento padre:', id_proy_elem_padre); // Para debugging
-    console.log('Elementos disponibles:', this.elementosData); // Para debugging
-    
     const elementoPadre = this.elementosData.find(
-      elem => elem.id_proy_elemento === id_proy_elem_padre && this.isElementoActivo(elem.idp_estado)
+      elem => elem.id_proy_elemento === id_proy_elem_padre
     );
     
-    if (elementoPadre && elementoPadre.id_meto_elemento) {
-      console.log('Elemento padre encontrado:', elementoPadre); // Para debugging
-      console.log('Meto elementos disponibles:', this.metoElementosData); // Para debugging
+    if (elementoPadre) {
+      const metoElemento = this.metoElementosData.find(
+        meto => meto.id_meto_elemento === elementoPadre.id_meto_elemento
+      );
       
-      // Asegurarnos de que metoElementosData está cargado
-      if (this.metoElementosData && this.metoElementosData.length > 0) {
-        const metoElemento = this.metoElementosData.find(
-          meto => meto.id_meto_elemento === elementoPadre.id_meto_elemento
-        );
-        
-        console.log('Meto elemento encontrado:', metoElemento); // Para debugging
-        return metoElemento ? metoElemento.meto_elemento : 'No encontrado';
+      if (metoElemento) {
+        return elementoPadre.descripcion || 'No encontrado';
       }
     }
     return 'No encontrado';
@@ -364,23 +382,21 @@ export class EjecEstrategicaComponent implements OnInit {
 // Función para obtener el componente del elemento padre
 getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string } {
   const elementoPadre = this.elementosData.find(
-    elem => elem.id_proy_elemento === id_proy_elem_padre && this.isElementoActivo(elem.idp_estado)
+    elem => elem.id_proy_elemento === id_proy_elem_padre
   );
   
-  if (elementoPadre) {
+  if (elementoPadre && this.metoElementosData.length > 0) {
     const metoElemento = this.metoElementosData.find(
       meto => meto.id_meto_elemento === elementoPadre.id_meto_elemento
     );
     
     if (metoElemento) {
       return {
-        sigla: metoElemento.sigla,
-        color: '#' + metoElemento.color // Añadimos el # al color
+        sigla: metoElemento.sigla || 'IN',
+        color: metoElemento.color ? '#' + metoElemento.color : '#FDC82F'
       };
     }
   }
-  
-  // Valores por defecto
   return {
     sigla: 'IN',
     color: '#FDC82F'
@@ -406,8 +422,17 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         }
       });
       this.ejecEstrategicaSelected = item;
+      
+      // Filtrar los avances para el indicador seleccionado
+      this.indicadoresAvance = this.datosIndicadoresAvance.filter(
+        avance => avance.id_proy_indicador === item.id_proy_indicador
+      ).sort((a, b) => 
+        new Date(b.fecha_reportar).getTime() - new Date(a.fecha_reportar).getTime()
+      );
     } else {
       this.ejecEstrategicaSelected = null;
+      // Restaurar el array original
+      this.indicadoresAvance = [...this.datosIndicadoresAvance];
     }
   }
 
@@ -585,26 +610,35 @@ updateElementoData() {
   }
   
   // Abrir modal de edición de avance
-  openEditPeriodoModal(modal: any, idAvance: number) {
-    const avance = this.indicadoresAvance.find(
-      a => a.id_proy_indica_avance === idAvance
-    );
-    
-    if (avance) {
-      // Verificar si el período ya culminó
-      const fechaActual = new Date();
-      const fechaReporte = new Date(avance.fecha_reportar);
-      
-      if (fechaReporte < fechaActual) {
-        console.log('Este período ya no puede ser editado');
-        return;
-      }
-      
-      // Abrir modal con los datos del avance
-      this.editAvance = { ...avance };
-      this.modalService.open(modal, { size: 'lg' });
+  openEditAvanceModal(modal: any, item: any) {
+    if (!this.ejecEstrategicaSelected) {
+      console.error('No hay indicador seleccionado');
+      return;
     }
+  
+    this.editAvance = {
+      id_proy_indica_avance: item.id_proy_indica_avance,
+      id_proy_indicador: this.ejecEstrategicaSelected.id_proy_indicador,
+      fecha_reportar: new Date(item.fecha_reportar).toISOString().split('T')[0],
+      valor_esperado: this.limpiarValorNumerico(item.valor_esperado),
+      valor_reportado: this.limpiarValorNumerico(item.valor_reportado),
+      comentarios: item.comentarios || '',
+      ruta_evidencia: item.ruta_evidencia || ''
+    };
+  
+    this.modalService.open(modal, {
+      size: 'lg',
+      backdrop: 'static'
+    });
   }
+  // Función auxiliar para limpiar valores numéricos
+  limpiarValorNumerico(valor: string | number): number {
+    if (typeof valor === 'string') {
+      return parseFloat(valor.replace(/[^0-9.-]+/g, ''));
+    }
+    return valor || 0;
+  }
+
   
   // Guardar cambios en el avance
   saveAvance(avance: any) {
@@ -631,19 +665,32 @@ updateElementoData() {
   }
 
   // Variables para el manejo de avances
-  editAvance: any = {
-    id_proy_indica_avance: null,
-    fecha_reportar: '',
-    valor_esperado: 0,
-    valor_reportado: 0,
-    comentarios: '',
-    ruta_evidencia: ''
-  };
+editAvance: any = {
+  id_proy_indica_avance: null,
+  id_proy_indicador: null,
+  fecha_reportar: '',
+  valor_esperado: '',
+  valor_reportado: '',
+  comentarios: '',
+  ruta_evidencia: ''
+};
+  
   selectedFile: File | null = null;
+  
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.selectedFile = file;
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+      ];
+      
+      if (allowedTypes.includes(file.type)) {
+        this.selectedFile = file;
+      } else {
+        alert('Formato de archivo no permitido');
+        event.target.value = '';
+      }
     }
   }
   
@@ -657,33 +704,50 @@ calculateProgress(reportado: number, esperado: number): number {
 // Función para guardar los cambios del avance
 async onEditAvanceSubmit() {
   try {
-    // Si hay un archivo seleccionado, primero subimos el archivo
+    if (!this.editAvance.id_proy_indica_avance) {
+      console.error('No hay ID de avance para actualizar');
+      return;
+    }
+
+    // Preparar los datos para enviar
+    const datosActualizados = {
+      id_proy_indica_avance: this.editAvance.id_proy_indica_avance,
+      id_proy_indicador: this.editAvance.id_proy_indicador,
+      fecha_reportar: this.editAvance.fecha_reportar,
+      valor_esperado: this.editAvance.valor_esperado.toString(),
+      valor_reportado: this.editAvance.valor_reportado.toString(),
+      comentarios: this.editAvance.comentarios,
+      ruta_evidencia: this.editAvance.ruta_evidencia
+    };
+
+    // Si hay archivo nuevo, subir primero
     if (this.selectedFile) {
       const formData = new FormData();
       formData.append('file', this.selectedFile);
+      formData.append('id_proy_indicador', this.editAvance.id_proy_indicador.toString());
       
       // Aquí deberías tener un servicio para subir archivos
+      // const uploadResponse = await this.tuServicio.uploadFile(formData).toPromise();
+      // datosActualizados.ruta_evidencia = uploadResponse.ruta;
     }
 
-    // Luego actualizamos el avance
-    this.servIndicadorAvance.editIndicadorAvance(this.editAvance).subscribe(
+    // Actualizar el avance
+    this.servIndicadorAvance.editIndicadorAvance(datosActualizados).subscribe(
       (response) => {
-        this.getEjecucionEstrategicaData();
+        console.log('Avance actualizado con éxito');
         this.modalService.dismissAll();
-        this.selectedFile = null;
+        // Recargar datos
+        this.getEjecucionEstrategicaData();
+
       },
       (error) => {
         console.error('Error al actualizar el avance:', error);
       }
     );
   } catch (error) {
-    console.error('Error al procesar la actualización:', error);
+    console.error('Error en el proceso de actualización:', error);
   }
 }
-
-
-
-
 
 
 
