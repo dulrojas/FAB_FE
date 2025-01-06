@@ -11,6 +11,7 @@ export class ElementosService {
 
   constructor(private http: HttpClient) {}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // Añadir elementos
 addElemento(elemento: any): Observable<any> {
 console.log( ' elemento reciido en el form corto : ', elemento);
@@ -49,6 +50,8 @@ editElemento(elemento: any): Observable<any> {
   console.log( ' elemento reciido en el form corto : ', elemento);
   const params =  {
 =======
+=======
+>>>>>>> Stashed changes
   // Añadir elementos
   addElemento(elemento: any): Observable<any> {
     const params =  {
@@ -80,6 +83,9 @@ editElemento(elemento: any): Observable<any> {
   // editar elementos
   editElemento(elemento: any): Observable<any> {
     const params =  {
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
       "procedure_name": "sp_proy_elementos",
       "body": {
@@ -110,6 +116,7 @@ editElemento(elemento: any): Observable<any> {
   getAllElementos(): Observable<any> {
     const params = {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "procedure_name": "sp_proy_elementos",
         "body": {
           "params": [      
@@ -131,6 +138,8 @@ editElemento(elemento: any): Observable<any> {
       };
 
 =======
+=======
+>>>>>>> Stashed changes
       "procedure_name": "sp_proy_elementos",
       "body": {
         "params": [
@@ -150,6 +159,9 @@ editElemento(elemento: any): Observable<any> {
         ]
       }
     };
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     const headers = new HttpHeaders({
       'ip': "127.0.0.1"
@@ -236,4 +248,8 @@ editElemento(elemento: any): Observable<any> {
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
+<<<<<<< Updated upstream
+  // ======= ======= ======= ======= ======= ======= =======
+=======
+>>>>>>> Stashed changes
 }
