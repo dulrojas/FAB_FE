@@ -600,6 +600,77 @@ select.form-control {
     transform: rotate(180deg);
 }
 
+.custom-gant-header{
+    width: 100%;
+
+    border-bottom: solid 3px;
+    border-color: $txt-1-color;
+
+    text-align: center;
+
+    color: $txt-2-color;
+
+    background-color: $primary-color;
+}
+
+.custom-elemento-container{
+    padding: 1rem;
+
+    background-color: $bg-2-color;
+}
+
+.custom-elemento-actividad{
+    border: 10px;
+    border-radius: 10px;
+
+    background-color: $bg-3-color;
+
+    color: $txt-2-color;
+    font-weight: bold;
+}
+
+.custom-row-relative{
+    position: relative;
+}
+
+.custom-gant-chart-background{
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.custom-gant-chart-content{
+    margin-top: 1rem;
+
+    position: relative;
+    z-index: 2;
+}
+
+.custom-month-col{
+    height: 100%;
+
+    padding: 0px;
+}
+
+.custom-month-span{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 90% !important;
+    height: 100%;
+
+    background-color: $bg-5-color;
+
+    color: $txt-1-color;
+    text-align: center;
+    font-weight: bold;
+}
+
 .custom-actividad-input-bg-3{
     background-color: $third-color;
 
@@ -672,15 +743,6 @@ canvas {
     
 .timeline {
   position: relative;
-}
-    
-.timeline-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #333;
 }
     
 .progress-bar-container {

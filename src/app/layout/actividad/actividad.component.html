@@ -154,7 +154,7 @@
                 <div class="col col-md-5 col-lg-5">
                     <!-- ======= HEADER SECTION ======= -->
                     <div class="row custom-actividad-header">
-                        <div class="col col-md-21 col-lg-2">
+                        <div class="col col-md-2 col-lg-2">
                             RES
                         </div>
                         <div class="col col-md-5 col-lg-5">
@@ -169,57 +169,116 @@
                     </div>
                     <!-- ======= ======= ======= -->
                     <!-- ======= ACTIVIDADES SECTION ======= -->
-                    <div class="row">
-                        <div class="col col-md-21 col-lg-2">
-                            <span class="custom-vertical-text">
-                                Res 1.0.1.2
+                    <div class="row my-1" *ngFor="let elementoGant of elementosGant">
+                        <div class="col col-md-2 col-lg-2">
+                            <span class="custom-vertical-text custom-elemento-container">
+                                Res {{ elementoGant.codigo }}
                             </span>
                         </div>
-                        <div class="col col-md-5 col-lg-5">
-                            <div class="row">
-
+                        <div class="col col-md-10 col-lg-10">
+                            <div class="row my-1" *ngFor="let actividadGant of elementoGant.childrens">
+                                <div class="col col-md-6 col-lg-6 custom-elemento-actividad">
+                                    {{ actividadGant.actividad }}
+                                </div>
+                                <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
+                                    {{ actividadGant.presupuesto }}
+                                </div>
+                                <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
+                                    <canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="100" height="100"></canvas>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col col-md-3 col-lg-3">
-                            PRESUPUESTO
-                        </div>
-                        <div class="col col-md-2 col-lg-2">
-                            AVANCE
                         </div>
                     </div>
                     <!-- ======= ======= ======= -->
                 </div>
-            
-                <!-- Contenedor para las barras de progreso y la línea de tiempo -->
+                <!-- ======= ======= ======= ======= ======= -->
+                <!-- ======= ======= GANT CHART SECTION ======= ======= -->
                 <div class="col col-md-7 col-lg-7">
-                    <div class="timeline">
-                        <label class="text-center" style="background-color: #4E8646;color: #ffffff;">
-                            2024
-                        </label>
-                        <div class="timeline-header">
-                            <span class="month">Ene</span>
-                            <span class="month">Feb</span>
-                            <span class="month">Mar</span>
-                            <span class="month">Abr</span>
-                            <span class="month">May</span>
-                            <span class="month">Jun</span>
-                            <span class="month">Jul</span>
-                            <span class="month">Ago</span>
-                            <span class="month">Sep</span>
-                            <span class="month">Oct</span>
-                            <span class="month">Nov</span>
-                            <span class="month">Dic</span>
+                    <div class="row">
+                        <div class="col col-md-12 col-lg-12">
+                            <label class="custom-gant-header">
+                                {{ gestion }}
+                            </label>
                         </div>
-                        <div class="progress-bar-container">
-                            <!-- Barra de progreso de la primera tarea -->
-                            <div class="progress-bar" style="width: 59%; background-color: #f7a800;"></div>
-                            <!-- Barra de progreso de la segunda tarea -->
-                            <div class="progress-bar" style="width: 89%; background-color: #989898;"></div>
-                            <!-- Barra de progreso de la tercera tarea -->
-                            <div class="progress-bar" style="width: 25%; background-color: #f7a800;"></div>
+                        <div class="col col-md-12 col-lg-12">
+                            <div class="row custom-row-relative">
+                                <div class="col col-md-12 col-lg-12 custom-gant-chart-background">
+                                    <div class="row mx-1">
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Ene
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Feb
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Mar
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Abr
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                May
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Jun
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Jul
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Ago
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Sep
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Oct
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Nov
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Dic
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col col-md-12 col-lg-12 custom-gant-chart-content progress-bar-container">
+                                    <!-- Barra de progreso de la primera tarea -->
+                                    <div class="progress-bar" style="width: 59%; background-color: #f7a800;"></div>
+                                    <!-- Barra de progreso de la segunda tarea -->
+                                    <div class="progress-bar" style="width: 89%; background-color: #989898;"></div>
+                                    <!-- Barra de progreso de la tercera tarea -->
+                                    <div class="progress-bar" style="width: 25%; background-color: #f7a800;"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!-- ======= ======= ======= ======= ======= -->
             </div>
         </div>
     </div>
@@ -227,186 +286,189 @@
     <!-- ======= ======= ======= ACTIVIDAD MODAL ======= ======= ======= -->
     <ng-template #actividad let-modal class="custom-modal">
         <div class="modal-header">
-        <h4 class="modal-title">{{ modalTitle }}</h4>
-        <button type="button" class="btn-close" aria-label="Close" 
-            (click)="modal.dismiss('Cross click')">
-        </button>
+            <h4 class="modal-title">{{ modalTitle }}</h4>
+            <button type="button" class="btn-close" aria-label="Close" 
+                (click)="modal.dismiss('Cross click')">
+            </button>
         </div>
         
         <div class="modal-body">
-        <form #actividadForm="ngForm" (ngSubmit)="onSubmit(actividadForm)">
-            <div class="row">
-            <div class="col col-xl-12 col-lg-12">
-                <div class="card mb-3">
-                <div class="card-body custom-card">
-                    <div class="row">
-        
-                    <div class="col-md-3 ">
-                        <label for="codigo">Código</label>
-                        <input class="form-control" type="text" 
-                            id="codigo" name="codigo" 
-                            [(ngModel)]="codigo" readonly>
-                    </div>
-
-                    <div class="col-md-9 ">
-                        <label for="codigo">Actividad</label>
-                        <input class="form-control" type="text" 
-                            id="codigo" name="codigo" 
-                            [(ngModel)]="codigo" readonly>
-                    </div>
-                    
-                    <div class="col-md-5 ">
-                        <label for="codigo">Reprogramado de</label>
-                        <input class="form-control" type="text" 
-                            id="codigo" name="codigo" 
-                            [(ngModel)]="codigo" readonly>
-                    </div>
-        
-                    <!-- Padre y Código -->
-                    <div class="col-md-3">
-                        <label for="padre">Padre</label>
-                        <select class="form-control" 
-                                id="padre" name="padre" 
-                                [(ngModel)]="padre"
-                                [disabled]="tipo === 'OG'">
-                        <option value="">Seleccionar padre</option>
-                        <option *ngFor="let item of planifEstrategica" 
-                                [value]="item.codigo"
-                                [disabled]="!validarPadre(tipo, item.codigo)">
-                            {{item.nombre}} ({{item.codigo}})
-                        </option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="codigo">Actividad Resultado/Output</label>
-                        <input class="form-control" type="text" 
-                            id="codigo" name="codigo" 
-                            [(ngModel)]="codigo" readonly>
-                    </div>
-        
-                    <!-- Descripción -->
-                    <div class="col-10">
-                        <label for="descripcion">Descripción</label>
-                        <textarea class="form-control" 
-                                id="descripcion" name="descripcion" 
-                                [(ngModel)]="descripcion" rows="3" required></textarea>
-                    </div>
-                    <div class="col-2">
-                        <label for="codigo">Presupuesto</label>
-                        <input class="form-control" type="text" 
-                            id="codigo" name="codigo" 
-                            [(ngModel)]="codigo" readonly>
-                    </div>
-
-                    <div class="planificacion">
-                        <label for="fechaIdentificacion" class="titulo">Planificación</label>
-                        
-                        <div class="tabla-meses">
-                            <!-- Encabezado del año -->
-                            <div class="fila-encabezado">
-                            <span class="celda-anio" colspan="12">2024</span>
-                            </div>
-                            
-                            <!-- Meses -->
-                            <div class="fila-meses">
-                            <span *ngFor="let mes of meses" class="mes">{{ mes }}</span>
-                            </div>
-                            
-                            <!-- Checkboxes -->
-                            <div class="fila-checkboxes">
-                            <span *ngFor="let dia of dias" class="checkbox-container">como
-                                <input 
-                                type="checkbox" 
-                                [id]="'checkbox-' + dia" 
-                                [value]="dia"
-                                (change)="toggleCheckbox(dia)"
-                                [checked]="seleccionados.includes(dia)" 
-                                />
-                                <label [for]="'checkbox-' + dia">asdsadas</label>
-                            </span>
-                            </div>
-                        </div>
-                        </div>
-                        
-
-                    
-                    <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"> </div>
-                    
-                    <div class="col-6 mb-3">
-                        <!-- Título con línea blanca -->
-                            <div class="relative mb-1">
+            <form #actividadForm="ngForm" (ngSubmit)="onSubmit(actividadForm)">
+                <div class="row">
+                    <div class="col col-xl-12 col-lg-12">
+                        <div class="card mb-3">
+                            <div class="card-body custom-card">
                                 <div class="row">
-                                    <span class="text-green-700 relative z-10 pl-2">Avance</span>
-                                    <div class="col col-xl-4 col-lg-4 mt-auto">
-                                        <label for="codigo">% Avance</label>
+                                    <!-- ======= COSIGO SECTION ======= -->
+                                    <div class="col col-md-3">
+                                        <label for="codigo">Código</label>
                                         <input class="form-control" type="text" 
                                             id="codigo" name="codigo" 
-                                            [(ngModel)]="codigo" readonly>
+                                            [(ngModel)]="codigo" disabled>
                                     </div>
-                                    <div class="col col-xl-6 col-lg-6 mt-auto">
-                                        <label for="codigo">Nuevo Ejecutado</label>
+                                    <!-- ======= ACTIVIDAD SECTION ======= -->
+                                    <div class="col col-md-9">
+                                        <label for="actividadText">Actividad</label>
                                         <input class="form-control" type="text" 
-                                            id="codigo" name="codigo" 
-                                            [(ngModel)]="codigo" readonly>
+                                            id="actividadText" name="actividadText" 
+                                            [(ngModel)]="actividadText" placeholder="Ingrese un titulo para la actividad">
                                     </div>
-                                    <div class="col col-xl-1 col-lg-1 mt-auto">
-                                    <button type="submit" class="btn btn-bg-1">
-                                        <i aria-hidden="true"></i> +
-                                    </button>
+
+                                    <!-- ======= REPROGRAMADO SECTION ======= -->
+                                    <div class="col col-md-5">
+                                        <label for="proy_acti_repro">Reprogramado de:</label>
+                                        <input class="form-control" type="text" 
+                                            id="proy_acti_repro" name="proy_acti_repro" 
+                                            [(ngModel)]="proy_acti_repro" placeholder="No es reprogramado" disabled>
+                                    </div>
+                                    <!-- ======= PADRE SECTION ======= -->
+                                    <div class="col col-md-3">
+                                        <label for="id_proy_elemento_padre">Padre</label>
+                                        <select class="form-control" id="id_proy_elemento_padre" 
+                                            name="id_proy_elemento_padre" 
+                                            [(ngModel)]="id_proy_elemento_padre">
+                                            <option value="">Seleccionar padre</option>
+                                            <option *ngFor="let elemento of elementos" 
+                                                    [value]="elemento.codigo">
+                                                {{elemento.codigo}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <!-- ======= RESULTADO OUTPUT SECTION ======= -->
+                                    <div class="col col-md-4">
+                                        <label for="proy_elemento_padre">Actividad Resultado/Output</label>
+                                        <input class="form-control" type="text" 
+                                            id="proy_elemento_padre" name="proy_elemento_padre" 
+                                            [(ngModel)]="proy_elemento_padre" placeholder="Seleccione un elemento padre" disabled>
+                                    </div>
+                        
+                                    <!-- ======= DESCRIPCION SECTION ======= -->
+                                    <div class="col col-md-12 col-lg-12">
+                                        <label for="descripcion">Descripción</label>
+                                        <textarea class="form-control" 
+                                            id="descripcion" name="descripcion" 
+                                            [(ngModel)]="descripcion" placeholder="Ingrese una descipcion de la actividad">
+                                        </textarea>
+                                    </div>
+
+
+                                    <!-- ======= LABEL SECTION ======= -->
+                                    <div class="col col-md-12 col-lg-12">
+                                        <label>Planificacion</label>
+                                    </div>
+                                    <!-- ======= FECHA INICIO SECTION ======= -->
+                                    <div class="col col-md-4 col-lg-4">
+                                        <label for="fecha_inicio">Inicio</label>
+                                        <input class="form-control" type="date" 
+                                            id="fecha_inicio" name="fecha_inicio" 
+                                            [(ngModel)]="fecha_inicio">
+                                    </div>
+                                    <!-- ======= FECHA FIN SECTION ======= -->
+                                    <div class="col col-md-4 col-lg-4">
+                                        <label for="fecha_fin">Fin</label>
+                                        <input class="form-control" type="date" 
+                                            id="fecha_fin" name="fecha_fin" 
+                                            [(ngModel)]="fecha_fin">
+                                    </div>
+                                    <!-- ======= PRESUPUESTO SECTION ======= -->
+                                    <div class="col col-md-4 col-lg-4">
+                                        <label for="presupuesto">Presupuesto</label>
+                                        <input class="form-control" type="text" 
+                                            id="presupuesto" name="presupuesto" 
+                                            [(ngModel)]="presupuesto" placeholder="Ingrese el presupuesto de la actividad">
+                                    </div>
+                                
+                                    <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"> 
+                                    </div>
+
+                                    <div class="row">
+                                        <span class="text-green-700 relative z-10 pl-2">
+                                            Avance
+                                        </span>
+                                    </div>
+                                
+                                    <!-- ======= AVANCE SECTION ======= -->
+                                    <div class="col col-md-6 col-lg-6 mb-3 custom-actividad-right-sep">
+                                            
+                                        <div class="row">
+                                            <!-- ======= PORCENTAJE SECTION ======= -->
+                                            <div class="col col-md-4 col-lg-4">
+                                                <label for="actAvaAvance">% Avance</label>
+                                                <input class="form-control" type="text" 
+                                                    id="actAvaAvance" name="actAvaAvance" 
+                                                    [(ngModel)]="actAvaAvance">
+                                            </div>
+                                            <!-- ======= EJECUTADO SECTION ======= -->
+                                            <div class="col col-md-6 col-lg-6">
+                                                <label for="actAvaMonto">Nuevo Ejecutado</label>
+                                                <input class="form-control" type="text" 
+                                                    id="actAvaMonto" name="actAvaMonto" 
+                                                    [(ngModel)]="actAvaMonto" disabled>
+                                            </div>
+                                            <!-- ======= ADD AVANCE SECTION ======= -->
+                                            <div class="col col-md-1 col-lg-1 mt-auto">
+                                                <button type="submit" class="btn btn-bg-1">
+                                                    <i aria-hidden="true"></i> +
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col col-md-12 col-lg-12">
+                                                <span class="text-green-700 relative z-10 pl-2 mt-4">
+                                                    Ejecucion Presupuestaria
+                                                </span>
+                                            </div>
+                                            <!-- ======= ADD AVANCE SECTION ======= -->
+                                            <div class="col col-md-12 col-lg-12">
+                                                <table class="table custom-table table-striped table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Declaracion</th>
+                                                            <th>Avance</th>
+                                                            <th>Ejecucion</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let aprendizaje of aprendizajesTable; let i = index">
+                                                            <td>{{ row.Declaracion }}</td>
+                                                            <td>{{ row.Avance }}</td>
+                                                            <td>{{ row.Ejecucion }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <!-- ======= FACTORES SECTION ======= -->
+                                    <div class="col col-md-6 col-lg-6 mb-3">
+                                        <label for="codigo">Factores que impidieron el cumplimiento</label>
+                                        <textarea class="form-control" type="text" 
+                                            id="codigo" name="codigo" 
+                                            [(ngModel)]="codigo">
+                                        </textarea>
                                     </div>
                                 </div>
-                                
-                                <span class="text-green-700 relative z-10 pl-2 mt-4">Ejecucion Presupuestaria</span>
-                                    <!-- Contenedor blanco para la tabla -->
-                                        <table class="w-full border-collapse table-bordered mt-2">
-                                            <thead>
-                                                <tr class="bg-yellow-300 ">
-                                                    <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Declaracion</th>
-                                                    <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Avance</th>
-                                                    <th class="col-3 py-0.5 px-2 text-left text-sm font-bold">Ejecucion</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr *ngFor="let row of evaluationData">
-                                                    <td class="py-0.5 px-2 text-sm">{{ row.Declaracion }}</td>
-                                                    <td class="py-0.5 px-2 text-sm">{{ row.Avance }}</td>
-                                                    <td class="py-0.5 px-2 text-sm">{{ row.Ejecucion }}</td> 
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                <div class="modal-footer">
+                                    <div class="d-flex justify-content-center" style="width: 100%;">
+                                        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                                            <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                        </button>
+                                        <button type="button" class="btn btn-bg-2" (click)="modal.close('Cerrar')">
+                                            <i aria-hidden="true"></i> Reprogramar
+                                        </button>
+                                        <button type="submit" class="btn btn-bg-1">
+                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        <!-- Línea vertical -->
-                        <div class="col-auto mt-4">
-                            <div style="width: 1px; height: 100%; background-color: #4E8646;"></div>
-                        </div>  
-
-                        <div class="col col-xl-5 col-lg-5 mt-auto top-0">
-                            <label for="codigo">Factores que impidieron el cumplimiento</label>
-                            <input class="form-control" type="text" 
-                                id="codigo" name="codigo" 
-                                [(ngModel)]="codigo" readonly>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <div class="d-flex justify-content-center" style="width: 100%;">
-                            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                            <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                            </button>
-                            <button type="button" class="btn btn-bg-3" style="background-color: #ff9131;" (click)="modal.close('Cerrar')">
-                            <i aria-hidden="true"></i> Reprogramar
-                            </button>
-                            <button type="submit" class="btn btn-bg-1">
-                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
-                            </button>
-                        </div>
-                        </div>
                 </div>
-                </div>
-            </div>
-            </div>
-        </form>
+            </form>
         </div>
     </ng-template>
 </div>

@@ -1,15 +1,17 @@
-import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output, QueryList, ViewChildren, ElementRef, AfterViewChecked } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
+import { ElementosService } from "../../servicios/elementos";
 import { servActividad } from "../../servicios/actividad";
 import { servActAvance } from "../../servicios/actividadAvance";
 import { servPresupuesto } from "../../servicios/presupuesto";
 import { servPresuAvance } from "../../servicios/presuAvance";
 
 import { Chart } from 'chart.js/auto';
+import { log } from 'console';
 
 @Component({
     selector: 'app-actividades',
@@ -26,6 +28,7 @@ export class ActividadComponent implements OnInit {
       private modalService: NgbModal,
       private proyectoService: ProyectoService,
       private servicios: servicios,
+      private ElementosService: ElementosService,
       private servActividad: servActividad,
       private servActAvance: servActAvance,
       private servPresupuesto: servPresupuesto,
@@ -57,11 +60,13 @@ export class ActividadComponent implements OnInit {
     id_proy_actividad: any = "";
     id_proyecto: any = "";
     id_proy_elemento_padre: any = "";
+    proy_elemento_padre: any = "";
     codigo: any = "";
-    actividad: any = "";
+    actividadText: any = "";
     descripcion: any = "";
     orden: any = "";
     id_proy_acti_repro: any = "";
+    proy_acti_repro: any = "";
     presupuesto: any = "";
     fecha_inicio: any = "";
     fecha_fin: any = "";
@@ -77,28 +82,17 @@ export class ActividadComponent implements OnInit {
 
     doughnutChartProy: any = null;
     doughnutChartGest: any = null;
+    halfCircleChart: any = null;
 
     montoNuevoEjecutado: any = null;
     motivoNuevoEjecutado: any = null;
 
+    elementos: any[] = [];
+
+    elementosGant: any[] = [];
+
     actividades: any[] = [];
     presuAvances: any[] = [];
-
-    actividadesTest: any[] = [
-      {
-        codigo: "Res 1.0.0.2",
-        childs: [
-          {
-            id_proy_elem_padre: 1,
-            proy_elem_padre: "Capacitacion",
-            codigo: "1.0.1.2",
-            actividad: "Capacitacion",
-          },
-        ]
-      }
-    ];
-
-    meses = ['En', 'Fe', 'Ma', 'Ab', 'My', 'Ju', 'Jl', 'Ag', 'Se', 'Oc', 'No', 'Di'];
     
     // ====== ======= ====== CHARTS CONFIG SECTION ====== ======= ======
     chartLabels: any = [
@@ -246,6 +240,62 @@ export class ActividadComponent implements OnInit {
       });
     }
     // ====== ======= ====== ======= ====== ======= ======
+    // ====== ======= ====== HALF CIRCLE SECTION ====== ======= ====== 
+    @ViewChildren('canvas') canvases!: QueryList<ElementRef>;
+
+    ngAfterViewInit() {
+      console.log('Elementos Gant:', this.elementosGant);
+      console.log('Canvas encontrados:', this.canvases.length);
+
+      setTimeout(() => {
+        console.log('Canvas después del setTimeout:', this.canvases.length);
+        this.initializeCharts();
+      }, 0);
+    }
+    
+    initializeCharts() {
+      this.canvases.forEach((canvasRef, index) => {
+        const ctx = canvasRef.nativeElement.getContext('2d');
+        const actividad = this.elementosGant[0].childrens[index];
+        this.createHalfCircleChart(ctx, actividad.ejecutado, actividad.presupuesto);
+      });
+    }
+  
+    createHalfCircleChart(ctx: CanvasRenderingContext2D, ejecutado: number, presupuesto: number) {
+      const porcentajeAvance = 25;
+      const porcentajeRestante = 100 - porcentajeAvance;
+  
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Avance', 'Restante'],
+          datasets: [
+            {
+              data: [porcentajeAvance, porcentajeRestante],
+              backgroundColor: ['#4caf50', '#e0e0e0'],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          rotation: -90,
+          circumference: 180,
+          cutout: '75%',
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (tooltipItem) =>
+                  `${tooltipItem.label}: ${tooltipItem.raw}%`,
+              },
+            },
+            legend: {
+              display: false,
+            },
+          },
+        },
+      });
+    }
+    // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
@@ -277,12 +327,20 @@ export class ActividadComponent implements OnInit {
 
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
+      this.ElementosService.getElementosByProyecto(this.idProyecto).subscribe(
+        (data) => {
+          this.elementos = (data[0].dato)?(data[0].dato):([]);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     }
     // ======= ======= ======= ======= =======
     actividadSelected: any = null;
 
     checkboxChanged(actividadSel: any){
-      this.actividad.forEach(actividad => {
+      this.actividades.forEach(actividad => {
         if(actividadSel.id.proy_actividad == actividad.id.proy_actividad){
           if(actividadSel.selected){
             actividad.selected = true;
@@ -322,7 +380,7 @@ export class ActividadComponent implements OnInit {
       this.id_proyecto = "";
       this.id_proy_elemento_padre = "";
       this.codigo = "";
-      this.actividad = "";
+      this.actividadText = "";
       this.descripcion = "";
       this.orden = "";
       this.id_proy_acti_repro = "";
@@ -401,7 +459,6 @@ export class ActividadComponent implements OnInit {
           console.error(error);
         }
       );
-
     }
     // ======= ======= ======= ======= =======
     // ======= ======= ADD PRESU AVANCE ======= =======
@@ -445,14 +502,31 @@ export class ActividadComponent implements OnInit {
           this.actividades.forEach((actividad)=>{
             actividad.presupuesto = (actividad.presupuesto)?(this.parseAmountStrToFloat(actividad.presupuesto.slice(1))):(0);
           });
-          
+
+          this.elementosGant = [];
+          this.elementos.forEach((elemento)=>{
+            let elementoToAdd = {...elemento};
+            elementoToAdd.childrens = this.actividades.filter(
+              (actividadObj) =>
+                actividadObj.codigo.startsWith(elemento.codigo.slice(0, -2))
+            );
+
+            this.elementosGant.push(elementoToAdd);
+          });
+
+          this.elementosGant = this.elementosGant.filter(
+            (elementoGant)=>(
+              elementoGant.childrens.length > 0
+            )
+          );
+
           this.countHeaderData();
+          //this.initializeCharts();
         },
         (error) => {
           console.error(error);
         }
       );
-
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT ADD PERSONA ROLES ======= =======
@@ -472,7 +546,7 @@ export class ActividadComponent implements OnInit {
         p_id_proyecto: parseInt(this.idProyecto,10),
         p_id_proy_elemento_padre: parseInt(this.id_proy_elemento_padre,10),
         p_codigo: this.codigo,
-        p_actividad: this.actividad,
+        p_actividad: this.actividadText,
         p_descripcion: this.descripcion,
         p_orden: parseInt(this.orden,10),
         p_id_proy_acti_repro: parseInt(this.id_proy_acti_repro,10),
