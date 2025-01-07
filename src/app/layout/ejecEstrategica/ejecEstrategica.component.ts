@@ -40,7 +40,7 @@ export class EjecEstrategicaComponent implements OnInit {
   // ======= ======= VARIABLES PAGINACION ======= =======
     mainPage = 1;
     mainPageSize = 10;
-    totalLength = 0;    
+    totalLength = 0;
   // ======= ======= CONSTRUCTOR SECTION ======= =======
   constructor(
     private modalService: NgbModal,
@@ -68,9 +68,8 @@ export class EjecEstrategicaComponent implements OnInit {
     this.currentPerProRol = selectedPro.rol;
 
     this.getEjecucionEstrategicaData();
-
-    this.loadCategorias();    
-
+    this.loadCategorias();
+    this.loadPeriodosEvaluacion();
     }
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
   // ======= ======= ======= CONTADOR =======  ======= =======
@@ -84,7 +83,6 @@ export class EjecEstrategicaComponent implements OnInit {
   // ======= ======= INIT VIEW FUN ======= =======
   ngOnInit(): void {
     this.getEjecucionEstrategicaData();
-
     this.loadCategorias();
     this.loadPeriodosEvaluacion();
   }
@@ -287,23 +285,27 @@ export class EjecEstrategicaComponent implements OnInit {
       }
 
      // Buscar el elemento padre
-    const elementoPadre = this.elementosData.find(
+     const elementoPadre = this.elementosData.find(
       elem => elem.id_proy_elemento === this.id_proy_elem_padre
-    );
+  );
 
-    if (elementoPadre) {
+  if (elementoPadre) {
       this.codigoPadre = elementoPadre.codigo;
       this.descripcionPadre = elementoPadre.descripcion;
 
-        // Buscar el abuelo (elemento padre del padre)
-        const elementoAbuelo = this.elementosData.find(
-          elem => elem.id_proy_elemento === elementoPadre.id_proy_elem_padre
-        );
-        
-        if (elementoAbuelo) {
+      // Encontrar el código base (primer número del código)
+      const codigoBase = elementoPadre.codigo.split('.')[0];
+      
+      // Buscar el objetivo general (abuelo) que corresponde al código base
+      const elementoAbuelo = this.elementosData.find(
+          elem => elem.codigo.startsWith(codigoBase) && 
+                 elem.codigo.match(/^\d+\.0\.0\.0$/) // Patrón para objetivos generales
+      );
+      
+      if (elementoAbuelo) {
           this.codigoAbuelo = elementoAbuelo.codigo;
-        }
       }
+    }
 
       // Cargar las categorías
       this.loadCategorias();
@@ -387,45 +389,60 @@ export class EjecEstrategicaComponent implements OnInit {
 
   getElementoPadre(id_proy_elem_padre: number): string {
     const elementoPadre = this.elementosData.find(
-      elem => elem.id_proy_elemento === id_proy_elem_padre
+        elem => elem.id_proy_elemento === id_proy_elem_padre
     );
     
     if (elementoPadre) {
-      const metoElemento = this.metoElementosData.find(
-        meto => meto.id_meto_elemento === elementoPadre.id_meto_elemento
-      );
-      
-      if (metoElemento) {
-        return `${metoElemento.meto_elemento} - ${elementoPadre.descripcion}`;
-      }
+        return `${elementoPadre.codigo}`;
     }
     return 'No encontrado';
-  }
+}
   
-
 // Función para obtener el componente del elemento padre
 getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string } {
   const elementoPadre = this.elementosData.find(
-    elem => elem.id_proy_elemento === id_proy_elem_padre
+      elem => elem.id_proy_elemento === id_proy_elem_padre
   );
   
-  if (elementoPadre && this.metoElementosData.length > 0) {
-    const metoElemento = this.metoElementosData.find(
-      meto => meto.id_meto_elemento === elementoPadre.id_meto_elemento && 
-              meto.id_metodologia === 2
-    );
-    
-    if (metoElemento) {
+  if (elementoPadre) {
+      // Determinar el tipo de componente basado en el nivel del código
+      const nivelCodigo = elementoPadre.codigo.split('.').filter(x => x !== '0').length;
+      
       return {
-        sigla: metoElemento.sigla || 'PE',  // PE para Planificación Estratégica por defecto
-        color: metoElemento.color ? '#' + metoElemento.color : '#FDC82F'
+          sigla: this.getSiglaByNivel(nivelCodigo),
+          color: this.getColorByNivel(nivelCodigo)
       };
-    }
   }
   return {
-    sigla: 'PE',
-    color: '#FDC82F'
+      sigla: 'IN',
+      color: '#FDC82F'
   };
+}
+private getDescripcionByNivel(nivel: number): string {
+  switch(nivel) {
+      case 1: return 'Objetivo General'; // Objetivo General
+      case 2: return 'Objetivo Específico'; // Objetivo Específico
+      case 3: return 'Resultado'; // Resultado
+      default: return 'INDICADOR';
+  }
+}
+// Funciones auxiliares
+private getSiglaByNivel(nivel: number): string {
+  switch(nivel) {
+      case 1: return 'OG'; // Objetivo General
+      case 2: return 'OE'; // Objetivo Específico
+      case 3: return 'RE'; // Resultado
+      default: return 'IN';
+  }
+}
+
+private getColorByNivel(nivel: number): string {
+  switch(nivel) {
+      case 1: return '#C64D27'; 
+      case 2: return '#D67600'; 
+      case 3: return '#F5A000'; 
+      default: return '#FDC82F';
+  }
 }
 
   // Función para manejar el envío del formulario
@@ -642,37 +659,37 @@ async onEditAvanceSubmit() {
   }
 }
 
-  countHeaderData() {
-    if (this.ejecEstrategicaTable && this.ejecEstrategicaTable.length > 0) {
+countHeaderData() {
+  if (this.ejecEstrategicaTable && this.ejecEstrategicaTable.length > 0) {
       // Total de indicadores
       this.headerDataNro01 = this.ejecEstrategicaTable.length;
   
-      // Contadores para las diferentes métricas
+      // Metas de período cumplidas (usando valores sumados)
       this.headerDataNro02 = this.ejecEstrategicaTable.filter(item => {
-        if (item.avance?.valor_reportado && item.avance?.valor_esperado) {
-          const reportado = parseFloat(item.avance.valor_reportado.replace('$', ''));
-          const esperado = parseFloat(item.avance.valor_esperado.replace('$', ''));
-          return reportado >= esperado;
-        }
-        return false;
+          if (item.avance?.valor_reportado_total && item.avance?.valor_esperado_total) {
+              const reportado = parseFloat(item.avance.valor_reportado_total);
+              const esperado = parseFloat(item.avance.valor_esperado_total);
+              return reportado >= esperado;
+          }
+          return false;
       }).length;
   
       // Indicadores sin avance
       this.headerDataNro03 = this.ejecEstrategicaTable.filter(item => 
-        !item.avance?.valor_reportado || 
-        parseFloat(item.avance.valor_reportado.replace('$', '')) === 0
+          !item.avance?.valor_reportado_total || 
+          parseFloat(item.avance.valor_reportado_total) === 0
       ).length;
   
       // Meta final cumplida
       this.headerDataNro04 = this.ejecEstrategicaTable.filter(item => {
-        if (item.avance?.valor_reportado && item.meta_final) {
-          const reportado = parseFloat(item.avance.valor_reportado.replace('$', ''));
-          const metaFinal = parseFloat(item.meta_final.replace('$', ''));
-          return reportado >= metaFinal;
-        }
-        return false;
+          if (item.avance?.valor_reportado_total && item.meta_final) {
+              const reportado = parseFloat(item.avance.valor_reportado_total);
+              const metaFinal = parseFloat(item.meta_final.replace('$', ''));
+              return reportado >= metaFinal;
+          }
+          return false;
       }).length;
-    }
   }
+}
 
 }

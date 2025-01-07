@@ -118,9 +118,15 @@
               </tr>
             </tbody>
           </table>
+          <!-- Botones de tabla -->
           <div class="d-flex justify-content-center">
-            <ngb-pagination [(page)]="mainPage" [pageSize]="mainPageSize" [collectionSize]="totalLength" [maxSize]="3"
-              [rotate]="true" [boundaryLinks]="true">
+            <ngb-pagination 
+              [(page)]="mainPage" 
+              [pageSize]="mainPageSize" 
+              [collectionSize]="totalLength"
+              [maxSize]="3"
+              [rotate]="true"
+              [boundaryLinks]="true">
             </ngb-pagination>
           </div>
         </div>
