@@ -639,7 +639,7 @@
                                 </div>
                                 <!-- ======= ======= INSTITUCION FIN SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="id_institucion_fin">Institucion Financiadora</label>
+                                    <label for="id_institucion_fin">Institución Financiadora</label>
                                     <select class="form-control" id="id_institucion_fin" name="id_institucion_fin" 
                                         [(ngModel)]="financiadores.id_institucion_fin" (change)="ValidateIdInstitucionFin()">
                                         <option value="" disabled selected>Selecciona un elemento</option>
@@ -806,7 +806,7 @@
                                 <!-- ======= ======= DESCRIPCION SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="descripcion">Descripción</label>
-                                    <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" placeholder="Ingresa una descipcion"
+                                    <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" placeholder="Ingresa una descipción"
                                         [(ngModel)]="obligacionesModel.descripcion" (change)="ValidateDescripcion()"></textarea>
                                     <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una descripcion valida, con menos de 250 caracteres.</span>
                                 </div>

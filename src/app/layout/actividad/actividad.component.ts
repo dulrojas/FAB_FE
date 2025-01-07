@@ -371,6 +371,11 @@ export class ActividadComponent implements OnInit {
       this.montoNuevoEjecutado = this.parseAmountStrToFloat(this.montoNuevoEjecutado);
       this.montoNuevoEjecutado = this.parseAmountFloatToStr(this.montoNuevoEjecutado);
     }
+
+    onPadreChanged(){
+      let elementoScope = (this.elementos.find((elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)));
+      this.proy_elemento_padre = elementoScope.elemento;
+    }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT ACTIVIDAD NGMODEL ======= =======
     initActividadModel(){
@@ -606,7 +611,7 @@ export class ActividadComponent implements OnInit {
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
       if(this.modalAction == "add"){
-        this.addActividad();
+        //this.addActividad();
       }
       else{
         //this.editActividad();

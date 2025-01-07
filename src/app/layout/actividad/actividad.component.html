@@ -8,10 +8,10 @@
         <div class="col col-md-6 text-center">
             <div class="row">
                 <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                    {{headerDataNro01}} Ejecucion Presupuestaria
+                    {{headerDataNro01}} Ejecución Presupuestaria
                 </div>
                 <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                    {{headerDataNro02}} Ejecucion Periodo
+                    {{headerDataNro02}} Ejecución Periodo
                 </div>
                 <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
                     {{headerDataNro03}} Actividades Pendientes
@@ -31,7 +31,7 @@
                     <div class="col col-md-7 col-lg-7 custom-actividad-right-sep">
                         <div class="row">
                             <div class="col col-md-12 col-lg-12">
-                                <h2 class="custom-view-title">Ejecucion Financiera</h2>
+                                <h2 class="custom-view-title">Ejecución Financiera</h2>
                             </div>
                             <!-- ======= ======= PROYECTO SECTION ======= ======= -->
                             <div class="col col-md-3 col-lg-3">
@@ -48,7 +48,7 @@
                             <!-- ======= ======= ======= ======= ======= -->
                             <!-- ======= ======= GESTION SECTION ======= ======= -->
                             <div class="col col-md-3 col-lg-3">
-                                <label class="custom-actividad-sub-title">Presupuesto de la Gestion {{ gestion }}</label>
+                                <label class="custom-actividad-sub-title">Presupuesto de la Gestión {{ gestion }}</label>
                                 <input class="form-control" type="text" 
                                     id="presupuestoGest" name="presupuestoGest" [(ngModel)]="presupuestoGest" disabled/>
                                 <label class="custom-actividad-sub-title">Ejecutado</label>
@@ -66,7 +66,7 @@
                             <!-- ======= ======= DECLARACION SECTION ======= ======= -->
                             <div class="col col-md-6 col-lg-6 custom-actividad-right-sep">
                                 <label class="custom-actividad-sub-title">
-                                    Declaraciones de Ejecucion
+                                    Declaraciones de Ejecución
                                 </label>
                                 <div class=" table-responsive custom-actividad-presu-avance-table">                                 
                                     <table class="table custom-table table-striped table-bordered">
@@ -105,7 +105,7 @@
                                 <label class="custom-actividad-sub-title">Motivo</label>
                                 <textarea class="form-control" type="text" 
                                     id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
-                                    placeholder="Ingrese el motivo de ejecucion" [(ngModel)]="motivoNuevoEjecutado">
+                                    placeholder="Ingrese el motivo de ejecución" [(ngModel)]="motivoNuevoEjecutado">
                                 </textarea>
                                 <span class="custom-alert-message" *ngIf="!valMotivoNuevoEjecutado">Debe ingresar un motivo valido, con menos de 100 caracteres.</span>
                                 <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
@@ -267,12 +267,15 @@
                                     </div>
                                 </div>
                                 <div class="col col-md-12 col-lg-12 custom-gant-chart-content progress-bar-container">
-                                    <!-- Barra de progreso de la primera tarea -->
-                                    <div class="progress-bar" style="width: 59%; background-color: #f7a800;"></div>
-                                    <!-- Barra de progreso de la segunda tarea -->
-                                    <div class="progress-bar" style="width: 89%; background-color: #989898;"></div>
-                                    <!-- Barra de progreso de la tercera tarea -->
-                                    <div class="progress-bar" style="width: 25%; background-color: #f7a800;"></div>
+                                    
+                                    <div class="row" *ngFor="let elementoGant of elementosGant">
+                                        <div class="col col-md-12 col-lg-12">
+                                            <div class="row my-1" *ngFor="let actividadGant of elementoGant.childrens">
+                                                <div class="progress-bar" style="width: 59%; background-color: #f7a800;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -311,7 +314,8 @@
                                         <label for="actividadText">Actividad</label>
                                         <input class="form-control" type="text" 
                                             id="actividadText" name="actividadText" 
-                                            [(ngModel)]="actividadText" placeholder="Ingrese un titulo para la actividad">
+                                            [(ngModel)]="actividadText" [disabled]="modalAction == 'edit'"
+                                            placeholder="Ingrese un titulo para la actividad">
                                     </div>
 
                                     <!-- ======= REPROGRAMADO SECTION ======= -->
@@ -325,11 +329,11 @@
                                     <div class="col col-md-3">
                                         <label for="id_proy_elemento_padre">Padre</label>
                                         <select class="form-control" id="id_proy_elemento_padre" 
-                                            name="id_proy_elemento_padre" 
-                                            [(ngModel)]="id_proy_elemento_padre">
-                                            <option value="">Seleccionar padre</option>
+                                            name="id_proy_elemento_padre" (change)="onPadreChanged()"
+                                            [(ngModel)]="id_proy_elemento_padre" [disabled]="modalAction == 'edit'">
+                                            <option value="" disabled>Seleccionar padre</option>
                                             <option *ngFor="let elemento of elementos" 
-                                                    [value]="elemento.codigo">
+                                                    [value]="elemento.id_proy_elemento">
                                                 {{elemento.codigo}}
                                             </option>
                                         </select>
@@ -347,7 +351,8 @@
                                         <label for="descripcion">Descripción</label>
                                         <textarea class="form-control" 
                                             id="descripcion" name="descripcion" 
-                                            [(ngModel)]="descripcion" placeholder="Ingrese una descipcion de la actividad">
+                                            [(ngModel)]="descripcion" [disabled]="modalAction == 'edit'"
+                                            placeholder="Ingrese una descipcion de la actividad">
                                         </textarea>
                                     </div>
 
@@ -361,7 +366,7 @@
                                         <label for="fecha_inicio">Inicio</label>
                                         <input class="form-control" type="date" 
                                             id="fecha_inicio" name="fecha_inicio" 
-                                            [(ngModel)]="fecha_inicio">
+                                            [(ngModel)]="fecha_inicio" [disabled]="modalAction == 'edit'">
                                     </div>
                                     <!-- ======= FECHA FIN SECTION ======= -->
                                     <div class="col col-md-4 col-lg-4">
@@ -375,7 +380,8 @@
                                         <label for="presupuesto">Presupuesto</label>
                                         <input class="form-control" type="text" 
                                             id="presupuesto" name="presupuesto" 
-                                            [(ngModel)]="presupuesto" placeholder="Ingrese el presupuesto de la actividad">
+                                            [(ngModel)]="presupuesto" [disabled]="modalAction == 'edit'"
+                                            placeholder="Ingrese el presupuesto de la actividad">
                                     </div>
                                 
                                     <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"> 
@@ -396,7 +402,7 @@
                                                 <label for="actAvaAvance">% Avance</label>
                                                 <input class="form-control" type="text" 
                                                     id="actAvaAvance" name="actAvaAvance" 
-                                                    [(ngModel)]="actAvaAvance">
+                                                    [(ngModel)]="actAvaAvance" [disabled]="modalAction == 'add'">
                                             </div>
                                             <!-- ======= EJECUTADO SECTION ======= -->
                                             <div class="col col-md-6 col-lg-6">
@@ -407,7 +413,7 @@
                                             </div>
                                             <!-- ======= ADD AVANCE SECTION ======= -->
                                             <div class="col col-md-1 col-lg-1 mt-auto">
-                                                <button type="submit" class="btn btn-bg-1">
+                                                <button type="submit" class="btn btn-bg-1" [disabled]="modalAction == 'add'">
                                                     <i aria-hidden="true"></i> +
                                                 </button>
                                             </div>
@@ -456,10 +462,10 @@
                                         <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                                             <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                         </button>
-                                        <button type="button" class="btn btn-bg-2" (click)="modal.close('Cerrar')">
+                                        <button type="button" class="btn btn-bg-2" [disabled]="modalAction == 'add'" (click)="modal.close('Cerrar')">
                                             <i aria-hidden="true"></i> Reprogramar
                                         </button>
-                                        <button type="submit" class="btn btn-bg-1">
+                                        <button type="submit" class="btn btn-bg-1" (click)="onSubmit()">
                                             <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
                                         </button>
                                     </div>
