@@ -199,6 +199,11 @@ export class EjecEstrategicaComponent implements OnInit {
       this.countHeaderData();
     }
   }
+ 
+  get ejecEstrategicaTablePaginada() {
+    const start = (this.mainPage - 1) * this.mainPageSize;
+    return this.ejecEstrategicaTable.slice(start, start + this.mainPageSize);
+  }
 
   calculateAvancePer(item: any): number {
     if (!item.avance?.valor_reportado_total || !item.avance?.valor_esperado_total) return 0;
@@ -389,35 +394,51 @@ export class EjecEstrategicaComponent implements OnInit {
 
   getElementoPadre(id_proy_elem_padre: number): string {
     const elementoPadre = this.elementosData.find(
-        elem => elem.id_proy_elemento === id_proy_elem_padre
+      elem => elem.id_proy_elemento === id_proy_elem_padre
     );
     
     if (elementoPadre) {
-        return `${elementoPadre.codigo}`;
+      const partesCodigo = elementoPadre.codigo.split('.').map(Number);
+      
+      // Determinar el tipo basado en el patrón del código
+      if (partesCodigo[1] === 0 && partesCodigo[2] === 0 && partesCodigo[3] === 0) {
+        return 'Objetivo General';
+      } else if (partesCodigo[2] === 0 && partesCodigo[3] === 0) {
+        return 'Objetivo Específico';
+      } else if (partesCodigo[3] === 0) {
+        return 'Resultado';
+      }
     }
-    return 'No encontrado';
-}
+    
+    return 'No asignado';
+  }
   
 // Función para obtener el componente del elemento padre
 getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string } {
   const elementoPadre = this.elementosData.find(
-      elem => elem.id_proy_elemento === id_proy_elem_padre
+    elem => elem.id_proy_elemento === id_proy_elem_padre
   );
   
   if (elementoPadre) {
-      // Determinar el tipo de componente basado en el nivel del código
-      const nivelCodigo = elementoPadre.codigo.split('.').filter(x => x !== '0').length;
-      
-      return {
-          sigla: this.getSiglaByNivel(nivelCodigo),
-          color: this.getColorByNivel(nivelCodigo)
-      };
+    const partesCodigo = elementoPadre.codigo.split('.').map(Number);
+    
+    // Verificar patrón de código
+    if (partesCodigo[1] === 0 && partesCodigo[2] === 0 && partesCodigo[3] === 0) {
+      // Es Objetivo General (1.0.0.0)
+      return { sigla: 'OG', color: '#C64D27' };
+    } else if (partesCodigo[2] === 0 && partesCodigo[3] === 0) {
+      // Es Objetivo Específico (1.1.0.0)
+      return { sigla: 'OE', color: '#D67600' };
+    } else if (partesCodigo[3] === 0) {
+      // Es Resultado (1.1.1.0)
+      return { sigla: 'RE', color: '#F5A000' };
+    }
   }
-  return {
-      sigla: 'IN',
-      color: '#FDC82F'
-  };
+  
+  // Por defecto retorna Indicador
+  return { sigla: 'IN', color: '#FDC82F' };
 }
+//Nombre del elemento padre
 private getDescripcionByNivel(nivel: number): string {
   switch(nivel) {
       case 1: return 'Objetivo General'; // Objetivo General
@@ -426,7 +447,7 @@ private getDescripcionByNivel(nivel: number): string {
       default: return 'INDICADOR';
   }
 }
-// Funciones auxiliares
+// componente del elemento padre
 private getSiglaByNivel(nivel: number): string {
   switch(nivel) {
       case 1: return 'OG'; // Objetivo General
@@ -435,7 +456,7 @@ private getSiglaByNivel(nivel: number): string {
       default: return 'IN';
   }
 }
-
+// Color del componente del elemento padre
 private getColorByNivel(nivel: number): string {
   switch(nivel) {
       case 1: return '#C64D27'; 
@@ -521,26 +542,24 @@ private getColorByNivel(nivel: number): string {
   
   // Abrir modal de edición de avance
   openEditAvanceModal(modal: any, item: any) {
-    if (!this.ejecEstrategicaSelected) {
-      console.error('No hay indicador seleccionado');
-      return;
-    }
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().slice(0, 19).replace('T', ' ');
   
     this.editAvance = {
       id_proy_indica_avance: item.id_proy_indica_avance,
-      id_proy_indicador: this.ejecEstrategicaSelected.id_proy_indicador,
-      fecha_reportar: new Date(item.fecha_reportar).toISOString().split('T')[0],
+      id_proy_indicador: item.id_proy_indicador,
+      fecha_reportar: item.fecha_reportar,
+      fecha_hora_reporte: formattedDate,
       valor_esperado: this.limpiarValorNumerico(item.valor_esperado),
       valor_reportado: this.limpiarValorNumerico(item.valor_reportado),
       comentarios: item.comentarios || '',
-      ruta_evidencia: item.ruta_evidencia || ''
+      ruta_evidencia: item.ruta_evidencia || '',
+      id_persona_reporte: this.idPersonaReg // Tomado del localStorage
     };
   
-    this.modalService.open(modal, {
-      size: 'lg',
-      backdrop: 'static'
-    });
+    this.modalService.open(modal, { size: 'lg' });
   }
+
   // Función auxiliar para limpiar valores numéricos
   limpiarValorNumerico(valor: string | number): number {
     if (typeof valor === 'string') {
@@ -584,26 +603,7 @@ editAvance: any = {
   comentarios: '',
   ruta_evidencia: ''
 };
-  
-  selectedFile: File | null = null;
-  
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const allowedTypes = [
-        'application/pdf',
-        'application/msword',
-      ];
-      
-      if (allowedTypes.includes(file.type)) {
-        this.selectedFile = file;
-      } else {
-        alert('Formato de archivo no permitido');
-        event.target.value = '';
-      }
-    }
-  }
-  
+selectedFile: File | null = null;
   // Función para calcular el progreso
 calculateProgress(reportado: number, esperado: number): number {
   if (!esperado) return 0;
@@ -619,45 +619,93 @@ async onEditAvanceSubmit() {
       return;
     }
 
-    // Preparar los datos para enviar
-    const datosActualizados = {
-      id_proy_indica_avance: this.editAvance.id_proy_indica_avance,
-      id_proy_indicador: this.editAvance.id_proy_indicador,
-      fecha_reportar: this.editAvance.fecha_reportar,
-      valor_esperado: this.editAvance.valor_esperado.toString(),
-      valor_reportado: this.editAvance.valor_reportado.toString(),
-      comentarios: this.editAvance.comentarios,
-      ruta_evidencia: this.editAvance.ruta_evidencia
-    };
-
-    // Si hay archivo nuevo, subir primero
-    if (this.selectedFile) {
+    // Si hay un archivo nuevo, primero lo subimos
+    let nuevaRutaEvidencia = this.editAvance.ruta_evidencia;
+    if (this.fileData) {
       const formData = new FormData();
-      formData.append('file', this.selectedFile);
-      formData.append('id_proy_indicador', this.editAvance.id_proy_indicador.toString());
+      formData.append('file', this.fileData);
+      formData.append('tipo', 'evidencia');
+      formData.append('id_proyecto', this.idProyecto);
       
-      // Aquí deberías tener un servicio para subir archivos
-      // const uploadResponse = await this.tuServicio.uploadFile(formData).toPromise();
-      // datosActualizados.ruta_evidencia = uploadResponse.ruta;
+      try {
+        // Aquí debes implementar tu servicio de subida de archivos
+        const response = await this.servicios.uploadFile(formData, "nombreTabla", "campoTabla", "idEnTabla", "nombreRegistro", "idRegistro").toPromise();
+        nuevaRutaEvidencia = response.ruta;
+      } catch (error) {
+        console.error('Error al subir el archivo:', error);
+        alert('Error al subir el archivo');
+        return;
+      }
     }
+
+    // Preparar datos para actualizar
+    const datosActualizados = {
+      p_id_proy_indicador_avance: this.editAvance.id_proy_indica_avance,
+      p_id_proy_indicador: this.editAvance.id_proy_indicador,
+      p_fecha_reportar: this.editAvance.fecha_reportar,
+      p_fecha_hora_reporte: this.editAvance.fecha_hora_reporte,
+      p_valor_esperado: this.editAvance.valor_esperado.toString(),
+      p_valor_reportado: this.editAvance.valor_reportado.toString(),
+      p_comentarios: this.editAvance.comentarios,
+      p_ruta_evidencia: nuevaRutaEvidencia,
+      p_id_persona_reporte: this.idPersonaReg
+    };
 
     // Actualizar el avance
     this.servIndicadorAvance.editIndicadorAvance(datosActualizados).subscribe(
       (response) => {
-        console.log('Avance actualizado con éxito');
-        this.modalService.dismissAll();
-        // Recargar datos
-        this.getEjecucionEstrategicaData();
-
+        if (response && response[0]?.mensaje === 'OK') {
+          alert('Avance actualizado exitosamente');
+          this.modalService.dismissAll();
+          this.getEjecucionEstrategicaData(); // Recargar datos
+        } else {
+          alert('Error al actualizar el avance');
+        }
       },
       (error) => {
         console.error('Error al actualizar el avance:', error);
+        alert('Error al actualizar el avance');
       }
     );
   } catch (error) {
     console.error('Error en el proceso de actualización:', error);
+    alert('Error en el proceso de actualización');
   }
 }
+// Variables para el manejo de archivos
+fileData: any = null;
+allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
+maxFileSize = 5 * 1024 * 1024; // 5MB en bytes
+onFileSelected(event: any): void {
+  const file = event.target.files[0];
+  
+  if (file) {
+    // Verificar el tipo de archivo
+    const fileExtension = file.name.toLowerCase().slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+    if (!this.allowedFileTypes.includes('.' + fileExtension)) {
+      alert('Tipo de archivo no permitido. Los formatos permitidos son: ' + this.allowedFileTypes.join(', '));
+      return;
+    }
+
+    // Verificar el tamaño
+    if (file.size > this.maxFileSize) {
+      alert('El archivo es demasiado grande. El tamaño máximo permitido es 5MB');
+      return;
+    }
+
+    this.fileData = file;
+    
+    // Si es una imagen, mostrar preview
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.editAvance.preview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
+
 
 countHeaderData() {
   if (this.ejecEstrategicaTable && this.ejecEstrategicaTable.length > 0) {
