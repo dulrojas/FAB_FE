@@ -86,13 +86,13 @@
                 <!-- FECHA A REPORTAR -->                
                 <td>{{ ejecEstrategica.avance?.fecha_reportar | date:'dd/MM/yyyy' || '-' }}</td>
                 <!-- PROGRESO SE CONECTA A VALOR REPORTADO-->
-                <td>{{ ejecEstrategica.avance?.valor_reportado || '-' }}</td>
+                <td>{{ ejecEstrategica.avance?.valor_reportado_total || '-' }}</td>
                 <!-- MEDIDA -->
-                <td>{{ ejecEstrategica.medida }}</td>
+                <td>{{ ejecEstrategica.medida_descripcion }}</td>
                 <!-- NOTAS SE CONECTA A COMENTARIOS DE IND.AVANCE -->
                 <td>{{ ejecEstrategica.avance?.comentarios || '-' }}</td>
                 <!-- META PER SE CONECTA A VALOR ESPERADO -->
-                <td>{{ ejecEstrategica.avance?.valor_esperado || '-' }}</td>
+                <td>{{ ejecEstrategica.avance?.valor_esperado_total || '-' }}</td>
                 <!-- AVANCE PORCENTUAL -->
                 <td>
                   <div class="progress-container">
@@ -261,22 +261,26 @@
                         <input type="text" 
                                class="form-control" 
                                id="elemento_padre"
-                               [value]="getElementoPadre(id_proy_elem_padre)" 
+                               [value]="id_proy_elem_padre ? getElementoPadre(id_proy_elem_padre) : ''" 
                                disabled />
                       </div>
                       <!-- Componente -->
                       <div class="col col-xl-1 col-lg-1 mt-auto">
                         <label class="btn-view-bg-3" 
-                               [style.backgroundColor]="getComponentePadre(id_proy_elem_padre).color">
-                          {{ getComponentePadre(id_proy_elem_padre).sigla }}
+                               [style.backgroundColor]="id_proy_elem_padre ? getComponentePadre(id_proy_elem_padre).color : '#FDC82F'">
+                          {{ id_proy_elem_padre ? getComponentePadre(id_proy_elem_padre).sigla : 'IN' }}
                         </label>
                       </div>
                       <!-- ABUELO ESTE LLAMARA AL OBJETIVO GENERAL DEL QUE FORME PARTE EL INDICADOR YA QUE ES DE EL QUE PARTEN LOS HIJOS POR ESO EL ES EL ABUELO SE PUEDE DECIR  -->
                       <div class="col col-xl-3 col-lg-3">
                         <label for="codigoAbuelo">Abuelo</label>
-                        <input class="form-control" type="text" id="codigoAbuelo" 
-                               name="codigoAbuelo" [(ngModel)]="codigoAbuelo"
-                               [disabled]="true" readonly />
+                        <input class="form-control" 
+                               type="text" 
+                               id="codigoAbuelo" 
+                               name="codigoAbuelo" 
+                               [(ngModel)]="codigoAbuelo"
+                               [disabled]="true" 
+                               readonly />
                       </div>
                       <!-- Descripción -->
                       <div class="col col-xl-12 col-lg-12">
@@ -300,8 +304,16 @@
                   <!-- Medida -->
                   <div class="col col-xl-2 col-lg-2">
                     <label for="medida">Medida</label>
-                    <input class="form-control" type="text" id="medida" name="medida" [(ngModel)]="medida"
-                      [disabled]="!editMode" />
+                    <select class="form-control" 
+                            id="medida" 
+                            name="medida" 
+                            [(ngModel)]="medida" 
+                            [disabled]="!editMode">
+                      <option *ngFor="let periodo of ejecPeridosEva" 
+                              [value]="periodo.descripcion_subtipo">
+                        {{periodo.descripcion_subtipo}}
+                      </option>
+                    </select>
                   </div>
                   <!-- Meta Final -->
                   <div class="col col-xl-2 col-lg-2">

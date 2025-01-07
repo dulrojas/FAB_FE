@@ -35,6 +35,8 @@ export class EjecEstrategicaComponent implements OnInit {
   metoElementosData: any[] = [];
   selectedMetoElemento: any = null;
   elementosCompletos: any[] = [];
+   // ======= ======= VARIABLE PERIODOS ======= ======= 
+   ejecPeridosEva: any[] = [];
   // ======= ======= VARIABLES PAGINACION ======= =======
     mainPage = 1;
     mainPageSize = 10;
@@ -66,7 +68,7 @@ export class EjecEstrategicaComponent implements OnInit {
     this.currentPerProRol = selectedPro.rol;
 
     this.getEjecucionEstrategicaData();
-    this.loadMetoElementos();
+
     this.loadCategorias();    
 
     }
@@ -82,10 +84,9 @@ export class EjecEstrategicaComponent implements OnInit {
   // ======= ======= INIT VIEW FUN ======= =======
   ngOnInit(): void {
     this.getEjecucionEstrategicaData();
-    this.loadMetoElementos();
+
     this.loadCategorias();
     this.loadPeriodosEvaluacion();
-    
   }
   // ======= ======= COMBINACION DE DATOS LLAMADOS PARA LA TABLA PRINCIPAL ======= =======
 
@@ -95,7 +96,16 @@ export class EjecEstrategicaComponent implements OnInit {
       (data) => {
         if (data && data[0]?.dato?.[0]) {
           this.datosIndicador = data[0].dato;
-          this.indicadoresData = this.datosIndicador;
+          this.indicadoresData = this.datosIndicador.map(indicador => {
+            // Buscar la descripción de la medida
+            const periodoEncontrado = this.ejecPeridosEva.find(
+              periodo => periodo.id_subtipo === parseInt(indicador.medida)
+            );
+            return {
+              ...indicador,
+              medida_descripcion: periodoEncontrado ? periodoEncontrado.descripcion_subtipo : indicador.medida
+            };
+          });
           this.combinarDatos();
         }
       }
@@ -132,63 +142,86 @@ export class EjecEstrategicaComponent implements OnInit {
   // Función para combinar los datos
   combinarDatos() {
     if (this.indicadoresData.length > 0 && this.elementosData.length > 0) {
-      // Primero filtramos los indicadores activos
       const indicadoresActivos = this.indicadoresData.filter(
         indicador => this.isIndicadorActivo(indicador.id_estado)
       );
-  
+
       this.ejecEstrategicaTable = indicadoresActivos.map(indicador => {
-        // Buscamos todos los avances relacionados con este indicador
+        // Obtenemos todos los avances para este indicador
         const avancesIndicador = this.datosIndicadoresAvance.filter(
           avance => avance.id_proy_indicador === indicador.id_proy_indicador
         );
-  
-        // Tomamos el último avance registrado (ordenado por fecha)
+
+        // Calculamos la suma de valores reportados y esperados
+        const sumaReportado = avancesIndicador.reduce((sum, avance) => 
+          sum + parseFloat(avance.valor_reportado?.replace('$', '') || '0'), 0
+        );
+
+        const sumaEsperado = avancesIndicador.reduce((sum, avance) => 
+          sum + parseFloat(avance.valor_esperado?.replace('$', '') || '0'), 0
+        );
+
+        // Tomamos el último avance para la fecha más reciente
         const ultimoAvance = avancesIndicador.length > 0 ? 
           avancesIndicador.sort((a, b) => 
             new Date(b.fecha_reportar).getTime() - new Date(a.fecha_reportar).getTime()
           )[0] : null;
-  
+
+        // Modificamos el avance para incluir las sumas
+        const avanceModificado = ultimoAvance ? {
+          ...ultimoAvance,
+          valor_reportado_total: sumaReportado.toString(),
+          valor_esperado_total: sumaEsperado.toString()
+        } : null;
+
         const elemento = this.elementosData.find(
           elem => elem.id_proy_elemento === indicador.id_proy_elem_padre && 
                  this.isElementoActivo(elem.idp_estado)
         );
-  
+
         return {
           ...indicador,
           elemento: elemento,
-          avance: ultimoAvance,
-          avances: avancesIndicador, // Guardamos todos los avances
+          avance: avanceModificado,
+          avances: avancesIndicador,
           selected: false
         };
       });
-  
+
+      // Ordenamos por código
+      this.ejecEstrategicaTable.sort((a, b) => {
+        if (!a.codigo || !b.codigo) return 0;
+        return a.codigo.localeCompare(b.codigo, undefined, {
+          numeric: true,
+          sensitivity: 'base'
+        });
+      });
+
       this.totalLength = this.ejecEstrategicaTable.length;
       this.countHeaderData();
     }
   }
-  getElementoInfo(id_elemento: number) {
-    const elemento = this.elementosCompletos?.find(
-      elem => elem.id_proy_elemento === id_elemento
-    );
-    return elemento?.metoInfo || { 
-      sigla: 'IN', 
-      color: '#FDC82F',
-      descripcion: 'No encontrado'
-    };
-  }
+
   calculateAvancePer(item: any): number {
-    if (!item.avance?.valor_reportado || !item.avance?.valor_esperado) return 0;
-    const reportado = parseFloat(item.avance.valor_reportado.replace('$', ''));
-    const esperado = parseFloat(item.avance.valor_esperado.replace('$', ''));
-    return Math.round((reportado / esperado) * 100);
+    if (!item.avance?.valor_reportado_total || !item.avance?.valor_esperado_total) return 0;
+    
+    const reportado = parseFloat(item.avance.valor_reportado_total);
+    const esperado = parseFloat(item.avance.valor_esperado_total);
+    const porcentaje = Math.round((reportado / esperado) * 100);
+    
+    // Limitamos a 100%
+    return Math.min(porcentaje, 100);
   }
   
   calculateAvanceTotal(item: any): number {
-    if (!item.avance?.valor_reportado || !item.meta_final) return 0;
-    const reportado = parseFloat(item.avance.valor_reportado.replace('$', ''));
+    if (!item.avance?.valor_reportado_total || !item.meta_final) return 0;
+    
+    const reportado = parseFloat(item.avance.valor_reportado_total);
     const metaFinal = parseFloat(item.meta_final.replace('$', ''));
-    return Math.round((reportado / metaFinal) * 100);
+    const porcentaje = Math.round((reportado / metaFinal) * 100);
+    
+    // Limitamos a 100%
+    return Math.min(porcentaje, 100);
   }
   
   // ======= ======= NGMODEL VARIABLES SECTION ======= =======
@@ -239,12 +272,24 @@ export class EjecEstrategicaComponent implements OnInit {
       this.comentario = this.ejecEstrategicaSelected.comentario;
       this.sigla = this.ejecEstrategicaSelected.sigla;
       this.color = '#' + this.ejecEstrategicaSelected.color;
+      
+      // Buscar la descripción de la medida
+      if (this.ejecEstrategicaSelected.medida && this.ejecPeridosEva.length > 0) {
+        const periodoEncontrado = this.ejecPeridosEva.find(
+          periodo => periodo.id_subtipo === parseInt(this.ejecEstrategicaSelected.medida)
+        );
+        
+        if (periodoEncontrado) {
+          this.medida = periodoEncontrado.descripcion_subtipo;
+        } else {
+          this.medida = this.ejecEstrategicaSelected.medida;
+        }
+      }
 
      // Buscar el elemento padre
     const elementoPadre = this.elementosData.find(
       elem => elem.id_proy_elemento === this.id_proy_elem_padre
     );
-
 
     if (elementoPadre) {
       this.codigoPadre = elementoPadre.codigo;
@@ -330,27 +375,6 @@ export class EjecEstrategicaComponent implements OnInit {
     }
   }
   
-
-  // Función para obtener el nombre del elemento
-  getElementoNombre(id_elemento: number): string {
-    // Buscar el elemento en elementosData
-    const elemento = this.elementosData.find(
-      elem => elem.id_proy_elemento === id_elemento
-    );
-    
-    if (elemento) {
-      // Buscar el meto_elemento correspondiente
-      const metoElemento = this.metoElementosData.find(
-        meto => meto.id_meto_elemento === elemento.id_meto_elemento
-      );
-      
-      if (metoElemento) {
-        // Retornar solo el meto_elemento
-        return metoElemento.meto_elemento;
-      }
-    }
-    return '';
-  }
   // Función para verificar si un elemento está activo
   isElementoActivo(idp_estado: number): boolean {
     return idp_estado === 1;
@@ -372,7 +396,7 @@ export class EjecEstrategicaComponent implements OnInit {
       );
       
       if (metoElemento) {
-        return elementoPadre.descripcion || 'No encontrado';
+        return `${metoElemento.meto_elemento} - ${elementoPadre.descripcion}`;
       }
     }
     return 'No encontrado';
@@ -387,18 +411,19 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
   
   if (elementoPadre && this.metoElementosData.length > 0) {
     const metoElemento = this.metoElementosData.find(
-      meto => meto.id_meto_elemento === elementoPadre.id_meto_elemento
+      meto => meto.id_meto_elemento === elementoPadre.id_meto_elemento && 
+              meto.id_metodologia === 2
     );
     
     if (metoElemento) {
       return {
-        sigla: metoElemento.sigla || 'IN',
+        sigla: metoElemento.sigla || 'PE',  // PE para Planificación Estratégica por defecto
         color: metoElemento.color ? '#' + metoElemento.color : '#FDC82F'
       };
     }
   }
   return {
-    sigla: 'IN',
+    sigla: 'PE',
     color: '#FDC82F'
   };
 }
@@ -436,167 +461,35 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     }
   }
 
-  // Cargar datos de meto_elementos
-  loadMetoElementos() {
-    this.metoElementosService.getAllMetoElementos().subscribe(
-      (response) => {
-        if (response && response[0]?.dato) {
-          // Filtrar solo los meto_elementos con id_metodologia = 2
-          this.metoElementosData = response[0].dato.filter(
-            (meto: any) => meto.id_metodologia === 2
-          );
-          
-          // Actualizar los datos si hay un elemento seleccionado
-          if (this.ejecEstrategicaSelected) {
-            this.updateElementoData();
-          }
-        }
-      },
-      (error) => {
-        console.error('Error al cargar meto_elementos:', error);
-      }
-    );
-  }
-
-// Función para actualizar los datos del elemento con meto_elementos
-updateElementoData() {
-  // Buscar el elemento padre
-  const elemento = this.elementosData.find(
-    elem => elem.id_proy_elemento === this.id_proy_elem_padre
-  );
-  
-  if (elemento) {
-    // Buscar el meto_elemento correspondiente, filtrando por id_metodologia = 2
-    const metoElemento = this.metoElementosData.find(
-      meto => meto.id_meto_elemento === elemento.id_meto_elemento && 
-              meto.id_metodologia === 2
-    );
-    
-    if (metoElemento) {
-      // Actualizar sigla y color desde meto_elemento
-      this.sigla = metoElemento.sigla;
-      this.color = metoElemento.color ? '#' + metoElemento.color : '#FDC82F';
-    } else {
-      // Valores por defecto si no encuentra meto_elemento
-      this.sigla = 'IN';
-      this.color = '#FDC82F';
-    }
-  }
-  }
-  getComponenteInfo(id_elemento: number): { sigla: string, color: string } {
-    // Buscar el elemento
-    const elemento = this.elementosData.find(
-      elem => elem.id_proy_elemento === id_elemento
-    );
-    
-    if (elemento) {
-      // Buscar el meto_elemento correspondiente
-      const metoElemento = this.metoElementosData.find(
-        meto => meto.id_meto_elemento === elemento.id_meto_elemento
-      );
-      
-      if (metoElemento) {
-        return {
-          sigla: metoElemento.sigla,
-          color: metoElemento.color ? '#' + metoElemento.color : '#FDC82F'
-        };
-      }
-    }
-    
-    // Valores por defecto
-    return {
-      sigla: 'IN',
-      color: '#FDC82F'
-    };
-  }
-
   // ======= ======= VARIABLES PARA PERIODOS ======= =======
-  periodoEvaluacion: string = 'ME'; // Valor por defecto
-  periodosEvaluacion: any[] = [];
-  fechaInicio: Date;
-  fechaFin: Date;
-  fechaFinAmpliada: Date;
-
 
   loadPeriodosEvaluacion() {
     this.servicios.getParametricaByIdTipo(10).subscribe(
       (response) => {
-        if (response && response.dato) {
-          this.periodosEvaluacion = response.dato;
-          // Actualizar el select de medida
-          this.updateMedidaSelect();
+        if (response && response[0]?.dato) {
+          this.ejecPeridosEva = response[0].dato;
+          // Recargar los datos después de obtener los períodos
+          this.getEjecucionEstrategicaData();
         }
       },
       (error) => {
-        console.error('Error al cargar periodos:', error);
+        console.error('Error al cargar períodos:', error);
       }
     );
   }
   
   // Actualizar el select de medida con los periodos disponibles
-  updateMedidaSelect() {
-    const periodos = this.periodosEvaluacion.map(p => ({
-      value: p.descripcion_subtipo.split(' - ')[0],
-      label: p.descripcion_subtipo
-    }));
-    // Actualizar el modelo de medida
-    this.medida = periodos[0].value;
-  }
-  
-  // Generar fechas según periodicidad
-  generateFechas(periodicidad: string, fechaInicio: Date, fechaFin: Date): Date[] {
-    const fechas: Date[] = [];
-    let currentDate = new Date(fechaInicio);
-    
-    while (currentDate <= fechaFin) {
-      fechas.push(new Date(currentDate));
+  actualizarMedida() {
+    if (this.medida && this.ejecPeridosEva.length > 0) {
+      // Buscamos el período que coincida con el código de la medida
+      const periodoEncontrado = this.ejecPeridosEva.find(
+        periodo => periodo.descripcion_subtipo.startsWith(this.medida)
+      );
       
-      switch (periodicidad) {
-        case 'ME':
-          currentDate.setMonth(currentDate.getMonth() + 1);
-          break;
-        case 'BI':
-          currentDate.setMonth(currentDate.getMonth() + 2);
-          break;
-        case 'TR':
-          currentDate.setMonth(currentDate.getMonth() + 3);
-          break;
-        case 'CU':
-          currentDate.setMonth(currentDate.getMonth() + 4);
-          break;
-        case 'SE':
-          currentDate.setMonth(currentDate.getMonth() + 6);
-          break;
-        case 'AN':
-          currentDate.setFullYear(currentDate.getFullYear() + 1);
-          break;
-        case 'FA':
-          // Fechas específicas mayo-diciembre
-          fechas.length = 0; // Limpiar array
-          fechas.push(new Date(currentDate.getFullYear(), 4, 31)); // Mayo
-          fechas.push(new Date(currentDate.getFullYear(), 11, 31)); // Diciembre
-          return fechas;
+      if (periodoEncontrado) {
+        this.medida = periodoEncontrado.descripcion_subtipo;
       }
     }
-    return fechas;
-  }
-  
-  // Generar registros de avance
-  generateAvanceRecords(indicadorId: number) {
-    const fechas = this.generateFechas(
-      this.medida,
-      this.fechaInicio,
-      this.fechaFinAmpliada || this.fechaFin
-    );
-  
-    const avances = fechas.map((fecha, index) => ({
-      id_proy_indica_avance: null,
-      id_proy_indicador: indicadorId,
-      fecha_reportar: fecha,
-      valor_reportado: null,
-      valor_esperado: this.calcularValorEsperado(index, fechas.length)
-    }));
-    return avances;
   }
   
   // Calcular valor esperado
@@ -748,8 +641,6 @@ async onEditAvanceSubmit() {
     console.error('Error en el proceso de actualización:', error);
   }
 }
-
-
 
   countHeaderData() {
     if (this.ejecEstrategicaTable && this.ejecEstrategicaTable.length > 0) {
