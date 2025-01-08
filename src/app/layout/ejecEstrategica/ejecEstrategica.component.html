@@ -436,52 +436,42 @@
   </div>
   <div class="modal-body">
     <form #editAvanceForm="ngForm" (ngSubmit)="onEditSubmit()">
-          <!-- FECHA Y HORA DE MODIFICACION -->
-          <div class="form-group mb-3">
-            <label for="editFechaReportar">Fecha a Reportar:</label>
-            <input
-              type="date"
-              id="editFechaReportar"
-              class="form-control"
-              [(ngModel)]="editAvance.fecha_reportar"
-              name="fecha_reportar"
-              required
-              [readonly]="true"
-            />
-          </div>
-           <!-- Última modificación -->
-          <div class="form-group mb-3">
+          <!-- FECHA Y HORA DE MODIFICACION Última modificación -->
+           <div class="form-group mb-3">
             <label>Última modificación:</label>
             <input
-              type="text"
+              type="datetime-local"
               class="form-control"
-              [value]="editAvance.fecha_hora_reporte | date:'dd/MM/yyyy HH:mm:ss'"
-              readonly
+              [(ngModel)]="editAvance.fecha_hora_reporte"
+              name="fecha_hora_reporte"
+              [readonly]="!puedeEditar"
             />
           </div>
           <!-- Valor Reportado -->
           <div class="form-group">
-              <label for="editValorReportado">Valor Reportado:</label>
-              <input
-                  type="number"
-                  step="0.01"
-                  id="editValorReportado"
-                  class="form-control"
-                  [(ngModel)]="editAvance.valor_reportado"
-                  name="valor_reportado"
-                  readonly
-              />
+            <label for="editValorReportado">Valor Reportado:</label>
+            <input
+              type="number"
+              step="0.01"
+              id="editValorReportado"
+              class="form-control"
+              [(ngModel)]="editAvance.valor_reportado"
+              name="valor_reportado"
+              [readonly]="!puedeEditar"
+              (ngModelChange)="editAvance.valor_reportado = $event"
+            />
           </div>
           <!-- Comentarios -->
           <div class="form-group">
-              <label for="editComentarios">Comentarios:</label>
-              <textarea
-                  id="editComentarios"
-                  class="form-control"
-                  [(ngModel)]="editAvance.comentarios"
-                  name="comentarios"
-                  maxlength="255"
-              ></textarea>
+            <label for="editComentarios">Comentarios:</label>
+            <textarea
+              id="editComentarios"
+              class="form-control"
+              [(ngModel)]="editAvance.comentarios"
+              name="comentarios"
+              maxlength="255"
+              [readonly]="!puedeEditar"
+            ></textarea>
           </div>
           <!-- Evidencia -->
           <div class="form-group mb-3">
