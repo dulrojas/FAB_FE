@@ -472,14 +472,35 @@
           <!-- Evidencia -->
           <div class="form-group mb-3">
             <label for="editEvidencia">Evidencia:</label>
-            <input
-              type="file"
-              id="editEvidencia"
-              class="form-control"
-              (change)="onFileSelected($event)"
-              accept=".pdf,.doc,.docx,.xls,.xlsx"
-            />
-            <small class="text-muted">Formatos permitidos: PDF, DOC</small>
+            <div class="input-group">
+              <input
+                type="file"
+                id="editEvidencia"
+                class="form-control"
+                (change)="onFileSelected($event)"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              />
+              <div class="input-group-append" *ngIf="editAvance.ruta_evidencia">
+                <button 
+                  class="btn btn-outline-secondary" 
+                  type="button"
+                  (click)="downloadAvanceFile(editAvance.id_proy_indica_avance, editAvance.ruta_evidencia)"
+                >
+                  Descargar
+                </button>
+              </div>
+            </div>
+            <small class="text-muted">
+              Formatos permitidos: PDF, DOC, DOCX, JPG, PNG. Tamaño máximo: 5MB
+            </small>
+            <div *ngIf="fileUrl" class="mt-2">
+              <img [src]="fileUrl" class="img-fluid" style="max-height: 200px;" *ngIf="fileData?.type?.startsWith('image/')">
+            </div>
+          
+            <!-- Nombre del archivo actual -->
+            <div *ngIf="editAvance.ruta_evidencia" class="mt-2">
+              <small>Archivo actual: {{editAvance.ruta_evidencia}}</small>
+            </div>
           </div>
          
               <div

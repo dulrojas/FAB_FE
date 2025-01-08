@@ -589,6 +589,12 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       fechaActual.setHours(fechaActual.getHours() - 4);
       const fechaHoraActual = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
   
+      // Si hay un archivo nuevo, subirlo primero
+      let rutaEvidencia = this.editAvance.ruta_evidencia;
+      if (this.fileData) {
+        rutaEvidencia = await this.uploadAvanceFile(this.editAvance.id_proy_indica_avance);
+      }
+  
       const datosActualizados = {
         p_accion: 'M1',
         p_id_proy_indicador_avance: this.editAvance.id_proy_indica_avance,
@@ -598,17 +604,20 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         p_valor_esperado: this.editAvance.valor_esperado.toString(),
         p_valor_reportado: this.editAvance.valor_reportado.toString(),
         p_comentarios: this.editAvance.comentarios || '',
-        p_ruta_evidencia: this.editAvance.ruta_evidencia || '',
+        p_ruta_evidencia: rutaEvidencia,
         p_id_persona_reporte: this.idPersonaReg
       };
   
       await this.servIndicadorAvance.editIndicadorAvance(datosActualizados).toPromise();
-      
-      // Actualizar datos sin cerrar el modal
       await this.actualizarTodosLosDatos(datosActualizados);
       
-      // Solo mostrar mensaje de éxito
       alert('Avance actualizado exitosamente');
+      
+      // Limpiar datos del archivo
+      this.fileData = null;
+      this.fileName = '';
+      this.fileUrl = null;
+      
     } catch (error) {
       console.error('Error:', error);
       alert('Error en el proceso de actualización');
@@ -685,8 +694,11 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
 
 // Variables para el manejo de archivos
 fileData: any = null;
-allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
-maxFileSize = 5 * 1024 * 1024; // 5MB en bytes
+fileName: string = '';
+fileUrl: string | null = null;
+readonly allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
+readonly maxFileSize = 5 * 1024 * 1024;
+
 onFileSelected(event: any): void {
   const file = event.target.files[0];
   
@@ -705,17 +717,80 @@ onFileSelected(event: any): void {
     }
 
     this.fileData = file;
+    this.fileName = file.name;
     
-    // Si es una imagen, mostrar preview
+    // Si es una imagen, crear preview
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = () => {
-        this.editAvance.preview = reader.result as string;
+        this.fileUrl = reader.result as string;
       };
       reader.readAsDataURL(file);
+    } else {
+      this.fileUrl = null;
     }
+
+    // Actualizar el valor en editAvance
+    this.editAvance.ruta_evidencia = this.fileName;
   }
 }
+// Función para subir archivo
+async uploadAvanceFile(idAvance: number): Promise<string> {
+  if (!this.fileData) {
+    return '';
+  }
+
+  try {
+    const response = await this.servicios.uploadFile(
+      this.fileData,
+      'proy_indicador_avance',
+      'ruta_evidencia',
+      'id_proy_indicador_avance',
+      this.fileName,
+      idAvance
+    ).toPromise();
+
+    return response?.ruta || '';
+  } catch (error) {
+    console.error('Error al subir el archivo:', error);
+    throw error;
+  }
+}
+
+// Función para descargar archivo
+downloadAvanceFile(idAvance: number, fileName: string): void {
+  this.servicios.downloadFile(
+    'proy_indicador_avance',
+    'ruta_evidencia',
+    'id_proy_indicador_avance',
+    idAvance
+  ).subscribe(
+    (response: Blob) => {
+      // Crear URL del blob
+      const url = window.URL.createObjectURL(response);
+      
+      // Crear elemento anchor temporal
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName || 'evidencia';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Limpiar
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    },
+    (error) => {
+      console.error('Error al descargar el archivo:', error);
+      if (error.status === 404) {
+        alert('No se encontró el archivo solicitado');
+      } else {
+        alert('Error al descargar el archivo');
+      }
+    }
+  );
+}
+
 // Variable para controlar si se puede editar
 puedeEditar: boolean = false;
 
