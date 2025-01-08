@@ -546,30 +546,42 @@ export class ActividadComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= EDIT APRENDIZAJE ======= =======
     addActividad(){
+      let actividadCodigo = ((this.elementos.find(
+        (elemento)=>(this.id_proy_elemento_padre == elemento.id_proy_elemento)
+      )).codigo);
+
+      actividadCodigo = actividadCodigo.slice(0,(actividadCodigo.length - 1));
+
+      console.log(this.elementosGant);
+
+      actividadCodigo = actividadCodigo+(666);
+
       const objActividad = {
         p_id_proy_actividad: 0,
         p_id_proyecto: parseInt(this.idProyecto,10),
-        p_id_proy_elemento_padre: parseInt(this.id_proy_elemento_padre,10),
-        p_codigo: this.codigo,
+        p_id_proy_elemento_padre: parseInt(this.id_proy_elemento_padre, 10),
+        p_codigo: actividadCodigo,
         p_actividad: this.actividadText,
         p_descripcion: this.descripcion,
         p_orden: parseInt(this.orden,10),
-        p_id_proy_acti_repro: parseInt(this.id_proy_acti_repro,10),
+        p_id_proy_acti_repro: parseInt(this.id_proy_acti_repro, 10),
         p_presupuesto: parseInt(this.presupuesto,10),
         p_fecha_inicio: this.fecha_inicio,
         p_fecha_fin: this.fecha_fin,
         p_resultado: this.resultado,
-        p_idp_actividad_estado: parseInt(this.idp_actividad_estado,10)
+        p_idp_actividad_estado: parseInt(this.idp_actividad_estado, 10)
       };
 
-      this.servActividad.addActividad(objActividad).subscribe(
+      console.log(objActividad);
+
+      /*this.servActividad.addActividad(objActividad).subscribe(
         (data) => {
           this.getActividades();
         },
         (error) => {
           console.error(error);
         }
-      );
+      );*/
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT EDIT PERSONA ROLES ======= =======
@@ -611,7 +623,7 @@ export class ActividadComponent implements OnInit {
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
       if(this.modalAction == "add"){
-        //this.addActividad();
+        this.addActividad();
       }
       else{
         //this.editActividad();
