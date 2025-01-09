@@ -250,17 +250,25 @@ export class Dashboard2Component implements OnInit {
           maximumFractionDigits: 2
         }).format(valor);
       }
-      private parseMonetaryValue(value: string): number {
+      private parseMonetaryValue(value: any): number {
         if (!value) return 0;
         
-        // Eliminar el símbolo de moneda y las comas
-        const cleanValue = value.replace(/[$,]/g, '');
+        // Si es número, retornarlo directamente
+        if (typeof value === 'number') return value;
         
-        // Convertir a número
-        const numValue = parseFloat(cleanValue);
+        // Si es string, limpiarlo y convertirlo
+        if (typeof value === 'string') {
+          // Eliminar símbolos de moneda y espacios
+          const cleanValue = value.replace(/[^0-9.-]+/g, '');
+          
+          // Convertir a número
+          const numValue = parseFloat(cleanValue);
+          
+          // Verificar si es un número válido
+          return isNaN(numValue) ? 0 : numValue;
+        }
         
-        // Retornar 0 si no es un número válido
-        return isNaN(numValue) ? 0 : numValue;
+        return 0;
       }
       procesarDatosPresupuesto(data: any) {
         // Obtener y convertir el presupuesto total
@@ -337,13 +345,7 @@ export class Dashboard2Component implements OnInit {
   // ====== ======= ====== ====== CUARTA TARJETA DE PRESUPUESTOS DE LA GESTION ====== ======= ====== ======
   // Variables para la gestión del presupuesto
   gestionActual: string = '';
-  presupuestoGestion: {
-    ejecutado: number;
-    presupuesto_actividad: number;
-    porcentaje_ejecutado: number;
-    ejecutado_formateado: string;
-    presupuesto_formateado: string;
-  } = {
+  presupuestoGestion = {
     ejecutado: 0,
     presupuesto_actividad: 0,
     porcentaje_ejecutado: 0,
@@ -351,79 +353,76 @@ export class Dashboard2Component implements OnInit {
     presupuesto_formateado: ''
   };
   chartGestion: any;
-  procesarDatosPresupuestoGestion(data: any) {
-    // Agregar console.log para ver los datos que llegan
-    console.log('Datos recibidos en procesarDatosPresupuestoGestion:', data);
-    
-    if (!data) return;
+  
+  private limpiarValorMonetario(valor: string | number): number {
+    if (typeof valor === 'number') return valor;
+    if (!valor) return 0;
     
     try {
+      // Remover símbolos de moneda y comas
+      const limpio = valor.replace(/[$,\s]/g, '');
+      return parseFloat(limpio) || 0;
+    } catch (error) {
+      console.error('Error al limpiar valor monetario:', error);
+      return 0;
+    }
+  }
+
+  procesarDatosPresupuestoGestion(data: any) {
+    try {
+      // 1. Establecer el año actual
       this.gestionActual = data.gestion_actual || new Date().getFullYear().toString();
+
+      // 2. Procesar el presupuesto del periodo
+      const presupuestoGestion = this.limpiarValorMonetario(data.pro_act_presupuesto_gestion);
       
-      // Asegurémonos de que los valores sean números antes de operar con ellos
-      let presupuestoGestion = 0;
-      let ejecutadoActividad = 0;
-      let ejecutadoPre = 0;
-  
-      // Verificar todas las posibles propiedades donde podrían estar los datos
-      if (data.pro_act_presupuesto_gestion) {
-        presupuestoGestion = this.parseMonetaryValue(data.pro_act_presupuesto_gestion);
-      } else if (data.presupuesto_gestion) {
-        presupuestoGestion = this.parseMonetaryValue(data.presupuesto_gestion);
-      }
-  
-      if (data.pro_act_ava_ejecutado_gestion) {
-        ejecutadoActividad = this.parseMonetaryValue(data.pro_act_ava_ejecutado_gestion);
-      } else if (data.ejecutado_actividad_gestion) {
-        ejecutadoActividad = this.parseMonetaryValue(data.ejecutado_actividad_gestion);
-      }
-  
-      if (data.pro_pre_ava_ejecutado_gestion) {
-        ejecutadoPre = this.parseMonetaryValue(data.pro_pre_ava_ejecutado_gestion);
-      } else if (data.ejecutado_pre_gestion) {
-        ejecutadoPre = this.parseMonetaryValue(data.ejecutado_pre_gestion);
-      }
-  
+      // 3. Procesar valores ejecutados
+      const ejecutadoActividad = this.limpiarValorMonetario(data.pro_act_ava_ejecutado_gestion);
+      const ejecutadoPre = this.limpiarValorMonetario(data.pro_pre_ava_ejecutado_gestion);
       const ejecutadoTotal = ejecutadoActividad + ejecutadoPre;
-  
-      // Actualizar el objeto presupuestoGestion
+
+      // 4. Calcular porcentaje
+      const porcentajeEjecutado = presupuestoGestion > 0 ? 
+        Math.min((ejecutadoTotal / presupuestoGestion) * 100, 100) : 0;
+
+      // 5. Actualizar el objeto presupuestoGestion
       this.presupuestoGestion = {
         ejecutado: ejecutadoTotal,
         presupuesto_actividad: presupuestoGestion,
-        porcentaje_ejecutado: presupuestoGestion > 0 ? Math.min((ejecutadoTotal / presupuestoGestion) * 100, 100) : 0,
+        porcentaje_ejecutado: porcentajeEjecutado,
         ejecutado_formateado: this.formatearMoneda(ejecutadoTotal),
         presupuesto_formateado: this.formatearMoneda(presupuestoGestion)
       };
-  
-      console.log('Datos procesados:', this.presupuestoGestion);
-      
-      // Forzar la detección de cambios
+
+      console.log('Datos procesados:', {
+        presupuestoGestion,
+        ejecutadoTotal,
+        porcentajeEjecutado
+      });
+
+      // 6. Forzar actualización de la vista y crear gráfico
       this.cdr.detectChanges();
-      
-      // Actualizar el gráfico
       this.createGestionChart();
     } catch (error) {
-      console.error('Error al procesar datos de presupuesto gestión:', error);
+      console.error('Error procesando datos de presupuesto:', error);
     }
   }
 
   // Función para crear el gráfico de dona
   createGestionChart() {
-    // Esperar un momento para asegurar que el elemento DOM esté listo
-    setTimeout(() => {
-      const ctx: any = document.getElementById('doughnutChart2024');
-      if (!ctx) {
-        console.error('No se encontró el elemento canvas');
-        return;
-      }
-  
-      if (this.chartGestion) {
-        this.chartGestion.destroy();
-      }
-  
-      const porcentaje = Math.min(Math.round(this.presupuestoGestion.porcentaje_ejecutado), 100);
-      const restante = 100 - porcentaje;
-  
+    const ctx: any = document.getElementById('doughnutChart2024');
+    if (!ctx) {
+      console.error('No se encontró el elemento canvas');
+      return;
+    }
+
+    if (this.chartGestion) {
+      this.chartGestion.destroy();
+    }
+
+    const porcentaje = Math.round(this.presupuestoGestion.porcentaje_ejecutado);
+    const restante = 100 - porcentaje;
+
     this.chartGestion = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -442,7 +441,12 @@ export class Dashboard2Component implements OnInit {
             display: false
           },
           tooltip: {
-            enabled: false
+            enabled: true,
+            callbacks: {
+              label: function(context) {
+                return `${context.raw}%`;
+              }
+            }
           }
         }
       },
@@ -462,8 +466,8 @@ export class Dashboard2Component implements OnInit {
         }
       }]
     });
-   }, 0);
   }
+
   // ====== ======= ====== ====== QUINTA TARJETA INDICADORES ====== ======= ====== ======
   // Variables para la quinta tarjeta
       indicadores: {

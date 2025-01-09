@@ -139,6 +139,9 @@ export class PlanifEstrategicaComponent implements OnInit {
       // this.getPlanifEstrategica();
       this.initPlanifEstrategicaModel();
       this.planifEstrategicaSelected = null
+      this.loadData();
+      this.countHeaderData();
+      
     }
 
     ngOnInit(): void {

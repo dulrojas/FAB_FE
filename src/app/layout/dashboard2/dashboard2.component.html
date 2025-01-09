@@ -102,28 +102,32 @@
         <div class="col-xl-8 col-lg-8 d-flex align-items-start">
           <div class="row" style="display: flex; justify-content: center;">
             <!-- CUARTA TARJETA DE PRESUPUESTOS DE LA GESTION -->
-                <div class="col-xl-4 col-lg-4 mt-3">
-                  <div class="card">
-                    <h6 class="card-title">PRESUPUESTO DE LA GESTIÓN {{gestionActual}}</h6>
-                    <div class="card-body" style="display: flex; justify-content: center;">
+            <div class="col-xl-4 col-lg-4 mt-3">
+              <div class="card">
+                <h6 class="card-title">PRESUPUESTO DE LA GESTIÓN {{gestionActual}}</h6>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
                       <div class="text-center">
                         <h6>Presupuesto del Periodo</h6>
                         <h5 class="presupuesto mb-3">
-                          {{moneda_presupuesto}}{{presupuestoGestion.presupuesto_formateado}}
+                          {{moneda_presupuesto}} {{presupuestoGestion.presupuesto_formateado}}
                         </h5>
                         <h6>Ejecutado</h6>
-                        <h5 class="presupuesto" style="background-color: #ffffff; color: #000000;">
-                          {{moneda_presupuesto}}{{presupuestoGestion.ejecutado_formateado}}
+                        <h5 class="presupuesto">
+                          {{moneda_presupuesto}} {{presupuestoGestion.ejecutado_formateado}}
                         </h5>
                       </div>
-                      <div class="col-md-6">
-                        <div class="chart-container" style="position: relative;height: 140px;">
-                          <canvas id="doughnutChart2024"></canvas>
-                        </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="chart-container" style="position: relative; height: 140px;">
+                        <canvas id="doughnutChart2024"></canvas>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
             <!-- QUINTA TARJETA INDICADORES -->
                 <div class="col-xl-4 col-lg-4 my-auto mt-3">
                   <div class="card">
