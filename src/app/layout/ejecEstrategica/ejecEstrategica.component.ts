@@ -182,6 +182,7 @@ export class EjecEstrategicaComponent implements OnInit {
       
       // Forzar la detección de cambios
       this.ejecEstrategicaTable = [...this.ejecEstrategicaTable];
+      this.indicadoresAvance = [...this.indicadoresAvance];
     }
   }
  
@@ -209,10 +210,10 @@ export class EjecEstrategicaComponent implements OnInit {
   calculateAvanceTotal(item: any): number {
     if (!item?.avances || !item?.meta_final) return 0;
     
-    const ultimoAvance = this.getUltimoAvanceValido(item.avances);
-    if (!ultimoAvance) return 0;
+    const avance = this.getUltimoAvanceValido(item.avances);
+    if (!avance) return 0;
     
-    const reportado = parseFloat(ultimoAvance.valor_reportado.toString().replace(/[^0-9.-]+/g, ''));
+    const reportado = parseFloat(avance.valor_reportado.toString().replace(/[^0-9.-]+/g, ''));
     const metaFinal = parseFloat(item.meta_final.toString().replace(/[^0-9.-]+/g, ''));
     
     if (isNaN(reportado) || isNaN(metaFinal) || metaFinal === 0) return 0;
@@ -418,6 +419,7 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
   // Función para controlar la selección de checkboxes
   checkboxChanged(item: any) {
     if (item.selected) {
+      // Deseleccionar otros items
       this.ejecEstrategicaTable.forEach(row => {
         if (row !== item) {
           row.selected = false;
@@ -425,15 +427,14 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       });
       this.ejecEstrategicaSelected = item;
       
-      // Filtrar los avances para el indicador seleccionado y ordenar por fecha
+      // Filtrar los avances solo del indicador seleccionado
       this.indicadoresAvance = this.datosIndicadoresAvance
         .filter(avance => avance.id_proy_indicador === item.id_proy_indicador)
         .sort((a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime());
     } else {
       this.ejecEstrategicaSelected = null;
-      // Restaurar y ordenar el array original
-      this.indicadoresAvance = [...this.datosIndicadoresAvance]
-        .sort((a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime());
+      // Limpiar la lista de avances cuando no hay selección
+      this.indicadoresAvance = [];
     }
   }
   
@@ -446,7 +447,7 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     const incremento = (parseFloat(this.meta_final) - parseFloat(this.linea_base)) / (total - 1);
     return parseFloat(this.linea_base) + (incremento * index);
   }
-  
+ 
   // Abrir modal de edición de avance
   openEditAvanceModal(modal: any, item: any) {
     // Usar la fecha del reporte existente si está disponible
@@ -470,6 +471,7 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     this.puedeEditar = this.verificarPermisoEdicion(item.fecha_reportar);
     this.modalService.open(modal, { size: 'lg' });
   }
+  
   // Función auxiliar para limpiar valores numéricos
   limpiarValorNumerico(valor: string | number): number {
     if (typeof valor === 'string') {
@@ -527,23 +529,12 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       alert('No se puede editar el avance');
       return;
     }
-    const currentIndex = this.indicadoresAvance.findIndex(
-      avance => avance.id_proy_indica_avance === this.editAvance.id_proy_indica_avance
-    );
-  
-    // Validar progreso acumulativo
-    if (!this.validateAccumulativeProgress(this.editAvance.valor_reportado, currentIndex)) {
-      alert('El valor reportado debe ser mayor o igual al periodo anterior');
-      return;
-    }
   
     try {
-      // Obtener fecha actual en zona horaria de Bolivia
       const fechaActual = new Date();
       fechaActual.setHours(fechaActual.getHours() - 4);
       const fechaHoraActual = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
   
-      // Si hay un archivo nuevo, subirlo primero
       let rutaEvidencia = this.editAvance.ruta_evidencia;
       if (this.fileData) {
         rutaEvidencia = await this.uploadAvanceFile(this.editAvance.id_proy_indica_avance);
@@ -562,88 +553,63 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         p_id_persona_reporte: this.idPersonaReg
       };
   
-      await this.servIndicadorAvance.editIndicadorAvance(datosActualizados).toPromise();
-      await this.actualizarTodosLosDatos(datosActualizados);
+      const response = await this.servIndicadorAvance.editIndicadorAvance(datosActualizados).toPromise();
       
-      alert('Avance actualizado exitosamente');
-      
-      // Limpiar datos del archivo
-      this.fileData = null;
-      this.fileName = '';
-      this.fileUrl = null;
+      if (response && response[0]?.dato) {
+        // Actualizar solo los datos necesarios
+        await this.actualizarDatosIndicador(this.editAvance.id_proy_indicador);
+        
+        // Limpiar datos del archivo
+        this.fileData = null;
+        this.fileName = '';
+        this.fileUrl = null;
+        
+        alert('Avance actualizado exitosamente');
+        this.modalService.dismissAll();
+      } else {
+        throw new Error('No se recibió respuesta del servidor');
+      }
       
     } catch (error) {
       console.error('Error:', error);
       alert('Error en el proceso de actualización');
     }
   }
-  
-  // Nuevo método para actualizar todos los datos
-  private async actualizarTodosLosDatos(datosActualizados: any) {
-    // Actualizar la tabla principal primero
-    const indexTabla = this.ejecEstrategicaTable.findIndex(
-      item => item.id_proy_indicador === datosActualizados.p_id_proy_indicador
-    );
-  
-    if (indexTabla !== -1) {
-      // Calculamos el nuevo valor total
-      const avancesActuales = this.datosIndicadoresAvance.filter(
-        avance => avance.id_proy_indicador === datosActualizados.p_id_proy_indicador
-      );
-  
-      const totalReportado = avancesActuales.reduce((sum, avance) => {
-        const valor = avance.id_proy_indica_avance === datosActualizados.p_id_proy_indicador_avance ? 
-          parseFloat(datosActualizados.p_valor_reportado) : 
-          parseFloat(avance.valor_reportado);
-        return sum + (isNaN(valor) ? 0 : valor);
-      }, 0);
-  
-      const totalEsperado = avancesActuales.reduce((sum, avance) => {
-        const valor = avance.id_proy_indica_avance === datosActualizados.p_id_proy_indicador_avance ? 
-          parseFloat(datosActualizados.p_valor_esperado) : 
-          parseFloat(avance.valor_esperado);
-        return sum + (isNaN(valor) ? 0 : valor);
-      }, 0);
-  
-      // Actualizar el elemento en la tabla
-      this.ejecEstrategicaTable[indexTabla] = {
-        ...this.ejecEstrategicaTable[indexTabla],
-        avance: {
-          ...this.ejecEstrategicaTable[indexTabla].avance,
-          valor_reportado: datosActualizados.p_valor_reportado,
-          valor_esperado: datosActualizados.p_valor_esperado,
-          valor_reportado_total: totalReportado.toString(),
-          valor_esperado_total: totalEsperado.toString(),
-          fecha_hora_reporte: datosActualizados.p_fecha_hora_reporte,
-          comentarios: datosActualizados.p_comentarios
+  private async actualizarDatosIndicador(idProyIndicador: number) {
+    try {
+      // Obtener datos actualizados del indicador avance
+      const response = await this.servIndicadorAvance.getIndicadoresAvance().toPromise();
+      
+      if (response && response[0]?.dato) {
+        // Actualizar datosIndicadoresAvance completo
+        this.datosIndicadoresAvance = response[0].dato;
+        
+        // Filtrar y actualizar indicadoresAvance solo para el indicador seleccionado
+        this.indicadoresAvance = this.datosIndicadoresAvance
+          .filter(avance => avance.id_proy_indicador === idProyIndicador)
+          .sort((a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime());
+        
+        // Actualizar el elemento en ejecEstrategicaTable
+        const index = this.ejecEstrategicaTable.findIndex(
+          item => item.id_proy_indicador === idProyIndicador
+        );
+        
+        if (index !== -1) {
+          const ultimoAvance = this.getUltimoAvanceValido(this.indicadoresAvance);
+          this.ejecEstrategicaTable[index] = {
+            ...this.ejecEstrategicaTable[index],
+            avance: ultimoAvance,
+            avances: this.indicadoresAvance
+          };
         }
-      };
-    }
-  
-    // Actualizar arrays de datos
-    const actualizarArray = (array: any[]) => {
-      const index = array.findIndex(
-        item => item.id_proy_indica_avance === datosActualizados.p_id_proy_indicador_avance
-      );
-      if (index !== -1) {
-        array[index] = {
-          ...array[index],
-          valor_reportado: datosActualizados.p_valor_reportado,
-          valor_esperado: datosActualizados.p_valor_esperado,
-          fecha_hora_reporte: datosActualizados.p_fecha_hora_reporte,
-          comentarios: datosActualizados.p_comentarios
-        };
+        
+        // Actualizar contadores
+        this.countHeaderData();
       }
-    };
-  
-    actualizarArray(this.datosIndicadoresAvance);
-    actualizarArray(this.indicadoresAvance);
-
-    // Actualizar contadores
-    this.countHeaderData();
-    
-    // Forzar detección de cambios
-    this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Error al actualizar datos del indicador:', error);
+      throw error;
+    }
   }
 
 // Variables para el manejo de archivos
@@ -771,27 +737,33 @@ verificarPermisoEdicion(fechaReportar: string): boolean {
 getUltimoAvanceValido(avances: any[]): any {
   if (!avances || avances.length === 0) return null;
   
-  const fechaActual = new Date();
-  // Ordenar avances por fecha de reporte
+  // Ordenar avances por fecha de reporte (del más antiguo al más reciente)
   const avancesOrdenados = [...avances].sort((a, b) => 
     new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
   );
-  
-  // Buscar el último avance que ya venció
-  let ultimoAvanceVencido = avancesOrdenados
-    .filter(avance => new Date(avance.fecha_reportar) <= fechaActual)
-    .pop();
-    
-  // Si no hay avances vencidos, tomar el próximo disponible
-  if (!ultimoAvanceVencido) {
-    ultimoAvanceVencido = avancesOrdenados[0];
+
+  // Primero buscar el último avance que tenga valor reportado (incluso si es fecha futura)
+  const ultimoConValor = [...avancesOrdenados]
+    .reverse()
+    .find(avance => parseFloat(String(avance.valor_reportado).replace(/[^0-9.-]+/g, '')) > 0);
+
+  if (ultimoConValor) {
+    return ultimoConValor;
   }
-  
-  // Si hay un avance con valor_reportado diferente a 0, tomarlo como último válido
-  const avanceConProgreso = avancesOrdenados
-    .find(avance => parseFloat(avance.valor_reportado) > 0);
-    
-  return avanceConProgreso || ultimoAvanceVencido;
+
+  // Si no hay ninguno con valor reportado, devolver el último vencido
+  const fechaActual = new Date();
+  fechaActual.setHours(0, 0, 0, 0);
+
+  const ultimoVencido = [...avancesOrdenados]
+    .reverse()
+    .find(avance => {
+      const fechaReporte = new Date(avance.fecha_reportar);
+      fechaReporte.setHours(0, 0, 0, 0);
+      return fechaReporte < fechaActual;
+    });
+
+  return ultimoVencido || avancesOrdenados[0];
 }
 
 // Función para obtener la próxima fecha a reportar
@@ -818,34 +790,40 @@ getProximaFechaReporte(avances: any[]): string {
 
 countHeaderData() {
   if (this.ejecEstrategicaTable && this.ejecEstrategicaTable.length > 0) {
-      // Total de indicadores
-      this.headerDataNro01 = this.ejecEstrategicaTable.length;
-  
-      // Metas de período cumplidas (usando valores sumados)
-      this.headerDataNro02 = this.ejecEstrategicaTable.filter(item => {
-          if (item.avance?.valor_reportado_total && item.avance?.valor_esperado_total) {
-              const reportado = parseFloat(item.avance.valor_reportado_total);
-              const esperado = parseFloat(item.avance.valor_esperado_total);
-              return reportado >= esperado;
-          }
-          return false;
-      }).length;
-  
-      // Indicadores sin avance
-      this.headerDataNro03 = this.ejecEstrategicaTable.filter(item => 
-          !item.avance?.valor_reportado_total || 
-          parseFloat(item.avance.valor_reportado_total) === 0
-      ).length;
-  
-      // Meta final cumplida
-      this.headerDataNro04 = this.ejecEstrategicaTable.filter(item => {
-          if (item.avance?.valor_reportado_total && item.meta_final) {
-              const reportado = parseFloat(item.avance.valor_reportado_total);
-              const metaFinal = parseFloat(item.meta_final.replace('$', ''));
-              return reportado >= metaFinal;
-          }
-          return false;
-      }).length;
+    // Total de indicadores
+    this.headerDataNro01 = this.ejecEstrategicaTable.length;
+
+    // Metas de período cumplidas
+    this.headerDataNro02 = this.ejecEstrategicaTable.filter(item => {
+      const avance = this.getUltimoAvanceValido(item.avances);
+      if (!avance) return false;
+      
+      const reportado = parseFloat(avance.valor_reportado.toString().replace(/[^0-9.-]+/g, ''));
+      const esperado = parseFloat(avance.valor_esperado.toString().replace(/[^0-9.-]+/g, ''));
+      
+      if (isNaN(reportado) || isNaN(esperado) || esperado === 0) return false;
+      
+      return reportado >= esperado;
+    }).length;
+
+    // Indicadores sin avance
+    this.headerDataNro03 = this.ejecEstrategicaTable.filter(item => {
+      const avance = this.getUltimoAvanceValido(item.avances);
+      return !avance || parseFloat(avance.valor_reportado) === 0;
+    }).length;
+
+    // Meta final cumplida
+    this.headerDataNro04 = this.ejecEstrategicaTable.filter(item => {
+      const avance = this.getUltimoAvanceValido(item.avances);
+      if (!avance) return false;
+      
+      const reportado = parseFloat(avance.valor_reportado.toString().replace(/[^0-9.-]+/g, ''));
+      const metaFinal = parseFloat(item.meta_final.toString().replace(/[^0-9.-]+/g, ''));
+      
+      if (isNaN(reportado) || isNaN(metaFinal) || metaFinal === 0) return false;
+      
+      return reportado >= metaFinal;
+    }).length;
   }
 }
 
