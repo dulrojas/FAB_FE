@@ -146,33 +146,14 @@ export class EjecEstrategicaComponent implements OnInit {
       );
   
       this.ejecEstrategicaTable = indicadoresActivos.map(indicador => {
-        // Obtenemos todos los avances para este indicador
+        // Obtener todos los avances para este indicador
         const avancesIndicador = this.datosIndicadoresAvance.filter(
           avance => avance.id_proy_indicador === indicador.id_proy_indicador
         );
   
-        // Calculamos la suma de valores reportados y esperados
-        const sumaReportado = avancesIndicador.reduce((sum, avance) => 
-          sum + parseFloat(avance.valor_reportado?.replace('$', '') || '0'), 0
-        );
-  
-        const sumaEsperado = avancesIndicador.reduce((sum, avance) => 
-          sum + parseFloat(avance.valor_esperado?.replace('$', '') || '0'), 0
-        );
-  
-        // Tomamos el último avance para la fecha más reciente
-        const ultimoAvance = avancesIndicador.length > 0 ? 
-          avancesIndicador.sort((a, b) => 
-            new Date(b.fecha_reportar).getTime() - new Date(a.fecha_reportar).getTime()
-          )[0] : null;
-  
-        // Modificamos el avance para incluir las sumas
-        const avanceModificado = ultimoAvance ? {
-          ...ultimoAvance,
-          valor_reportado_total: sumaReportado.toString(),
-          valor_esperado_total: sumaEsperado.toString()
-        } : null;
-  
+        // Obtener el último avance válido
+        const ultimoAvance = this.getUltimoAvanceValido(avancesIndicador);
+        
         const elemento = this.elementosData.find(
           elem => elem.id_proy_elemento === indicador.id_proy_elem_padre && 
                  this.isElementoActivo(elem.idp_estado)
@@ -181,13 +162,13 @@ export class EjecEstrategicaComponent implements OnInit {
         return {
           ...indicador,
           elemento: elemento,
-          avance: avanceModificado,
+          avance: ultimoAvance,
           avances: avancesIndicador,
           selected: false
         };
       });
   
-      // Ordenamos por código
+      // Ordenar por código
       this.ejecEstrategicaTable.sort((a, b) => {
         if (!a.codigo || !b.codigo) return 0;
         return a.codigo.localeCompare(b.codigo, undefined, {
@@ -198,10 +179,9 @@ export class EjecEstrategicaComponent implements OnInit {
   
       this.totalLength = this.ejecEstrategicaTable.length;
       this.countHeaderData();
-  
-      // Forzar la detección de cambios si es necesario
+      
+      // Forzar la detección de cambios
       this.ejecEstrategicaTable = [...this.ejecEstrategicaTable];
-      this.indicadoresAvance = [...this.indicadoresAvance];
     }
   }
  
@@ -211,36 +191,35 @@ export class EjecEstrategicaComponent implements OnInit {
   }
 
   calculateAvancePer(item: any): number {
-    if (!item?.avance?.valor_reportado_total || !item?.avance?.valor_esperado_total) {
-      return 0;
-    }
+    if (!item?.avances) return 0;
     
-    const reportado = parseFloat(item.avance.valor_reportado_total.toString().replace(/[^0-9.-]+/g, ''));
-    const esperado = parseFloat(item.avance.valor_esperado_total.toString().replace(/[^0-9.-]+/g, ''));
+    const ultimoAvance = this.getUltimoAvanceValido(item.avances);
+    if (!ultimoAvance) return 0;
     
-    if (isNaN(reportado) || isNaN(esperado) || esperado === 0) {
-      return 0;
-    }
+    const reportado = parseFloat(ultimoAvance.valor_reportado.toString().replace(/[^0-9.-]+/g, ''));
+    const esperado = parseFloat(ultimoAvance.valor_esperado.toString().replace(/[^0-9.-]+/g, ''));
+    
+    if (isNaN(reportado) || isNaN(esperado) || esperado === 0) return 0;
     
     const porcentaje = Math.round((reportado / esperado) * 100);
     return Math.min(porcentaje, 100);
   }
   
+  
   calculateAvanceTotal(item: any): number {
-    if (!item?.avance?.valor_reportado_total || !item?.meta_final) {
-      return 0;
-    }
+    if (!item?.avances || !item?.meta_final) return 0;
     
-    const reportado = parseFloat(item.avance.valor_reportado_total.toString().replace(/[^0-9.-]+/g, ''));
+    const ultimoAvance = this.getUltimoAvanceValido(item.avances);
+    if (!ultimoAvance) return 0;
+    
+    const reportado = parseFloat(ultimoAvance.valor_reportado.toString().replace(/[^0-9.-]+/g, ''));
     const metaFinal = parseFloat(item.meta_final.toString().replace(/[^0-9.-]+/g, ''));
     
-    if (isNaN(reportado) || isNaN(metaFinal) || metaFinal === 0) {
-      return 0;
-    }
+    if (isNaN(reportado) || isNaN(metaFinal) || metaFinal === 0) return 0;
     
     const porcentaje = Math.round((reportado / metaFinal) * 100);
     return Math.min(porcentaje, 100);
-  }  
+  }
   
   // ======= ======= NGMODEL VARIABLES SECTION ======= =======
   id_proy_elem_padre: number = 0;
@@ -438,7 +417,6 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
 
   // Función para controlar la selección de checkboxes
   checkboxChanged(item: any) {
-    // Deseleccionar otros items si uno está seleccionado
     if (item.selected) {
       this.ejecEstrategicaTable.forEach(row => {
         if (row !== item) {
@@ -447,16 +425,15 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       });
       this.ejecEstrategicaSelected = item;
       
-      // Filtrar los avances para el indicador seleccionado
-      this.indicadoresAvance = this.datosIndicadoresAvance.filter(
-        avance => avance.id_proy_indicador === item.id_proy_indicador
-      ).sort((a, b) => 
-        new Date(b.fecha_reportar).getTime() - new Date(a.fecha_reportar).getTime()
-      );
+      // Filtrar los avances para el indicador seleccionado y ordenar por fecha
+      this.indicadoresAvance = this.datosIndicadoresAvance
+        .filter(avance => avance.id_proy_indicador === item.id_proy_indicador)
+        .sort((a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime());
     } else {
       this.ejecEstrategicaSelected = null;
-      // Restaurar el array original
-      this.indicadoresAvance = [...this.datosIndicadoresAvance];
+      // Restaurar y ordenar el array original
+      this.indicadoresAvance = [...this.datosIndicadoresAvance]
+        .sort((a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime());
     }
   }
   
@@ -548,6 +525,15 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
   async onEditAvanceSubmit() {
     if (!this.editAvance.id_proy_indica_avance || !this.puedeEditar) {
       alert('No se puede editar el avance');
+      return;
+    }
+    const currentIndex = this.indicadoresAvance.findIndex(
+      avance => avance.id_proy_indica_avance === this.editAvance.id_proy_indica_avance
+    );
+  
+    // Validar progreso acumulativo
+    if (!this.validateAccumulativeProgress(this.editAvance.valor_reportado, currentIndex)) {
+      alert('El valor reportado debe ser mayor o igual al periodo anterior');
       return;
     }
   
@@ -762,17 +748,73 @@ downloadAvanceFile(idAvance: number, fileName: string): void {
 // Variable para controlar si se puede editar
 puedeEditar: boolean = false;
 
-// Función para verificar si se puede editar según la fecha
+/// Nueva función para validar el progreso acumulativo
+validateAccumulativeProgress(newValue: number, index: number): boolean {
+  if (index === 0) return true;
+  
+  const previousValue = this.convertToNumber(this.indicadoresAvance[index - 1].valor_reportado);
+  return newValue >= previousValue;
+}
+
+// Actualiza la función de verificación de permisos de edición
 verificarPermisoEdicion(fechaReportar: string): boolean {
   const fechaReporte = new Date(fechaReportar);
   const fechaActual = new Date();
   
-  // Convertir ambas fechas a formato YYYY-MM-DD para comparar solo fechas
-  const fechaReporteStr = fechaReporte.toISOString().split('T')[0];
-  const fechaActualStr = fechaActual.toISOString().split('T')[0];
+  // Convertir a UTC-4 (Bolivia)
+  fechaReporte.setHours(fechaReporte.getHours() - 4);
+  fechaActual.setHours(fechaActual.getHours() - 4);
   
-  return fechaReporteStr >= fechaActualStr;
+  // Comparar solo las fechas
+  return fechaReporte.toISOString().split('T')[0] >= fechaActual.toISOString().split('T')[0];
 }
+getUltimoAvanceValido(avances: any[]): any {
+  if (!avances || avances.length === 0) return null;
+  
+  const fechaActual = new Date();
+  // Ordenar avances por fecha de reporte
+  const avancesOrdenados = [...avances].sort((a, b) => 
+    new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
+  );
+  
+  // Buscar el último avance que ya venció
+  let ultimoAvanceVencido = avancesOrdenados
+    .filter(avance => new Date(avance.fecha_reportar) <= fechaActual)
+    .pop();
+    
+  // Si no hay avances vencidos, tomar el próximo disponible
+  if (!ultimoAvanceVencido) {
+    ultimoAvanceVencido = avancesOrdenados[0];
+  }
+  
+  // Si hay un avance con valor_reportado diferente a 0, tomarlo como último válido
+  const avanceConProgreso = avancesOrdenados
+    .find(avance => parseFloat(avance.valor_reportado) > 0);
+    
+  return avanceConProgreso || ultimoAvanceVencido;
+}
+
+// Función para obtener la próxima fecha a reportar
+getProximaFechaReporte(avances: any[]): string {
+  if (!avances || avances.length === 0) return '-';
+  
+  const fechaActual = new Date();
+  const avancesOrdenados = [...avances].sort((a, b) => 
+    new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
+  );
+  
+  // Buscar la próxima fecha de reporte
+  const proximaFecha = avancesOrdenados.find(avance => 
+    new Date(avance.fecha_reportar) >= fechaActual
+  );
+  
+  // Si no hay próxima fecha, retornar la última fecha disponible
+  return proximaFecha ? 
+    proximaFecha.fecha_reportar : 
+    avancesOrdenados[avancesOrdenados.length - 1].fecha_reportar;
+}
+
+
 
 countHeaderData() {
   if (this.ejecEstrategicaTable && this.ejecEstrategicaTable.length > 0) {
