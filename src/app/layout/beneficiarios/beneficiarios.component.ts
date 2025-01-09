@@ -949,7 +949,7 @@ onDeleteAliado(modalRef: any): void {
 
 // cargar convenios
 loadConvenios(): void {
-  this.servicios.getParametricaByIdTipo(5).subscribe(
+  this.servicios.getParametricaByIdTipo(21).subscribe(
     (response) => {
       if (response[0]?.res === 'OK') {
         this.tiposConvenio = response[0].dato.map((item: any) => ({

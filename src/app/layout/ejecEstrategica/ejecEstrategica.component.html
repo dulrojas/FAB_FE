@@ -310,16 +310,8 @@
                   <!-- Medida -->
                   <div class="col col-xl-2 col-lg-2">
                     <label for="medida">Medida</label>
-                    <select class="form-control" 
-                            id="medida" 
-                            name="medida" 
-                            [(ngModel)]="medida" 
-                            [disabled]="!editMode">
-                      <option *ngFor="let periodo of ejecPeridosEva" 
-                              [value]="periodo.descripcion_subtipo">
-                        {{periodo.descripcion_subtipo}}
-                      </option>
-                    </select>
+                    <input class="form-control" type="text" id="medida" name="medida" [(ngModel)]="medida"
+                      [disabled]="!editMode" />
                   </div>
                   <!-- Meta Final -->
                   <div class="col col-xl-2 col-lg-2">
@@ -342,9 +334,8 @@
                 </div>
                 <!-- ======= ======= REPORTE ======= ======= -->
                 <div class="row col col-xl-12 col-lg-12 mt-2">
+                  <label for="comentario">Reporte</label>
                   <div class="col-12 mt-2 mb-2 p-2" style="border: 1px solid white">
-                    <label for="comentario">Reporte</label>
-           
                     <!-- Tabla Reporte -->
                     <table class="table custom-table-planifEstrategica table-striped table-bordered table-responsive">
                       <thead>

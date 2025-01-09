@@ -70,7 +70,7 @@ export class EjecEstrategicaComponent implements OnInit {
 
     this.getEjecucionEstrategicaData();
     this.loadCategorias();
-    this.loadPeriodosEvaluacion();
+   
     }
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
   // ======= ======= ======= CONTADOR =======  ======= =======
@@ -84,8 +84,7 @@ export class EjecEstrategicaComponent implements OnInit {
   // ======= ======= INIT VIEW FUN ======= =======
   ngOnInit(): void {
     this.getEjecucionEstrategicaData();
-    this.loadCategorias();
-    this.loadPeriodosEvaluacion();    
+    this.loadCategorias();       
   }
   // ======= ======= COMBINACION DE DATOS LLAMADOS PARA LA TABLA PRINCIPAL ======= =======
 
@@ -458,37 +457,6 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       this.ejecEstrategicaSelected = null;
       // Restaurar el array original
       this.indicadoresAvance = [...this.datosIndicadoresAvance];
-    }
-  }
-
-  // ======= ======= VARIABLES PARA PERIODOS ======= =======
-
-  loadPeriodosEvaluacion() {
-    this.servicios.getParametricaByIdTipo(10).subscribe(
-      (response) => {
-        if (response && response[0]?.dato) {
-          this.ejecPeridosEva = response[0].dato;
-          // Recargar los datos después de obtener los períodos
-          this.getEjecucionEstrategicaData();
-        }
-      },
-      (error) => {
-        console.error('Error al cargar períodos:', error);
-      }
-    );
-  }
-  
-  // Actualizar el select de medida con los periodos disponibles
-  actualizarMedida() {
-    if (this.medida && this.ejecPeridosEva.length > 0) {
-      // Buscamos el período que coincida con el código de la medida
-      const periodoEncontrado = this.ejecPeridosEva.find(
-        periodo => periodo.descripcion_subtipo.startsWith(this.medida)
-      );
-      
-      if (periodoEncontrado) {
-        this.medida = periodoEncontrado.descripcion_subtipo;
-      }
     }
   }
   
