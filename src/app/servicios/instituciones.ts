@@ -37,7 +37,31 @@ export class servInstituciones{
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
+  getInstitucionesById(idInt:number): Observable<any> {
+    console.log('idInt reibido',idInt);
+    const params = {
+      "procedure_name": "sp_instituciones",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "C2","type": "string"},
+          {"name": "p_id_institucion","value": idInt,"type": "int"},
+          {"name": "p_institucion","value": null,"type": "string"},
+          {"name": "p_id_persona_resp","value": null,"type": "int"},
+          {"name": "p_id_persona_autoriza","value": null,"type": "int"},
+          {"name": "p_idp_tipo_inst","value": null,"type": "int"},
+          {"name": "p_idp_estado","value": null,"type": "int"},
+          {"name": "p_sigla","value": null,"type": "string"},
+        ]
+      }
+    };
 
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
 
   private getHeaders(): HttpHeaders {
     const ip = sessionStorage.getItem('ip') || '127.0.0.1';

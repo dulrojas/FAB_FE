@@ -143,13 +143,17 @@
                                         id="id"
                                         name="id"
                                         formControlName="id"
-                                        class="form-control"
+                                       
                                     />
                                 </div>
                                 <div class="col col-xl-6 col-lg-6 mt-auto"></div>
+
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="fecha">Fecha de evento</label>
                                     <input type="date" formControlName="fecha" class="form-control" />
+                                    <small class="text-danger" *ngIf="beneficiariesForm.get('fecha')?.touched && beneficiariesForm.get('fecha')?.invalid">
+                                        El campo fecha de evento es obligatorio.
+                                      </small>
                                 </div>
                             </div>
 
@@ -158,14 +162,14 @@
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="actividad">Pertenece a la Actividad</label>
                                     <select class="form-control" id="actividad" formControlName="actividad">
-                                        <option value="" selected>Seleccione la Actividad</option>
-                                        <option
-                                            *ngFor="let actividad of actividades"
-                                            [value]="actividad.actividad"
-                                        >
+                                        <option value="" disabled selected hidden>Seleccione la Actividad</option>
+                                        <option *ngFor="let actividad of actividades" [value]="actividad.actividad">
                                             {{ actividad.actividad }}
                                         </option>
                                     </select>
+                                    <small class="text-danger" *ngIf="beneficiariesForm.get('actividad')?.touched && beneficiariesForm.get('actividad')?.hasError('required')">
+                                        El campo actividad es obligatorio.
+                                    </small>
                                 </div>
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="evento">Evento</label>
@@ -174,7 +178,11 @@
                                         formControlName="evento"
                                         class="form-control"
                                         placeholder="Ingresa el evento"
+                                       
                                     />
+                                    <small class="text-danger" *ngIf="beneficiariesForm.get('evento')?.touched && beneficiariesForm.get('evento')?.invalid">
+                                        El campo evento es obligatorio.
+                                    </small>
                                 </div>
                                 <div class="row">
                                     <div class="col col-xl-3 col-lg-3 mt-auto">
@@ -184,7 +192,7 @@
                                             formControlName="departamento"
                                             (change)="onDepartamentoChange($event.target.value)"
                                         >
-                                            <option value="" selected>Seleccione un departamento</option>
+                                            <option value="" disabled selected hidden>Seleccione un departamento</option>
                                             <option *ngFor="let depto of departamentos" [value]="depto.nombre">
                                                 {{ depto.nombre }}
                                             </option>
@@ -199,7 +207,7 @@
                                             [disabled]="!municipios.length"
                                             (change)="onMunicipioChange($event.target.value)"
                                         >
-                                            <option value="" selected>Seleccione un municipio</option>
+                                            <option value="" disabled selected hidden>Seleccione un municipio</option>
                                             <option *ngFor="let muni of municipios" [value]="muni.nombre">
                                                 {{ muni.nombre }}
                                             </option>
@@ -213,7 +221,7 @@
                                             formControlName="comunidad"
                                            
                                         >
-                                            <option value="" selected>Seleccione una comunidad</option>
+                                            <option value="" disabled selected hidden>Seleccione una comunidad</option>
                                             <option
                                                 *ngFor="let comunidad of comunidades"
                                                 [value]="comunidad.nombre"
@@ -248,11 +256,14 @@
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="tipoOrganizacion">Tipo de Organización</label>
                                     <select class="form-control" formControlName="tipoOrganizacion">
-                                     
+                                        <option value="" disabled selected hidden>Seleccione un tipo de Organización</option>
                                         <option *ngFor="let tipo of tiposOrganizacion" [value]="tipo.nombre">
                                             {{ tipo.nombre }}
                                         </option>
                                     </select>
+                                    <small class="text-danger" *ngIf="beneficiariesForm.get('tipoOrganizacion')?.touched && beneficiariesForm.get('tipoOrganizacion')?.invalid">
+                                        El campo tipo Organizacion es obligatorio.
+                                    </small>
                                 </div>
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="organizacion">Nombre de la Organización</label>
@@ -262,6 +273,9 @@
                                         class="form-control"
                                         placeholder="Ingresa el Nombre de la Organización"
                                     />
+                                    <small class="text-danger" *ngIf="beneficiariesForm.get('organizacion')?.touched && beneficiariesForm.get('organizacion')?.invalid">
+                                        El campo Nombre de la Organización es obligatorio.
+                                    </small>
                                 </div>
                                 <!-- Detalle -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -271,6 +285,9 @@
                                         class="form-control"
                                         placeholder="Ingresa el Detalle de evento"
                                     ></textarea>
+                                    <small class="text-danger" *ngIf="beneficiariesForm.get('details')?.touched && beneficiariesForm.get('details')?.invalid">
+                                        El campo Detalle de evento es obligatorio.
+                                    </small>
                                 </div>
                                 <!-- Mujeres, Hombres y Total -->
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
@@ -282,6 +299,7 @@
                                         min="0"
                                         placeholder="Ingresa el Nro de Mujeres"
                                     />
+                                  
                                 </div>
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
                                     <label for="hombres">Nro de Hombres</label>
@@ -344,12 +362,13 @@
                                         <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                     </button>
                                     <button
-                                        type="button"
-                                        class="btn btn-bg-1"
-                                        (click)="onSubmit(); modal.close('Añadir')"
-                                    >
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
-                                    </button>
+                                    type="button"
+                                    class="btn btn-bg-1"
+                                   
+                                    (click)="onSubmit(); "
+                                  >
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                                  </button>
                                 </div>
                             </div>
                         </div>
@@ -581,6 +600,9 @@
                         <div class="col col-xl-5 col-lg-5 mt-auto">
                             <label for="identificationDate">Fecha de identificación</label>
                             <input type="date" formControlName="identificationDate" class="form-control" />
+                            <small class="text-danger" *ngIf="aliadosForm.get('identificationDate')?.touched && aliadosForm.get('identificationDate')?.invalid">
+                                la fecha es obligatorio.
+                            </small>
                         </div>
                     </div>
 
@@ -588,12 +610,15 @@
                         <!-- institucion u organizacion -->
                         <div class="col col-xl-6 col-lg-6 mt-auto">
                             <label for="tipoOrganizacion">Institución/Organización</label>
-                            <select class="form-control"  formControlName="tipoOrganizacion"id="tipoOrganizacion" name="tipoOrganizacion">
-                                <option value="" disabled selected>Seleccione una organización</option>
+                            <select class="form-control" formControlName="tipoOrganizacion" id="tipoOrganizacion" name="tipoOrganizacion">
+                                <option value="" disabled selected hidden>Seleccione una organización</option>
                                 <option *ngFor="let tipo of organizacionTipo" [value]="tipo.organizacion">
                                     {{ tipo.organizacion }}
                                 </option>
                             </select>
+                            <small class="text-danger" *ngIf="aliadosForm.get('tipoOrganizacion')?.touched && aliadosForm.get('tipoOrganizacion')?.invalid">
+                                El tipo de Organizacion es obligatorio.
+                            </small>
                         </div>
                         <!-- boton de + -->
                         <div class="col col-xl-2 col-lg-2 mt-auto">
@@ -621,6 +646,9 @@
                                 class="form-control"
                                 placeholder="Ingresa el Nombre"
                             />
+                            <small class="text-danger" *ngIf="aliadosForm.get('referentName')?.touched && aliadosForm.get('referentName')?.invalid">
+                                El nombre del referente es obligatorio.
+                            </small>
                         </div>
                                 <!--vinculo con resultado -->
                         <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -630,16 +658,22 @@
                                 class="form-control"
                                 placeholder="Ingresa Vínculo"
                             ></textarea>
+                            <small class="text-danger" *ngIf="aliadosForm.get('resultsLink')?.touched && aliadosForm.get('resultsLink')?.invalid">
+                                Vínculo con Resultados es obligatorio.
+                            </small>
                         </div>
                             <!-- convenio -->
                         <div class="col-md-6">
                             <label for="convenio">Convenio</label>
                             <select class="form-control" formControlName="convenio" id="convenio" name="convenio">
-                                
-                                <option *ngFor="let convenio of tiposConvenio" [value]="convenio.descripcion">
+                                <option value="" disabled selected hidden>Seleccione un convenio</option>
+                                <option *ngFor="let convenio of tiposConvenio" [value]="convenio.descripcion" aria-placeholder="terer">
                                     {{ convenio.descripcion }}
                                 </option>
                             </select>
+                            <small class="text-danger" *ngIf="aliadosForm.get('convenio')?.touched && aliadosForm.get('convenio')?.invalid">
+                                convenio es obligatorio.
+                            </small>
                         </div>
                         <!-- persona registro -->
                         <div class="col col-xl-6 col-lg-6 mt-auto">
@@ -661,7 +695,7 @@
                                 <button
                                 type="button"
                                 class="btn btn-bg-1"
-                                (click)="onSubmitAliadosForm(); modal.close('Añadir')"
+                                (click)="onSubmitAliadosForm(); "
                             >
                                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
                             </button>
@@ -700,6 +734,8 @@
                 <div class="col col-xl-6 col-lg-6 mt-auto">
                     <label for="id_tipo_organizacion">Tipo de Organización</label>
                     <select class="form-control" formControlName="id_tipo_organizacion">
+                        <option value="" disabled selected hidden>Seleccione una organización</option>
+
                         <option *ngFor="let tipo of tiposOrganizacion" [value]="tipo.nombre">
                             {{ tipo.nombre }}
                         </option>

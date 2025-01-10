@@ -12,6 +12,9 @@ import {OrganizacionesService} from "../../servicios/organizaciones";
 import {servListBenef} from "../../servicios/ListBeneficiarios";
 import {servInstituciones} from "../../servicios/instituciones";
 import { servPersonaRoles } from "../../servicios/personaRoles";
+import {Params_generales} from "../../servicios/Params_generales";
+
+
 import { ChangeDetectorRef } from '@angular/core';
 
 import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
@@ -73,7 +76,8 @@ export class BeneficiariosComponent implements OnInit {
     private servPersonaRoles: servPersona,
     private OrganizacionesService:OrganizacionesService,
     private servListBenef:servListBenef,
-    private servInstituciones:servInstituciones
+    private servInstituciones:servInstituciones,
+    private Params_generales:Params_generales
   ) {}
 
 
@@ -89,6 +93,8 @@ export class BeneficiariosComponent implements OnInit {
   aliadosTable: any[] = [];
   tiposConvenio: any[] = [];
   peronsaRegistro:any="";
+
+  parametrosGenerales: any[] = [];
   
   // ======= ======= HEADER SECTION ======= =======
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
@@ -142,10 +148,12 @@ export class BeneficiariosComponent implements OnInit {
     this.initOrganizacionForm();
     this.loadAliados();
     this.loadConvenios();
-    this.loadInstitucion();
-    
+  
+    this.getParamGenerales();
+   
 
   }
+
 
   
 //obtenr actividades
@@ -166,22 +174,24 @@ getActividades(): void {
    initForm(): void {
     this.beneficiariesForm = this.fb.group({
       id: [{ value: '', disabled: true }],
-      fecha: [''],
+      fecha: ['', Validators.required],
       departamento: [''],
-      municipio: [''],
-      comunidad: [''],
-      tipoOrganizacion: [''],
-      organizacion: [''],
-      actividad: [''],
-      evento: [''],
+      municipio: [{ value: '', disabled: true }],
+      comunidad: [{ value: '', disabled: true }],
+      tipoOrganizacion: ['', Validators.required],
+      organizacion: ['', Validators.required],
+      actividad: ['', Validators.required],
+      evento: ['', Validators.required],
       mujeres: [0],
       hombres: [0],
-      total: [{ value: 0, disabled: true  }],
-      details: [''],
+      total: [0],
+      details:['', Validators.required],
       registeredBy: [{ value: '' ,disabled: true }] // Este campo es solo lectura
      
 
     });
+  
+
 this.beneficiariesFormUbicacion=this.fb.group({
 
   departamento: [''],
@@ -283,12 +293,12 @@ cargarPersona(id_beneficiario: any) {
 private initAliadosForm(): void {
   this.aliadosForm = this.fb.group({
     id: [{ value: '', disabled: true }],
-    identificationDate: ['',],
-    tipoOrganizacion: ['',], 
-    institution: ['',],
-    referentName: ['',],
-    resultsLink: [''],
-    convenio: ['',],
+    identificationDate: ['', Validators.required],
+    tipoOrganizacion: ['', Validators.required], 
+    institution: ['', Validators.required],
+    referentName: ['', Validators.required],
+    resultsLink: ['', Validators.required],
+    convenio:['', Validators.required],
     registeredByAliado: [{ value: '' ,disabled: true }] // Este campo es solo lectura
    
   });
@@ -393,6 +403,10 @@ private initOrganizacionForm():void{
             idMunicipios.includes(geo.id_ubica_geo_padre)
     );
     console.log('Comunidades filtradas:', this.comunidades);
+    this.beneficiariesForm.get('municipio')?.enable();
+    this.beneficiariesForm.get('comunidad')?.disable();
+    this.beneficiariesForm.get('municipio')?.setValue('');
+    this.beneficiariesForm.get('comunidad')?.setValue('');
 }
   onMunicipioChange(p_orden_monucipio: any): void {
     const idMunicipio = this.getIdMunicipio(p_orden_monucipio);
@@ -416,6 +430,8 @@ console.log('estas son las comunidades de donde se filtrarran :' , this.geografi
     );
 
     console.log('Comunidades filtradas:', this.comunidades);
+    this.beneficiariesForm.get('comunidad')?.enable();
+    this.beneficiariesForm.get('comunidad')?.setValue('');
 }
 
 
@@ -560,7 +576,24 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario, isListModal: boo
       this.onMunicipioChange(this.selectedBeneficiarios.municipio);
       console.log('Datos cargados al formulario:', this.beneficiariesForm.value);
     } else { // Modo creación
-      this.beneficiariesForm.reset();
+      this.beneficiariesForm.reset(
+        {
+          id:"",
+          fecha: "",
+          departamento: "",
+          municipio: "",
+          comunidad: "",
+          tipoOrganizacion:"",
+          organizacion: "",
+          actividad:"",
+          evento:"",
+          mujeres: "",
+          hombres: "",
+          total: "",
+          details: "",
+          registeredBy: this.namePersonaReg,
+        }
+      );
       console.log('Nombre de la persona registrada (verificación):', this.namePersonaReg);
       this.beneficiariesForm.patchValue({
         registeredBy: this.namePersonaReg,
@@ -591,10 +624,11 @@ this.beneficiariesForm.patchValue({
 
    // Guardar o actualizar beneficiario
    onSubmit(): void {
-    if (!this.beneficiariesForm.valid) {
-        console.error('Formulario inválido:', this.beneficiariesForm.errors);
-        return;
-    }
+    if (this.beneficiariesForm.invalid) {
+      // Marca todos los controles como tocados para activar los mensajes de error
+      this.beneficiariesForm.markAllAsTouched();
+      return;
+  }
 
     const formValue = this.beneficiariesForm.getRawValue();
     const isEditingOrganizacion = !!formValue.organizacion; // Verifica si hay una organización existente
@@ -658,8 +692,11 @@ this.beneficiariesForm.patchValue({
 
             if (isEditingBeneficiario) {
                 this.editBeneficiario(beneficiarioData);
+                this.modalService.dismissAll();// esto es para cerrar el modal
+
             } else {
                 this.addBeneficiario(beneficiarioData);
+                this.modalService.dismissAll();// esto es para cerrar el modal
             }
         },
         (error) => {
@@ -669,7 +706,7 @@ this.beneficiariesForm.patchValue({
     );
 }
 loadInstitucion():void{
-  this.servInstituciones.getInstituciones().subscribe(
+  this.servInstituciones.getInstitucionesById(this.parametrosGenerales?.[0]?.id_institucion).subscribe(
     (response) => {
       if (response[0]?.res === 'OK') {
         this.instituciones = response[0].dato;
@@ -777,7 +814,22 @@ getIdActividad(nombre :any){
   }
 
 /// ahora alido 
+
+getParamGenerales():void{
+  this.Params_generales.getAllParams_generales().subscribe(
+    (response) => {
+      if (response[0]?.res === 'OK') {
+        this.parametrosGenerales = response[0].dato;
+        this.loadInstitucion();
+      }
+    },
+    (error) => console.error('Error al cargar parametros generales:', error)
+  );
+
+}
  // Abrir el modal para crear o editar un aliado
+
+
  loadAliados(): void {
   this.aliadosService.getAliadosByProyecto(this.idProyecto).subscribe(
     (response) => {
@@ -810,7 +862,7 @@ getIdActividad(nombre :any){
 openAliadoModal(modal: TemplateRef<any>, aliado?: any): void {
   this.selectedAliados = aliado || null;
 
-  if (aliado) {
+  if (aliado) { // en modo edición
     this.aliadosForm.patchValue({
       id: aliado.id,
       identificationDate: aliado.fecha,
@@ -824,8 +876,17 @@ openAliadoModal(modal: TemplateRef<any>, aliado?: any): void {
     console.log(' datos cargados al formulario de aliados: ',this.aliadosForm.value )
     console.log('nombre de persoanregistro en alidados ',this.namePersonaReg);
     
-  } else {
-    this.aliadosForm.reset();
+  } else { // en modo creación
+    this.aliadosForm.reset({
+      id: null,
+      identificationDate: null,
+      tipoOrganizacion: "",
+      referentName: "", 
+      resultsLink: "",
+      convenio: "", 
+      registeredByAliado: this.namePersonaReg || null,
+    });
+    
     this.aliadosForm.patchValue({
       registeredByAliado: this.namePersonaReg || null
     });
@@ -851,8 +912,9 @@ getIdConvenio(nombre: string): number | undefined {
   return convenio ? convenio.id : undefined;
 }
 onSubmitAliadosForm(): void {
-  if (!this.aliadosForm.valid) {
-    console.error('Formulario inválido:', this.aliadosForm.errors);
+  if (this.aliadosForm.invalid) {
+    // Marca todos los controles como tocados para activar los mensajes de error
+    this.aliadosForm.markAllAsTouched();
     return;
   }
 
@@ -872,8 +934,12 @@ onSubmitAliadosForm(): void {
 
   if (aliadoPayload.id) {
     this.editAliado(aliadoPayload);
+    this.modalService.dismissAll();
+
   } else {
     this.addAliado(aliadoPayload);
+    this.modalService.dismissAll();
+
   }
 }
 
@@ -999,8 +1065,5 @@ countHeaderData() {
  
   });
 }
-
-
-
 
 }
