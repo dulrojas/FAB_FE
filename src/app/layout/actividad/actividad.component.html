@@ -137,12 +137,13 @@
                             Ver reprogramados
                         </label>
                         <button type="button" class="btn btn-view-bg-1 mx-2"
-                            (click)="initAddActividad(actividad)">
+                            (click)="initAddActividad(actividad)"
+                            [disabled]="actividadSelected">
                             <i aria-hidden="true"></i> Añadir
                         </button>
                         <button type="button" class="btn btn-view-bg-1"
                             (click)="initAvanceActividad(actividad)"
-                            [disabled]="">
+                            [disabled]="!actividadSelected">
                             <i aria-hidden="true"></i> Avance
                         </button>
                     </div>
@@ -170,13 +171,16 @@
                     <!-- ======= ======= ======= -->
                     <!-- ======= ACTIVIDADES SECTION ======= -->
                     <div class="row my-1" *ngFor="let elementoGant of elementosGant">
-                        <div class="col col-md-2 col-lg-2">
-                            <span class="custom-vertical-text custom-elemento-container">
+                        <div class="col col-md-2 col-lg-2 custom-elemento-container">
+                            <span class="custom-vertical-text custom-elemento-span">
                                 Res {{ elementoGant.codigo }}
                             </span>
                         </div>
                         <div class="col col-md-10 col-lg-10">
-                            <div class="row my-1" *ngFor="let actividadGant of elementoGant.childrens">
+                            <div class="row mb-1 custom-actividad-gant-container" 
+                                *ngFor="let actividadGant of elementoGant.childrens"
+                                [ngClass]="{'custom-actividad-gant-container-selected': actividadGant.selected}"
+                                (click)="onActividadClick(actividadGant)">
                                 <div class="col col-md-6 col-lg-6 custom-elemento-actividad">
                                     {{ actividadGant.actividad }}
                                 </div>
@@ -184,7 +188,8 @@
                                     {{ actividadGant.presupuesto }}
                                 </div>
                                 <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
-                                    <canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="100" height="100"></canvas>
+                                    {{ actividadGant.porcentajeAvance }}%
+                                    <canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="50" height="50"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -270,8 +275,19 @@
                                     
                                     <div class="row" *ngFor="let elementoGant of elementosGant">
                                         <div class="col col-md-12 col-lg-12">
-                                            <div class="row my-1" *ngFor="let actividadGant of elementoGant.childrens">
-                                                <div class="progress-bar" style="width: 59%; background-color: #f7a800;"></div>
+                                            <div class="row" *ngFor="let actividadGant of elementoGant.childrens">
+                                                
+                                                <div [style.width.%]="actividadGant.init_date_gap">
+                                                </div>
+
+                                                <div class="custom-actividad-progress-bar"
+                                                    [style.width.%]="actividadGant.date_gap">
+                                                    <div 
+                                                        class="custom-actividad-progress-fill" 
+                                                        [style.width.%]="actividadGant.porcentajeAvance">
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>

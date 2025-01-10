@@ -338,18 +338,26 @@ export class ActividadComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     actividadSelected: any = null;
-
-    checkboxChanged(actividadSel: any){
-      this.actividades.forEach(actividad => {
-        if(actividadSel.id.proy_actividad == actividad.id.proy_actividad){
-          if(actividadSel.selected){
-            actividad.selected = true;
-            this.actividadSelected = actividad;
+    // ======= ======= CHECKBOX CHANGED ======= =======
+    onActividadClick(actividadSel: any) {
+      this.elementosGant.forEach((elementoGant) =>{
+        elementoGant.childrens.forEach((actividadGant)=>{
+          if(actividadSel.id_proy_actividad == actividadGant.id_proy_actividad){
+            actividadSel.selected = !actividadGant.selected;
+            if(actividadSel.selected){
+              this.actividadSelected = actividadSel;
+            }
+            else{
+              this.actividadSelected = null;
+            }
           }
-        }
-      })
+          else{
+            actividadGant.selected = false;
+          }
+        });
+      });
     }
-
+    // ======= ======= ======= ======= =======
     // ======= ======= ACTIVIDADES FUN ======= =======
     parseAmountStrToFloat(amount: any): number {
       amount = amount.replace(',', '');
@@ -398,9 +406,8 @@ export class ActividadComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= COUNT HEADER DATA FUCTION ======= =======
     countHeaderData(){
-      this.headerDataNro01 = this.actividades.length;
-      this.actividades.forEach(actividad =>{
-      });
+      this.headerDataNro01 = this.ejecutadoProy;
+      this.headerDataNro02 = this.ejecutadoGest;
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET PRESUPUESTO EJECUTADO ======= =======
@@ -435,6 +442,16 @@ export class ActividadComponent implements OnInit {
 
     }
     // ======= ======= ======= ======= =======
+    getDateDaysGap(date1: string, date2: string): number {
+      const date1Formated = new Date(date1);
+      const date2Formated = new Date(date2);
+    
+      let dateDiference = date1Formated.getTime() - date2Formated.getTime();
+      dateDiference = Math.floor(dateDiference / (1000 * 60 * 60 * 24));
+    
+      return dateDiference;
+    }
+
     valMontoNuevoEjecutado: any = true;
     validateMontoNuevoEjecutado(){
       if((this.montoNuevoEjecutado)&&((this.parseAmountStrToFloat(this.montoNuevoEjecutado))>0)){
@@ -525,6 +542,23 @@ export class ActividadComponent implements OnInit {
             )
           );
 
+          this.elementosGant.forEach((elementoGant)=>{
+            elementoGant.childrens.forEach((actividadGant)=>{
+
+              actividadGant.init_date_gap = this.getDateDaysGap(actividadGant.fecha_inicio, (this.gestion+"/01/01"));
+              actividadGant.date_gap = this.getDateDaysGap(actividadGant.fecha_fin, actividadGant.fecha_inicio);
+              
+              const totalEjecutado = actividadGant.avances.reduce((sum, item) => {
+                const monto = parseFloat(item.monto_ejecutado.replace("$", "").replace(",", ""));
+                return sum + monto;
+              }, 0);
+              actividadGant.porcentajeAvance = (100*(totalEjecutado / actividadGant.presupuesto)).toFixed(2);
+            
+            });
+          });
+
+          console.log(this.elementosGant);
+
           this.countHeaderData();
           //this.initializeCharts();
         },
@@ -547,14 +581,27 @@ export class ActividadComponent implements OnInit {
     // ======= ======= EDIT APRENDIZAJE ======= =======
     addActividad(){
       let actividadCodigo = ((this.elementos.find(
-        (elemento)=>(this.id_proy_elemento_padre == elemento.id_proy_elemento)
+        (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
       )).codigo);
-
       actividadCodigo = actividadCodigo.slice(0,(actividadCodigo.length - 1));
 
-      console.log(this.elementosGant);
+      let elementoPadre = (this.elementosGant.find(
+        (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
+      ));
 
-      actividadCodigo = actividadCodigo+(666);
+      if( elementoPadre ){
+        let childrensCodigos = elementoPadre.childrens
+          .map(item => item.codigo)
+          .filter(codigo => codigo.startsWith(actividadCodigo))
+          .map(codigo => parseInt(codigo.split(actividadCodigo)[1], 10)) 
+          .filter(x => !isNaN(x));
+        let maxChildrenCodigo = (childrensCodigos.length > 0)?(Math.max(...childrensCodigos)):(null);
+
+        actividadCodigo = actividadCodigo+ (maxChildrenCodigo+1).toString();
+      }
+      else{
+        actividadCodigo = actividadCodigo+"1";
+      }
 
       const objActividad = {
         p_id_proy_actividad: 0,
@@ -564,7 +611,7 @@ export class ActividadComponent implements OnInit {
         p_actividad: this.actividadText,
         p_descripcion: this.descripcion,
         p_orden: parseInt(this.orden,10),
-        p_id_proy_acti_repro: parseInt(this.id_proy_acti_repro, 10),
+        p_id_proy_acti_repro: null,
         p_presupuesto: parseInt(this.presupuesto,10),
         p_fecha_inicio: this.fecha_inicio,
         p_fecha_fin: this.fecha_fin,
@@ -572,16 +619,14 @@ export class ActividadComponent implements OnInit {
         p_idp_actividad_estado: parseInt(this.idp_actividad_estado, 10)
       };
 
-      console.log(objActividad);
-
-      /*this.servActividad.addActividad(objActividad).subscribe(
+      this.servActividad.addActividad(objActividad).subscribe(
         (data) => {
           this.getActividades();
         },
         (error) => {
           console.error(error);
         }
-      );*/
+      );
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT EDIT PERSONA ROLES ======= =======
@@ -615,19 +660,15 @@ export class ActividadComponent implements OnInit {
 
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= INIT DELETE PERSONA ROLES ======= =======
-    initDeleteActividad(){
-      
-    }
-    // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
       if(this.modalAction == "add"){
         this.addActividad();
       }
       else{
-        //this.editActividad();
+        this.editActividad();
       }
+      this.closeModal();
     }
     // ======= ======= ======= ======= =======
 }

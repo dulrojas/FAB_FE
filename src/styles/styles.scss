@@ -613,10 +613,52 @@ select.form-control {
     background-color: $primary-color;
 }
 
-.custom-elemento-container{
+.custom-elemento-container {
+    position: relative;
+}
+
+.custom-elemento-span{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     padding: 1rem;
 
     background-color: $bg-2-color;
+}
+
+.custom-actividad-gant-container{
+    cursor: pointer;
+
+    border: 3px solid;
+    border-color: rgba(0, 0, 0, 0);
+}
+
+.custom-actividad-gant-container-selected{
+    cursor: pointer;
+    
+    border: 3px dashed;
+    border-color: $primary-color;
+}
+
+.custom-actividad-progress-bar{
+    height: 20px;
+
+    border-radius: 5px;
+    
+    background-color: $bg-7-color;
+    overflow: hidden;
+}
+
+.custom-actividad-progress-fill{
+    height: 100%;
+    background-color: green;
+    transition: width 0.3s ease-in-out;
 }
 
 .custom-elemento-actividad{
