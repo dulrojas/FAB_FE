@@ -529,17 +529,29 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       alert('No se puede editar el avance');
       return;
     }
-  
+
+    // Encontrar el índice del avance actual
+    const currentIndex = this.indicadoresAvance.findIndex(
+      avance => avance.id_proy_indica_avance === this.editAvance.id_proy_indica_avance
+    );
+
+    // Validar el nuevo valor reportado
+    const nuevoValor = this.convertToNumber(this.editAvance.valor_reportado);
+    if (!this.validateAccumulativeProgress(nuevoValor, currentIndex)) {
+      alert('El valor reportado debe ser mayor al último valor reportado');
+      return;
+    }
+
     try {
       const fechaActual = new Date();
       fechaActual.setHours(fechaActual.getHours() - 4);
       const fechaHoraActual = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
-  
+
       let rutaEvidencia = this.editAvance.ruta_evidencia;
       if (this.fileData) {
         rutaEvidencia = await this.uploadAvanceFile(this.editAvance.id_proy_indica_avance);
       }
-  
+
       const datosActualizados = {
         p_accion: 'M1',
         p_id_proy_indicador_avance: this.editAvance.id_proy_indica_avance,
@@ -547,19 +559,17 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         p_fecha_reportar: this.editAvance.fecha_reportar,
         p_fecha_hora_reporte: fechaHoraActual,
         p_valor_esperado: this.editAvance.valor_esperado.toString(),
-        p_valor_reportado: this.editAvance.valor_reportado.toString(),
+        p_valor_reportado: nuevoValor.toString(),
         p_comentarios: this.editAvance.comentarios || '',
         p_ruta_evidencia: rutaEvidencia,
         p_id_persona_reporte: this.idPersonaReg
       };
-  
+
       const response = await this.servIndicadorAvance.editIndicadorAvance(datosActualizados).toPromise();
       
       if (response && response[0]?.dato) {
-        // Actualizar solo los datos necesarios
         await this.actualizarDatosIndicador(this.editAvance.id_proy_indicador);
         
-        // Limpiar datos del archivo
         this.fileData = null;
         this.fileName = '';
         this.fileUrl = null;
@@ -574,6 +584,13 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       console.error('Error:', error);
       alert('Error en el proceso de actualización');
     }
+  }
+
+  // Agregar función auxiliar para obtener el índice válido según la fecha
+  private getValidIndexByDate(fechaReporte: string): number {
+    return this.indicadoresAvance
+      .sort((a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime())
+      .findIndex(avance => avance.fecha_reportar === fechaReporte);
   }
   private async actualizarDatosIndicador(idProyIndicador: number) {
     try {
@@ -715,11 +732,32 @@ downloadAvanceFile(idAvance: number, fileName: string): void {
 puedeEditar: boolean = false;
 
 /// Nueva función para validar el progreso acumulativo
-validateAccumulativeProgress(newValue: number, index: number): boolean {
-  if (index === 0) return true;
+// Mejora de la función validateAccumulativeProgress
+validateAccumulativeProgress(newValue: number, currentIndex: number): boolean {
+  // Permitir siempre el valor 0
+  if (newValue === 0) return true;
   
-  const previousValue = this.convertToNumber(this.indicadoresAvance[index - 1].valor_reportado);
-  return newValue >= previousValue;
+  // Si es el primer registro, solo validar que no sea negativo
+  if (currentIndex === 0) return newValue >= 0;
+  
+  // Obtener los avances anteriores ordenados por fecha
+  const avancesAnteriores = this.indicadoresAvance
+    .slice(0, currentIndex)
+    .sort((a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime());
+  
+  // Encontrar el último valor reportado válido (mayor a 0)
+  const ultimoValorValido = avancesAnteriores
+    .reverse()
+    .find(avance => this.convertToNumber(avance.valor_reportado) > 0);
+  
+  // Si no hay valor anterior válido, solo validar que no sea negativo
+  if (!ultimoValorValido) return newValue >= 0;
+  
+  // Convertir el último valor válido a número
+  const valorAnterior = this.convertToNumber(ultimoValorValido.valor_reportado);
+  
+  // El nuevo valor debe ser mayor o igual al anterior (si no es 0)
+  return newValue >= valorAnterior;
 }
 
 // Actualiza la función de verificación de permisos de edición
