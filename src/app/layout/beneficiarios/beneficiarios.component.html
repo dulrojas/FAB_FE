@@ -295,20 +295,19 @@
                                     <input
                                         type="number"
                                         formControlName="mujeres"
-                                        class="form-control"
-                                        min="0"
-                                        placeholder="Ingresa el Nro de Mujeres"
+                                        class="form-control bg-gray-200"
+                                        readonly
+                                        placeholder="Nro de Mujeres"
                                     />
-                                  
                                 </div>
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
                                     <label for="hombres">Nro de Hombres</label>
                                     <input
                                         type="number"
                                         formControlName="hombres"
-                                        class="form-control"
-                                        min="0"
-                                        placeholder="Ingresa el Nro de Hombres"
+                                        class="form-control bg-gray-200"
+                                        readonly
+                                        placeholder="Nro de Hombres"
                                     />
                                 </div>
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
@@ -316,9 +315,10 @@
                                     <input
                                         type="number"
                                         formControlName="total"
-                                        class="form-control"
-                                        min="0"
-                                        placeholder="Total al Grabar"
+                                        class="form-control bg-gray-200"
+                                        readonly
+                                        placeholder="Total"
+                                        required
                                     />
                                 </div>
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
@@ -446,13 +446,11 @@
     </form>
   </div>
 </ng-template>
- 
-<ng-template #listaBeneficiariesModal let-modal class="custom-modal">
-    <!-- Encabezado del Modal-->
+ <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+ <ng-template #listaBeneficiariesModal let-modal class="custom-modal">
     <div class="modal-header">
         <h4 class="modal-title">Lista de Beneficiarios</h4>        
     </div>
-    <!-- Cuerpo del Modal -->
     <div class="modal-body">
         <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmit()">
             <div class="row">
@@ -468,6 +466,7 @@
                                         <th>Nombre</th>
                                         <th>Rango edad</th>
                                         <th>Sexo</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -478,25 +477,140 @@
                                         <td>{{ persona.nombreCompleto }}</td>
                                         <td>{{ persona.rangoEdad }}</td>
                                         <td>{{ persona.sexo }}</td>
+                                        <td class="text-center">                                           
+                                            <button class="btn btn-sm btn-danger" (click)="deleteParticipante(persona.id)">
+                                                <i class="fa fa-trash"></i>
+                                            </button> 
+                                                                                       
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <!-- Botones Cancelar y Guardar -->
-                            <div class="modal-footer mt-3">
-                                <div class="d-flex justify-content-center" style="width: 100%">
-                                    <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i> ok
-                                    </button>
-                                </div>
+                            <div *ngIf="selectedBeneficiarios && !mostrarTablaParticipantes" class="alert alert-info" style="background-color: #78e36a;">
+                                No hay participantes registrados.
                             </div>
-                        </div>
+                            <!-- Botón Añadir -->
+                            <div class="modal-footer mt-3">
+                                <div class="d-flex justify-content-end" style="width: 100%">
+                                    <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                                        <i class="fa fa-times"></i> Cancelar
+                                      </button>
+                                    <button type="button" class="btn btn-bg-1"
+                                        (click)="openParticipanteModal(participanteModal)">
+                                        <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                                    </button>                                                                        
+                                </div>
+                            </div>                            
+                        </div>                        
                     </div>
                 </div>
             </div>
         </form>
     </div>
 </ng-template>
+<ng-template #participanteModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{ participanteForm.get('id_proy_bene_lista')?.value ? 'Editar' : 'Nuevo' }} Participante</h4>
+    
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="participanteForm" (ngSubmit)="onSubmitParticipante()">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Documento de Identidad *</label>
+            <input type="text" class="form-control" formControlName="num_doc_identidad"
+                   [class.is-invalid]="participanteForm.get('num_doc_identidad')?.invalid && 
+                                     participanteForm.get('num_doc_identidad')?.touched">
+            <div class="invalid-feedback" *ngIf="participanteForm.get('num_doc_identidad')?.errors?.['required']">
+              El documento de identidad es requerido
+            </div>
+            <div class="invalid-feedback" *ngIf="participanteForm.get('num_doc_identidad')?.errors?.['minlength']">
+              El documento debe tener al menos 5 caracteres
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Nombre Completo *</label>
+            <input type="text" class="form-control" formControlName="nombre"
+                   [class.is-invalid]="participanteForm.get('nombre')?.invalid && 
+                                     participanteForm.get('nombre')?.touched">
+            <div class="invalid-feedback" *ngIf="participanteForm.get('nombre')?.errors?.['required']">
+              El nombre es requerido
+            </div>
+            <div class="invalid-feedback" *ngIf="participanteForm.get('nombre')?.errors?.['minlength']">
+              El nombre debe tener al menos 3 caracteres
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Comunidad *</label>
+            <select class="form-control" formControlName="comunidad"
+                    [class.is-invalid]="participanteForm.get('comunidad')?.invalid && 
+                                      participanteForm.get('comunidad')?.touched">
+              <option value="">Seleccione...</option>
+              <option *ngFor="let com of comunidades" [value]="com.id_ubica_geo">
+                {{com.nombre}}
+              </option>
+            </select>
+            <div class="invalid-feedback">
+              La comunidad es requerida
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Rango de Edad *</label>
+            <select class="form-control" formControlName="idp_rango_edad"
+                    [class.is-invalid]="participanteForm.get('idp_rango_edad')?.invalid && 
+                                      participanteForm.get('idp_rango_edad')?.touched">
+              <option value="">Seleccione...</option>
+              <option *ngFor="let rango of rangosEdad" [value]="rango.id">
+                {{rango.descripcion}}
+              </option>
+            </select>
+            <div class="invalid-feedback">
+              El rango de edad es requerido
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Sexo *</label>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="radio" formControlName="es_hombre" 
+                     [value]="true" id="sexoHombre">
+              <label class="form-check-label" for="sexoHombre">Hombre</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" formControlName="es_hombre" 
+                     [value]="false" id="sexoMujer">
+              <label class="form-check-label" for="sexoMujer">Mujer</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-bg-3" (click)="modal.dismiss()">
+          <i class="fa fa-times"></i> Cancelar
+        </button>
+        <button type="submit" class="btn btn-bg-1" [disabled]="participanteForm.invalid">
+          <i class="fa fa-save"></i> 
+          {{ participanteForm.get('id_proy_bene_lista')?.value ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>        
+    </form>
+  </div>
+</ng-template>
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- Tabla Aliados -->
 <div class="card" style="margin-top: 20px">
