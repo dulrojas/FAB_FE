@@ -750,7 +750,7 @@ getIdActividad(nombre :any){
     this.participanteForm = this.fb.group({
       id_proy_bene_lista: [null],
       id_proy_beneficiario: [null],
-      comunidad: ['', Validators.required],
+      comunidad: [{ value: '', disabled: true }],
       num_doc_identidad: ['', [
         Validators.required,
         Validators.minLength(5),
@@ -809,9 +809,11 @@ getIdActividad(nombre :any){
   }
 
   private procesarDatosPersonas(): void {
+    if (!this.selectedBeneficiarios) return;
+  
     this.tablaPersonas = this.planifData.map((persona) => ({
       id: this.contadorParticipantes++,
-      comunidad: this.getComunidad(persona.comunidad),
+      comunidad: this.selectedBeneficiarios.comunidad || 'Sin comunidad',
       docIden: persona.num_doc_identidad || 'Sin documento',
       nombreCompleto: persona.nombre || 'Sin nombre',
       rangoEdad: this.getRangoEdadNombre(persona.idp_rango_edad),
@@ -820,11 +822,10 @@ getIdActividad(nombre :any){
       id_real: persona.id_proy_bene_lista
     }));
   }
+
   getComunidad(id: any): any {
-    console.log('El id recibido es:', id);
     const comunidad = this.geografia.find(muni => muni.id_ubica_geo === Number(id));
-    if (comunidad) {
-      console.log('Nombre de la comunidad es:', comunidad.nombre);
+    if (comunidad) {      
       return comunidad.nombre;
     } else {
       console.warn(`No se encontró la comunidad con id: ${id}`);
@@ -857,26 +858,7 @@ getIdActividad(nombre :any){
       }
     });
   }
-  verificarDocumentoDuplicado(numDocumento: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.servListBenef.getListBeneByIdProy(this.selectedBeneficiarios.id).subscribe({
-        next: (response) => {
-          if (response[0]?.res === 'OK') {
-            const documentoExiste = response[0].dato.some(
-              (participante) => participante.num_doc_identidad === numDocumento
-            );
-            resolve(documentoExiste);
-          } else {
-            resolve(false);
-          }
-        },
-        error: (error) => {
-          console.error('Error al verificar documento:', error);
-          resolve(false);
-        }
-      });
-    });
-  }
+
  // Función para obtener el nombre completo de una persona
  obtenerNombreCompleto(persona: any): string {
    const nombres = persona.nombres || '';
@@ -894,7 +876,8 @@ getIdActividad(nombre :any){
 
     this.initParticipanteForm();
     this.participanteForm.patchValue({
-      id_proy_beneficiario: this.selectedBeneficiarios.id
+      id_proy_beneficiario: this.selectedBeneficiarios.id,
+      comunidad: this.selectedBeneficiarios.comunidad 
     });
 
     this.modalRefParticipante = this.modalService.open(modal, { 
@@ -915,13 +898,10 @@ getIdActividad(nombre :any){
     }
      
     const formValue = this.participanteForm.getRawValue();
-    //funcion para evitar documentos duplicados si exite que no permita añadir nuevo participante hasta cambiar el numero de carnet
-     
-
- 
+  
     const participanteData = {
       id_proy_beneficiario: this.selectedBeneficiarios.id,
-      comunidad: formValue.comunidad,
+      comunidad: this.getIdComunidad(this.selectedBeneficiarios.comunidad),
       num_doc_identidad: formValue.num_doc_identidad,
       nombre: formValue.nombre,
       idp_rango_edad: formValue.idp_rango_edad,
@@ -961,7 +941,7 @@ getIdActividad(nombre :any){
         if (response[0]?.res === 'OK') {
           // Primero actualizamos la tabla local
           this.tablaPersonas = this.tablaPersonas.filter(p => p.id !== index);
-          
+          const participanteData = this.planifData.find(p => p.id_proy_bene_lista === participante.id_real);
           if (this.selectedBeneficiarios) {
             // Actualizamos los totales locales
             const nuevoTotal = {
@@ -988,7 +968,7 @@ getIdActividad(nombre :any){
               mujeres: nuevoTotal.mujeres,
               total: nuevoTotal.hombres + nuevoTotal.mujeres
             };
-  
+            this.cargarPersona(this.selectedBeneficiarios.id);
             // Actualizamos en la base de datos
             this.beneficiariosService.editBeneficiario(beneficiarioActualizado).subscribe({
               next: (updateResponse) => {

@@ -139,9 +139,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       // this.getPlanifEstrategica();
       this.initPlanifEstrategicaModel();
       this.planifEstrategicaSelected = null
-      this.loadData();
-      this.countHeaderData();
-      
     }
 
     ngOnInit(): void {
@@ -666,52 +663,128 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
   
     moverElemento(elemento: any, direccion: string): void {
+      // Validar que solo se puedan mover indicadores
+      if (elemento.tipo !== 'Indicador') {
+        alert('Solo se pueden mover los indicadores');
+        return;
+      }
+    
       // Encontrar el índice actual del elemento
       const index = this.combinedData.findIndex(el => el === elemento);
-  
       if (index === -1) {
-        alert('Error: Elemento no encontrado.');
         console.error('Elemento no encontrado.');
         return;
       }
-  
+    
       // Determinar el nuevo índice
       let newIndex = direccion === 'arriba' ? index - 1 : index + 1;
-  
+    
       // Validar que el índice esté dentro de los límites
       if (newIndex < 0 || newIndex >= this.combinedData.length) {
         alert(`No se puede mover más ${direccion === 'arriba' ? 'arriba' : 'abajo'}.`);
-        console.warn('Movimiento fuera de límites.');
         return;
       }
-  
-      // Obtener códigos del elemento actual y del elemento de destino
-      const codigoActual = this.combinedData[index].codigo.split('.').map(Number);
-      const codigoDestino = this.combinedData[newIndex].codigo.split('.').map(Number);
-  
-      // Verificar que el movimiento respete la jerarquía
-      if (direccion === 'arriba') {
-        // Validar que no suba sobre un padre
-        if (!this.puedeMover(codigoActual, codigoDestino)) {
-          alert('Movimiento no permitido: un hijo no puede estar encima de su padre.');
-          console.warn('Movimiento no permitido: un hijo no puede estar encima de su padre.');
-          return;
-        }
-      } else if (direccion === 'abajo') {
-        // Validar que no baje sobre un hijo
-        if (!this.puedeMover(codigoDestino, codigoActual)) {
-          alert('Movimiento no permitido: un padre no puede estar debajo de su hijo.');
-          console.warn('Movimiento no permitido: un padre no puede estar debajo de su hijo.');
-          return;
-        }
+    
+      // Obtener el elemento padre
+      const padreActual = this.combinedData.find(el => 
+        el.id_proy_elemento === elemento.id_proy_elem_padre
+      );
+    
+      if (!padreActual) {
+        alert('No se encontró el elemento padre');
+        return;
       }
-  
+    
+      // Validar que el movimiento sea dentro del mismo padre
+      const elementoDestino = this.combinedData[newIndex];
+      if (elementoDestino.id_proy_elem_padre !== elemento.id_proy_elem_padre) {
+        alert('Solo se puede mover dentro del mismo grupo de indicadores');
+        return;
+      }
+    
+      // Obtener todos los indicadores del mismo padre
+      const indicadoresHermanos = this.combinedData.filter(el => 
+        el.tipo === 'Indicador' && 
+        el.id_proy_elem_padre === elemento.id_proy_elem_padre
+      );
+    
+      // Reordenar códigos
+      this.reordenarCodigos(elemento, elementoDestino, indicadoresHermanos);
+    
       // Intercambiar elementos en la lista
-      [this.combinedData[index], this.combinedData[newIndex]] =
+      [this.combinedData[index], this.combinedData[newIndex]] = 
         [this.combinedData[newIndex], this.combinedData[index]];
-  
-      alert(`Elemento movido ${direccion}.`);
-      console.log(`Elemento movido ${direccion}. Nuevo orden:`, this.combinedData);
+    
+      // Actualizar en la base de datos
+      this.actualizarIndicadoresEnBD(elemento, elementoDestino);
+    
+      console.log(`Indicador movido ${direccion}. Nuevo orden:`, this.combinedData);
+    }
+    private reordenarCodigos(indicadorActual: any, indicadorDestino: any, indicadoresHermanos: any[]): void {
+      // Ordenar indicadores por código
+      indicadoresHermanos.sort((a, b) => this.compareCode(a.codigo, b.codigo));
+      
+      // Intercambiar códigos entre los indicadores
+      const codigoTemp = indicadorActual.codigo;
+      indicadorActual.codigo = indicadorDestino.codigo;
+      indicadorDestino.codigo = codigoTemp;
+    }
+    
+    // Función para actualizar los indicadores en la base de datos
+    private actualizarIndicadoresEnBD(indicador1: any, indicador2: any): void {
+      // Actualizar primer indicador
+      const objIndicador1 = {
+        p_id_proy_indicador: indicador1.id_proy_indicador,
+        p_id_proyecto: this.idProyecto,
+        p_id_proy_elem_padre: indicador1.id_proy_elem_padre,
+        p_codigo: indicador1.codigo,
+        p_indicador: indicador1.indicador,
+        p_descripcion: indicador1.descripcion,
+        p_comentario: indicador1.comentario,
+        p_orden: indicador1.orden,
+        p_linea_base: indicador1.linea_base,
+        p_medida: indicador1.medida,
+        p_meta_final: indicador1.meta_final,
+        p_medio_verifica: indicador1.medio_verifica,
+        p_id_estado: indicador1.id_estado,
+        p_inst_categoria_1: indicador1.id_inst_categoria_1,
+        p_inst_categoria_2: indicador1.id_inst_categoria_2,
+        p_inst_categoria_3: indicador1.id_inst_categoria_3
+      };
+    
+      // Actualizar segundo indicador
+      const objIndicador2 = {
+        p_id_proy_indicador: indicador2.id_proy_indicador,
+        p_id_proyecto: this.idProyecto,
+        p_id_proy_elem_padre: indicador2.id_proy_elem_padre,
+        p_codigo: indicador2.codigo,
+        p_indicador: indicador2.indicador,
+        p_descripcion: indicador2.descripcion,
+        p_comentario: indicador2.comentario,
+        p_orden: indicador2.orden,
+        p_linea_base: indicador2.linea_base,
+        p_medida: indicador2.medida,
+        p_meta_final: indicador2.meta_final,
+        p_medio_verifica: indicador2.medio_verifica,
+        p_id_estado: indicador2.id_estado,
+        p_inst_categoria_1: indicador2.id_inst_categoria_1,
+        p_inst_categoria_2: indicador2.id_inst_categoria_2,
+        p_inst_categoria_3: indicador2.id_inst_categoria_3
+      };
+    
+      // Realizar las actualizaciones en la base de datos
+      this.servIndicador.editIndicador(objIndicador1).subscribe(
+        () => {
+          this.servIndicador.editIndicador(objIndicador2).subscribe(
+            () => {
+              this.getPlanifEstrategica();
+              this.loadData();
+            },
+            error => console.error('Error actualizando segundo indicador:', error)
+          );
+        },
+        error => console.error('Error actualizando primer indicador:', error)
+      );
     }
   
     /**
@@ -936,10 +1009,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       console.log('Datos combinados y ordenados:', this.combinedData);
       this.countHeaderData();
     }
-  
-  
-  
-  
   
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
     initAddPlanifEstrategica(modalScope: TemplateRef<any>, id_proy_elem_padre?: number): void {

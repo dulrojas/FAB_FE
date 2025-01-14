@@ -466,7 +466,7 @@
                                         <th>Nombre</th>
                                         <th>Rango edad</th>
                                         <th>Sexo</th>
-                                        <th>Acciones</th>
+                                       <!-- <th>Acciones</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -477,12 +477,14 @@
                                         <td>{{ persona.nombreCompleto }}</td>
                                         <td>{{ persona.rangoEdad }}</td>
                                         <td>{{ persona.sexo }}</td>
-                                        <td class="text-center">                                           
-                                            <button class="btn btn-sm btn-danger" (click)="deleteParticipante(persona.id)">
+                                      <!--  <td class="text-center">                                           
+                                            <button 
+                                                type="button" 
+                                                class="btn btn-sm btn-danger" 
+                                                (click)="deleteParticipante(persona.id)">
                                                 <i class="fa fa-trash"></i>
-                                            </button> 
-                                                                                       
-                                        </td>
+                                            </button>                                                                                       
+                                        </td> -->
                                     </tr>
                                 </tbody>
                             </table>
@@ -532,7 +534,7 @@
         </div>
         <div class="col-md-6">
           <div class="form-group">
-            <label>Nombre Completo *</label>
+            <label>Nombre Completo *</label>            
             <input type="text" class="form-control" formControlName="nombre"
                    [class.is-invalid]="participanteForm.get('nombre')?.invalid && 
                                      participanteForm.get('nombre')?.touched">
@@ -548,21 +550,11 @@
 
       <div class="row mt-3">
         <div class="col-md-6">
-          <div class="form-group">
-            <label>Comunidad *</label>
-            <select class="form-control" formControlName="comunidad"
-                    [class.is-invalid]="participanteForm.get('comunidad')?.invalid && 
-                                      participanteForm.get('comunidad')?.touched">
-              <option value="">Seleccione...</option>
-              <option *ngFor="let com of comunidades" [value]="com.id_ubica_geo">
-                {{com.nombre}}
-              </option>
-            </select>
-            <div class="invalid-feedback">
-              La comunidad es requerida
+            <div class="form-group">
+              <label>Comunidad</label>         
+              <input type="text" class="form-control" formControlName="comunidad" readonly>
             </div>
           </div>
-        </div>
         <div class="col-md-6">
           <div class="form-group">
             <label>Rango de Edad *</label>
