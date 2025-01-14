@@ -73,6 +73,9 @@ export class ActividadComponent implements OnInit {
     resultado: any = "";
     idp_actividad_estado: any = "";
 
+    actAvaAvance: any = "";
+    actAvaMonto: any = "";
+
     periodo: any = "";
     presupuestoProy: any = 0;
     ejecutadoProy: any = 0;
@@ -324,7 +327,6 @@ export class ActividadComponent implements OnInit {
       return this.modalTitle;
     }
     // ======= ======= ======= ======= =======
-
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
       this.ElementosService.getElementosByProyecto(this.idProyecto).subscribe(
@@ -371,18 +373,30 @@ export class ActividadComponent implements OnInit {
 
       return amount;
     }
-    onChangedMontoNuevoEjecutado(){
-      if(/[a-zA-Z]/.test(this.montoNuevoEjecutado)) {
-        this.montoNuevoEjecutado = "0.00";
-        return;
+    getFormatedMonto(monto){
+      if(/[a-zA-Z]/.test(monto)) {
+        return ("0.00");
       }
-      this.montoNuevoEjecutado = this.parseAmountStrToFloat(this.montoNuevoEjecutado);
-      this.montoNuevoEjecutado = this.parseAmountFloatToStr(this.montoNuevoEjecutado);
+      monto = this.parseAmountStrToFloat(monto);
+      monto = this.parseAmountFloatToStr(monto);
+      return (monto);
+    }
+    onChangedMontoNuevoEjecutado(){
+      this.montoNuevoEjecutado = this.getFormatedMonto(this.montoNuevoEjecutado);
+    }
+    onChangedPresupuesto(){
+      this.presupuesto = this.getFormatedMonto(this.presupuesto);
+      this.validatePresupuesto();
+    }
+    onChangedAvanceNuevoEjecutado(){
+      this.actAvaMonto = this.getFormatedMonto(this.actAvaMonto);
+      this.validateActAvaMonto();
     }
 
     onPadreChanged(){
       let elementoScope = (this.elementos.find((elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)));
       this.proy_elemento_padre = elementoScope.elemento;
+      this.validateIdProyElementoPadre();
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT ACTIVIDAD NGMODEL ======= =======
@@ -402,6 +416,24 @@ export class ActividadComponent implements OnInit {
       this.fecha_fin = "";
       this.resultado = "";
       this.idp_actividad_estado = "";
+
+      this.actAvaAvance = "";
+      this.actAvaMonto = "";
+
+      this.valMontoNuevoEjecutado = true;
+      this.valMotivoNuevoEjecutado = true;
+
+      this.valIdProyElementoPadre = true;
+      this.valActividadText = true;
+      this.valDescripcion = true;
+      this.valPresupuesto = true;
+      this.valFechaInicio = true;
+      this.valFechaFin = true;
+      this.valResultado = true;
+
+      this.valActAvaAvance = true;
+      this.valActAvaMonto = true;
+
     }
     // ======= ======= ======= ======= =======
     // ======= ======= COUNT HEADER DATA FUCTION ======= =======
@@ -452,6 +484,7 @@ export class ActividadComponent implements OnInit {
       return dateDiference;
     }
 
+    // ======= PRESU EJECUTADO VALIDATIONS =======
     valMontoNuevoEjecutado: any = true;
     validateMontoNuevoEjecutado(){
       if((this.montoNuevoEjecutado)&&((this.parseAmountStrToFloat(this.montoNuevoEjecutado))>0)){
@@ -471,6 +504,90 @@ export class ActividadComponent implements OnInit {
         this.valMotivoNuevoEjecutado = false;
       }
     }
+    // ======= ======= =======
+    // ======= ACTIVIDAD VALIDATIONS =======
+    valIdProyElementoPadre: any = true;
+    validateIdProyElementoPadre() {
+      if (this.id_proy_elemento_padre) {
+        this.valIdProyElementoPadre = true;
+      } else {
+        this.valIdProyElementoPadre = false;
+      }
+    }
+
+    valActividadText: any = true;
+    validateActividadText() {
+      if ((this.actividadText) && (this.actividadText.length < 100)) {
+        this.valActividadText = true;
+      } else {
+        this.valActividadText = false;
+      }
+    }
+
+    valDescripcion: any = true;
+    validateDescripcion() {
+      if ((this.descripcion) && (this.descripcion.length < 255)) {
+        this.valDescripcion = true;
+      } else {
+        this.valDescripcion = false;
+      }
+    }
+
+    valFechaInicio: any = true;
+    validateFechaInicio() {
+      if (this.fecha_inicio) {
+        this.valFechaInicio = true;
+      } else {
+        this.valFechaInicio = false;
+      }
+    }
+
+    valFechaFin: any = true;
+    validateFechaFin() {
+      if (this.fecha_fin) {
+        this.valFechaFin = true;
+      } else {
+        this.valFechaFin = false;
+      }
+    }
+
+    valPresupuesto: any = true;
+    validatePresupuesto() {
+      if (this.presupuesto) {
+        this.valPresupuesto = true;
+      } else {
+        this.valPresupuesto = false;
+      }
+    }
+    // ======= ======= =======
+    // ======= ACTIVIDAD AVANCE VALIDATIONS =======
+    valActAvaAvance: any = true;
+    validateActAvaAvance() {
+      if(this.actAvaAvance) {
+        this.valActAvaAvance = true;
+      } else {
+        this.valActAvaAvance = false;
+      }
+    }
+
+    valActAvaMonto: any = true;
+    validateActAvaMonto() {
+      if(this.actAvaMonto) {
+        this.valActAvaMonto = true;
+      } else {
+        this.valActAvaMonto = false;
+      }
+    }
+
+    valResultado: any = true;
+    validateResultado() {
+      if((this.resultado) && (this.resultado.length < 255)) {
+        this.valResultado = true;
+      } else {
+        this.valResultado = false;
+      }
+    }
+    // ======= ======= =======
     // ======= ======= GET PRESU AVANCE ======= =======
     getPresuAvance(){
       this.servPresuAvance.getPresuAvanceByIdProy(this.idProyecto).subscribe(
@@ -630,19 +747,32 @@ export class ActividadComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT EDIT PERSONA ROLES ======= =======
-    initEditActividad(modalScope: TemplateRef<any>){
+    initAvanceActividad(modalScope: TemplateRef<any>){
       this.initActividadModel();
 
       this.modalAction = "edit";
       this.modalTitle = this.getModalTitle("edit");
 
-      this.id_proy_actividad = this.actividadSelected.id.proy_actividad;
+      this.id_proy_actividad = this.actividadSelected.id_proy_actividad;
+      this.codigo = this.actividadSelected.codigo;
+      this.actividadText = this.actividadSelected.actividadText;
+      this.proy_acti_repro = (this.actividadSelected.id_proy_acti_repro)?
+        (this.actividadSelected.pro_act_rep_codigo+" - REP: "+this.actividadSelected.pro_act_rep_actividad):
+        (null);
+      this.id_proy_elemento_padre = this.actividadSelected.id_proy_elem_padre;
+      this.onPadreChanged();
+      this.descripcion = this.actividadSelected.descripcion;
+      this.fecha_inicio = this.actividadSelected.fecha_inicio;
+      this.fecha_fin = this.actividadSelected.fecha_fin;
+      this.presupuesto = this.actividadSelected.presupuesto;
+
+      this.resultado = this.actividadSelected.resultado;
 
       this.openModal(modalScope);
     }
     // ======= ======= ======= ======= =======
     // ======= ======= EDIT APRENDIZAJE ======= =======
-    editActividad(){
+    avanceActividad(){
       const objActividad = {
         p_id_proy_aprende: 0,
         p_id_proyecto: parseInt(this.idProyecto,10),
@@ -662,13 +792,37 @@ export class ActividadComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
-      if(this.modalAction == "add"){
-        this.addActividad();
+      let valForm = false;
+      
+      if(valForm){
+        if(this.modalAction == "add"){
+          this.validateIdProyElementoPadre();
+          this.validateActividadText();
+          this.validateDescripcion();
+          this.validatePresupuesto();
+          this.validateFechaInicio();
+          this.validateFechaFin();
+
+          let valForm = (
+            this.valIdProyElementoPadre &&
+            this.valActividadText &&
+            this.valDescripcion &&
+            this.valPresupuesto &&
+            this.valFechaInicio &&
+            this.valFechaFin
+          );
+
+          if(valForm){
+            this.addActividad();
+          }
+        }
+        else{
+          if(valForm){
+            this.avanceActividad();
+          }
+        }
+        this.closeModal();
       }
-      else{
-        this.editActividad();
-      }
-      this.closeModal();
     }
     // ======= ======= ======= ======= =======
 }

@@ -137,12 +137,12 @@
                             Ver reprogramados
                         </label>
                         <button type="button" class="btn btn-view-bg-1 mx-2"
-                            (click)="initAddActividad(actividad)"
+                            (click)="initAddActividad(actividadModal)"
                             [disabled]="actividadSelected">
                             <i aria-hidden="true"></i> Añadir
                         </button>
                         <button type="button" class="btn btn-view-bg-1"
-                            (click)="initAvanceActividad(actividad)"
+                            (click)="initAvanceActividad(actividadModal)"
                             [disabled]="!actividadSelected">
                             <i aria-hidden="true"></i> Avance
                         </button>
@@ -303,7 +303,7 @@
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
     <!-- ======= ======= ======= ACTIVIDAD MODAL ======= ======= ======= -->
-    <ng-template #actividad let-modal class="custom-modal">
+    <ng-template #actividadModal let-modal class="custom-modal">
         <div class="modal-header">
             <h4 class="modal-title">{{ modalTitle }}</h4>
             <button type="button" class="btn-close" aria-label="Close" 
@@ -331,8 +331,12 @@
                                         <input class="form-control" type="text" 
                                             id="actividadText" name="actividadText" 
                                             [(ngModel)]="actividadText" [disabled]="modalAction == 'edit'"
+                                            (change)="validateActividadText()"
                                             placeholder="Ingrese un titulo para la actividad">
-                                    </div>
+                                    <span class="custom-alert-message" *ngIf="!valActividadText">
+                                        Debe ingresar un titulo valido, con menos de 100 caracteres.
+                                    </span>
+                                </div>
 
                                     <!-- ======= REPROGRAMADO SECTION ======= -->
                                     <div class="col col-md-5">
@@ -353,6 +357,9 @@
                                                 {{elemento.codigo}}
                                             </option>
                                         </select>
+                                        <span class="custom-alert-message" *ngIf="!valIdProyElementoPadre">
+                                            Debe seleccionar un elemento padre.
+                                        </span>
                                     </div>
                                     <!-- ======= RESULTADO OUTPUT SECTION ======= -->
                                     <div class="col col-md-4">
@@ -368,8 +375,12 @@
                                         <textarea class="form-control" 
                                             id="descripcion" name="descripcion" 
                                             [(ngModel)]="descripcion" [disabled]="modalAction == 'edit'"
+                                            (change)="validateDescripcion()"
                                             placeholder="Ingrese una descipcion de la actividad">
                                         </textarea>
+                                        <span class="custom-alert-message" *ngIf="!valDescripcion">
+                                            Debe ingresar una descripción valida, con menos de 255 caracteres.
+                                        </span>
                                     </div>
 
 
@@ -382,14 +393,22 @@
                                         <label for="fecha_inicio">Inicio</label>
                                         <input class="form-control" type="date" 
                                             id="fecha_inicio" name="fecha_inicio" 
-                                            [(ngModel)]="fecha_inicio" [disabled]="modalAction == 'edit'">
+                                            [(ngModel)]="fecha_inicio" [disabled]="modalAction == 'edit'"
+                                            (change)="validateFechaInicio()">
+                                        <span class="custom-alert-message" *ngIf="!valFechaInicio">
+                                            Debe ingresar un monto valido.
+                                        </span>
                                     </div>
                                     <!-- ======= FECHA FIN SECTION ======= -->
                                     <div class="col col-md-4 col-lg-4">
                                         <label for="fecha_fin">Fin</label>
                                         <input class="form-control" type="date" 
                                             id="fecha_fin" name="fecha_fin" 
-                                            [(ngModel)]="fecha_fin">
+                                            [(ngModel)]="fecha_fin" [disabled]="modalAction == 'edit'"
+                                            (change)="validateFechaFin()">
+                                        <span class="custom-alert-message" *ngIf="!valFechaFin">
+                                            Debe ingresar un monto valido.
+                                        </span>
                                     </div>
                                     <!-- ======= PRESUPUESTO SECTION ======= -->
                                     <div class="col col-md-4 col-lg-4">
@@ -397,7 +416,11 @@
                                         <input class="form-control" type="text" 
                                             id="presupuesto" name="presupuesto" 
                                             [(ngModel)]="presupuesto" [disabled]="modalAction == 'edit'"
+                                            (change)="onChangedPresupuesto()"
                                             placeholder="Ingrese el presupuesto de la actividad">
+                                        <span class="custom-alert-message" *ngIf="!valPresupuesto">
+                                            Debe ingresar un monto valido.
+                                        </span>
                                     </div>
                                 
                                     <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"> 
@@ -418,18 +441,29 @@
                                                 <label for="actAvaAvance">% Avance</label>
                                                 <input class="form-control" type="text" 
                                                     id="actAvaAvance" name="actAvaAvance" 
-                                                    [(ngModel)]="actAvaAvance" [disabled]="modalAction == 'add'">
+                                                    placeholder="Ingresa el porcentaje"
+                                                    [(ngModel)]="actAvaAvance" [disabled]="modalAction == 'add'"
+                                                    (change)="validateActAvaAvance()">
+                                                <span class="custom-alert-message" *ngIf="!valActAvaAvance">
+                                                    Debe ingresar un monto valido.
+                                                </span>
                                             </div>
                                             <!-- ======= EJECUTADO SECTION ======= -->
                                             <div class="col col-md-6 col-lg-6">
                                                 <label for="actAvaMonto">Nuevo Ejecutado</label>
                                                 <input class="form-control" type="text" 
                                                     id="actAvaMonto" name="actAvaMonto" 
-                                                    [(ngModel)]="actAvaMonto" disabled>
+                                                    placeholder="Ingresa el nuevo monto"
+                                                    [(ngModel)]="actAvaMonto" [disabled]="modalAction == 'add'"
+                                                    (change)="onChangedAvanceNuevoEjecutado()">
+                                                <span class="custom-alert-message" *ngIf="!valActAvaMonto">
+                                                    Debe ingresar un monto valido.
+                                                </span>
                                             </div>
                                             <!-- ======= ADD AVANCE SECTION ======= -->
                                             <div class="col col-md-1 col-lg-1 mt-auto">
-                                                <button type="submit" class="btn btn-bg-1" [disabled]="modalAction == 'add'">
+                                                <button type="submit" class="btn btn-bg-1" 
+                                                    [disabled]="modalAction == 'add'">
                                                     <i aria-hidden="true"></i> +
                                                 </button>
                                             </div>
@@ -466,15 +500,15 @@
 
                                     <!-- ======= FACTORES SECTION ======= -->
                                     <div class="col col-md-6 col-lg-6 mb-3">
-                                        <label for="codigo">Factores que impidieron el cumplimiento</label>
+                                        <label for="resultado">Factores que impidieron el cumplimiento</label>
                                         <textarea class="form-control" type="text" 
-                                            id="codigo" name="codigo" 
-                                            [(ngModel)]="codigo">
+                                            id="resultado" name="resultado" 
+                                            [(ngModel)]="resultado" [disabled]="modalAction == 'add'">
                                         </textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <div class="d-flex justify-content-center" style="width: 100%;">
+                                    <div class="d-flex justify-content-center">
                                         <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                                             <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                         </button>
