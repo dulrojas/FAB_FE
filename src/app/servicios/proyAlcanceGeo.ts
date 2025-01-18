@@ -20,7 +20,8 @@ export class servProyAlcanceGeo{
           { "name": "p_accion", "value": "C2", "type": "string" },
           { "name": "p_id_proy_alcance", "value": null, "type": "int" },
           { "name": "p_id_proyecto", "value": idProy, "type": "int" },
-          { "name": "p_id_ubica_geo", "value": null, "type": "int" }
+          { "name": "p_id_ubica_geo", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": null, "type": "int"}
         ]
       }
     };
@@ -42,7 +43,8 @@ export class servProyAlcanceGeo{
           { "name": "p_accion", "value": "A1", "type": "string" },
           { "name": "p_id_proy_alcance", "value": null, "type": "int" },
           { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },
-          { "name": "p_id_ubica_geo", "value": obj.p_id_ubica_geo, "type": "int" }
+          { "name": "p_id_ubica_geo", "value": obj.p_id_ubica_geo, "type": "int" },
+          { "name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int"}
         ]
       }
     };
@@ -56,7 +58,7 @@ export class servProyAlcanceGeo{
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET PROY ALCANCE GEO ======= ======= =======
-  deleteAlcanceGeo(idProy: any): Observable<any> {
+  deleteAlcanceGeo(idProy: any, idPer: any): Observable<any> {
     const params = {
       "procedure_name": "sp_proy_alcance_geo",
       "body": {
@@ -64,7 +66,8 @@ export class servProyAlcanceGeo{
           { "name": "p_accion", "value": "D2", "type": "string" },
           { "name": "p_id_proy_alcance", "value": null, "type": "int" },
           { "name": "p_id_proyecto", "value": idProy, "type": "int" },
-          { "name": "p_id_ubica_geo", "value": null, "type": "int" }
+          { "name": "p_id_ubica_geo", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": idPer, "type": "int"}
         ]
       }
     };

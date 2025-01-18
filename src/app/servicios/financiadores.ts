@@ -25,7 +25,8 @@ export class servFinanciadores{
           {"name": "p_id_institucion_fin","value": null,"type": "int"},
           {"name": "p_idp_tipo_finan","value": null,"type": "int"},
           {"name": "p_idp_estado","value": null,"type": "int"},
-          {"name": "p_orden","value": null,"type": "int"}
+          {"name": "p_orden","value": null,"type": "int"},
+          {"name": "p_id_persona_reg","value": null,"type": "int"}
         ]
       }
     };
@@ -52,7 +53,8 @@ export class servFinanciadores{
           {"name": "p_id_institucion_fin","value": obj.p_id_institucion_fin,"type": "int"},
           {"name": "p_idp_tipo_finan","value": obj.p_idp_tipo_finan,"type": "int"},
           {"name": "p_idp_estado","value": obj.p_idp_estado,"type": "int"},
-          {"name": "p_orden","value": obj.p_orden,"type": "int"}
+          {"name": "p_orden","value": obj.p_orden,"type": "int"},
+          {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
         ]
       }
     };
@@ -79,7 +81,8 @@ export class servFinanciadores{
           {"name": "p_id_institucion_fin","value": obj.p_id_institucion_fin,"type": "int"},
           {"name": "p_idp_tipo_finan","value": obj.p_idp_tipo_finan,"type": "int"},
           {"name": "p_idp_estado","value": obj.p_idp_estado,"type": "int"},
-          {"name": "p_orden","value": obj.p_orden,"type": "int"}
+          {"name": "p_orden","value": obj.p_orden,"type": "int"},
+          {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
         ]
       }
     };

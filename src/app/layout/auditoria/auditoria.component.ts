@@ -41,6 +41,7 @@ export class AuditoriaComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
     formularios: any = [];
+    tablas: any = [];
     acciones: any = [];
 
     id_formulario: any = "";
@@ -52,11 +53,17 @@ export class AuditoriaComponent implements OnInit {
     // ======= ======= FUNCIONS SECTION ======= =======
     onFormularioChange(){
       this.registrosAuditoriaForm = this.registrosAuditoria.filter((item)=>(item.id_formulario == this.id_formulario));
+      this.registroSelected = [];
     }
     getDescripcionAccion(id_accion){
       let accionForm = this.acciones.find((accionItem)=>(accionItem.id_subtipo == id_accion));
       let accionDescripcion = accionForm.descripcion_subtipo;
       return accionDescripcion;
+    }
+    getDescripcionTabla(id_tabla){
+      let tablaForm = this.tablas.find((tablaItem)=>(tablaItem.id_subtipo == id_tabla));
+      let tablaDescripcion = tablaForm.descripcion_subtipo;
+      return tablaDescripcion;
     }
     objectEntries(obj: any): { key: string, value: any }[] {
       return Object.entries(obj).map(([key, value]) => ({ key, value }));
@@ -82,6 +89,14 @@ export class AuditoriaComponent implements OnInit {
       this.servicios.getParametricaByIdTipo(22).subscribe(
         (data)=>{
           this.formularios = (data[0].dato)?(data[0].dato):([]);
+        },
+        (error)=>{
+          console.error(error);
+        }
+      );
+      this.servicios.getParametricaByIdTipo(23).subscribe(
+        (data)=>{
+          this.tablas = (data[0].dato)?(data[0].dato):([]);
         },
         (error)=>{
           console.error(error);

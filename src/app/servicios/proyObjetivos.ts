@@ -21,7 +21,8 @@ export class servProyObjetivos{
           { "name": "p_id_proy_objetivos", "value": null, "type": "int" },
           { "name": "p_id_proyecto", "value": idProy, "type": "int" },
           { "name": "p_idp_inst_objetivos", "value": null, "type": "int" },
-          { "name": "p_idp_valor_objetivo", "value": null, "type": "int" }
+          { "name": "p_idp_valor_objetivo", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": null, "type": "int" }
         ]
       }
     };
@@ -44,7 +45,8 @@ export class servProyObjetivos{
           { "name": "p_id_proy_objetivos", "value": null, "type": "int" },
           { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },
           { "name": "p_idp_inst_objetivos", "value": obj.p_idp_inst_objetivos, "type": "int" },
-          { "name": "p_idp_valor_objetivo", "value": obj.p_idp_valor_objetivo, "type": "int" }
+          { "name": "p_idp_valor_objetivo", "value": obj.p_idp_valor_objetivo, "type": "int" },
+          { "name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int" }
         ]
       }
     };
@@ -67,7 +69,8 @@ export class servProyObjetivos{
           { "name": "p_id_proy_objetivos", "value": null, "type": "int" },
           { "name": "p_id_proyecto", "value": idProy, "type": "int" },
           { "name": "p_idp_inst_objetivos", "value": null, "type": "int" },
-          { "name": "p_idp_valor_objetivo", "value": null, "type": "int" }
+          { "name": "p_idp_valor_objetivo", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": null, "type": "int" }
         ]
       }
     };

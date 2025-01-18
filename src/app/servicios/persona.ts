@@ -36,7 +36,8 @@ export class servPersona{
                 {"name": "p_id_tipo_institucion","value": null,"type": "int"},
                 {"name": "p_id_inst_unidad","value": null,"type": "int"},
                 {"name": "p_cargo","value": null,"type": "string"},
-                {"name": "p_admi_sistema","value": null,"type": "boolean"}
+                {"name": "p_admi_sistema","value": null,"type": "boolean"},
+                {"name": "p_id_persona_reg","value": null,"type": "int"}
             ]
         }
     };
@@ -74,7 +75,8 @@ export class servPersona{
                 {"name": "p_id_tipo_institucion","value": obj.p_id_tipo_institucion,"type": "int"},
                 {"name": "p_id_inst_unidad","value": obj.p_id_inst_unidad,"type": "int"},
                 {"name": "p_cargo","value": obj.p_cargo,"type": "string"},
-                {"name": "p_admi_sistema","value": obj.p_admi_sistema,"type": "boolean"}
+                {"name": "p_admi_sistema","value": obj.p_admi_sistema,"type": "boolean"},
+                {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
             ]
         }
     };
@@ -112,7 +114,8 @@ export class servPersona{
                 {"name": "p_id_tipo_institucion","value": obj.p_id_tipo_institucion,"type": "int"},
                 {"name": "p_id_inst_unidad","value": obj.p_id_inst_unidad,"type": "int"},
                 {"name": "p_cargo","value": obj.p_cargo,"type": "string"},
-                {"name": "p_admi_sistema","value": obj.p_admi_sistema,"type": "boolean"}
+                {"name": "p_admi_sistema","value": obj.p_admi_sistema,"type": "boolean"},
+                {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
             ]
         }
     };

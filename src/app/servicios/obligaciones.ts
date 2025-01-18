@@ -29,7 +29,8 @@ export class servObligaciones{
           {"name": "p_idp_estado_entrega","value": null,"type": "int"},
           {"name": "p_ruta_documento","value": null,"type": "string"},
           {"name": "p_fecha_hora_entrega","value": null,"type": "string"},
-          {"name": "p_id_persona_entrega","value": null,"type": "int"}
+          {"name": "p_id_persona_entrega","value": null,"type": "int"},
+          {"name": "p_id_persona_reg","value": null,"type": "int"}
         ]
       }
     };
@@ -60,7 +61,8 @@ export class servObligaciones{
           {"name": "p_idp_estado_entrega","value": obj.p_idp_estado_entrega,"type": "int"},
           {"name": "p_ruta_documento","value": obj.p_ruta_documento,"type": "string"},
           {"name": "p_fecha_hora_entrega","value": obj.p_fecha_hora_entrega,"type": "string"},
-          {"name": "p_id_persona_entrega","value": obj.p_id_persona_entrega,"type": "int"}
+          {"name": "p_id_persona_entrega","value": obj.p_id_persona_entrega,"type": "int"},
+          {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
         ]
       }
     };
@@ -91,7 +93,8 @@ export class servObligaciones{
           {"name": "p_idp_estado_entrega","value": obj.p_idp_estado_entrega,"type": "int"},
           {"name": "p_ruta_documento","value": obj.p_ruta_documento,"type": "string"},
           {"name": "p_fecha_hora_entrega","value": obj.p_fecha_hora_entrega,"type": "string"},
-          {"name": "p_id_persona_entrega","value": obj.p_id_persona_entrega,"type": "int"}
+          {"name": "p_id_persona_entrega","value": obj.p_id_persona_entrega,"type": "int"},
+          {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
         ]
       }
     };
@@ -105,7 +108,7 @@ export class servObligaciones{
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET PERSONAS ======= ======= =======
-  deleteObligacion(idObli: any): Observable<any> {
+  deleteObligacion(idObli: any, idPer: any): Observable<any> {
     const params = {
       "procedure_name": "sp_proy_obligaciones",
       "body": {
@@ -122,7 +125,8 @@ export class servObligaciones{
           {"name": "p_idp_estado_entrega","value": null,"type": "int"},
           {"name": "p_ruta_documento","value": null,"type": "string"},
           {"name": "p_fecha_hora_entrega","value": null,"type": "string"},
-          {"name": "p_id_persona_entrega","value": null,"type": "int"}
+          {"name": "p_id_persona_entrega","value": null,"type": "int"},
+          {"name": "p_id_persona_reg","value": idPer,"type": "int"}
         ]
       }
     };

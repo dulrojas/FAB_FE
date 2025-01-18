@@ -22,7 +22,8 @@ export class servPersonaRoles {
           {"name": "p_id_persona","value": null,"type": "int"},
           {"name": "p_id_institucion","value": null,"type": "int"},
           {"name": "p_id_proyecto","value": null,"type": "int"},
-          {"name": "p_rol","value": null,"type": "string"}
+          {"name": "p_rol","value": null,"type": "string"},
+          {"name": "p_id_persona_reg","value": null,"type": "int"}
         ]
       }
     };
@@ -46,7 +47,8 @@ export class servPersonaRoles {
           {"name": "p_id_persona","value": null,"type": "int"},
           {"name": "p_id_institucion","value": null,"type": "int"},
           {"name": "p_id_proyecto","value": idProy,"type": "int"},
-          {"name": "p_rol","value": null,"type": "string"}
+          {"name": "p_rol","value": null,"type": "string"},
+          {"name": "p_id_persona_reg","value": null,"type": "int"}
         ]
       }
     };
@@ -70,7 +72,8 @@ export class servPersonaRoles {
           {"name": "p_id_persona","value": idPersona,"type": "int"},
           {"name": "p_id_institucion","value": null,"type": "int"},
           {"name": "p_id_proyecto","value": null,"type": "int"},
-          {"name": "p_rol","value": null,"type": "string"}
+          {"name": "p_rol","value": null,"type": "string"},
+          {"name": "p_id_persona_reg","value": null,"type": "int"}
         ]
       }
     };
@@ -94,7 +97,8 @@ export class servPersonaRoles {
           {"name": "p_id_persona","value": obj.p_id_persona,"type": "int"},
           {"name": "p_id_institucion","value": obj.p_id_institucion,"type": "int"},
           {"name": "p_id_proyecto","value": obj.p_id_proyecto,"type": "int"},
-          {"name": "p_rol","value": obj.p_rol,"type": "string"}
+          {"name": "p_rol","value": obj.p_rol,"type": "string"},
+          {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
         ]
       }
     };
@@ -118,7 +122,8 @@ export class servPersonaRoles {
           {"name": "p_id_persona","value": obj.p_id_persona,"type": "int"},
           {"name": "p_id_institucion","value": obj.p_id_institucion,"type": "int"},
           {"name": "p_id_proyecto","value": obj.p_id_proyecto,"type": "int"},
-          {"name": "p_rol","value": obj.p_rol,"type": "string"}
+          {"name": "p_rol","value": obj.p_rol,"type": "string"},
+          {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
         ]
       }
     };

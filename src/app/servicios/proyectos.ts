@@ -40,7 +40,8 @@ export class servProyectos{
                 {"name": "p_id_preguntas_1", "value": null, "type": "int"},
                 {"name": "p_id_preguntas_2", "value": null, "type": "int"},
                 {"name": "p_idp_periodo_evaluacion", "value": null, "type": "int"},
-                {"name": "p_fecha_evaluacion_1", "value": null, "type": "string"}
+                {"name": "p_fecha_evaluacion_1", "value": null, "type": "string"},
+                {"name": "p_id_persona_reg", "value": null, "type": "int"}
             ]
         }
     };
@@ -82,7 +83,8 @@ export class servProyectos{
                 {"name": "p_id_preguntas_1", "value": null, "type": "int"},
                 {"name": "p_id_preguntas_2", "value": null, "type": "int"},
                 {"name": "p_idp_periodo_evaluacion", "value": null, "type": "int"},
-                {"name": "p_fecha_evaluacion_1", "value": null, "type": "string"}
+                {"name": "p_fecha_evaluacion_1", "value": null, "type": "string"},
+                {"name": "p_id_persona_reg", "value": null, "type": "int"}
             ]
         }
     };
@@ -124,7 +126,8 @@ export class servProyectos{
                 {"name": "p_id_preguntas_1", "value": null, "type": "int"},
                 {"name": "p_id_preguntas_2", "value": null, "type": "int"},
                 {"name": "p_idp_periodo_evaluacion", "value": null, "type": "int"},
-                {"name": "p_fecha_evaluacion_1", "value": null, "type": "string"}
+                {"name": "p_fecha_evaluacion_1", "value": null, "type": "string"},
+                {"name": "p_id_persona_reg", "value": null, "type": "int"}
             ]
         }
     };
@@ -166,7 +169,8 @@ export class servProyectos{
           {"name": "p_id_preguntas_1", "value": obj.id_preguntas_1, "type": "int"},
           {"name": "p_id_preguntas_2", "value": obj.id_preguntas_2, "type": "int"},
           {"name": "p_idp_periodo_evaluacion", "value": obj.idp_periodo_evaluacion, "type": "int"},
-          {"name": "p_fecha_evaluacion_1", "value": obj.fecha_evaluacion_1, "type": "string"}
+          {"name": "p_fecha_evaluacion_1", "value": obj.fecha_evaluacion_1, "type": "string"},
+          {"name": "p_id_persona_reg", "value": obj.id_persona_reg, "type": "int"}
         ]
       }
     };

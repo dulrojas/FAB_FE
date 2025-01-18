@@ -15,7 +15,7 @@
         <div class="card-body custom-card table-responsive">
             <div class="row">
                 <div class="col col-md-12">
-                    <h2 class="custom-view-title">Auditoria</h2>
+                    <h2 class="custom-view-title">Auditoría</h2>
                 </div>
             </div>
             <div class="row">
@@ -49,7 +49,8 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Accion</th>
+                                            <th>Tabla</th>
+                                            <th>Accíon</th>
                                             <th>Fecha/Hora</th>                                            
                                             <th>Persona</th>                                            
                                             <th>Usuario</th>                                            
@@ -60,6 +61,9 @@
                                         <tr *ngFor="let registro of registrosAuditoriaForm;">
                                             <td>
                                                 {{ registro.id_auditoria }}
+                                            </td>
+                                            <td>
+                                                {{ getDescripcionTabla(registro.id_tabla_origen) }}
                                             </td>
                                             <td>
                                                 {{ getDescripcionAccion(registro.id_accion) }}

@@ -368,6 +368,7 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= EDIT PROYECTO ======= =======
     editInfProyecto(){
       // ======= PROJECT SECTION =======
+      this.proyectoScope.id_persona_reg = this.idPersonaReg;
       this.proyectoScope.presupuesto_me = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_me);
       this.proyectoScope.presupuesto_mn = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn);
 
@@ -385,7 +386,8 @@ export class InfProyectoComponent implements OnInit {
                 p_id_proy_objetivos: null,
                 p_id_proyecto: this.idProyecto,
                 p_idp_inst_objetivos: objetivo.id_inst_objetivos,
-                p_idp_valor_objetivo: (objetivo.selected == 1)?(2):(1)
+                p_idp_valor_objetivo: (objetivo.selected == 1)?(2):(1),
+                p_id_persona_reg: this.idPersonaReg
               };
               addRequestsObj.push(this.servProyObjetivos.addProyObjetivos(objetivoObj));
             }
@@ -403,13 +405,14 @@ export class InfProyectoComponent implements OnInit {
           let allAlcanceGeo: any = [...this.ubicacionesSel, ...ubicacionesBranchSel];
           let addRequestsAlc = [];
 
-          let deleteRequestAlc = this.servProyAlcanceGeo.deleteAlcanceGeo(this.proyectoScope.id_proyecto);
+          let deleteRequestAlc = this.servProyAlcanceGeo.deleteAlcanceGeo(this.proyectoScope.id_proyecto, this.idPersonaReg);
 
           allAlcanceGeo.forEach((alcance) => {
             let alcanceObj = {
               p_id_proy_alcance: null,
               p_id_proyecto: this.idProyecto,
-              p_id_ubica_geo: alcance.id_ubica_geo
+              p_id_ubica_geo: alcance.id_ubica_geo,
+              p_id_persona_reg: this.idPersonaReg
             };
             addRequestsAlc.push(this.servProyAlcanceGeo.addProyAlcanceGeo(alcanceObj));
           });
@@ -445,6 +448,7 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= FUNCTION INFO PROYECTO NGMODEL ======= =======
     setEstadoProyecto(newEstadoProyecto: any){
+      this.proyectoScope.id_persona_reg = this.idPersonaReg;
       this.proyectoScope.idp_estado_proy = newEstadoProyecto;
       this.proyectoScope.presupuesto_me = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_me);
       this.proyectoScope.presupuesto_mn = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn);
@@ -725,7 +729,8 @@ export class InfProyectoComponent implements OnInit {
         p_id_institucion_fin: parseInt(this.financiadores.id_institucion_fin),
         p_idp_tipo_finan: parseInt(this.financiadores.idp_tipo_finan),
         p_idp_estado: this.financiadores.idp_estado,
-        p_orden: parseInt(this.financiadores.orden)
+        p_orden: parseInt(this.financiadores.orden),
+        p_id_persona_reg: this.idPersonaReg
       };
 
       this.servFinanciadores.addFinanciador(objPresupuesto).subscribe(
@@ -767,7 +772,8 @@ export class InfProyectoComponent implements OnInit {
         p_id_institucion_fin: parseInt(this.financiadores.id_institucion_fin),
         p_idp_tipo_finan: parseInt(this.financiadores.idp_tipo_finan),
         p_idp_estado: this.financiadores.idp_estado,
-        p_orden: parseInt(this.financiadores.orden)
+        p_orden: parseInt(this.financiadores.orden),
+        p_id_persona_reg: this.idPersonaReg
       };
 
       this.servFinanciadores.editFinanciador(objPresupuesto).subscribe(
@@ -807,7 +813,8 @@ export class InfProyectoComponent implements OnInit {
         p_id_institucion_fin: parseInt(this.financiadores.id_institucion_fin),
         p_idp_tipo_finan: parseInt(this.financiadores.idp_tipo_finan),
         p_idp_estado: 2,
-        p_orden: parseInt(this.financiadores.orden)
+        p_orden: parseInt(this.financiadores.orden),
+        p_id_persona_reg: this.idPersonaReg
       };
 
       this.servFinanciadores.editFinanciador(objPresupuesto).subscribe(
@@ -1123,7 +1130,8 @@ export class InfProyectoComponent implements OnInit {
         p_idp_estado_entrega: parseInt(this.obligacionesModel.idp_estado_entrega),
         p_ruta_documente: this.obligacionesModel.ruta_documente,
         p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
-        p_id_persona_entrega: parseInt(this.idPersonaReg)
+        p_id_persona_entrega: parseInt(this.idPersonaReg),
+        p_id_persona_reg: parseInt(this.idPersonaReg)
       };
       this.servObligaciones.addObligaciones(objObligacion).subscribe(
         (data) => {
@@ -1177,7 +1185,8 @@ export class InfProyectoComponent implements OnInit {
         p_idp_estado_entrega: parseInt(this.obligacionesModel.idp_estado_entrega),
         p_ruta_documente: this.obligacionesModel.ruta_documente,
         p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
-        p_id_persona_entrega: parseInt(this.obligacionesModel.idPersonaReg)
+        p_id_persona_entrega: parseInt(this.obligacionesModel.idPersonaReg),
+        p_id_persona_reg: parseInt(this.idPersonaReg)
       };
       this.servObligaciones.editObligaciones(objObligacion).subscribe(
         (data) => {
@@ -1202,7 +1211,7 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= DELETE OBLIGACION ======= =======
     deleteObligacion(){
-      this.servObligaciones.deleteObligacion(this.obligacionesModel.id_proy_obliga).subscribe(
+      this.servObligaciones.deleteObligacion(this.obligacionesModel.id_proy_obliga, this.idPersonaReg).subscribe(
         (data) => {
           this.obligacionesSelected = null;
           this.getObligaciones();

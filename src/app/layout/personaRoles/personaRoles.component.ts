@@ -441,7 +441,8 @@ export class PersonaRolesComponent implements OnInit {
         p_id_tipo_institucion: 1,
         p_id_inst_unidad: this.id_inst_unidad,
         p_cargo: this.cargo,
-        p_admi_sistema: this.admi_sistema
+        p_admi_sistema: this.admi_sistema,
+        p_id_persona_reg: this.idPersonaReg
       };
     
       this.servPersona.addPersona(objPersona).subscribe(
@@ -458,7 +459,8 @@ export class PersonaRolesComponent implements OnInit {
               p_id_persona: idPersona,
               p_id_institucion: null,
               p_id_proyecto: personaProyecto.id_proyecto,
-              p_rol: personaProyecto.rol
+              p_rol: personaProyecto.rol,
+              p_id_persona_reg: this.idPersonaReg
             };
             return this.servPersonaRoles.addPersonaRol(objPersonaRol);
           });
@@ -571,7 +573,8 @@ export class PersonaRolesComponent implements OnInit {
         p_id_tipo_institucion: 1,
         p_id_inst_unidad: this.id_inst_unidad,
         p_cargo: this.cargo,
-        p_admi_sistema: this.admi_sistema
+        p_admi_sistema: this.admi_sistema,
+        p_id_persona_reg: this.idPersonaReg
       };
     
       this.servPersona.editPersona(objPersona).subscribe(
@@ -591,6 +594,7 @@ export class PersonaRolesComponent implements OnInit {
               p_id_institucion: 1,
               p_id_proyecto: personaProyecto.id_proyecto,
               p_rol: personaProyecto.rol,
+              p_id_persona_reg: this.idPersonaReg
             };
             addRequestsPersona.push(this.servPersonaRoles.addPersonaRol(objPersonaRol));
           });
@@ -604,6 +608,7 @@ export class PersonaRolesComponent implements OnInit {
               p_id_institucion: 1,
               p_id_proyecto: personaProyecto.id_proyecto,
               p_rol: personaProyecto.rol,
+              p_id_persona_reg: this.idPersonaReg
             };
             editRequestsPersona.push(this.servPersonaRoles.editPersonaRol(objPersonaRol));
           });
