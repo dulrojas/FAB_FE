@@ -37,12 +37,10 @@ interface Beneficiario {
   selected?: boolean;
 }
 
-
 @Component({
   selector: 'app-beneficiarios',
   templateUrl: './beneficiarios.component.html',
   styleUrls: ['../../../styles/styles.scss'],
-
   animations: [routerTransition()]
 })
 export class BeneficiariosComponent implements OnInit {
