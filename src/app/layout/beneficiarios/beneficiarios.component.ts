@@ -939,11 +939,12 @@ getIdActividad(nombre :any){
     this.servListBenef.deleteListBene(participante.id_real).subscribe({
       next: (response) => {
         if (response[0]?.res === 'OK') {
-          // Primero actualizamos la tabla local
+          // Filtrar localmente
           this.tablaPersonas = this.tablaPersonas.filter(p => p.id !== index);
-          const participanteData = this.planifData.find(p => p.id_proy_bene_lista === participante.id_real);
+          this.planifData = this.planifData.filter(p => p.id_proy_bene_lista !== participante.id_real);
+  
           if (this.selectedBeneficiarios) {
-            // Actualizamos los totales locales
+            // Actualizar totales
             const nuevoTotal = {
               hombres: participante.sexo === 'Hombre' ? 
                 this.selectedBeneficiarios.hombres - 1 : 
@@ -953,47 +954,11 @@ getIdActividad(nombre :any){
                 this.selectedBeneficiarios.mujeres              
             };
   
-            // Actualizamos el beneficiario seleccionado
-            this.selectedBeneficiarios = {
-              ...this.selectedBeneficiarios,
-              hombres: nuevoTotal.hombres,
-              mujeres: nuevoTotal.mujeres,
-              total: nuevoTotal.hombres + nuevoTotal.mujeres
-            };
+            // Forzar actualización de totales
+            this.actualizarTotales();
   
-            // Preparamos los datos para actualizar en la base de datos
-            const beneficiarioActualizado = {
-              ...this.selectedBeneficiarios,
-              hombres: nuevoTotal.hombres,
-              mujeres: nuevoTotal.mujeres,
-              total: nuevoTotal.hombres + nuevoTotal.mujeres
-            };
-            this.cargarPersona(this.selectedBeneficiarios.id);
-            // Actualizamos en la base de datos
-            this.beneficiariosService.editBeneficiario(beneficiarioActualizado).subscribe({
-              next: (updateResponse) => {
-                if (updateResponse[0]?.res === 'OK') {
-                  // Actualizamos la tabla principal
-                  const index = this.beneficiariosTable.findIndex(
-                    b => b.id === this.selectedBeneficiarios.id
-                  );
-                  if (index !== -1) {
-                    this.beneficiariosTable[index] = {
-                      ...this.beneficiariosTable[index],
-                      hombres: nuevoTotal.hombres,
-                      mujeres: nuevoTotal.mujeres,
-                      total: nuevoTotal.hombres + nuevoTotal.mujeres
-                    };
-                  }
-                  
-                  // Actualizamos los contadores del header
-                  this.countHeaderData();
-                  // Forzamos la actualización de la vista
-                  this.cdr.detectChanges();
-                }
-              },
-              error: (error) => console.error('Error al actualizar beneficiario:', error)
-            });
+            // Forzar detección de cambios
+            this.cdr.detectChanges();
           }
         } else {
           console.error('Error en la respuesta:', response);
