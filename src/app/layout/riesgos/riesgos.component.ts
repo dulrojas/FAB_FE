@@ -433,7 +433,7 @@ export class RiesgosComponent implements OnInit {
     }
 
     // ======= ======= ADD RIESGOS ======= =======
-    addRiesgos(){
+    addRiesgos(){      
       const objRiesgo = {
         p_id_proy_aprende: 0,
         p_id_proyecto: this.idProyecto,
@@ -520,7 +520,7 @@ export class RiesgosComponent implements OnInit {
       p_medidas: this.medidas,
       p_idp_efectividad: this.idp_efectividad,
       p_comentarios: this.comentarios,
-      p_fecha_hora_reg: null,
+      p_fecha_hora_reg: this.getCurrentDateTime(),
       p_id_persona_reg: this.id_persona_reg         
     }
 
@@ -567,6 +567,20 @@ export class RiesgosComponent implements OnInit {
             return 'Desconocido';
         }
       }
+      calcularNivelRiesgo() {
+        if (this.impacto && this.probabilidad) {
+            const impactoNum = parseInt(this.impacto);
+            const probabilidadNum = parseInt(this.probabilidad);
+            // Matriz de riesgo
+            const matrizRiesgo = [
+                ['1', '1', '1'], // Impacto bajo (1)
+                ['1', '2', '2'], // Impacto medio (2)
+                ['1', '2', '3']  // Impacto alto (3)
+            ];
+            // Obtener nivel de riesgo según matriz
+            this.nivel = matrizRiesgo[impactoNum - 1][probabilidadNum - 1];
+        }
+    }
 
  
   // ======= ======= COUNT HEADER DATA FUNCTION ======= =======

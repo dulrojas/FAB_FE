@@ -109,7 +109,7 @@
               'riesgo-alto': mapNivel(riesgo.nivel) === 'Alto',
               'riesgo-medio':mapNivel(riesgo.nivel) === 'Medio',
               'riesgo-bajo': mapNivel(riesgo.nivel) === 'Bajo'}">
-              <span *ngIf="mapNivel(riesgo.nivel) === 'Alto'" class="symbol">X</span>
+              <span *ngIf="mapNivel(riesgo.nivel) === 'Alto'" class="symbol">✕</span>
               <span *ngIf="mapNivel(riesgo.nivel) === 'Medio'" class="symbol">!</span>
               <span *ngIf="mapNivel(riesgo.nivel) === 'Bajo'" class="symbol">✓</span>
             </div>
@@ -260,39 +260,86 @@
                         <span class="custom-alert-message" *ngIf="!valIdentificacion">Debe elegir una Identificacion</span>
                     </div>
                     
-                <!-- Impacto, Probabilidad, Nivel de Riesgo -->
+                <!-- Quinta fila Impacto, Probabilidad, Nivel de Riesgo -->
+                <!-- Impacto--> 
                 <div class="col col-xl-4 col-lg-4 mt-auto">
                   <label for="impacto">Impacto</label>
-                    <select class="form-control" id="impacto" name="impacto" 
-                      [(ngModel)]="impacto" >
+                  <div class="position-relative">
+                    <select class="form-control ps-2"
+                      id="impacto"
+                      name="impacto"
+                      [(ngModel)]="impacto"
+                      (ngModelChange)="calcularNivelRiesgo()">
                       <option value="" disabled selected>Seleccione Impacto</option>
                       <option value="3">Alto</option>
                       <option value="2">Medio</option>
                       <option value="1">Bajo</option>
                     </select>
-                  
+                    <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
+                      <div *ngIf="impacto" class="impacto-button" >
+                      <div [ngClass]="{
+                          'impacto-alto': impacto === '3',
+                          'impacto-medio': impacto === '2',
+                          'impacto-bajo': impacto === '1'
+                        }">
+                        {{ mapNivel(impacto) }}</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+                <!-- Probabilidad -->
                 <div class="col col-xl-4 col-lg-4 mt-auto">
                   <label for="probabilidad">Probabilidad</label>
-                  <select class="form-control" id="probabilidad" name="probabilidad" 
-                  [(ngModel)]="probabilidad" >
-                    <option value="" disabled selected>Seleccione Probabilidad</option>
-                    <option value="3">Alta</option>
-                    <option value="2">Media</option>
-                    <option value="1">Baja</option>
-                  </select>
-                  
+                  <div class="position-relative">
+                    <select class="form-control ps-2"
+                      id="probabilidad"
+                      name="probabilidad"
+                      [(ngModel)]="probabilidad"
+                      (ngModelChange)="calcularNivelRiesgo()">
+                      <option value="" disabled selected>Seleccione Probabilidad</option>
+                      <option value="3">Alto</option>
+                      <option value="2">Medio</option>
+                      <option value="1">Bajo</option>
+                    </select>
+                    <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
+                      <div *ngIf="probabilidad" class="probabilidad-shape" style="transform: scale(0.6);">
+                        <div [ngClass]="{
+                          'probabilidad-alto': probabilidad === '3',
+                          'probabilidad-medio': probabilidad === '2',
+                          'probabilidad-bajo': probabilidad === '1'
+                        }"></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+                <!-- Nivel de Riesgo -->
                 <div class="col col-xl-4 col-lg-4 mt-auto">
                   <label for="nivelRiesgo">Nivel de Riesgo</label>
-                  <select class="form-control" id="nivel" name="nivel" 
-                  [(ngModel)]="nivel" >
-                  <option value="" disabled selected>Seleccione Nivel de Riesgo</option>
-                    <option value="3">Alto</option>
-                    <option value="2">Medio</option>
-                    <option value="1">Bajo</option>
-                  </select>
-                  
+                  <div class="position-relative">
+                    <input
+                      class="form-control ps-2"
+                      id="nivel"
+                      name="nivel"
+                      [ngModel]="nivel ? mapNivel(nivel) : ''"
+                      disabled
+                      [ngClass]="{
+                        'nivel-alto': nivel === '3',
+                        'nivel-medio': nivel === '2',
+                        'nivel-bajo': nivel === '1'
+                      }">
+                    <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
+                      <div *ngIf="nivel" class="riesgo-circle" style="transform: scale(0.6);"
+                        [ngClass]="{
+                          'riesgo-alto': nivel === '3',
+                          'riesgo-medio': nivel === '2',
+                          'riesgo-bajo': nivel === '1'
+                        }">
+                        <span class="symbol" *ngIf="nivel === '3'">✕</span>
+                        <span class="symbol" *ngIf="nivel === '2'">!</span>
+                        <span class="symbol" *ngIf="nivel === '1'">✓</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
 
