@@ -49,10 +49,15 @@ export class AuditoriaComponent implements OnInit {
     registrosAuditoria:any = [];
     registrosAuditoriaForm:any = [];
     registroSelected: any = [];
+    
+    mainPage = 1;
+    mainPageSize = 10;
+    totalLength = 0;
     // ======= ======= ======= ======= =======
     // ======= ======= FUNCIONS SECTION ======= =======
     onFormularioChange(){
       this.registrosAuditoriaForm = this.registrosAuditoria.filter((item)=>(item.id_formulario == this.id_formulario));
+      this.totalLength = this.registrosAuditoriaForm.length;
       this.registroSelected = [];
     }
     getDescripcionAccion(id_accion){
@@ -76,6 +81,15 @@ export class AuditoriaComponent implements OnInit {
       catch (error) {
         console.error(error);
       }
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= PERSONA ROLES TABLE PAGINATION ======= =======
+    get registrosAuditoriaFormTable() {
+      if (!this.registrosAuditoriaForm) {
+          return [];
+      }
+      const start = (this.mainPage - 1) * this.mainPageSize;
+      return this.registrosAuditoriaForm.slice(start, start + this.mainPageSize);
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======

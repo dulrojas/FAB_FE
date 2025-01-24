@@ -100,7 +100,7 @@
                                     id="montoNuevoEjecutado" name="montoNuevoEjecutado" 
                                     placeholder="Ingrese el monto ejecutado" (change)="onChangedMontoNuevoEjecutado()"
                                     [(ngModel)]="montoNuevoEjecutado"/>
-                                <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">Debe ingresar un monto valido.</span>
+                                <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">Debe ingresar un monto válido.</span>
                                 <div></div>
                                 <label class="custom-actividad-sub-title">Motivo</label>
                                 <textarea class="form-control" type="text" 
@@ -376,7 +376,7 @@
                                             id="descripcion" name="descripcion" 
                                             [(ngModel)]="descripcion" [disabled]="modalAction == 'edit'"
                                             (change)="validateDescripcion()"
-                                            placeholder="Ingrese una descipcion de la actividad">
+                                            placeholder="Ingrese una descipción de la actividad">
                                         </textarea>
                                         <span class="custom-alert-message" *ngIf="!valDescripcion">
                                             Debe ingresar una descripción valida, con menos de 255 caracteres.

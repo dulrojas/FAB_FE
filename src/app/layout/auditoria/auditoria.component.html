@@ -45,6 +45,7 @@
                         </label>
                         <div class="col col-lg-12 col-md-12">
                             <div class="table-responsive">                                 
+                                
                                 <table class="table custom-table table-striped table-bordered">
                                     <thead>
                                         <tr>
@@ -58,7 +59,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let registro of registrosAuditoriaForm;">
+                                        <tr *ngFor="let registro of registrosAuditoriaFormTable;">
                                             <td>
                                                 {{ registro.id_auditoria }}
                                             </td>
@@ -85,6 +86,18 @@
                                             </td>
                                     </tbody>
                                 </table>
+                  
+                                <div class="d-flex justify-content-center">
+                                    <ngb-pagination 
+                                        [(page)]="mainPage" 
+                                        [pageSize]="mainPageSize" 
+                                        [collectionSize]="totalLength"
+                                        [maxSize]="3"
+                                        [rotate]="true"
+                                        [boundaryLinks]="true">
+                                    </ngb-pagination>
+                                </div>
+
                             </div>
                         </div>
                         <!-- ======= ======= ======= ======= ======= -->
