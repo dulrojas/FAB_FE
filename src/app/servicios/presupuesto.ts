@@ -11,22 +11,21 @@ export class servPresupuesto{
 
   constructor(private http: HttpClient) {}
 
-  // ======= ======= ======= GET LOGROS ======= ======= =======
-  getLogrosByIdProy(idProy: any): Observable<any> {
+  // ======= ======= ======= GET PRESUPUESTOS ======= ======= =======
+  getPresupuestosByIdProy(idProy: any): Observable<any> {
     const params = {
-      "procedure_name": "sp_logro",
+      "procedure_name": "sp_proy_presupuesto",
       "body": {
         "params": [
-          { "name": "p_accion", "value": "C2", "type": "string" },
-          { "name": "p_id_proy_logro", "value": null, "type": "int" },
-          { "name": "p_id_proyecto", "value": idProy, "type": "int" },
-          { "name": "p_logro", "value": null, "type": "string" },
-          { "name": "p_descripcion", "value": null, "type": "string" },
-          { "name": "p_rut_imagen", "value": null, "type": "string" },
-          { "name": "p_fecha_hora", "value": null, "type": "string" },
-          { "name": "p_id_persona_reg", "value": null, "type": "int" },
-          { "name": "p_id_proy_elemento", "value": null, "type": "int" },
-          { "name": "p_fecha_logro", "value": null, "type": "string" }
+          {"name": "p_accion","value": "C3","type": "string"},
+          {"name": "p_id_proy_presupuesto","value": null,"type": "int"},
+          {"name": "p_id_proyecto","value": idProy,"type": "int"},
+          {"name": "p_anio","value": null,"type": "string"}, 
+          {"name": "p_presup_actividades","value": 0,"type": "int"}, 
+          {"name": "p_presup_adicional","value": 0,"type": "int"},
+          {"name": "p_ejec_actividades","value": 0,"type": "int"}, 
+          {"name": "p_ejec_manual","value": 0,"type": "int"},
+          {"name": "p_id_persona_reg", "value": null, "type": "int"}
         ]
       }
     };
@@ -39,22 +38,21 @@ export class servPresupuesto{
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
-  // ======= ======= ======= ADD PERSONA ======= ======= =======
-  addLogro(obj: any): Observable<any> {
+  // ======= ======= ======= ADD PRESUPUESTO ======= ======= =======
+  addPresupuesto(obj: any): Observable<any> {
     const params = {
-      "procedure_name": "sp_logro",
+      "procedure_name": "sp_proy_presupuesto",
       "body": {
         "params": [
-          { "name": "p_accion", "value": "A1", "type": "string" },
-          { "name": "p_id_proy_logro", "value": null, "type": "int" },
-          { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },
-          { "name": "p_logro", "value": obj.p_logro, "type": "string" },
-          { "name": "p_descripcion", "value": obj.p_descripcion, "type": "string" },
-          { "name": "p_rut_imagen", "value": obj.p_ruta_imagen, "type": "string" },
-          { "name": "p_fecha_hora", "value": null, "type": "string" },
-          { "name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int" },
-          { "name": "p_id_proy_elemento", "value": obj.p_id_proy_elemento, "type": "int" },
-          { "name": "p_fecha_logro", "value": obj.p_fecha_logro, "type": "string" }
+          {"name": "p_accion","value": "A1","type": "string"},
+          {"name": "p_id_proy_presupuesto","value": null,"type": "int"},
+          {"name": "p_id_proyecto","value": obj.p_id_proyecto,"type": "int"},
+          {"name": "p_anio","value": obj.p_anio,"type": "string"}, 
+          {"name": "p_presup_actividades","value": obj.p_presup_actividades,"type": "int"}, 
+          {"name": "p_presup_adicional","value": obj.p_presup_adicional,"type": "int"},
+          {"name": "p_ejec_actividades","value": obj.p_ejec_actividades,"type": "int"}, 
+          {"name": "p_ejec_manual","value": obj.p_ejec_manual,"type": "int"},
+          {"name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int"}
         ]
       }
     };
@@ -67,22 +65,21 @@ export class servPresupuesto{
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
-  // ======= ======= ======= EDIT PERSONA ======= ======= =======
-  editLogro(obj: any): Observable<any> {
+  // ======= ======= ======= EDIT PRESUPUESTO ======= ======= =======
+  editPresupuesto(obj: any): Observable<any> {
     const params = {
-      "procedure_name": "sp_logro",
+      "procedure_name": "sp_proy_presupuesto",
       "body": {
         "params": [
-          { "name": "p_accion", "value": "M1", "type": "string" },
-          { "name": "p_id_proy_logro", "value": obj.p_id_proy_logro, "type": "int" },
-          { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },
-          { "name": "p_logro", "value": obj.p_logro, "type": "string" },
-          { "name": "p_descripcion", "value": obj.p_descripcion, "type": "string" },
-          { "name": "p_rut_imagen", "value": obj.p_rut_imagen, "type": "string" },
-          { "name": "p_fecha_hora", "value": obj.p_fecha_hora, "type": "string" },
-          { "name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int" },
-          { "name": "p_id_proy_elemento", "value": obj.p_id_proy_elemento, "type": "int" },
-          { "name": "p_fecha_logro", "value": obj.p_fecha_logro, "type": "string" }
+          {"name": "p_accion","value": "M1","type": "string"},
+          {"name": "p_id_proy_presupuesto","value": obj.p_id_proy_presupuesto,"type": "int"},
+          {"name": "p_id_proyecto","value": obj.p_id_proyecto,"type": "int"},
+          {"name": "p_anio","value": obj.p_anio,"type": "string"}, 
+          {"name": "p_presup_actividades","value": obj.p_presup_actividades,"type": "int"}, 
+          {"name": "p_presup_adicional","value": obj.p_presup_adicional,"type": "int"},
+          {"name": "p_ejec_actividades","value": obj.p_ejec_actividades,"type": "int"}, 
+          {"name": "p_ejec_manual","value": obj.p_ejec_manual,"type": "int"},
+          {"name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int"}
         ]
       }
     };
@@ -95,22 +92,21 @@ export class servPresupuesto{
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
-  // ======= ======= ======= DELTE LOGRO ======= ======= =======
-  deleteLogro(idLogro: any): Observable<any> {
+  // ======= ======= ======= DELTE PRESUPUESTO ======= ======= =======
+  deletePresupuesto(idPresu: any, idPerReg: any): Observable<any> {
     const params = {
-      "procedure_name": "sp_logro",
+      "procedure_name": "sp_proy_presupuesto",
       "body": {
         "params": [
-          { "name": "p_accion", "value": "D1", "type": "string" },
-          { "name": "p_id_proy_logro", "value": idLogro, "type": "int" },
-          { "name": "p_id_proyecto", "value": null, "type": "int" },
-          { "name": "p_logro", "value": null, "type": "string" },
-          { "name": "p_descripcion", "value": null, "type": "string" },
-          { "name": "p_rut_imagen", "value": null, "type": "string" },
-          { "name": "p_fecha_hora", "value": null, "type": "string" },
-          { "name": "p_id_persona_reg", "value": null, "type": "int" },
-          { "name": "p_id_proy_elemento", "value": null, "type": "int" },
-          { "name": "p_fecha_logro", "value": null, "type": "string" }
+          {"name": "p_accion","value": "D1","type": "string"},
+          {"name": "p_id_proy_presupuesto","value": idPresu,"type": "int"},
+          {"name": "p_id_proyecto","value": null,"type": "int"},
+          {"name": "p_anio","value": null,"type": "string"}, 
+          {"name": "p_presup_actividades","value": null,"type": "int"}, 
+          {"name": "p_presup_adicional","value": null,"type": "int"},
+          {"name": "p_ejec_actividades","value": null,"type": "int"}, 
+          {"name": "p_ejec_manual","value": null,"type": "int"},
+          {"name": "p_id_persona_reg", "value": idPerReg, "type": "int"}
         ]
       }
     };

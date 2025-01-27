@@ -10,6 +10,7 @@ import { servProyObjetivos } from "../../servicios/proyObjetivos";
 import { servInstObjetivos } from "../../servicios/instObjetivos";
 import { servObligaciones } from "../../servicios/obligaciones";
 import { servFinanciadores } from "../../servicios/financiadores";
+import { servPresupuesto } from "../../servicios/presupuesto";
 import { servUbicaGeografica } from "../../servicios/ubicaGeografica";
 import { servProyAlcanceGeo } from "../../servicios/proyAlcanceGeo";
 import { servPersona } from "../../servicios/persona";
@@ -37,6 +38,7 @@ export class InfProyectoComponent implements OnInit {
       private servObligaciones: servObligaciones,
       private servPersona: servPersona,
       private servFinanciadores: servFinanciadores,
+      private servPresupuesto: servPresupuesto,
       private servUbicaGeografica: servUbicaGeografica,
       private servProyAlcanceGeo: servProyAlcanceGeo
     ){}
@@ -354,6 +356,7 @@ export class InfProyectoComponent implements OnInit {
           this.proyectoScope.presupuesto_mn = (this.proyectoScope.presupuesto_mn).slice(1);
           
           this.getProyectDateGaps();
+          this.getPresupuestos();
 
           this.countHeaderData();
 
@@ -618,6 +621,7 @@ export class InfProyectoComponent implements OnInit {
     }
 
     parseAmountStrToFloat(amount: any): number {
+      amount = amount.replace('$', '');
       amount = amount.replace(',', '');
       amount = parseFloat(amount);
 
@@ -831,7 +835,6 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= SUBMIT FORM ======= =======
     financiadoresOnSubmit(): void {
-      // ======= VALIDATION SECTION =======
       let valForm = false;
       
       this.ValidateIdInstitucionFin();
@@ -856,6 +859,178 @@ export class InfProyectoComponent implements OnInit {
       }
     }
     // ======= ======= ======= ======= =======
+    // ======= ======= PRESUPUESTO FUNCTIONS ======= =======
+    presupuestos: any[] = [];
+    presupuestoActual:any = {};
+
+    onPresuAdicionalChange(){
+      if((this.presupuestoActual.presup_adicional < 0) || (/[a-zA-Z]/.test(this.presupuestoActual.presup_adicional.toString()))) {
+        this.presupuestoActual.presup_adicional = 0;
+      }
+      this.presupuestoActual.presup_adicional = this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional);
+      this.presupuestoActual.presup_adicional = this.parseAmountFloatToStr(this.presupuestoActual.presup_adicional);
+    
+      this.ValidatePresuAdicional();
+    }
+    
+    valPresupAdicional = true;
+    ValidatePresuAdicional(){
+      this.valPresupAdicional = true;
+      if (!this.presupuestoActual.presup_adicional) {
+        this.valPresupAdicional = false;
+      }
+    }
+
+    getPresupuestos(){
+      this.servPresupuesto.getPresupuestosByIdProy(this.idProyecto).subscribe(
+        (data)=>{
+          this.presupuestos = (data[0].dato)?(data[0].dato):([]);
+
+          this.presupuestos.forEach((presupuesto)=>{
+            let presup_sum = this.parseAmountStrToFloat(presupuesto.total_actividades_presupuesto) +
+              this.parseAmountStrToFloat(presupuesto.presup_adicional);
+            presupuesto.total_presup = this.parseAmountFloatToStr(presup_sum);
+          });
+
+          if (this.proyectoScope.fecha_inicio && (this.proyectoScope.fecha_fin || this.proyectoScope.fecha_fin_ampliada)) {
+            let startYear = null;
+            let endYear = null;
+
+            // ======= GET START ADICIONAL YEAR =======
+            if(this.presupuestos.length > 0){
+              startYear = parseInt((this.presupuestos[ this.presupuestos.length - 1 ]).anio)+1;
+            }
+            else{
+              startYear = new Date(this.proyectoScope.fecha_inicio).getFullYear();
+              this.presupuestoActual = {
+                id_proy_presupuesto: 0,
+                id_proyecto: this.idProyecto,
+                anio: startYear,
+                presup_actividades: "0.00",
+                presup_adicional: "0.00",
+                ejec_actividades: "0.00",
+                ejec_manual: "0.00"
+              };
+              this.addPresupuesto();
+              return;
+            }
+            // ======= ======= =======
+            // ======= GET END ADICIONAL YEAR =======
+            if(this.proyectoScope.fecha_fin_ampliada){
+              endYear = new Date(this.proyectoScope.fecha_fin_ampliada).getFullYear();
+            }
+            else{
+              endYear = new Date(this.proyectoScope.fecha_fin).getFullYear();
+            }
+            // ======= ======= =======
+            if (startYear > endYear) {
+              return;
+            }
+            // ======= ADD ADITIONAL YEARS =======
+            for (let year = startYear; year <= endYear; year++) {
+              let presupObjAux = {
+                id_proy_presupuesto: 0,
+                id_proyecto: this.idProyecto,
+                anio: year,
+                presup_actividades: "0.00",
+                presup_adicional: "0.00",
+                ejec_actividades: "0.00",
+                ejec_manual: "0.00",
+                total_actividades_presupuesto: "0.00",
+                total_presup: "0.00"
+              };
+
+              this.presupuestos.push(presupObjAux);
+
+              if( year == this.proyectoScope.gestion_actual){
+                this.presupuestoActual = presupObjAux;
+                this.addPresupuesto();
+                return;
+              }
+            }
+            // ======= ======= =======
+            // ======= GET CURRENT PRESUPUESTO =======
+            this.presupuestoActual = this.presupuestos.find((presupuesto)=> (presupuesto.anio == this.proyectoScope.gestion_actual));
+            this.presupuestoActual.presup_adicional = this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional);
+            this.presupuestoActual.presup_adicional = this.parseAmountFloatToStr(this.presupuestoActual.presup_adicional);
+            // ======= ======= =======
+          }
+
+        },
+        (error)=>{
+          console.error(error);
+        }
+      );
+    };
+    // ======= ======= ======= ======= =======
+    // ======= ======= INIT PRESUPEUSTO FORM ======= =======
+    initPresuAdicionalForm(modalScope: TemplateRef<any>){
+      this.initFinanciadoresModel();
+
+      this.modalAction = "add";
+      this.modalTitle = "Editar Presupuesto Adicional";
+
+      this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= ADD PRESUPEUSTO ======= =======
+    addPresupuesto(){
+      let presupuestoObj = {
+        p_id_proy_presupuesto: 0,
+        p_id_proyecto: this.idProyecto,
+        p_anio: this.presupuestoActual.anio,
+        p_presup_actividades: 0,
+        p_presup_adicional: 0,
+        p_ejec_actividades: 0,
+        p_ejec_manual: 0,
+        p_id_persona_reg: this.idPersonaReg
+      };
+
+      this.servPresupuesto.addPresupuesto(presupuestoObj).subscribe(
+        (data)=>{
+          this.getPresupuestos();
+        },
+        (error)=>{
+          console.error(error);
+        }
+      );
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= EDIT PRESUPUESTO ======= =======
+    editPresupuesto(){
+      let presupuestoObj = {
+        p_id_proy_presupuesto: this.presupuestoActual.id_proy_presupuesto,
+        p_id_proyecto: this.idProyecto,
+        p_anio: (this.presupuestoActual.anio).toString(),
+        p_presup_actividades: this.parseAmountStrToFloat(this.presupuestoActual.presup_actividades),
+        p_presup_adicional: this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional),
+        p_ejec_actividades: this.parseAmountStrToFloat(this.presupuestoActual.ejec_actividades),
+        p_ejec_manual: this.parseAmountStrToFloat(this.presupuestoActual.ejec_manual),
+        p_id_persona_reg: this.idPersonaReg
+      };
+
+      this.servPresupuesto.editPresupuesto(presupuestoObj).subscribe(
+        (data)=>{
+        },
+        (error)=>{
+          console.error(error);
+        }
+      );
+
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= INIT ADD FINANCIADORES ======= =======
+    presuAdicionalOnSubmit(){
+      if( this.presupuestoActual.id_presupeusto == 0 ){
+        this.addPresupuesto();
+      }
+      else{
+        this.editPresupuesto();
+      }
+      this.closeModal();
+    }
+    // ======= ======= ======= ======= =======
+
     // ======= ======= UBICACIONES FUNCTIONS ======= =======
     ubicaciones: any[] = [];
     ubicacionesBranch: any[] = [];

@@ -310,34 +310,34 @@
                         <div class="col col-md-12 pl-2 pr-0">
                             <h2 class="custom-info-proy-title my-0">Presupuesto</h2>
                         </div>
-                        <div class="col col-md-4 pl-2 pr-0">
+                        <!-- ======= ======= FINANCIADORES SECTION ======= ======= -->
+                        <div class="col col-md-6 pl-2 pr-0">
                             <div class="row">
-                                <div class="col col-md-12">
+                                <!-- ======= INPUT PRESUPUESTOS SECTION ======= -->
+                                <div class="col col-md-4">
                                     <label class="custom-info-proy-sub-title" for="">Moneda</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="moneda_presupuesto" name="moneda_presupuesto" 
                                         [(ngModel)]="proyectoScope.moneda_presupuesto" [disabled]="!buttonValidations.editMode"/>
                                 </div>
-                                <div class="col col-md-12">
+                                <div class="col col-md-4">
                                     <label class="custom-info-proy-sub-title" for="">Total</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="presupuesto_me" name="presupuesto_me" 
                                         [(ngModel)]="proyectoScope.presupuesto_me" [disabled]="!buttonValidations.editMode"/>
                                 </div>
-                                <div class="col col-md-12">
+                                <div class="col col-md-4">
                                     <label class="custom-info-proy-sub-title" for="">Total (Bs)</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="presupuesto_mn" name="presupuesto_mn" 
                                         [(ngModel)]="proyectoScope.presupuesto_mn" [disabled]="!buttonValidations.editMode"/>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col col-md-8 p-0">
-                            <div class="row">
-                                <div class="col col-md-12">
+                                <!-- ======= ======= ======= -->
+                                <!-- ======= TABLE PRESUPUESTOS SECTION ======= -->
+                                <div class="col col-md-7">
                                     <label class="custom-info-proy-sub-title" for="">Composición del Presupuesto</label>
                                 </div>
-                                <div class="col col-md-12 text-end">
+                                <div class="col col-md-5 text-end">
                                     <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initAddFinanciadores(presupuestoFormModal)"
                                         [disabled]="((financiadoresSelected)||(!buttonValidations.editMode))">
@@ -354,7 +354,7 @@
                                         <i class="fa fa-minus" aria-hidden="true"></i>
                                     </button>
                                 </div>
-                                <div class="col col-md-12">
+                                <div class="col col-md-12 custom-table-info-proy-4-container">
 
                                     <table class="table custom-table table-striped table-bordered custom-table-info-proy-3" style="max-height: 200px;">
                                         <thead>
@@ -384,8 +384,45 @@
                                     </table>
 
                                 </div>
+                                <!-- ======= ======= ======= -->
                             </div>
                         </div>
+                        <!-- ======= ======= ======= ======= ======= -->
+                        <!-- ======= ======= PRESUPUETOS SECTION ======= ======= -->
+                        <div class="col col-md-6 pl-2 pr-0">
+
+                            <div class="col col-md-12 text-end">
+                                <button type="button" class="btn btn-bg-1 custom-btn-info" style="font-size: 10px;"
+                                    (click)="initPresuAdicionalForm(presuAdicionalFormModal)"
+                                    [disabled]="!buttonValidations.editMode">
+                                    Editar Adicional de gestión
+                                </button>
+                            </div>
+                            <div class="col col-md-12 custom-table-info-proy-4-container">
+
+                                <table class="table custom-table table-striped table-bordered custom-table-info-proy-3" style="max-height: 200px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Año</th>
+                                            <th>Actividades</th>
+                                            <th>Adicionales</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let presupuesto of presupuestos; let i = index">
+                                            <td>{{ presupuesto.anio }}</td>
+                                            <td>{{ presupuesto.total_actividades_presupuesto }}</td>
+                                            <td>{{ presupuesto.presup_adicional }}</td>
+                                            <td>{{ presupuesto.total_presup }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                        <!-- ======= ======= ======= ======= ======= -->
                     </div>
                 </div>
             </div>
@@ -647,7 +684,7 @@
                                             {{ institucion.institucion }}
                                         </option>
                                     </select>
-                                    <span class="custom-alert-message" *ngIf="!valIdInstitucionFin">Debe seleccionar una institucion financiadora.</span>
+                                    <span class="custom-alert-message" *ngIf="!valIdInstitucionFin">Debe seleccionar una institución financiadora.</span>
                                 </div>
 
                                 <!-- ======= ======= PORCENTAJE SECTION ======= ======= -->
@@ -726,6 +763,70 @@
             </button>
             <button type="button" class="btn btn-bg-1" (click)="deleteFinanciadores();">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= ADD EDIT PRESU ADICIONAL MODAL ======= ======= ======= -->
+<ng-template #presuAdicionalFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #presuAdicionalForm="ngForm" (ngSubmit)="onSubmit(presuAdicionalForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="id_proy_presupuesto">Id</label>
+                                    <input class="form-control" type="text" id="id_proy_presupuesto" name="id_proy_presupuesto" 
+                                        [(ngModel)]="presupuestoActual.id_proy_presupuesto" disabled/>
+                                </div>
+                                <!-- ======= ======= ANIO SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="anio">Año</label>
+                                    <input class="form-control" type="text" id="anio" name="anio" 
+                                        [(ngModel)]="presupuestoActual.anio" disabled/>
+                                </div>
+
+                                <!-- ======= ======= PRESU ACTIV SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="total_actividades_presupuesto">Presupuesto en actividades</label>
+                                    <input class="form-control" type="text" id="total_actividades_presupuesto" 
+                                        name="total_actividades_presupuesto" 
+                                        [(ngModel)]="presupuestoActual.total_actividades_presupuesto" disabled/>
+                                </div>
+                                <!-- ======= ======= PRESU ADICIONAL SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="presup_adicional">Presupuesto adicional</label>
+                                    <input class="form-control" type="text" id="presup_adicional" name="presup_adicional" 
+                                        [(ngModel)]="presupuestoActual.presup_adicional" (change)="onPresuAdicionalChange()" />
+                                    <span class="custom-alert-message" *ngIf="!valPresupAdicional">
+                                        Debe ingresar un presupuesto válido.
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="presuAdicionalForm.invalid" 
+                (click)="presuAdicionalOnSubmit()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
             </button>
         </div>
     </div>
