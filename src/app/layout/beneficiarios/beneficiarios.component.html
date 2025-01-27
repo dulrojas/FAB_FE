@@ -2,36 +2,32 @@
     <!-- Encabezado -->
     <div class="row col-md-12">
         <div class="col col-md-6 align-items-center custom-body-header">
-            <app-bodyHeader (selectionChange)="onChildSelectionChange($event)"> </app-bodyHeader>
+            <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader>
         </div>
 
         <!-- Tarjetas de Estadísticas -->
         <div class="col col-md-6 text-center">
             <div class="row">
-                <div
-                    class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1"
-                >
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
                     {{ headerDataNro01 }} Comunidades / Organizaciones
                 </div>
-                <div
-                    class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1"
-                >
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
                     {{ headerDataNro02 }} Mujeres beneficiadas
                 </div>
-                <div
-                    class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1"
-                >
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
                     {{ headerDataNro03 }} Hombres beneficiados
                 </div>
-                <div
-                    class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1"
-                >
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
                     {{ headerDataNro04 }} Aliados
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+<div [@routerTransition]>
     <!-- Tabla de Beneficiarios Alcanzados -->
     <div class="card mb-3" style="margin-top: 20px">
         <div class="card-body custom-card table-responsive">
@@ -41,13 +37,15 @@
                 <!-- Botones de Acción -->
                 <div class="row">
                     <div class="d-flex col col-xl-12 col-lg-12 text-end">
-                        <button type="button" class="btn btn-view-bg-1" (click)="openModal(beneficiariesModal)">
+                        <button type="button" class="btn btn-view-bg-1"
+                        [disabled]="(selectedBeneficiarios)||(currentPerProRol=='LEC')" 
+                        (click)="openModal(beneficiariesModal)">
                             <i class="fa fa-plus" aria-hidden="true"></i> Añadir
                         </button>
                         <button
                             type="button"
                             class="btn btn-view-bg-1"
-                            [disabled]="!selectedBeneficiarios"
+                            [disabled]="(!selectedBeneficiarios)||(currentPerProRol=='LEC')"                            
                             (click)="openModal(beneficiariesModal, selectedBeneficiarios)"
                         >
                             <i class="fa fa-pencil" aria-hidden="true"></i> Editar
@@ -55,7 +53,7 @@
                         <button
                             type="button"
                             class="btn btn-view-bg-1"
-                            [disabled]="!selectedBeneficiarios"
+                            [disabled]="(!selectedBeneficiarios)||(currentPerProRol=='LEC')"                            
                             (click)="openDeleteBeneficiarioModal(deleteBeneficiarioModal)"
                         >
                             <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
@@ -68,8 +66,8 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>ID</th>
-                        <th>Fecha</th>
+                        <th style="text-align: center;">ID</th>
+                        <th style="text-align: center;">Fecha</th>
                         <th>Municipio</th>
                         <th>Comunidad</th>
                         <th>Tipo de Organización</th>
@@ -91,8 +89,8 @@
                                 id="checkbox-{{ i }}"
                             />
                         </td>
-                        <td>{{ beneficiario.id }}</td>
-                        <td>{{ beneficiario.fecha }}</td>
+                        <td style="text-align: center;">{{ beneficiario.id }}</td>
+                        <td style="text-align: center;">{{ beneficiario.fecha }}</td>
                         <td>{{ beneficiario.municipio }}</td>
                         <td>{{ beneficiario.comunidad }}</td>
                         <td>{{ beneficiario.tipoOrganizacion }}</td>
@@ -136,7 +134,7 @@
                             <!-- ID y Fecha -->
                             <div class="row">
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
-                                    <label for="id">Id</label>
+                                    <label for="id">ID</label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -446,6 +444,29 @@
     </form>
   </div>
 </ng-template>
+<!-- ====== ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
+<ng-template #deleteBeneficiarioModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Beneficiario</h4>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <p>¿Está seguro de querer eliminar el registro de Beneficiario?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <!-- ======= Botones ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="modal.close('Eliminar')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
  <ng-template #listaBeneficiariesModal let-modal class="custom-modal">
     <div class="modal-header">
@@ -603,208 +624,193 @@
     </form>
   </div>
 </ng-template>
+
+
+
+
+
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-<!-- Tabla Aliados -->
-<div class="card" style="margin-top: 20px">
-    <div class="card-body custom-card table-responsive">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2 class="title" style="color: #4e8646; font-size: 180%">Aliados</h2>
+<!-- ////////////////////////////////////////  TABLA ALIADOS PROY-ALIADOS //////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<div [@routerTransition]>
+    <div class="card mb-3" style="margin-top: 20px">
+        <div class="card-body custom-card table-responsive">
+            <!-- Encabezado y Botones -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="title" style="color: #4E8646;">Aliados</h2>
+                <!-- Botones de Acción -->
+                    <div class="row">
+                        <div class="col col-xl-12 col-lg-12 text-end">
+                            <button type="button" class="btn btn-view-bg-1" 
+                                (click)="initAddAliado(aliadosFormModal)"
+                                [disabled]="(aliadosSelected)||(currentPerProRol=='LEC')">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                            </button>
+                            <button type="button" class="btn btn-view-bg-1" 
+                                (click)="initEditAliado(aliadosFormModal)"
+                                [disabled]="(!aliadosSelected)||(currentPerProRol=='LEC')" >                                    
+                                <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                            </button>
+                            <button type="button" class="btn btn-view-bg-1" 
+                                (click)="initDeleteAliado(deleteAliadoModal)"
+                                [disabled]="(!aliadosSelected)||(currentPerProRol=='LEC')">
+                                <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                            </button> 
+                        </div>
+                    </div>
+            </div>
+
+            <!-- Tabla de Aliados -->
             <div class="row">
-                <div class="d-flex col text-end">
-                    <button type="button" class="btn btn-view-bg-1" (click)="openAliadoModal(aliadosModal)">
-                        <i class="fa fa-plus"></i> Añadir
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-view-bg-1 ms-2"
-                        (click)="openAliadoModal(aliadosModal, selectedAliados)"
-                        [disabled]="!selectedAliados"
-                    >
-                        <i class="fa fa-pencil"></i> Editar
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-view-bg-1 ms-2"
-                        [disabled]="!selectedAliados"
-                        (click)="openDeleteAliadoModal(deleteAliadoModal)"
-                    >
-                        <i class="fa fa-trash"></i> Eliminar
-                    </button>
+                <div class="container">
+                    <table class="table custom-table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th style="text-align: center;">ID</th>
+                                <th style="text-align: center;">Fecha</th>
+                                <th>Institución / Organización</th>
+                                <th>Nombre del Referente</th>
+                                <th>Vínculo con los Resultados</th>
+                                <th>Convenio</th>
+                            </tr>
+                        </thead>
+                        <!-- Cuerpo de la Tabla -->
+                        <tbody>
+                            <tr *ngFor="let aliado of aliadosTable; let i = index">
+                                <td>
+                                    <input type="checkbox" 
+                                        [(ngModel)]="aliado.selected" 
+                                        (change)="checkboxChangedAliado(aliado)"
+                                        id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
+                                </td>  
+                                <td style="text-align: center;">{{ aliado.id_proy_aliado }}</td>
+                                <td style="text-align: center;">{{ aliado.fecha }}</td>
+                                <td>{{ getOrganizacion(aliado.id_organizacion, aliadosOrganizacion) }}</td>
+                                <td>{{ aliado.referente }}</td>
+                                <td>{{ aliado.vinculo }}</td>
+                                <td>{{  getDescripcionSubtipo(aliado.idp_convenio, aliadosConvenio) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- Botones de tabla -->
+                        <div class="d-flex justify-content-center">
+                            <ngb-pagination 
+                            [(page)]="mainPageAliados" 
+                            [pageSize]="mainPageSizeAliados" 
+                            [collectionSize]="totalLengthAliados"
+                            [maxSize]="3"
+                            [rotate]="true"
+                            [boundaryLinks]="true">
+                            </ngb-pagination>
+                        </div>                        
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="container mt-4">
-                <table class="table custom-table table-striped">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>ID</th>
-                            <th>Fecha</th>
-                            <th>Institución / Organización</th>
-                            <th>Nombre del Referente</th>
-                            <th>Vínculo con los Resultados</th>
-                            <th>Convenio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let aliado of paginatedAliados">
-                            <td>
-                                <input
-                                    type="checkbox"
-                                    [(ngModel)]="aliado.selected"
-                                    (change)="checkboxChangedAliado(aliado)"
-                                    id="checkbox-{{ i }}"
-                                />
-                            </td>
-                            <td>{{ aliado.id }}</td>
-                            <td>{{ aliado.fecha }}</td>
-                            <td>{{ aliado.institucion }}</td>
-                            <td>{{ aliado.referente }}</td>
-                            <td>{{ aliado.vinculo }}</td>
-                            <td>{{ aliado.convenio }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="d-flex justify-content-center"></div>
-            </div>
-        </div>
-        <!-- Paginación -->
-        <div class="d-flex justify-content-center">
-            <ngb-pagination
-                [(page)]="mainPage"
-                [pageSize]="mainPageSize"
-                [collectionSize]="totalLength"
-                [maxSize]="3"
-                [rotate]="true"
-                [boundaryLinks]="true"
-            >
-            </ngb-pagination>
         </div>
     </div>
 </div>
 
-<!-- Modal for Adding/Editing Aliados -->
-<ng-template #aliadosModal let-modal class="custom-modal">
+<!-- //////////////////////////////////////// MODAL PARA AÑADIR O EDITAR UN ALIADO  //////////////////////////////////////// -->
+<ng-template #aliadosFormModal let-modal class="custom-modal">
+    <!-- Encabezado del Modal-->
     <div class="modal-header">
-        <h4 class="modal-title">{{ selectedAliados ? 'Editar' : 'Añadir' }} Aliado</h4>        
+        <h4 class="modal-title">{{ modalTitleAliado }}</h4>        
     </div>
-
+    <!-- Cuerpo del Modal-->
     <div class="modal-body">
-        <form *ngIf="aliadosForm" [formGroup]="aliadosForm" (ngSubmit)="onSubmitAliadosForm()">
-            <div class="card mb-3">
-                <div class="card-body custom-card">
-                    <div class="row">
-                        <!--  -->
-                        <div class="col col-xl-2 col-lg-2 mt-auto">
-                            <label for="id">ID</label>
-                            <input type="text" formControlName="id" class="form-control" readonly />
-                        </div>
-                        <!-- fecha de identificaion -->
-                        <div class="col col-xl-5 col-lg-5 mt-auto"></div>
-                        <div class="col col-xl-5 col-lg-5 mt-auto">
-                            <label for="identificationDate">Fecha de identificación</label>
-                            <input type="date" formControlName="identificationDate" class="form-control" />
-                            <small class="text-danger" *ngIf="aliadosForm.get('identificationDate')?.touched && aliadosForm.get('identificationDate')?.invalid">
-                                la fecha es obligatorio.
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="row mt-3">
-                        <!-- institucion u organizacion -->
-                        <div class="col col-xl-6 col-lg-6 mt-auto">
-                            <label for="tipoOrganizacion">Institución/Organización</label>
-                            <select class="form-control" formControlName="tipoOrganizacion" id="tipoOrganizacion" name="tipoOrganizacion">
-                                <option value="" disabled selected hidden>Seleccione una organización</option>
-                                <option *ngFor="let tipo of organizacionTipo" [value]="tipo.organizacion">
-                                    {{ tipo.organizacion }}
-                                </option>
-                            </select>
-                            <small class="text-danger" *ngIf="aliadosForm.get('tipoOrganizacion')?.touched && aliadosForm.get('tipoOrganizacion')?.invalid">
-                                El tipo de Organizacion es obligatorio.
-                            </small>
-                        </div>
-                        <!-- boton de + -->
-                        <div class="col col-xl-2 col-lg-2 mt-auto">
-                            <button
-                                type="button"
-                                (click)="openModal(organizacionModal)"
-                                style="
-                                    background-color: #d67600;
-                                    color: white;
-                                    border: none;
-                                    border-radius: 30%;
-                                    width: 35px;
-                                    height: 35px;
-                                "
-                            >
-                                +
-                            </button>
-                        </div>
-                        <!-- nombre del referente -->
-                        <div class="col col-xl-4 col-lg-4 mt-auto">
-                            <label for="referentName">Nombre Referente</label>
-                            <input
-                                type="text"
-                                formControlName="referentName"
-                                class="form-control"
-                                placeholder="Ingresa el Nombre"
-                            />
-                            <small class="text-danger" *ngIf="aliadosForm.get('referentName')?.touched && aliadosForm.get('referentName')?.invalid">
-                                El nombre del referente es obligatorio.
-                            </small>
-                        </div>
-                                <!--vinculo con resultado -->
-                        <div class="col col-xl-12 col-lg-12 mt-auto">
-                            <label for="resultsLink">Vínculo con Resultados</label>
-                            <textarea
-                                formControlName="resultsLink"
-                                class="form-control"
-                                placeholder="Ingresa Vínculo"
-                            ></textarea>
-                            <small class="text-danger" *ngIf="aliadosForm.get('resultsLink')?.touched && aliadosForm.get('resultsLink')?.invalid">
-                                Vínculo con Resultados es obligatorio.
-                            </small>
-                        </div>
-                            <!-- convenio -->
-                        <div class="col-md-6">
-                            <label for="convenio">Convenio</label>
-                            <select class="form-control" formControlName="convenio" id="convenio" name="convenio">
-                                <option value="" disabled selected hidden>Seleccione un convenio</option>
-                                <option *ngFor="let convenio of tiposConvenio" [value]="convenio.descripcion" aria-placeholder="terer">
-                                    {{ convenio.descripcion }}
-                                </option>
-                            </select>
-                            <small class="text-danger" *ngIf="aliadosForm.get('convenio')?.touched && aliadosForm.get('convenio')?.invalid">
-                                convenio es obligatorio.
-                            </small>
-                        </div>
-                        <!-- persona registro -->
-                        <div class="col col-xl-6 col-lg-6 mt-auto">
-                            <label for="registeredByAliado">Persona Registro</label>
-                            <input
-                                type="text"
-                                id="registeredByAliado"
-                                formControlName="registeredByAliado"
-                                class="form-control"
-                                readonly
-                            />
-                        </div>
-
-                        <div class="modal-footer">
-                            <div class="d-flex justify-content-center" style="width: 100%">
-                                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                                    <i class="fa fa-times"></i> Cancelar
-                                </button>
-                                <button
-                                type="button"
-                                class="btn btn-bg-1"
-                                (click)="onSubmitAliadosForm(); "
-                            >
-                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
-                            </button>
+        <form #aliadosForm="ngForm" (ngSubmit)="onSubmitAliados(aliadosForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- Primera Fila: ID, FECHA DE IDENTIFICACION-->
+                                    <!-- ======= ======= ======= ID ======= ======= ======= -->
+                                    <div class="col col-xl-2 col-lg-2 mb-auto">
+                                        <label  for="id_proy_aliado">ID</label>
+                                        <input  class="form-control" type="text" 
+                                                id="id_proy_aliado" name="id_proy_aliado" 
+                                                [(ngModel)]="id_proy_aliado" disabled/>
+                                    </div>
+                                    <!-- ======= ======= ======= ======= ======= ======= -->
+                                    <div class="col col-xl-7 col-lg-7 mb-auto">                                        
+                                    </div>
+                                    <!-- ======= ======= FECHA DE IDENTIFICACION ======= ======= --> 
+                                    <div class="col col-xl-3 col-lg-3 mb-auto">
+                                        <label for="fecha">Fecha de identificación</label>
+                                        <input class="form-control" type="date" 
+                                            id="fecha" name="fecha" 
+                                            [(ngModel)]="fecha"/>
+                                    </div>
+                                <!-- Segunda Fila: INSTITUCION/ORGANIZACION, +, NOMBRE DE LA ORGANIZACION -->    
+                                    <!-- ======= ======= INSTITUCION/ORGANIZACION ======= ======= -->
+                                    <div class="col col-xl-4 col-lg-4 mb-auto">
+                                        <label for="id_organizacion">Institución/Organización</label>
+                                        <select class="form-control" id="id_organizacion" name="id_organizacion"
+                                            [(ngModel)]="id_organizacion">
+                                            <option value="" disabled selected>Seleccione una Institución/Organización</option>
+                                            <option *ngFor="let organizacion of aliadosOrganizacion" [value]="organizacion.id_proyecto">
+                                            {{ organizacion.organizacion }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <!-- ======= ======= + ======= ======= --> 
+                                    <div class="col col-xl-2 col-lg-2 mt-4">
+                                        <button type="button" (click)="openModal(organizacionModal)"
+                                            style=" background-color: #d67600;color: white;border: none; 
+                                            border-radius: 30%; width: 35px;height: 35px;"> +
+                                        </button>
+                                    </div>
+                                    <!-- ======= ======= NOMBRE DE LA ORGANIZACION ======= ======= -->                                   
+                                    <div class="col col-xl-6 col-lg-6 mb-auto">
+                                        <label for="referente">Nombre Referente</label>
+                                        <input  class="form-control" type="text" 
+                                            id="referente" name="referente"  
+                                            placeholder="Ingresa el nombre referente"
+                                            [(ngModel)]="referente" (change)="ValidateReferente()"/> 
+                                        <span class="custom-alert-message" *ngIf="!valReferente">Debe ingresar el nombre referente</span>       
+                                    </div>
+                                <!-- Tercera Fila: VINCULO CON RESULTADO --> 
+                                    <!-- ======= ======= VINCULO CON RESULTADO ======= ======= -->
+                                    <div class="col col-xl-12 col-lg-12 mb-auto">
+                                        <label for="vinculo">Vínculo con los Resultados</label>
+                                        <textarea class="form-control" id="vinculo" name="vinculo"
+                                            placeholder="Ingresa la descripción del Vínculo con los Resultados"
+                                            [(ngModel)]="vinculo" (change)="ValidateVinculo()">
+                                            <span class="custom-alert-message" *ngIf="!valVinculo">Debe ingresar la descripción del Vínculo</span>
+                                        </textarea>                                        
+                                    </div>
+                                <!-- Cuarta Fila: CONVENIO, PERSONA REGISTRO -->
+                                    <!-- ======= ======= CONVENIO ======= ======= -->                                    
+                                    <div class="col col-xl-6 col-lg-6 mb-auto">
+                                        <label for="idp_convenio">Convenio</label>
+                                        <select class="form-control" id="idp_convenio" name="idp_convenio"
+                                            [(ngModel)]="idp_convenio" >
+                                            <option value="" disabled selected>Seleccione un Convenio</option>
+                                            <option *ngFor="let convenio of aliadosConvenio" [value]="convenio.id_subtipo">
+                                            {{ convenio.descripcion_subtipo }}
+                                            </option>
+                                        </select>                                          
+                                    </div>
+                                    <!-- ======= ======= PERSONA REGISTRO ======= ======= -->                                    
+                                    <div class="col col-xl-6 col-lg-6 mb-auto">
+                                        <label for="aliados_persona_registro">Persona Registro</label>
+                                        <input  class="form-control" type="text" 
+                                                id="aliados_persona_registro" name="aliados_persona_registro" 
+                                                [(ngModel)]="aliados_persona_registro" disabled/>
+                                    </div>
+                                    <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+                                    <div class="modal-footer">
+                                        <div class="d-flex justify-content-center" style="width: 100%">
+                                            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                                                <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                            </button>
+                                            <button type="button" class="btn btn-bg-1" 
+                                            [disabled]="aliadosForm.invalid" (click)="onSubmitAliados();">
+                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                                            </button>
+                                        </div>
+                                    </div>             
                             </div>
                         </div>
                     </div>
@@ -873,50 +879,25 @@
     </div>
 </ng-template>
 
-   
-<!-- ====== ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
-<ng-template #deleteBeneficiarioModal let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Eliminar Beneficiario</h4>
-    </div>
-    <div class="modal-body">
-        <div class="d-flex justify-content-center" style="width: 100%">
-            <p>¿Está seguro de querer eliminar el registro de Beneficiario?</p>
+<!-- ====== ======= ======= DELETE ALIADO ======= ======= ======= -->
+    <ng-template #deleteAliadoModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title">Eliminar Aliado</h4>
         </div>
-    </div>
-    <div class="modal-footer">
-        <div class="d-flex justify-content-center" style="width: 100%">
-            <!-- ======= Botones ======= -->
-            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
-            </button>
-            <button type="button" class="btn btn-bg-1" (click)="modal.close('Eliminar')">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
-            </button>
+        <div class="modal-body">
+            <div class="d-flex justify-content-center" style="width: 100%">
+                <p>¿Está seguro de querer eliminar el registro de Aliado?</p>
+            </div>
         </div>
-    </div>
-</ng-template>
-<!-- ======= ======= ======= ======= ======= ======= ======= -->
-<!-- ====== ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
-<ng-template #deleteAliadoModal let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Eliminar Aliado</h4>
-    </div>
-    <div class="modal-body">
-        <div class="d-flex justify-content-center" style="width: 100%">
-            <p>¿Está seguro de querer eliminar el registro de Aliado?</p>
+        <div class="modal-footer">
+            <div class="d-flex justify-content-center" style="width: 100%">
+                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                    <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+                </button>
+                <button type="button" class="btn btn-bg-1" (click)="deleteAliado()">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+                </button>
+            </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <div class="d-flex justify-content-center" style="width: 100%">
-            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
-            </button>
-            <button type="button" class="btn btn-bg-1" (click)="modal.close('Eliminar')">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
-            </button>
-        </div>
-    </div>
-</ng-template>
-
+    </ng-template>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->

@@ -6,19 +6,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { BeneficiariosService } from "../../servicios/Beneficiarios";
-import { AliadosService } from "../../servicios/aliados";
 import { servPersona } from "../../servicios/persona";
 import {OrganizacionesService} from "../../servicios/organizaciones"; 
 import {servListBenef} from "../../servicios/ListBeneficiarios";
-import {servInstituciones} from "../../servicios/instituciones";
 import { servPersonaRoles } from "../../servicios/personaRoles";
 import {Params_generales} from "../../servicios/Params_generales";
-
-
 import { ChangeDetectorRef } from '@angular/core';
-
 import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
 import { register } from 'module';
+
+//Aliados
+import { servAliados } from "../../servicios/aliados";
+import { servInstituciones } from "../../servicios/instituciones";
 
 interface Beneficiario {
   id: number;
@@ -67,15 +66,16 @@ export class BeneficiariosComponent implements OnInit {
     private beneficiariosService: BeneficiariosService,
     
     private servicios: servicios,
-    private aliadosService: AliadosService,
     private personaService: servPersona,
     private ubicaGeograficaService: servUbicaGeografica,
     private cdr: ChangeDetectorRef,
     private servPersonaRoles: servPersona,
     private OrganizacionesService:OrganizacionesService,
     private servListBenef:servListBenef,
-    private servInstituciones:servInstituciones,
-    private Params_generales:Params_generales
+    private Params_generales:Params_generales,
+    //Aliados
+    private servAliados: servAliados,
+    private servInstituciones:servInstituciones
   ) {}
 
 
@@ -88,7 +88,6 @@ export class BeneficiariosComponent implements OnInit {
   actividades: any[] = [];
   organizaciones: any[] = [];
   organizacionTipo: any[] = [];
-  aliadosTable: any[] = [];
   tiposConvenio: any[] = [];
   peronsaRegistro:any="";
 
@@ -114,12 +113,15 @@ export class BeneficiariosComponent implements OnInit {
       this.loadTiposOrganizacion();
       this.initAliadosForm();
       this.initOrganizacionForm();
-      this.loadAliados();
       this.loadConvenios();
       this.loadInstitucion();
       this.loadRangosEdad();
       this.getParamGenerales();
-
+      
+      //Aliados
+      this.getParametricasAliados();
+      this.getAliados();
+      this.aliadosSelected = null;
 
   }
 
@@ -134,10 +136,6 @@ export class BeneficiariosComponent implements OnInit {
   currentPageBeneficiarios = 1;
   totalLengthBeneficiarios = 0;
   
-  pageSizeAliados = 10;
-  currentPageAliados = 1;
-  totalLengthAliados = 0;
-  
   ngOnInit(): void {
     this.loadGeografica();
     this.loadBeneficiarios();
@@ -147,13 +145,47 @@ export class BeneficiariosComponent implements OnInit {
     this.loadTiposOrganizacion();
     this.initAliadosForm();
     this.initOrganizacionForm();
-    this.loadAliados();
     this.loadConvenios();
     this.loadRangosEdad();
     this.getParamGenerales();
     this.loadInstitucion();
+    //Aliados
+    this.getParametricasAliados();
+    this.getAliados();
 
   }
+  // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
+  jsonToString(json: object): string {
+    return JSON.stringify(json);
+  }
+  stringToJson(jsonString: string): object {
+    return JSON.parse(jsonString);
+  }
+  // GET PARAMETRICAS
+  getDescripcionSubtipo(idRegistro: any, paramList: any): string{
+    const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
+    return subtipo ? subtipo.descripcion_subtipo : 'Null';
+  }
+  // GET ORGANIZACION
+  getOrganizacion(idRegistro: any, paramList: any): string {
+    const org = paramList.find(elem => elem.id_organizacion === parseInt(idRegistro));
+    return org?.organizacion || 'Null';
+  }
+
+  getCurrentDateTime(): string {
+    const date: Date = new Date();
+    
+    const day: string = String(date.getDate()).padStart(2, '0');
+    const month: string = String(date.getMonth() + 1).padStart(2, '0');
+    const year: number = date.getFullYear();
+    
+    const hours: string = String(date.getHours()).padStart(2, '0');
+    const minutes: string = String(date.getMinutes()).padStart(2, '0');
+    const seconds: string = String(date.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+// ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
 
 
   
@@ -1029,7 +1061,264 @@ getIdActividad(nombre :any){
   }
 
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
-/// ahora alido 
+// ======= ======= ======= ======= ======= ======= =======  ======= =======
+// ======= ======= =======  ALIADOS - PROY_ALIADOS  ======= ======= =======
+// ======= ======= ======= ======= ======= ======= =======  ======= =======
+    // ======= ======= NGMODEL VARIABLES GENERALES ======= =======
+    aliados: any[] = [];
+    mainPageAliados = 1;
+    mainPageSizeAliados = 10;
+    totalLengthAliados = 0;
+
+// ======= ======= NGMODEL VARIABLES SECTION ALIADOS ======= =======
+  modalTitleAliado: any = "";
+  modalActionAliado: any = '';
+
+  id_proy_aliado: any = '';
+  id_proyecto: any = '';
+  fecha: any = '';
+  id_organizacion: any = '';
+  referente: any = '';
+  vinculo: any = '';
+  idp_convenio: any = '';
+  id_persona_reg: any = '';
+  fecha_hora_reg: any = '';
+
+  aliados_persona_registro: any = "";
+  aliados_fecha_registro: any = "";
+// ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL ALIADOS ======= =======
+  aliadosOrganizacion: any[] = [];
+  aliadosConvenio: any[] = [];
+// ======= ======= GET PARAMETRICAS ALIADOS ======= =======
+  getParametricasAliados():void{
+    // ======= GET ORGANIZACIONES =======
+    this.OrganizacionesService.getOrganizacionByProyecto(this.idProyecto).subscribe(
+      (data) => {
+        this.aliadosOrganizacion = data.map(item => item.dato);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // ======= GET CONVENIO =======
+    this.servicios.getParametricaByIdTipo(21).subscribe(
+      (data) => {
+        this.aliadosConvenio = data[0].dato;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+// ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
+  valReferente: any = true;
+  ValidateReferente(){
+    this.valReferente = true;
+    if((!this.referente)||(this.referente.length >= 100)){
+      this.valReferente = false;
+    }
+  }
+  valVinculo: any = true;
+  ValidateVinculo(){
+    this.valVinculo = true;
+    if((!this.vinculo)||(this.vinculo.length >= 255)){
+      this.valVinculo = false;
+    }
+  }
+
+// ======= ======= OPEN MODALS FUN ======= =======
+private modalRef: NgbModalRef | null = null;
+openModalAliado(content: TemplateRef<any>) {
+this.modalRef = this.modalService.open(content, { size: 'xl' });
+}
+closeModalAliado() {
+if (this.modalRef) {
+  this.modalRef.close(); 
+  this.modalRef = null;
+}
+}
+// ======= ======= GET ALIADOS ======= =======
+getModalTitleAliado(modalActionAliado: any) {
+this.modalTitleAliado = (modalActionAliado == "add") ? ("Añadir Aliado") : this.modalTitleAliado;
+this.modalTitleAliado = (modalActionAliado == "edit") ? ("Editar Aliado") : this.modalTitleAliado;
+return this.modalTitleAliado;
+}
+// ======= ======= ALIADOS TABLE PAGINATION ======= =======
+get aliadosTable() {
+const start = (this.mainPageAliados - 1) * this.mainPageSizeAliados;
+  return this.aliados.slice(start, start + this.mainPageSizeAliados);
+}
+// ======= ======= ======= ======= =======
+aliadosSelected: any = null;
+// ======= ======= ======= ======= =======
+checkboxChangedAliado(aliadoSel: any): void {
+this.aliados.forEach(aliado =>{
+  if(aliadoSel.id_proy_aliado == aliado.id_proy_aliado){
+    if(aliadoSel.selected){
+      this.aliadosSelected = aliadoSel;
+    }
+    else{
+      this.aliadosSelected = null;
+    }
+  }
+  else{
+    aliado.selected = false;
+  }
+});
+}
+// ======= ======= INIT ALIADOS MODEL ======= =======
+initAliadosModel(){
+this.modalTitleAliado = "";
+
+this.id_proy_aliado = 0;
+this.id_proyecto = '';
+this.id_organizacion = '';
+this.referente = '';
+this.vinculo = '';
+this.idp_convenio = '';
+this.id_persona_reg = '';
+this.fecha = null;
+
+this.aliados_persona_registro = this.namePersonaReg;
+this.aliados_fecha_registro = "";
+
+this.valReferente = true;
+this.valVinculo = true;
+
+}
+// ======= ======= GET ALIADOS ======= =======
+getAliados(){
+this.servAliados.getAliadosByIdProy(this.idProyecto).subscribe(
+  (data) => {
+    this.aliados = (data[0].dato)?(data[0].dato):([]);
+    this.totalLengthAliados = this.aliados.length;
+    this.countHeaderData();
+  },
+  (error) => {
+    console.error(error);
+  }
+);
+}
+// ======= ======= INIT ADD ALIADOS ======= =======
+initAddAliado(modalScope: TemplateRef<any>){
+this.initAliadosModel();
+
+this.aliados_fecha_registro = this.getCurrentDateTime();
+
+this.modalActionAliado = "add";
+this.modalTitleAliado = this.getModalTitleAliado("add");
+
+this.openModalAliado(modalScope);
+}
+// ======= ======= ADD ALIADOS ======= =======
+addAliado(){
+const objAliado = {
+  p_id_proy_aliado: 0,
+  p_id_proyecto: this.idProyecto,
+  p_id_organizacion: this.id_organizacion,
+  p_referente: this.referente,
+  p_vinculo: this.vinculo,
+  p_idp_convenio: this.idp_convenio,
+  p_id_persona_reg: parseInt(this.idPersonaReg,10),
+  p_fecha: this.fecha,
+  p_fecha_hora_reg: null
+};
+this.servAliados.addAliado(objAliado).subscribe(
+  (data) => {
+    this.getAliados();
+    console.error('Error al guardar aliado');
+  },
+  (error) => {
+    console.error(error);
+  }
+);
+}
+// ======= ======= INIT EDIT ALIADOS ======= =======
+initEditAliado(modalScope: TemplateRef<any>){
+this.initAliadosModel();
+this.modalActionAliado = "edit";
+this.modalTitleAliado = this.getModalTitleAliado("edit");
+
+this.id_proy_aliado = this.aliadosSelected.id_proy_aliado;
+this.id_proyecto = this.aliadosSelected.id_proyecto;      
+this.id_organizacion = this.aliadosSelected.id_organizacion;
+this.referente = this.aliadosSelected.referente;
+this.vinculo = this.aliadosSelected.vinculo;
+this.idp_convenio = this.aliadosSelected.idp_convenio;
+this.id_persona_reg = this.aliadosSelected.id_persona_reg;
+this.fecha = this.aliadosSelected.fecha;
+this.aliados_fecha_registro = this.aliadosSelected.fecha_hora_reg;
+
+this.openModalAliado(modalScope);
+}
+// ======= ======= EDIT ALIADOS ======= =======
+editAliado(){
+const objAliado = {
+  p_id_proy_aliado: this.id_proy_aliado,
+  p_id_proyecto: this.id_proyecto,        
+  p_id_organizacion: this.id_organizacion,
+  p_referente: this.referente,
+  p_vinculo: this.vinculo,
+  p_idp_convenio: this.idp_convenio,
+  p_id_persona_reg: this.id_persona_reg,
+  p_fecha: this.fecha,
+  p_fecha_hora_reg: this.getCurrentDateTime()
+};
+this.servAliados.editAliado(objAliado).subscribe(
+  (data) => {
+    this.getAliados();
+  },
+  (error) => {
+    console.error(error);
+  }
+);
+}
+// ======= ======= INIT DELETE ALIADOS ======= =======
+initDeleteAliado(modalScope: TemplateRef<any>){
+this.initAliadosModel();
+
+this.id_proy_aliado = this.aliadosSelected.id_proy_aliado;
+
+this.openModalAliado(modalScope);
+}
+// ======= ======= DELETE ALIADOS ======= =======
+deleteAliado(){
+this.servAliados.deleteAliado(this.aliadosSelected.id_proy_aliado).subscribe(
+  (data) => {
+    this.closeModalAliado();
+    this.getAliados();
+  },
+  (error) => {
+    console.error(error);
+  }
+);
+}
+
+
+
+// ======= ======= ======= ======= ======= ======= =======  ======= =======
+onSubmitAliados(): void{
+// ======= VALIDATION SECTION =======
+let valForm = false;
+this.ValidateReferente();
+this.ValidateVinculo();    
+
+valForm = 
+  this.valReferente &&
+  this.valVinculo;        
+
+// ======= ACTION SECTION =======
+if(valForm){
+  if (this.modalActionAliado === 'add') {
+    this.addAliado();
+  } else {
+    this.editAliado();
+  } 
+  this.closeModalAliado();
+}
+}
+
 
 getParamGenerales():void{
   this.Params_generales.getAllParams_generales().subscribe(
@@ -1043,37 +1332,6 @@ getParamGenerales():void{
   );
 
 }
- // Abrir el modal para crear o editar un aliado
-
-
- loadAliados(): void {
-  this.aliadosService.getAliadosByProyecto(this.idProyecto).subscribe(
-    (response) => {
-      if (response[0]?.res === 'OK') {
-        const rawAliados = response[0].dato || [];
-        this.aliadosTable = rawAliados.map((item: any) => ({
-          id: item.id,
-          fecha: item.fecha,
-          institucion: item.institucion || null,
-          referente: item.referente ||null,
-          vinculo: item.vinculo || null,
-          convenio: item.convenio || null,
-        }));
-
-  
-        this.totalLengthAliados = this.aliadosTable.length;
-      } else {
-        console.error('Respuesta inválida del servicio de aliados:', response);
-      }
-    },
-    (error) => console.error('Error al cargar los aliados:', error)
-  );
-  this.countHeaderData();
-}
-
-
-// agregar aliado
-
 
 openAliadoModal(modal: TemplateRef<any>, aliado?: any): void {
   this.selectedAliados = aliado || null;
@@ -1114,11 +1372,6 @@ openAliadoModal(modal: TemplateRef<any>, aliado?: any): void {
 }
 
 
-checkboxChangedAliado(selectedAliado: any): void {
-  this.aliadosTable.forEach(a => (a.selected = a.id === selectedAliado.id));
-  this.selectedAliados = selectedAliado.selected ? selectedAliado : null;
-}
-
 getIdOrgamnizacionesAliados(nombre: string): number | undefined {  
   const organizacion = this.organizacionTipo.find(orga => orga.organizacion === nombre);
   return organizacion ? organizacion.id_organizacion : undefined;
@@ -1148,85 +1401,7 @@ onSubmitAliadosForm(): void {
   };
   console.log( 'datos de aliados normalizados ', aliadoPayload)
 
-  if (aliadoPayload.id) {
-    this.editAliado(aliadoPayload);
-    this.modalService.dismissAll();
-
-  } else {
-    this.addAliado(aliadoPayload);
-    this.modalService.dismissAll();
-
-  }
 }
-
-addAliado(aliadoData: any): void {
-  this.aliadosService.addAliado(aliadoData).subscribe(
-    (response) => {
-      console.log('Respuesta del backend (añadir aliado):', response);
-      if (response[0]?.res === 'OK') {
-        this.loadAliados();
-        this.modalService.dismissAll();
-      } else {
-        console.error('Error en la respuesta del backend (añadir aliado):', response);
-      }
-    },
-    (error) => console.error('Error al añadir aliado:', error)
-  );
-}
-
-editAliado(aliadoData: any): void {
-  this.aliadosService.editAliado(aliadoData).subscribe(
-    (response) => {
-      console.log('Respuesta del backend (editar aliado):', response);
-      if (response[0]?.res === 'OK') {
-        this.loadAliados();
-        this.modalService.dismissAll();
-      } else {
-        console.error('Error en la respuesta del backend (editar aliado):', response);
-      }
-    },
-    (error) => console.error('Error al editar aliado:', error)
-  );
-}
-
-openDeleteAliadoModal(deleteAliadoModal: any): void {
-  const modalRef = this.modalService.open(deleteAliadoModal, { centered: true });
-
-  modalRef.result.then(
-    (result) => {
-      if (result === 'Eliminar') {
-        this.onDeleteAliado(modalRef); // Proceder con la eliminación
-      }
-    },
-    (reason) => {
-      console.log('Modal cerrado sin eliminar:', reason);
-    }
-  );
-}
-
-// Eliminar Aliado
-onDeleteAliado(modalRef: any): void {
-  if (this.selectedAliados) {
-    this.aliadosService.deleteAliado(this.selectedAliados.id).subscribe(
-      (response) => {
-        console.log('Respuesta del backend (eliminar aliado):', response);
-        if (response[0]?.res === 'OK') {
-          console.log('Aliado eliminado correctamente');
-          this.loadAliados(); // Recargar la lista después de eliminar
-          this.selectedAliados = null; // Reiniciar selección
-          modalRef.close(); // Cerrar el modal
-        } else {
-          console.error('Error en la respuesta del backend (eliminar aliado):', response);
-        }
-      },
-      (error) => {
-        console.error('Error al eliminar aliado:', error);
-        modalRef.close(); // También cerrar el modal en caso de error
-      }
-    );
-  }
-}
-
 
 // cargar convenios
 loadConvenios(): void {
@@ -1244,11 +1419,7 @@ loadConvenios(): void {
   );
 }
 
-get paginatedAliados(): any[] {
-  const startIndex = (this.currentPageAliados - 1) * this.pageSizeAliados;
-  const endIndex = startIndex + this.pageSizeAliados;
-  return this.aliadosTable.slice(startIndex, endIndex);
-}
+
 
 countHeaderData() {
   // Inicializar contadores
