@@ -656,7 +656,7 @@
                                     <input class="form-control" type="number" min="0" max="100" placeholder="Ingrese un porcentaje" 
                                         id="porcentaje" name="porcentaje" [(ngModel)]="financiadores.porcentaje"
                                         (change)="onPocentajeChange()"/>
-                                    <span class="custom-alert-message" *ngIf="!valPorcentaje">Debe ingresar un porcentaje valido.</span>
+                                    <span class="custom-alert-message" *ngIf="!valPorcentaje">Debe ingresar un porcentaje válido.</span>
                                 </div>
                                 <!-- ======= ======= MONTO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
@@ -683,7 +683,7 @@
                                     <label for="orden">Orden</label>
                                     <input class="form-control" type="number" min="1" placeholder="Ingrese un orden"
                                         id="orden" name="orden" [(ngModel)]="financiadores.orden" (change)="ValidateOrden()"/>
-                                    <span class="custom-alert-message" *ngIf="!valOrden">Debe ingresar un orden valido.</span>
+                                    <span class="custom-alert-message" *ngIf="!valOrden">Debe ingresar un orden válido.</span>
                                 </div>
 
                             </div>

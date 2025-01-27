@@ -20,10 +20,6 @@ import { environment } from '../../../environments/environment';
 })
 export class PersonaRolesComponent implements OnInit {
     // ======= ======= VARIABLES SECTION ======= =======
-    personasRoles: any[] = [];
-    mainPage = 1;
-    mainPageSize = 10;
-    totalLength = 0;
     constructor(
       private modalService: NgbModal,
       private proyectoService: ProyectoService,
@@ -57,6 +53,11 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
     modalAction: any = "";
     modalTitle: any = "";
+    
+    personasRoles: any[] = [];
+    mainPage = 1;
+    mainPageSize = 10;
+    totalLength = 0;
 
     id_persona: any = null;
     nombres: any = null;
