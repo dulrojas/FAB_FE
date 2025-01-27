@@ -39,17 +39,17 @@
         <div class="col col-xl-12 col-lg-12 text-end">
           <button type="button" class="btn btn-view-bg-1" 
             (click)="initAddRiesgo(riesgosFormModal)"
-            [disabled]="riesgosSelected">
+            [disabled]="(riesgosSelected)||(currentPerProRol=='LEC')">
             <i class="fa fa-plus" aria-hidden="true"></i> Añadir
           </button>
           <button type="button" class="btn btn-view-bg-1" 
             (click)="initEditRiesgo(riesgosFormModal)"
-            [disabled]="!riesgosSelected">
+            [disabled]="(!riesgosSelected)||(currentPerProRol=='LEC')">
             <i class="fa fa-pencil" aria-hidden="true"></i> Editar
           </button>
           <button type="button" class="btn btn-view-bg-1" 
           (click)="initDeleteRiesgo(deleteRiesgosModal)"
-            [disabled]="!riesgosSelected">
+          [disabled]="(!riesgosSelected)||(currentPerProRol=='LEC')">
             <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
           </button>
         </div>

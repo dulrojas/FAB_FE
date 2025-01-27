@@ -46,8 +46,8 @@
                         <button
                             class="btn-añadirElemento"
                             style="background-color: #d45b49"
-                            (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 1)"
-                            [disabled]="planifEstrategicaSelected"
+                            (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 1)"                           
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol=='LEC')"
                         >
                             Objetivo General / Impact
                         </button>
@@ -56,6 +56,7 @@
                             class="btn-añadirElemento"
                             style="background-color: #f58634"
                             (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 2)"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol=='LEC')"
                         >
                             Objetivo Específico / Outcome
                         </button>
@@ -64,6 +65,7 @@
                             class="btn-añadirElemento"
                             style="background-color: #f7b529"
                             (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 3)"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol=='LEC')"
                         >
                             Resultado / Output
                         </button>
@@ -72,6 +74,7 @@
                             class="btn-añadirElemento"
                             style="background-color: #fbd468"
                             (click)="initAddPlanifEstrategica(planifEstrategicaIN, 4)"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol=='LEC')"
                         >
                             Indicador
                         </button>
@@ -84,15 +87,15 @@
                         <!-- Botón: Editar elemento seleccionado -->
                         <button
                             class="btn-Editdelete"
-                            [disabled]="!planifEstrategicaSelected"
-                            (click)="editPlanifEstrategica(planifEstrategicaOGOERE, planifEstrategicaIN)"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol=='LEC')"                            
+                            (click)="editPlanifEstrategica(planifEstrategicaOGOERE, planifEstrategicaIN)"                            
                         >
                             Editar
                         </button>
                         <!-- Botón: Eliminar elemento seleccionado -->
                         <button
                             class="btn-Editdelete"
-                            [disabled]="!planifEstrategicaSelected"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol=='LEC')"
                             (click)="initDeletePlanifEstrategica(deleteIndicadorModal)"
                         >
                             Eliminar
@@ -100,7 +103,7 @@
                         <!-- Botón: Mover elemento hacia arriba -->
                         <button
                             class="btn-SubirBajar"
-                            [disabled]="!planifEstrategicaSelected"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol=='LEC')"
                             (click)="moverElemento(planifEstrategicaSelected, 'arriba')"
                         >
                             ↑
@@ -108,7 +111,7 @@
                         <!-- Botón: Mover elemento hacia abajo -->
                         <button
                             class="btn-SubirBajar"
-                            [disabled]="!planifEstrategicaSelected"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol=='LEC')"
                             (click)="moverElemento(planifEstrategicaSelected, 'abajo')"
                         >
                             ↓
