@@ -22,13 +22,13 @@ export class servAliados{
           "params": [
             { "name": "p_accion", "value": "C1", "type": "string" },
             { "name": "p_id_proy_aliado", "value":null, "type": "int" },
-            { "name": "p_id_proyecto", "value":null, "type": "int" },
-            { "name": "fecha", "value":null, "type": "string" },
+            { "name": "p_id_proyecto", "value":null, "type": "int" },            
             { "name": "p_id_organizacion", "value":null, "type": "int" },
             { "name": "p_referente", "value":null, "type": "string" },
             { "name": "p_vinculo", "value":null, "type": "string" },
             { "name": "p_idp_convenio", "value":null, "type": "string" },
             { "name": "p_id_persona_reg", "value":null, "type": "int" },
+            { "name": "fecha", "value":null, "type": "string" },
             { "name": "p_fecha_hora_reg", "value":null, "type": "string" }
           ]
         }
@@ -51,13 +51,13 @@ export class servAliados{
           "params": [
             { "name": "p_accion", "value": "C2", "type": "string" },
             { "name": "p_id_proy_aliado", "value":null, "type": "int" },
-            { "name": "p_id_proyecto", "value":idProy, "type": "int" },
-            { "name": "p_fecha", "value":  null, "type": "string" },
+            { "name": "p_id_proyecto", "value":idProy, "type": "int" },            
             { "name": "p_id_organizacion", "value":  null, "type": "int" },
             { "name": "p_referente", "value": null, "type": "string" },
             { "name": "p_vinculo", "value":  null, "type": "string" },
             { "name": "p_idp_convenio", "value": null, "type": "string" },
             { "name": "p_id_persona_reg", "value":  null, "type": "int" },
+            { "name": "p_fecha", "value":  null, "type": "string" },
             { "name": "p_fecha_hora_reg", "value": null, "type": "string" }            
           ]
         }
@@ -78,7 +78,7 @@ export class servAliados{
             "body": {
               "params": [
                 { "name": "p_accion", "value": "A1", "type": "string" },
-                { "name": "p_id_proy_aliado", "value": null, "type": "int" },
+                { "name": "p_id_proy_aliado", "value": null, "type": "int" },                
                 { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },            
                 { "name": "p_id_organizacion", "value": obj.p_id_organizacion, "type": "int" },
                 { "name": "p_referente", "value": obj.p_referente, "type": "string" },

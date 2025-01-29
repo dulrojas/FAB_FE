@@ -75,25 +75,25 @@ editOrganizacion(data:any){
     return this.http.post<any>(this.URL, params, { headers });
   }
 
-  getOrganizacionByProyecto( idProyecto:number):Observable<any>{
-    console.log('este es el id del proyecto para el e alidados : ', idProyecto)
+  getOrganizacionByIdProy( idProy: any):Observable<any>{
     const params =  {
       "procedure_name": "sp_organizaciones",
       "body": {
         "params": [
           { "name": "p_accion", "value": "C3", "type": "string" },
           { "name": "p_id_organizacion", "value": null, "type": "int" },
-           { "name": "p_id_proyecto", "value": idProyecto, "type": "int" },
+           { "name": "p_id_proyecto", "value": idProy, "type": "int" },
           { "name": "p_id_institucion" , "value": null, "type": "int"},
           { "name": "p_idp_tipo_organizacion", "value": null, "type": "int" },
           { "name": "p_organizacion", "value": null, "type": "string" }
-
         ]
       }
     };   
-   // console.log('este es el id del proyecto para el e alidados en el parames  : ', params)
- 
-    const headers = new HttpHeaders({ 'ip': "127.0.0.1" });
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
     return this.http.post<any>(this.URL, params, { headers });
   }
 }
