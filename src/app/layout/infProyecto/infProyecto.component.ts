@@ -1207,7 +1207,7 @@ export class InfProyectoComponent implements OnInit {
       }
   }
     // ======= ======= ======= ======= =======
-    // ======= ======= INIT OBLIGACIONES NGMODEL ======= =======
+    // ======= ======= OBLIGACIONES FUNCTIONS ======= =======
     obligaCheckboxChanged(obligacionesSel: any){
       this.obligaciones.forEach(obligacion =>{
         if(obligacionesSel.id_proy_obliga == obligacion.id_proy_obliga){
@@ -1223,9 +1223,38 @@ export class InfProyectoComponent implements OnInit {
         }
       });
     }
+
     getPersonaName(objPersona: any){
       const nameToReturn = objPersona.nombres+" "+objPersona.apellido_1+((objPersona.apellido_2)?(" "+objPersona.apellido_2):(""));
       return nameToReturn;
+    }
+
+    async obligacionesDownload(campo_obligacion: string){
+      let obligacionDocumentoURL = await this.downloadFile(
+        'proy_obligaciones',
+        campo_obligacion,
+        'id_proy_obliga', 
+        this.obligacionesModel.id_proy_obliga
+      );
+      
+      if(obligacionDocumentoURL) {
+        const a = document.createElement('a');
+        a.href = obligacionDocumentoURL as string;
+        a.download = ((this.obligacionesModel.obligacion).replace(" ","_"))+'.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(obligacionDocumentoURL as string);
+      } 
+      else {
+        console.error('No se pudo obtener el archivo.');
+      }
+    }
+    onFileChange(event: any) {
+      const file = event.target.files[0];
+      if (file) {
+        this.obligacionesModel.selectedFile = file;
+      }
     }
     // ======= ======= INIT PERSONA ROLES NGMODEL ======= =======
     initObligacionesModel(){
@@ -1241,7 +1270,7 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.idp_estado_entrega = "";
       this.obligacionesModel.fecha_hora_entrega = null;
       this.obligacionesModel.ruta_plantilla = "";
-      this.obligacionesModel.ruta_documente = "";
+      this.obligacionesModel.ruta_documento = "";
       this.obligacionesModel.persona_entrega = this.namePersonaReg;
 
       this.valObligacion = true;
@@ -1303,13 +1332,23 @@ export class InfProyectoComponent implements OnInit {
         p_ruta_plantilla: this.obligacionesModel.ruta_plantilla,
         p_id_institucion_exige: parseInt(this.obligacionesModel.id_institucion_exige),
         p_idp_estado_entrega: parseInt(this.obligacionesModel.idp_estado_entrega),
-        p_ruta_documente: this.obligacionesModel.ruta_documente,
+        p_ruta_documento: this.obligacionesModel.ruta_documento,
         p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
         p_id_persona_entrega: parseInt(this.idPersonaReg),
         p_id_persona_reg: parseInt(this.idPersonaReg)
       };
+
       this.servObligaciones.addObligaciones(objObligacion).subscribe(
         (data) => {
+          this.uploadFile(
+            this.obligacionesModel.selectedFile,
+            'proy_obligaciones',
+            'ruta_documento',
+            'id_proy_obliga',
+            this.obligacionesModel.obligacion,
+            data[0].dato[0].id_proy_obliga
+          );
+
           this.getObligaciones();
         },
         (error) => {
@@ -1335,7 +1374,7 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.ruta_plantilla = this.obligacionesSelected.ruta_plantilla;
       this.obligacionesModel.id_institucion_exige = this.obligacionesSelected.id_institucion_exige;
       this.obligacionesModel.idp_estado_entrega = this.obligacionesSelected.idp_estado_entrega;
-      this.obligacionesModel.ruta_documente = this.obligacionesSelected.ruta_documente;
+      this.obligacionesModel.ruta_documento = this.obligacionesSelected.ruta_documento;
       this.obligacionesModel.fecha_hora_entrega = this.obligacionesSelected.fecha_hora_entrega;
       this.obligacionesModel.persona_entrega = (
         this.obligacionesSelected.nombres+" "+
@@ -1358,13 +1397,23 @@ export class InfProyectoComponent implements OnInit {
         p_ruta_plantilla: this.obligacionesModel.ruta_plantilla,
         p_id_institucion_exige: parseInt(this.obligacionesModel.id_institucion_exige),
         p_idp_estado_entrega: parseInt(this.obligacionesModel.idp_estado_entrega),
-        p_ruta_documente: this.obligacionesModel.ruta_documente,
+        p_ruta_documento: this.obligacionesModel.ruta_documento,
         p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
         p_id_persona_entrega: parseInt(this.obligacionesModel.idPersonaReg),
         p_id_persona_reg: parseInt(this.idPersonaReg)
       };
+
       this.servObligaciones.editObligaciones(objObligacion).subscribe(
         (data) => {
+          this.uploadFile(
+            this.obligacionesModel.selectedFile,
+            'proy_obligaciones',
+            'ruta_documento',
+            'id_proy_obliga',
+            this.obligacionesModel.obligacion,
+            this.obligacionesModel.id_proy_obliga
+          );
+
           this.getObligaciones();
           this.obligacionesSelected = null;
         },
@@ -1454,6 +1503,19 @@ export class InfProyectoComponent implements OnInit {
           }
         );
       });
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= UPLOAD FILE FUN ======= =======
+    uploadFile(file: any, nombreTabla: any, campoTabla: any, idEnTabla: any, fileName: any, idRegistro: any){
+      this.servicios.uploadFile(file, nombreTabla, campoTabla, idEnTabla, fileName, idRegistro).subscribe(
+        (response) => {
+          //console.log(response);
+          //console.log('Archivo subido correctamente:', response);
+        },
+        (error) => {
+          console.error('Error al subir el archivo:', error);
+        }
+      );
     }
     // ======= ======= ======= ======= =======
 }

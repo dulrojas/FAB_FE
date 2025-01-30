@@ -907,7 +907,7 @@
                                 <!-- ======= ======= DESCRIPCION SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="descripcion">Descripción</label>
-                                    <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" placeholder="Ingresa una descipción"
+                                    <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Ingresa una descipción"
                                         [(ngModel)]="obligacionesModel.descripcion" (change)="ValidateDescripcion()"></textarea>
                                     <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una descripcion valida, con menos de 250 caracteres.</span>
                                 </div>
@@ -915,7 +915,7 @@
                                 <!-- ======= ======= FECHA SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="fecha_obligacion">Fecha obligación</label>
-                                    <input class="form-control custom-info-proy-input" type="date" 
+                                    <input class="form-control" type="date" 
                                         id="fecha_obligacion" name="fecha_obligacion" 
                                         [(ngModel)]="obligacionesModel.fecha_obligacion" (change)="ValidateFechaObligacion()"/>
                                     <span class="custom-alert-message" *ngIf="!valFechaObligacion">Debe seleccionar una fecha de obligación.</span>
@@ -948,7 +948,7 @@
                                 <!-- ======= ======= FECHA HORA ENTREGA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="fecha_hora_entrega">Fecha hora entrega</label>
-                                    <input class="form-control custom-info-proy-input" type="date" 
+                                    <input class="form-control" type="date" 
                                         id="fecha_hora_entrega" name="fecha_hora_entrega" 
                                         [(ngModel)]="obligacionesModel.fecha_hora_entrega" (change)="ValidateFechaHoraEntrega()"/>
                                     <span class="custom-alert-message" *ngIf="!valFechaHoraEntrega">Debe seleccionar una fecha y hora de entrega.</span>
@@ -957,11 +957,39 @@
                                 <!-- ======= ======= ID PERSONA ENTREGA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="id_persona_entrega">Persona entrega</label>
-                                    <input class="form-control custom-info-proy-input" type="text" 
+                                    <input class="form-control" type="text" 
                                         id="persona_entrega" name="persona_entrega" 
                                         [(ngModel)]="obligacionesModel.persona_entrega" disabled>
                                 </div>
-                                
+
+                                <!-- ======= ======= UPLOAD FILE SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 my-auto">
+                                    <label for="documento_entrega">Documento</label>
+
+                                    <input class="form-control" type="file" 
+                                        id="documento_entrega" name="documento_entrega" 
+                                        (change)="onFileChange($event)"
+                                        [(ngModel)]="obligacionesModel.documento_entrega">
+                                        
+                                    <div class="d-flex justify-content-center mt-2">
+                                        <button type="button" class="btn btn-bg-2 mx-auto" 
+                                            [disabled]="!obligacionesModel.ruta_documento"
+                                            (click)="obligacionesDownload('ruta_documento')">
+                                            Descargar documento
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- ======= ======= PLANTILLA DOWNLOAD SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 my-auto">
+                                    <div class="d-flex justify-content-center mt-2">
+                                        <button type="button" class="btn btn-bg-2 mx-auto" 
+                                            [disabled]="!obligacionesModel.ruta_plantilla"
+                                            (click)="obligacionesDownload('ruta_plantilla')">
+                                            Descargar plantilla
+                                        </button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
