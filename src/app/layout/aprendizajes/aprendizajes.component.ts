@@ -207,7 +207,7 @@ export class AprendizajesComponent implements OnInit {
       );
       // ======= ======= =======
       // ======= GET PREGUNTAS =======
-      this.servApredizaje.getPreguntas(this.idProyecto).subscribe(
+      this.servApredizaje.getPreguntas().subscribe(
         (data) => {
           if(data[0].dato){
             this.preguntasObj1 = data[0].dato[0];

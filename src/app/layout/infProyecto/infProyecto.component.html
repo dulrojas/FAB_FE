@@ -36,13 +36,13 @@
                         <div class="col col-md-6 custom-info-section-separator">
                             <div class="row">
                                 <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
-                                <div class="col col-lg-6 col-md-6 my-auto">
+                                <div class="col col-lg-12 col-md-12 my-auto">
                                     <h2 class="custom-info-proy-sub-title">Nombre corto del proyecto</h2>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto" 
                                         [disabled]="!buttonValidations.editMode"/>
                                 </div>
-                                <div class="col col-lg-6 col-md-6">
+                                <div class="col col-lg-12 col-md-12">
                                     <!-- ======= ======= ======= NOMBRE COMPLETO PROYECTO ======= ======= ======= -->
                                     <h2 class="custom-info-proy-sub-title">Nombre completo del proyecto</h2>
                                     <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" 
@@ -51,7 +51,7 @@
                             </div>
                             <div class="row">
                                 <!-- ======= ======= ======= RESPONSABLE PROYECTO ======= ======= ======= -->
-                                <div class="col col-lg-3 col-md-3 my-auto pr-0">
+                                <div class="col col-lg-6 col-md-6 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Responsable de registro</h2>
                                     <select class="form-control custom-info-proy-input" id="id_person_resp" name="id_person_resp" 
                                         [(ngModel)]="proyectoScope.id_person_resp" [disabled]="!buttonValidations.editMode">
@@ -62,7 +62,7 @@
                                     </select>
                                 </div>
                                 <!-- ======= ======= ======= UNIDAD PROYECTO ======= ======= ======= -->
-                                <div class="col col-lg-3 col-md-3 my-auto pr-0">
+                                <div class="col col-lg-6 col-md-6 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Unidad ejecutora</h2>
                                     <select class="form-control custom-info-proy-input" id="id_inst_unidad" name="id_inst_unidad" 
                                         [(ngModel)]="proyectoScope.id_inst_unidad" [disabled]="!buttonValidations.editMode">
@@ -73,7 +73,7 @@
                                     </select>
                                 </div>
                                 <!-- ======= ======= ======= NOTAS PROYECTO ======= ======= ======= -->
-                                <div class="col col-md-6"> 
+                                <div class="col col-md-12"> 
                                     <h2 class="custom-info-proy-sub-title">Notas adicionales</h2>
                                     <textarea class="form-control custom-info-proy-input" id="notas" name="notas" 
                                         [(ngModel)]="proyectoScope.notas" [disabled]="!buttonValidations.editMode"></textarea>
@@ -288,11 +288,15 @@
                                                 <span class="custom-info-text-box">
                                                     {{ currentDateGap }}
                                                 </span>
-                                                de
+                                                <span class="mx-1">
+                                                    de
+                                                </span>
                                                 <span class="custom-info-text-box">
                                                     {{ finalDateGap }}
                                                 </span>
-                                                dias.
+                                                <span class="mx-1">
+                                                    dias.
+                                                </span>
                                             </label>
                                         </div>
                                     </div>

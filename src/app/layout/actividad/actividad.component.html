@@ -185,7 +185,7 @@
                                     {{ actividadGant.actividad }}
                                 </div>
                                 <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
-                                    {{ actividadGant.presupuesto }}
+                                    {{ parseAmountFloatToStr(actividadGant.presupuesto) }}
                                 </div>
                                 <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
                                     {{ actividadGant.porcentajeAvance }}%
@@ -486,10 +486,10 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr *ngFor="let aprendizaje of aprendizajesTable; let i = index">
-                                                            <td>{{ row.Declaracion }}</td>
-                                                            <td>{{ row.Avance }}</td>
-                                                            <td>{{ row.Ejecucion }}</td>
+                                                        <tr *ngFor="let actividadAvance of actividadAvances">
+                                                            <td>{{ ((actividadAvance.fecha_hora).slice(0,10)) }}</td>
+                                                            <td>{{ actividadAvance.avance }}</td>
+                                                            <td>{{ actividadAvance.monto_ejecutado }}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -503,21 +503,10 @@
                                         <label for="resultado">Factores que impidieron el cumplimiento</label>
                                         <textarea class="form-control" type="text" 
                                             id="resultado" name="resultado" 
-                                            [(ngModel)]="resultado" [disabled]="modalAction == 'add'">
+                                            placeholder="Si sera reprogramado ingrese el motivo de incumplimiento"
+                                            [(ngModel)]="resultado" 
+                                            [disabled]="modalAction == 'add'">
                                         </textarea>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="d-flex justify-content-center">
-                                        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                                            <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                                        </button>
-                                        <button type="button" class="btn btn-bg-2" [disabled]="modalAction == 'add'" (click)="modal.close('Cerrar')">
-                                            <i aria-hidden="true"></i> Reprogramar
-                                        </button>
-                                        <button type="button" class="btn btn-bg-1" (click)="onSubmit()">
-                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -525,6 +514,24 @@
                     </div>
                 </div>
             </form>
+        </div>
+        
+        <div class="modal-footer">
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-bg-3" 
+                    (click)="modal.close('Cerrar')">
+                    <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-bg-2" 
+                    [disabled]="modalAction == 'add'" 
+                    (click)="modal.close('Cerrar')">
+                    <i aria-hidden="true"></i> Reprogramar
+                </button>
+                <button type="button" class="btn btn-bg-1" 
+                    (click)="onSubmit()">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+                </button>
+            </div>
         </div>
     </ng-template>
 </div>
