@@ -157,18 +157,17 @@
 
                             <div class="row">
                                 <!-- Actividad y Evento -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
-                                    <label for="actividad">Pertenece a la Actividad</label>
-                                    <select class="form-control" id="actividad" formControlName="actividad">
-                                        <option value="" disabled selected hidden>Seleccione la Actividad</option>
-                                        <option *ngFor="let actividad of actividades" [value]="actividad.actividad">
-                                            {{ actividad.actividad }}
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="id_proy_actividad">Pertenece a la Actividad</label>
+                                    <select class="form-control" id="id_proy_actividad" name="id_proy_actividad"
+                                        [(ngModel)]="id_proy_actividad">
+                                        <option value="" disabled selected>Seleccione una Actividad</option>
+                                        <option *ngFor="let actividad of beneficiariosActividad" [value]="actividad.id_proy_actividad">
+                                        {{ actividad.actividad }}
                                         </option>
                                     </select>
-                                    <small class="text-danger" *ngIf="beneficiariesForm.get('actividad')?.touched && beneficiariesForm.get('actividad')?.hasError('required')">
-                                        El campo actividad es obligatorio.
-                                    </small>
                                 </div>
+
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="evento">Evento</label>
                                     <input
@@ -251,30 +250,34 @@
                                     </div>
                                 </div>
                                 <!-- Tipo de Organización y Organización -->
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
-                                    <label for="tipoOrganizacion">Tipo de Organización</label>
-                                    <select class="form-control" formControlName="tipoOrganizacion">
-                                        <option value="" disabled selected hidden>Seleccione un tipo de Organización</option>
-                                        <option *ngFor="let tipo of tiposOrganizacion" [value]="tipo.nombre">
-                                            {{ tipo.nombre }}
-                                        </option>
-                                    </select>
-                                    <small class="text-danger" *ngIf="beneficiariesForm.get('tipoOrganizacion')?.touched && beneficiariesForm.get('tipoOrganizacion')?.invalid">
-                                        El campo tipo Organizacion es obligatorio.
-                                    </small>
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                        <label for="idp_organizacion_tipo">Tipo de Organización</label>
+                                        <select class="form-control" id="idp_organizacion_tipo" name="idp_organizacion_tipo"
+                                            [(ngModel)]="idp_organizacion_tipo">
+                                            <option value="" disabled selected>Seleccione un tipo de Organización</option>
+                                            <option *ngFor="let tipo of beneficiariosTipoOrganizacion" [value]="tipo.id_subtipo">
+                                            {{ tipo.descripcion_subtipo }}
+                                            </option>
+                                        </select>
                                 </div>
-                                <div class="col col-xl-6 col-lg-6 mt-auto">
-                                    <label for="organizacion">Nombre de la Organización</label>
-                                    <input
-                                        type="text"
-                                        formControlName="organizacion"
-                                        class="form-control"
-                                        placeholder="Ingresa el Nombre de la Organización"
-                                    />
-                                    <small class="text-danger" *ngIf="beneficiariesForm.get('organizacion')?.touched && beneficiariesForm.get('organizacion')?.invalid">
-                                        El campo Nombre de la Organización es obligatorio.
-                                    </small>
-                                </div>
+                                <!-- ======= ======= ======= NOMBRE DE LA ORGANIZACIÓN ======= ======= ======= -->                                        
+                                    <div class="col col-xl-5 col-lg-5 mb-auto">
+                                        <label for="id_organizacion">Nombre de la Organización</label>
+                                        <select class="form-control" id="id_organizacion" name="id_organizacion"
+                                            [(ngModel)]="id_organizacion">
+                                            <option value="" disabled selected>Seleccione el Nombre de la Organización</option>
+                                            <option *ngFor="let organizacion of beneficiariosOrganizacion" [value]="organizacion.id_organizacion">
+                                            {{ organizacion.organizacion }}
+                                            </option>
+                                        </select>
+                                    </div>                                 
+                                <!-- ======= ======= + ======= ======= --> 
+                                <div class="col col-xl-1 col-lg-1 mt-4">
+                                    <button type="button" (click)="openModalOrg(organizacionModal)"
+                                        style=" background-color: #d67600;color: white;border: none; 
+                                        border-radius: 30%; width: 35px;height: 35px;"> +
+                                    </button>
+                                </div> 
                                 <!-- Detalle -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
                                     <label for="details">Detalle de evento</label>
@@ -685,11 +688,11 @@
                                             id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
                                     </td>  
                                     <td style="text-align: center;">{{ aliado.id_proy_aliado }}</td>
-                                    <td style="text-align: center;">{{ aliado.fecha }}</td>
+                                    <td style="text-align: center;">{{ aliado.fecha | date:'dd/MM/yyyy' }}</td>
                                     <td>{{ getOrganizacion(aliado.id_organizacion, aliadosOrganizacion) }}</td>
                                     <td>{{ aliado.referente }}</td>
                                     <td>{{ aliado.vinculo }}</td>
-                                    <td>{{  getDescripcionSubtipo(aliado.idp_convenio, aliadosConvenio) }}</td>
+                                    <td>{{ getDescripcionSubtipo(aliado.idp_convenio, aliadosConvenio) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -754,8 +757,8 @@
                                             </select>
                                         </div>
                                         <!-- ======= ======= + ======= ======= --> 
-                                        <div class="col col-xl-2 col-lg-2 mt-4">
-                                            <button type="button" (click)="openModal(organizacionModal)"
+                                        <div class="col col-xl-1 col-lg-1 mt-4">
+                                            <button type="button" (click)="openModalOrg(organizacionModal)"
                                                 style=" background-color: #d67600;color: white;border: none; 
                                                 border-radius: 30%; width: 35px;height: 35px;"> +
                                             </button>
@@ -818,64 +821,6 @@
             </form>
         </div>
     </ng-template>
-<!-- //////////////////////////////////////// MODAL PARA AÑADIR NUEVA ORGANIZACION  //////////////////////////////////////// -->
-    <ng-template #organizacionModal let-modal class="custom-modal">
-        <div class="modal-header">
-            <h4 class="modal-title">Añadir una nueva organización</h4>
-        </div>
-        <div class="modal-body">
-            <form [formGroup]="organizacionForm" (ngSubmit)="saveLocationSelection()">
-                <div class="row g-3">
-                    <!-- Institución -->
-                    <div class="col col-xl-6 col-lg-6 mt-auto">      
-                        <label for="id_institucion" class="form-label">Institución</label>
-                        <select
-                            class="form-select"
-                            formControlName="id_institucion"
-                        >
-                            
-                            <option *ngFor="let inst of instituciones" [value]="inst.id_institucion">
-                                {{ inst.institucion }}
-                            </option>
-                        </select>
-                    </div>
-            
-                    <!-- Tipo de Organización -->
-                    <div class="col col-xl-6 col-lg-6 mt-auto">
-                        <label for="id_tipo_organizacion">Tipo de Organización</label>
-                        <select class="form-control" formControlName="id_tipo_organizacion">
-                            <option value="" disabled selected hidden>Seleccione una organización</option>
-
-                            <option *ngFor="let tipo of tiposOrganizacion" [value]="tipo.nombre">
-                                {{ tipo.nombre }}
-                            </option>
-                        </select>
-                    </div>
-            
-                    <!-- Nombre de la Organización -->
-                    <div class="col col-xl-6 col-lg-6 mt-auto">
-                        <label for="organizacion">Nombre de la Organización</label>
-                        <input
-                            type="text"
-                            formControlName="organizacion"
-                            class="form-control"
-                            placeholder="Ingresa el Nombre de la Organización"
-                        />
-                    </div>
-                </div>
-            
-                <div class="modal-footer mt-2 d-flex justify-content-center"> 
-                    <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                    <i class="fa fa-times"></i> Cancelar
-                    </button>
-                    <button type="button" class="btn btn-bg-1" (click)="onSubmitOrganize();modal.close('Cerrar')">
-                    <i class="fa fa-check"></i> Guardar
-                    </button>
-                </div>
-            </form>
-            
-        </div>
-    </ng-template>
 <!-- //////////////////////////////////////// MODAL PARA DELETE ALIADO  //////////////////////////////////////// -->
     <ng-template #deleteAliadoModal let-modal>
         <div class="modal-header">
@@ -888,13 +833,60 @@
         </div>
         <div class="modal-footer">
             <div class="d-flex justify-content-center" style="width: 100%">
-                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <button type="button" class="btn btn-bg-3" (click)="closeModalAliado('Cerrar')">
                     <i class="fa fa-times" aria-hidden="true"></i> Cerrar
                 </button>
                 <button type="button" class="btn btn-bg-1" (click)="deleteAliado()">
                     <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
                 </button>
             </div>
+        </div>
+    </ng-template>
+<!-- //////////////////////////////////////// MODAL PARA AÑADIR NUEVA ORGANIZACION  //////////////////////////////////////// -->
+    <ng-template #organizacionModal let-modal class="custom-modal">
+        <!-- Encabezado del Modal-->
+        <div class="modal-header">
+            <h4 class="modal-title">Añadir una nueva organización</h4>
+        </div>
+        <!-- Cuerpo del Modal-->
+        <div class="modal-body">
+            <form #organizacionForm="ngForm" (ngSubmit)="onSubmitOrganizaciones(organizacionForm)">
+                <div class="row">
+                    <!-- Tipo de Organización -->
+                    <div class="col col-xl-6 col-lg-6 mb-auto">
+                        <label for="idp_tipo_organizacion">Tipo de Organización</label>
+                        <select class="form-control" id="idp_tipo_organizacion" name="idp_tipo_organizacion"
+                            [(ngModel)]="idp_tipo_organizacion" (change)="ValidateTipoOrganizacion()">
+                            <option value="" disabled selected>Seleccione tipo de organización</option>
+                            <option *ngFor="let tipo of orgTipoOrganizacion" [value]="tipo.id_subtipo">
+                            {{ tipo.descripcion_subtipo }}
+                            </option>
+                        </select>
+                        <span class="custom-alert-message" *ngIf="!valTipoOrganizacion">Debe elegir tipo de organización</span>
+                    </div>
+                    <!-- Nombre de la Organización -->
+                    <div class="col col-xl-6 col-lg-6 mb-auto">
+                        <label for="organizacion">Nombre de la Organización</label>
+                        <input  class="form-control" type="text" 
+                            id="organizacion" name="organizacion"  
+                            placeholder="Ingresa el Nombre de la Organización"
+                            [(ngModel)]="organizacion" (change)="ValidateOrganizacion()"/> 
+                        <span class="custom-alert-message" *ngIf="!valOrganizacion">Debe ingresar el nombre de la Organización</span>       
+                    </div>                
+                </div>
+            
+                <div class="modal-footer mt-2 d-flex justify-content-center"> 
+                    <button type="button" class="btn btn-bg-3" (click)="closeModalOrg()">
+                    <i class="fa fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" 
+                                class="btn btn-bg-1" 
+                                [disabled]="!valTipoOrganizacion || !valOrganizacion">
+                            <i class="fa fa-check"></i> Guardar
+                    </button>
+                </div>
+            </form>
+            
         </div>
     </ng-template>
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->

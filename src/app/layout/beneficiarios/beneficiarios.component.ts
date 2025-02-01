@@ -14,7 +14,9 @@ import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
 import { register } from 'module';
 //General
 import { servicios } from "../../servicios/servicios";
-import { OrganizacionesService } from "../../servicios/organizaciones";
+import { ServOrganizacion } from "../../servicios/organizaciones";
+//Beneficiarios
+import { servActividad } from "../../servicios/actividad";
 //Aliados
 import { servAliados } from "../../servicios/aliados";
 import { servInstituciones } from "../../servicios/instituciones";
@@ -66,13 +68,17 @@ export class BeneficiariosComponent implements OnInit {
     private ubicaGeograficaService: servUbicaGeografica,
     private cdr: ChangeDetectorRef,
     private servPersonaRoles: servPersona,
-    private servListBenef:servListBenef,
     private Params_generales:Params_generales,
     //General
     private modalService: NgbModal,
     private proyectoService: ProyectoService,
     private servicios: servicios,
-    private OrganizacionesService: OrganizacionesService,
+    private ServOrganizacion: ServOrganizacion,
+    //Beneficiarios
+    //private servBeneficiarios: servBeneficiarios,
+    private servUbicaGeografica: servUbicaGeografica,
+    private servListBenef: servListBenef,
+    private servActividad: servActividad,
     //Aliados
     private servAliados: servAliados,
     private servInstituciones:servInstituciones
@@ -86,10 +92,13 @@ export class BeneficiariosComponent implements OnInit {
   comunidades: any[] = [];
   tiposOrganizacion: any[] = [];
   actividades: any[] = [];
-  organizaciones: any[] = [];
   organizacionTipo: any[] = [];
   tiposConvenio: any[] = [];
   peronsaRegistro:any="";
+
+  beneficiariosActividad: any = [];
+  beneficiariosTipoOrganizacion: any = [];
+  beneficiariosOrganizacion: any[] = [];
 
   parametrosGenerales: any[] = [];
   
@@ -108,15 +117,8 @@ export class BeneficiariosComponent implements OnInit {
       this.loadGeografica();
       this.loadBeneficiarios();
       this.initForm();
-      this.getActividades();
       this.loadDepartamentos();
-      this.loadTiposOrganizacion();
-      this.initAliadosForm();
-      this.initOrganizacionForm();
-      this.loadConvenios();
-      this.loadInstitucion();
       this.loadRangosEdad();
-      this.getParamGenerales();
       
       //Aliados
       this.getParametricasAliados();
@@ -140,15 +142,10 @@ export class BeneficiariosComponent implements OnInit {
     this.loadGeografica();
     this.loadBeneficiarios();
     this.initForm();
-    this.getActividades();
     this.loadDepartamentos();
-    this.loadTiposOrganizacion();
-    this.initAliadosForm();
-    this.initOrganizacionForm();
-    this.loadConvenios();
     this.loadRangosEdad();
-    this.getParamGenerales();
-    this.loadInstitucion();
+    //Beneficiarios
+    this.getParametricasBeneficiarios();
     //Aliados
     this.getParametricasAliados();
     this.getAliados();
@@ -186,20 +183,44 @@ export class BeneficiariosComponent implements OnInit {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
-
-//obtenr actividades
-getActividades(): void {
-  this.beneficiariosService.getActividades().subscribe(
-    (response) => {
-      console.log('Respuesta completa de actividades:', response);
-      if (response[0]?.res === 'OK') {
-        this.actividades = response[0].dato;
-        console.log('Actividades cargadas:', this.actividades);
+    getParametricasBeneficiarios(){
+      //Actividad
+        this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
+          (data) => {
+            this.beneficiariosActividad = data[0].dato;
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      // Tipos de organización
+        this.servicios.getParametricaByIdTipo(18).subscribe(
+          (data) => {
+            this.beneficiariosTipoOrganizacion = data[0].dato;
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      // Organización
+        this.ServOrganizacion.getOrganizacionByIdProy(this.idProyecto).subscribe(
+          (data) => {
+            this.beneficiariosOrganizacion = data[0].dato;
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
       }
-    },
-    (error) => console.error('Error al cargar actividades:', error)
-  );
-}
+      getActividad(idRegistro: any, paramList: any): string{
+              const actividad = paramList.find(elem => elem.id_proy_actividad == idRegistro);
+              return actividad ? actividad.actividad : 'Null';
+            }
+      
+      getIdActividad(nombre: string): number | undefined {
+          const actividad = this.beneficiariosActividad.find(act => act.actividad === nombre);
+          return actividad ? actividad.id_proy_actividad : undefined;
+      }
 
 // inicializar formulario con los campos del beneficiario
    initForm(): void {
@@ -218,8 +239,6 @@ getActividades(): void {
       total: [{value: 0, disabled: true}],
       details:['', Validators.required],
       registeredBy: [{ value: '' ,disabled: true }] // Este campo es solo lectura
-     
-
     });
   
 
@@ -230,49 +249,8 @@ this.beneficiariesFormUbicacion=this.fb.group({
   comunidad: ['']
 });
     
-    
-      // ======= GET organizacion para aliados  =======
-      this.OrganizacionesService.getOrganizacionByIdProy(this.idProyecto).subscribe(
-        (data) => {
-          if (data.length > 0 && data[0].res === "OK") {
-            this.organizacionTipo = data.map(item => item.dato);
-            console.log('Organizaciones tipo recibidas para aliados:', this.organizacionTipo);
-          } else {
-            console.warn('No se encontraron datos para el proyecto.');
-            this.organizacionTipo = [];
-          }
-        },
-        (error) => {
-          console.error('Error al obtener las organizaciones:', error);
-        }
-      );
-      
-   
   }
   
-  /// init aliados form
-  private initAliadosForm(): void {
-    this.aliadosForm = this.fb.group({
-      id: [{ value: '', disabled: true }],
-      identificationDate: ['', Validators.required],
-      tipoOrganizacion: ['', Validators.required], 
-      institution: ['', Validators.required],
-      referentName: ['', Validators.required],
-      resultsLink: ['', Validators.required],
-      convenio:['', Validators.required],
-      registeredByAliado: [{ value: '' ,disabled: true }] // Este campo es solo lectura
-    
-    });
-  }
-  private initOrganizacionForm():void{
-    this.organizacionForm=this.fb.group({
-      id_organizzacion:[''],
-      id_institucion:[''],
-      id_proyecto:[''],
-      id_tipo_organizacion:[''],
-      organizacion:['']
-    });
-  }
 
   loadGeografica():void{
     this.ubicaGeograficaService.getUbicaGeografica().subscribe(
@@ -314,10 +292,12 @@ this.beneficiariesFormUbicacion=this.fb.group({
     const comunidad =  this.geografia.find(comu => comu.nombre === nombre);
     return comunidad ? comunidad.id_ubica_geo : undefined;
   }
-  getIdOrgamnizacion(nombre: string): number | undefined {  
-    const organizacion = this.tiposOrganizacion.find(orga => orga.organizacion === nombre);
-    return organizacion ? organizacion.id_organizacion : undefined;
+
+  getIdTipoOrganizacion(nombre: string): number | undefined {
+    const tipoOrganizacion = this.beneficiariosTipoOrganizacion.find(tipo => tipo.descripcion_subtipo === nombre);
+    return tipoOrganizacion ? tipoOrganizacion.id_subtipo : undefined;
   }
+
   onDepartamentoChange(p_orden_departamento: any): void {
     console.log('nombre recibido de departamento : ', p_orden_departamento)
     const idDepartamento = this.getIdDepartamento(p_orden_departamento);
@@ -393,31 +373,7 @@ this.beneficiariesFormUbicacion=this.fb.group({
     this.beneficiariesForm.get('comunidad')?.enable();
   }
 
-  loadTiposOrganizacion(): void {
-    this.servicios.getParametricaByIdTipo(18).subscribe(
-      (response) => {
-        if (response[0]?.res === 'OK') {
-          this.tiposOrganizacion = response[0].dato.map((item: any) => ({
-            id: item.idp,
-            nombre: item.descripcion_subtipo
-            
-          }));
-        }
-        console.log(' organizaciones tiporecibidads:  ',this.tiposOrganizacion)
-      },
-      (error) => console.error('Error al cargar tipos de organización:', error)
-    );
-  }
- onTipoOrganizacionChange(tipoOrganizacionId: number): void {
-    this.beneficiariosService.getOrganizacionesPorTipo(tipoOrganizacionId).subscribe(
-      (response) => {
-        if (response[0]?.res === 'OK') {
-          this.organizaciones = response[0].dato;
-        }
-      },
-      (error) => console.error('Error al cargar organizaciones:', error)
-    );
-  }
+  
   loadBeneficiarios(): void {
     this.beneficiariosService.getBeneficiarios(this.idProyecto).subscribe(
       (response) => {
@@ -590,19 +546,11 @@ this.beneficiariesForm.patchValue({
 
     console.log('ID de organización seleccionado:', organizacionId);
 
-    const organizacionData = {
-        p_id_organizacion: organizacionId==null ?null:organizacionId ,
-        p_id_proyecto: parseInt(this.idProyecto, 10),
-        p_id_institucion: 1,
-        p_idp_tipo_organizacion: this.getIdTipoOrganizacion(formValue.tipoOrganizacion) ,
-        p_organizacion: formValue.organizacion,
-    };
 
-    console.log('Datos para organización:', organizacionData);
-
-    const organizacionObservable =  organizacionId!=null
-        ? this.OrganizacionesService.editOrganizacion(organizacionData) // Llamada para editar
-        : this.OrganizacionesService.addOrganizacion(organizacionData); // Llamada para crear
+   
+    const organizacionObservable = isEditingOrganizacion
+      ? this.ServOrganizacion.editOrganizacion({ id: organizacionId, ...formValue })
+      : this.ServOrganizacion.addOrganizacion({ ...formValue });
 
     organizacionObservable.subscribe(
         (response) => {
@@ -614,11 +562,7 @@ this.beneficiariesForm.patchValue({
             const organizacionResponse = Array.isArray(response) ? response[0] : response;
             const finalOrganizacionId = organizacionResponse?.dato?.id || organizacionId;
 
-            if (!finalOrganizacionId) {
-                console.error('No se pudo obtener el ID de la organización');
-                alert('Hubo un problema con la organización. Por favor, intenta de nuevo.');
-                return;
-            }
+           
 
             // Beneficiario
             const isEditingBeneficiario = !!formValue.id; // Verifica si hay un beneficiario existente
@@ -656,43 +600,6 @@ this.beneficiariesForm.patchValue({
             alert('No se pudo procesar la organización. Por favor, intenta de nuevo.');
         }
     );
-}
-loadInstitucion():void{
-  this.servInstituciones.getInstitucionesById(this.parametrosGenerales?.[0]?.id_institucion).subscribe(
-    (response) => {
-      if (response[0]?.res === 'OK') {
-        this.instituciones = response[0].dato;
-      console.log('instituciones ************* recibidos :', this.instituciones); 
-      }
-    },
-    (error) => console.error('Error al cargar departamentos:', error)
-  );
-
-}
-onSubmitOrganize(): void {
-  const formValue = this.organizacionForm.getRawValue();
-  const organizacionData = {
-    p_id_organizacion: null,
-    p_id_proyecto: parseInt(this.idProyecto, 10),
-    p_id_institucion: parseInt(formValue.id_institucion, 10),
-    p_idp_tipo_organizacion: this.getIdTipoOrganizacion(formValue.id_tipo_organizacion),
-    p_organizacion: formValue.organizacion,
-  };
-
-
-    console.log('Se envió el ', organizacionData);
-    this.OrganizacionesService.addOrganizacion(organizacionData).subscribe();
-    this.ngOnInit()
-  this.loadBeneficiarios();
-}
-getIdTipoOrganizacion(nombre :any){
-  const tipoOrganizacion =  this.tiposOrganizacion.find(TOr => TOr.nombre === nombre);
-    return tipoOrganizacion ? tipoOrganizacion.id : undefined;
-}
-
-getIdActividad(nombre :any){
-  const getIdActividad =  this.actividades.find(acti => acti.actividad === nombre);
-    return getIdActividad ? getIdActividad.id_proy_actividad : undefined;
 }
   
   // Método para editar beneficiario
@@ -1059,6 +966,7 @@ getIdActividad(nombre :any){
   }
 
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
+
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
 // ======= ======= =======  ALIADOS - PROY_ALIADOS  ======= ======= =======
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
@@ -1090,7 +998,7 @@ getIdActividad(nombre :any){
     // ======= ======= GET PARAMETRICAS ALIADOS ======= =======
         getParametricasAliados():void{
           // ======= GET ORGANIZACIONES =======
-          this.OrganizacionesService.getOrganizacionByIdProy(this.idProyecto).subscribe(
+          this.ServOrganizacion.getOrganizacionByIdProy(this.idProyecto).subscribe(
             (data) => {
               this.aliadosOrganizacion = data[0].dato;
             },
@@ -1283,6 +1191,7 @@ getIdActividad(nombre :any){
         this.servAliados.deleteAliado(this.aliadosSelected.id_proy_aliado).subscribe(
           (data) => {
             this.closeModalAliado();
+            this.aliadosSelected = null;
             this.getAliados();
           },
           (error) => {
@@ -1291,7 +1200,7 @@ getIdActividad(nombre :any){
         );
         }
 
-    // ======= ======= ======= ======= VALIDATION ALIADOS======= ======= ======= =======
+    // ======= ======= ======= ======= VALIDATION ALIADOS ======= ======= ======= =======
         onSubmitAliados(): void{
         // ======= VALIDATION SECTION =======
         let valForm = false;
@@ -1310,111 +1219,127 @@ getIdActividad(nombre :any){
             this.editAliado();
           } 
           this.closeModalAliado();
+          }
         }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+  // ======= ======= =======      ORGANIZACIONES      ======= ======= =======
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======  
+      // ======= ======= NGMODEL VARIABLES GENERALES ======= =======
+      organizaciones: any[] = [];
+      // ======= ======= NGMODEL VARIABLES SECTION ORGANIZACIONES ======= =======
+          modalActionOrganizacion: any = '';
+      
+          //id_organizacion: any = '';
+          id_institucion: number = 1;
+          //id_proyecto: any = '';
+          idp_tipo_organizacion: any = '';
+          organizacion: any = '';
+      // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL ORGANIZACIONES ======= =======
+          orgTipoOrganizacion: any[] = [];
+      // ======= ======= GET PARAMETRICAS ALIADOS ======= =======
+          getParametricasOrganizaciones():void{
+            // ======= GET TIPO ORGANIZACION =======
+            this.servicios.getParametricaByIdTipo(18).subscribe(
+              (data) => {
+                this.orgTipoOrganizacion = data[0].dato;
+              },
+              (error) => {
+                console.error(error);
+              }
+            );
+          }
+      // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
+          valTipoOrganizacion: any = true;
+          ValidateTipoOrganizacion(){
+            this.valTipoOrganizacion = true;
+            if(!this.idp_tipo_organizacion){
+              this.valTipoOrganizacion= false;
+            }
+          }
+          valOrganizacion: any = true;
+          ValidateOrganizacion(){
+            this.valOrganizacion = true;
+            if((!this.organizacion)||(this.organizacion.length >= 100)){
+              this.valOrganizacion = false;
+            }
+          }     
+      // ======= ======= OPEN MODALS FUN ======= =======
+        //private modalRef: NgbModalRef | null = null;
+          openModalOrg(content: TemplateRef<any>) {
+          this.initOrganizacionModel()  
+          this.modalRef = this.modalService.open(content, { size: 'xl' });
+          }
+          closeModalOrg() {
+          if (this.modalRef) {
+            this.modalRef.close(); 
+            this.modalRef = null;
+            }
+          }
+      // ======= ======= INIT ORGANIZACIONES MODEL ======= =======
+          initOrganizacionModel(){
+
+          this.id_organizacion = 0;
+          this.id_institucion = 1;
+          this.id_proyecto = "";
+          this.idp_tipo_organizacion = '';
+          this.organizacion = '';
+
+          this.valTipoOrganizacion = true;
+          this.valOrganizacion = true;
+          }
+      // ======= ======= GET ORGANIZACIONES ======= =======
+          getOrganizaciones(){
+          this.ServOrganizacion.getOrganizacionByIdProy(this.idProyecto).subscribe(
+            (data) => {
+              this.organizaciones = (data[0].dato)?(data[0].dato):([]);
+            },
+            (error) => {
+              console.error(error);
+            }
+          );
+          }
+       // ======= ======= INIT ADD ORGANIZACIONES ======= =======
+       initAddOrganizacion(modalScope: TemplateRef<any>){
+        this.initOrganizacionModel();
+
+        this.modalActionOrganizacion = "add";
+
+        this.openModalOrg(modalScope);
         }
-
-
-        
-getParamGenerales():void{
-  this.Params_generales.getAllParams_generales().subscribe(
-    (response) => {
-      if (response[0]?.res === 'OK') {
-        this.parametrosGenerales = response[0].dato;
-        this.loadInstitucion();
-      }
-    },
-    (error) => console.error('Error al cargar parametros generales:', error)
-  );
-
-}
-
-openAliadoModal(modal: TemplateRef<any>, aliado?: any): void {
-  this.selectedAliados = aliado || null;
-
-  if (aliado) { // en modo edición
-    this.aliadosForm.patchValue({
-      id: aliado.id,
-      identificationDate: aliado.fecha,
-      tipoOrganizacion: aliado.institucion || null,
-      institution: aliado.institucion || null,
-      referentName: aliado.referente || null,
-      resultsLink: aliado.vinculo || null,
-      convenio: aliado.convenio || null,
-      registeredByAliado: this.namePersonaReg || null
-    });
-    console.log(' datos cargados al formulario de aliados: ',this.aliadosForm.value )
-    console.log('nombre de persoanregistro en alidados ',this.namePersonaReg);
-    
-  } else { // en modo creación
-    this.aliadosForm.reset({
-      id: null,
-      identificationDate: null,
-      tipoOrganizacion: "",
-      referentName: "", 
-      resultsLink: "",
-      convenio: "", 
-      registeredByAliado: this.namePersonaReg || null,
-    });
-    
-    this.aliadosForm.patchValue({
-      registeredByAliado: this.namePersonaReg || null
-    });
-  }
-
-  this.modalService.open(modal,{ size: 'xl' }).result.finally(() => {
-    this.selectedAliados = null;
-  });
-}
-
-
-getIdOrgamnizacionesAliados(nombre: string): number | undefined {  
-  const organizacion = this.organizacionTipo.find(orga => orga.organizacion === nombre);
-  return organizacion ? organizacion.id_organizacion : undefined;
-}
-getIdConvenio(nombre: string): number | undefined {  
-  const convenio = this.tiposConvenio.find(conve => conve.descripcion === nombre);
-  return convenio ? convenio.id : undefined;
-}
-onSubmitAliadosForm(): void {
-  if (this.aliadosForm.invalid) {
-    // Marca todos los controles como tocados para activar los mensajes de error
-    this.aliadosForm.markAllAsTouched();
-    return;
-  }
-
-  const aliadoData = this.aliadosForm.getRawValue();
-  const aliadoPayload = {
-    id: aliadoData.id || null,
-    id_proyecto:this.idProyecto,
-    fecha: aliadoData.identificationDate || null,
-    tipoOrganizacion:this.getIdOrgamnizacionesAliados(aliadoData.tipoOrganizacion) || null,
-    institucion: aliadoData.institution || null,
-    referente: aliadoData.referentName || null,
-    vinculo: aliadoData.resultsLink || null,
-    convenio: this.getIdConvenio(aliadoData.convenio) || null,
-    registeredBy: this.idPersonaReg || null
-  };
-  console.log( 'datos de aliados normalizados ', aliadoPayload)
-
-}
-
-// cargar convenios
-loadConvenios(): void {
-  this.servicios.getParametricaByIdTipo(21).subscribe(
-    (response) => {
-      if (response[0]?.res === 'OK') {
-        this.tiposConvenio = response[0].dato.map((item: any) => ({
-          id: item.id_subtipo,
-          descripcion: item.descripcion_subtipo,
-        }));
-        console.log('Convenios cargados:', this.tiposConvenio);
-      }
-    },
-    (error) => console.error('Error al cargar convenios:', error)
-  );
-}
-
-
+      // ======= ======= ADD ORGANIZACIONES ======= =======
+          addOrganizacion(){
+          const objOrganizacion = {
+            p_id_organizacion: 0,
+            p_id_institucion: 1,
+            p_id_proyecto: this.idProyecto,
+            p_idp_tipo_organizacion: this.idp_tipo_organizacion,
+            p_organizacion: this.organizacion,
+          };
+          this.ServOrganizacion.addOrganizacion(objOrganizacion).subscribe(
+            (data) => {
+              alert('Organización agregada exitosamente');
+              this.getOrganizaciones();
+              this.getParametricasAliados();
+              this.closeModalOrg();              
+            },
+            (error) => {
+              console.error(error);
+              alert('Error al guardar la organización');
+            }
+          );
+          }
+    // ======= ======= ======= ======= VALIDATION ORGANIZACIONES ======= ======= ======= ======= 
+          onSubmitOrganizaciones(): void{
+            // ======= VALIDATION SECTION =======
+            let valForm = false;
+            this.ValidateTipoOrganizacion();
+            this.ValidateOrganizacion();
+                
+            if (this.valTipoOrganizacion && this.valOrganizacion) {
+              this.addOrganizacion();
+            }
+          }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
 
 countHeaderData() {
   // Inicializar contadores
