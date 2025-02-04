@@ -93,9 +93,9 @@
                         <td style="text-align: center;">{{ beneficiario.fecha }}</td>
                         <td>{{ beneficiario.municipio }}</td>
                         <td>{{ beneficiario.comunidad }}</td>
-                        <td>{{ beneficiario.tipoOrganizacion }}</td>
-                        <td>{{ beneficiario.organizacion }}</td>
-                        <td>{{ beneficiario.actividad }}</td>
+                        <td>{{ getOrganizacionTipo(beneficiario.idp_organizacion_tipo,beneficiariosOrganizacionTipo) }}</td>
+                        <td>{{ getOrganizacion(beneficiario.id_organizacion,beneficiariosOrganizacion) }}</td>
+                        <td>{{ getActividad(beneficiario.id_proy_actividad,beneficiariosActividad) }}</td>
                         <td>{{ beneficiario.evento }}</td>
                         <td>{{ beneficiario.mujeres }}</td>
                         <td>{{ beneficiario.hombres }}</td>
@@ -106,9 +106,9 @@
             <!-- Botones de tabla -->
             <div class="d-flex justify-content-center">
                 <ngb-pagination
-                    [(page)]="mainPage"
-                    [pageSize]="mainPageSize"
-                    [collectionSize]="totalLength"
+                    [(page)]="currentPageBeneficiarios"
+                    [pageSize]="pageSizeBeneficiarios"
+                    [collectionSize]="totalLengthBeneficiarios"
                     [maxSize]="3"
                     [rotate]="true"
                     [boundaryLinks]="true"
@@ -159,13 +159,16 @@
                                 <!-- Actividad y Evento -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="id_proy_actividad">Pertenece a la Actividad</label>
-                                    <select class="form-control" id="id_proy_actividad" name="id_proy_actividad"
-                                        [(ngModel)]="id_proy_actividad">
+                                    <select class="form-control" formControlName="id_proy_actividad" required>
                                         <option value="" disabled selected>Seleccione una Actividad</option>
-                                        <option *ngFor="let actividad of beneficiariosActividad" [value]="actividad.id_proy_actividad">
-                                        {{ actividad.actividad }}
+                                        <option *ngFor="let actividad of beneficiariosActividad" 
+                                                [value]="actividad.id_proy_actividad">
+                                            {{ actividad.actividad }}
                                         </option>
                                     </select>
+                                    <small class="text-danger" *ngIf="beneficiariesForm.get('id_proy_actividad')?.touched && beneficiariesForm.get('id_proy_actividad')?.invalid">
+                                        El campo Actividad es obligatorio.
+                                    </small>
                                 </div>
 
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
@@ -182,7 +185,7 @@
                                     </small>
                                 </div>
                                 <div class="row">
-                                    <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <div class="col col-xl-4 col-lg-4 mt-auto">
                                         <label for="departamento">Departamento</label>
                                         <select
                                             class="form-control"
@@ -252,24 +255,30 @@
                                 <!-- Tipo de Organización y Organización -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
                                         <label for="idp_organizacion_tipo">Tipo de Organización</label>
-                                        <select class="form-control" id="idp_organizacion_tipo" name="idp_organizacion_tipo"
-                                            [(ngModel)]="idp_organizacion_tipo">
+                                        <select class="form-control" formControlName="idp_organizacion_tipo" required>
                                             <option value="" disabled selected>Seleccione un tipo de Organización</option>
-                                            <option *ngFor="let tipo of beneficiariosTipoOrganizacion" [value]="tipo.id_subtipo">
-                                            {{ tipo.descripcion_subtipo }}
+                                            <option *ngFor="let tipo of beneficiariosOrganizacionTipo" [value]="tipo.id_subtipo">
+                                                {{ tipo.descripcion_subtipo }}
                                             </option>
                                         </select>
+                                        <small class="text-danger" *ngIf="beneficiariesForm.get('idp_organizacion_tipo')?.touched && beneficiariesForm.get('idp_organizacion_tipo')?.invalid">
+                                            El campo Tipo de Organización es obligatorio.
+                                        </small>                                         
                                 </div>
+
                                 <!-- ======= ======= ======= NOMBRE DE LA ORGANIZACIÓN ======= ======= ======= -->                                        
                                     <div class="col col-xl-5 col-lg-5 mb-auto">
                                         <label for="id_organizacion">Nombre de la Organización</label>
-                                        <select class="form-control" id="id_organizacion" name="id_organizacion"
-                                            [(ngModel)]="id_organizacion">
+                                        <select class="form-control" formControlName="id_organizacion" required>
                                             <option value="" disabled selected>Seleccione el Nombre de la Organización</option>
-                                            <option *ngFor="let organizacion of beneficiariosOrganizacion" [value]="organizacion.id_organizacion">
-                                            {{ organizacion.organizacion }}
+                                            <option *ngFor="let organizacion of beneficiariosOrganizacion" 
+                                                    [value]="organizacion.id_organizacion">
+                                                {{ organizacion.organizacion }}
                                             </option>
                                         </select>
+                                        <small class="text-danger" *ngIf="beneficiariesForm.get('id_organizacion')?.touched && beneficiariesForm.get('id_organizacion')?.invalid">
+                                            El campo Organización es obligatorio.
+                                        </small>
                                     </div>                                 
                                 <!-- ======= ======= + ======= ======= --> 
                                 <div class="col col-xl-1 col-lg-1 mt-4">
@@ -321,27 +330,16 @@
                                         placeholder="Total"
                                         required
                                     />
-                                </div>
-                                <div class="col col-xl-3 col-lg-3 mt-auto">
-                                    <button
-                                        type="button"
-                                        (click)="openModal(listaBeneficiariesModal, null, true)"
-                                        style="
-                                            background-color: #d67600;
-                                            color: white;
-                                            border: none;
-                                            border-radius: 15%;
-                                            width: 90px;
-                                            height: 35px;
-                                            font-size: 10px;
-                                            display: flex;
-                                            justify-content: center;
-                                            align-items: center;
-                                        "
-                                    >
+                                </div>                                
+                                <div class="col col-xl-3 col-lg-3 mt-auto d-flex justify-content-center">
+                                    <button type="button" (click)="openModal(listaBeneficiariesModal, null, true)"
+                                        style="background-color: #d67600; color: white; border: none;
+                                               border-radius: 15px; width: 100%; max-width: 200px; height: 35px;
+                                               padding: 10px 15px; font-size: 14px; font-weight: bold;
+                                               display: flex; justify-content: center; align-items: center;">
                                         Lista de Participantes
                                     </button>
-                                </div>
+                                </div> 
 
                                 <!-- Persona Registro -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
@@ -362,12 +360,7 @@
                                     <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                                         <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                     </button>
-                                    <button
-                                    type="button"
-                                    class="btn btn-bg-1"
-                                   
-                                    (click)="onSubmit(); "
-                                  >
+                                    <button type="button" class="btn btn-bg-1" (click)="onSubmit(); ">
                                     <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
                                   </button>
                                 </div>

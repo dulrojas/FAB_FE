@@ -57,9 +57,8 @@
                             <!-- Fin de Proyecto -->
                             <div class="col col-xl-4 col-lg-4 mt-auto text-center">
                               <label class="custom-info-proy-sub-title" for="fecha_fin">Fin de Proyecto</label>
-                              <!-- Mostrar fecha fin en lugar de input -->
                               <div class="form-control custom-info-proy-input" id="fecha_fin" name="fecha_fin">
-                                {{ proyectoScope.fecha_fin | date:'dd/MM/yyyy' }}
+                                {{ fechaFinMostrar | date:'dd/MM/yyyy' }}
                               </div>
                             </div>
                             <!-- Periodo Actual -->

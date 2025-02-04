@@ -18,7 +18,6 @@ import { NgForm } from '@angular/forms';
 import { get } from 'http';
 import { subscribe } from 'diagnostics_channel';
 
-
 // ======= ======= ======= COMPONENTES ======= ======= =======
 @Component({
   selector: 'app-planifEstrategica',
@@ -339,7 +338,7 @@ export class PlanifEstrategicaComponent implements OnInit {
           id_proy_indicador: avanceData.id_proy_indicador || null,  // Asegúrate de que el campo correcto sea id_proy_indicador
           fecha_reportar: avanceData.fecha_reportar || '',  // Asegúrate de que se cargue correctamente
           fecha_hora_reporte: new Date().toISOString(),
-          valor_reportado: parseFloat(avanceData.valor_reportado.replace('$', '').replace(',', '')) || 0,  // Eliminar símbolo de dólar y coma si la hay
+          valor_reportado: parseFloat(avanceData.valor_reportado.replace('$', '').replace(',', '')) || 0 || null ,  // Eliminar símbolo de dólar y coma si la hay
           valor_esperado: parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', '')) || 0,  // Lo mismo para valor_esperado
           id_persona_reporte: avanceData.id_persona_reporte || null,
           comentarios: avanceData.comentarios || '',  // Cargar comentarios si existen
@@ -1505,6 +1504,136 @@ export class PlanifEstrategicaComponent implements OnInit {
       }
       this.ngOnInit();
     }
-  
+      // ======= ======= ======= ======= ======= ======= ======= ======= =======
+// ============== INDICADOR AVANCE - PROY_INDICADOR_AVANCE  ==============
+// ======= ======= ======= ======= ======= ======= ======= ======= =======
+    // ======= ======= NGMODEL VARIABLES GENERALES ======= =======
+    indicadorAvance: any[] = [];
+    // ======= NGMODEL VARIABLES SECTION INDICADOR AVANCE ======= 
+        //modalTitleInAvance: string = "";
+        modalActionInAvance: string = "";
+        
+        id_proy_indica_avance: any = "";
+        //id_proy_indicador: any = "";
+        fecha_reportar: any = "";
+        valor_esperado: any = "";
+        fecha_hora_reporte: any = "";
+        id_persona_reporte: any = "";
+        valor_reportado: any = "";
+        comentarios: any = "";
+        ruta_evidencia: any = "";
+
+        inAvance_persona_registro: any = "";
+        //inAvance_fecha_registro: any = ""; 
+    // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
+        valValorEsperado: any = true;
+        ValidateValorEsperado() {
+          this.valValorEsperado = true;
+          const valor = parseFloat(this.valor_esperado);
+          if (isNaN(valor) || valor < 0) {
+            this.valValorEsperado = false;
+          }
+        }
+        valComentarios: any = true;
+        ValidateComentarios(){
+          this.valComentarios = true;
+          if((!this.comentarios)||(this.comentarios.length >= 255)){
+            this.valComentarios = false;
+          }
+        }
+    // ======= ======= OPEN MODALS FUN ======= =======
+        //private modalRef: NgbModalRef | null = null;
+          openModalIndicadorAvance(content: TemplateRef<any>) {
+          this.initIndicadorAvanceModel()  
+          this.modalRef = this.modalService.open(content, { size: 'xl' });
+          }
+          closeModalIndicadorAvance() {
+          if (this.modalRef) {
+            this.modalRef.close(); 
+            this.modalRef = null;
+            }
+          }    
+    // ======= ======= INIT INDICADOR AVANCE MODEL ======= =======
+        initIndicadorAvanceModel() {
+          //this.modalTitleInAvance = "";
+
+          this.id_proy_indica_avance = 0;
+          this.id_proy_indicador = "";
+          this.fecha_reportar = "";
+          this.valor_esperado = "";
+          this.fecha_hora_reporte = null;
+          this.id_persona_reporte = "";
+          this.valor_reportado = null;
+          this.comentarios = "";
+          this.ruta_evidencia = null;
+
+          this.inAvance_persona_registro = "";
+          //this.inAvance_fecha_registro = "";
+          }
+    // ======= ======= GET INDICADOR AVANCE ======= =======
+        getIndicadorAvance() {
+          this.servIndicadorAvance.getIndicadoresAvanceById(this.idProyecto).subscribe(
+            (data) => {
+              this.indicadorAvance = (data[0].dato)?(data[0].dato):([]);
+            },
+            (error) => {
+              console.error(error);
+            }
+          );
+        }
+    // ======= ======= INIT ADD INDICADOR AVANCE ======= =======
+        initAddIndicadorAvance(modalScope: TemplateRef<any>) {
+          if (!this.planifEstrategicaSelected?.id_proy_indicador) {
+            alert('Por favor seleccione un indicador primero');
+            return;
+          }
+        
+          this.initIndicadorAvanceModel();
+          this.modalActionInAvance = "add";
+          console.log('ID del indicador seleccionado:', this.planifEstrategicaSelected.id_proy_indicador);
+          this.openModalIndicadorAvance(modalScope);
+        }     
+    // ======= ======= ADD INDICADOR AVANCE ======= =======
+        addIndicadorAvance() {
+          if (!this.planifEstrategicaSelected?.id_proy_indicador) {
+            console.error('No hay un indicador seleccionado');
+            return;
+          }
+          const objIndicadorAvance = {
+            p_id_proy_indica_avance: 0,
+            p_id_proy_indicador: this.planifEstrategicaSelected.id_proy_indicador,
+            p_fecha_reportar: this.fecha_reportar,
+            p_valor_esperado: this.valor_esperado,
+            p_fecha_hora_reporte: null,
+            p_id_persona_reporte: parseInt(this.idPersonaReg,10),
+            p_valor_reportado: null,
+            p_comentarios: this.comentarios,
+            p_ruta_evidencia: null
+          };
+          console.log('Datos a enviar:', objIndicadorAvance);
+          
+          this.servIndicadorAvance.addIndicadorAvance(objIndicadorAvance).subscribe(
+            (data) => {
+              alert('Avance agregado exitosamente');
+              this.getIndicadorAvance();
+              this.closeModalIndicadorAvance();
+              this.cargarIndicadoresAvance();
+            },
+            (error) => {
+              console.error('Error al guardar los datos:', error);
+              alert('Error al guardar los datos');
+            }
+          );
+        }
+
+    // ======= ======= ======= ======= VALIDATION INDICADOR AVANCE ======= =======
+    onSudmidIndicadorAvance(): void {
+      let valForm = false;
+      this.ValidateComentarios();
+      this.ValidateValorEsperado();
+      if (this.valComentarios && this.valValorEsperado) {
+        this.addIndicadorAvance();
+      }
+    }
   
   }

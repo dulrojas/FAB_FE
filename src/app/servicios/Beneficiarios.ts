@@ -20,7 +20,7 @@ export class BeneficiariosService {
         "params": [
           { "name": "p_accion", "value": "C1", "type": "string" },
           { "name": "p_id_proy_beneficiario", "value": null, "type": "int" },
-          { "name": "", "value":id_proyecto, "type": "int" },
+          { "name": "p_id_proyecto", "value":id_proyecto, "type": "int" },
           { "name": "p_idp_organizacion_tipo", "value": null, "type": "int" }, 
           { "name": "p_id_organizacion", "value":null, "type": "int" },
           { "name": "p_id_tipo_geo_n3", "value": null, "type": "int" },

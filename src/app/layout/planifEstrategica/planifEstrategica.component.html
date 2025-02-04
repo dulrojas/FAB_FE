@@ -571,6 +571,16 @@
                                                         </td>
                                                     </tr>
                                                 </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">
+                                                            <button type="button" class="btn btn-bg-1" 
+                                                                    (click)="openModalIndicadorAvance(indicadorAvance)">
+                                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir Nuevo Avance
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
                                             </table>
                                         </div>
                                         <div class="col-xl-5 col-lg-5 mt-auto">
@@ -640,19 +650,6 @@
                 />
             </div>
 
-    
-            <div class="form-group">
-                <label for="editValorReportado">Valor Reportado:</label>
-                <input
-                    type="number"
-                    step="0.01"
-                    id="editValorReportado"
-                    class="form-control"
-                    [(ngModel)]="editAvance.valor_reportado"
-                    name="valor_reportado"
-                  
-                />
-            </div>
             <div class="form-group">
                 <label for="editComentarios">Comentarios:</label>
                 <textarea
@@ -723,3 +720,67 @@
 </ng-template>
 
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
+ <!-- ======= ======= ======= ======= ======= ======= ======= -->
+<ng-template #indicadorAvance let-modal class="custom-modal">
+    <!-- Encabezado del Modal-->
+    <div class="modal-header">
+        <h4 class="modal-title">Añadir un nuevo Avance</h4>
+    </div>
+    <!-- Cuerpo del Modal-->
+    <div class="modal-body">
+        <form #inAvanceForm="ngForm" (ngSubmit)="onSudmidIndicadorAvance(inAvanceForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- Primera Fila: FECHA REPORTAR, VALOR ESPERADO-->
+                                <!-- ======= ======= FECHA ======= ======= --> 
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="fecha_reportar">Fecha reportar</label>
+                                    <input class="form-control" type="date" 
+                                                id="fecha_reportar" name="fecha_reportar" 
+                                                [(ngModel)]="fecha_reportar"/>
+                                </div>
+                                <!-- ======= ======= VALOR ESPERADO ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="valor_esperado">Valor Esperado</label>
+                                    <input class="form-control" type="number" 
+                                           id="valor_esperado" name="valor_esperado"  
+                                           placeholder="Ingresa el valor esperado"
+                                           [(ngModel)]="valor_esperado"
+                                           (change)="ValidateValorEsperado()"/> 
+                                    <span class="custom-alert-message" *ngIf="!valValorEsperado">
+                                        El valor esperado debe ser mayor o igual a 0
+                                    </span>
+                                </div>
+                                <!-- Segunda Fila: COMENTARIOS-->                            
+                                <!-- ======= ======= COMENTARIOS ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <label for="comentarios">Comentarios</label>
+                                    <input  class="form-control" type="text" 
+                                        id="comentarios" name="comentarios"  
+                                        placeholder="Ingresa un comentario"
+                                        [(ngModel)]="comentarios" (change)="ValidateComentarios()"/> 
+                                    <span class="custom-alert-message" *ngIf="!valComentarios">Debe ingresar un comentario</span>       
+                                </div>
+                                <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+                                <div class="modal-footer mt-2 d-flex justify-content-center"> 
+                                    <button type="button" class="btn btn-bg-3" (click)="closeModalIndicadorAvance()">
+                                    <i class="fa fa-times"></i> Cancelar
+                                    </button>
+                                    <button type="submit" class="btn btn-bg-1" 
+                                            [disabled]="!valValorEsperado || !valComentarios">
+                                        <i class="fa fa-floppy-o"></i> Grabar
+                                    </button>                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+        </form>
+        
+    </div>
+</ng-template>
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// --> 

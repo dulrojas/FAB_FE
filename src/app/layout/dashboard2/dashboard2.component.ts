@@ -82,6 +82,7 @@ export class Dashboard2Component implements OnInit {
             fecha_fin_real: data[0].dato[0].fecha_fin_real
           };
           this.calculatePeriodoActual();
+          this.getProyectDateGaps();
         //TARJETA 3
           this.procesarDatosPresupuesto(data[0].dato[0]);
           this.moneda_presupuesto = data[0].dato[0].moneda_presupuesto || 'Bs';      
@@ -206,17 +207,18 @@ export class Dashboard2Component implements OnInit {
       finalDateGap: number = 0;
       realFinalDate: string = '';
       periodoActual: string = '';
+      fechaFinMostrar: string = '';
 
       getProyectDateGaps() {
         // Paso 1: Asignar fecha final inicial desde `fecha_fin`
-        this.realFinalDate = this.proyectoScope.fecha_fin;
+        this.fechaFinMostrar = this.proyectoScope.fecha_fin;
         // Paso 2: Verificar y sobrescribir con `fecha_fin_ampliada` si está disponible
-        if (this.proyectoScope.fecha_fin_ampliada) {
-            this.realFinalDate = this.proyectoScope.fecha_fin_ampliada;
+        if (this.proyectoScope.fecha_fin_ampliada && this.proyectoScope.fecha_fin_ampliada !== '0') {
+          this.fechaFinMostrar = this.proyectoScope.fecha_fin_ampliada;
         }
         // Paso 3: Verificar y sobrescribir con `fecha_fin_real` si está disponible
         if (this.proyectoScope.fecha_fin_real) {
-            this.realFinalDate = this.proyectoScope.fecha_fin_real;
+          this.fechaFinMostrar = this.proyectoScope.fecha_fin_real;
         }
         // Paso 4: Actualizar el periodo actual formateado a DD/MM/AAAA
         this.calculatePeriodoActual();
@@ -232,6 +234,7 @@ export class Dashboard2Component implements OnInit {
           // Actualizar la variable `periodoActual` con el formato DD/MM/AAAA de la fecha actual
           this.periodoActual = `${day}/${month}/${year}`;         
         }
+        
 
   // ====== ======= ====== ====== TERCERA TARJETA DONA DE PRESUPUESTO DEL PROYECTO ====== ======= ====== ======   
       // Variables para tarjeta 3

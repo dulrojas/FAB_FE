@@ -52,9 +52,6 @@ export class BeneficiariosComponent implements OnInit {
   beneficiariesFormUbicacion:FormGroup;
   aliadosForm: FormGroup;
   organizacionForm: FormGroup;
-  mainPage = 1;
-  mainPageSize = 10;
-  totalLength = 0;
   previousIdProyecto: any;
   selectedOrganizacionId: any;
   geografia: any;
@@ -86,24 +83,17 @@ export class BeneficiariosComponent implements OnInit {
 
 
   // ======= ======= VARIABLES SECTION ======= =======
-  departamentos: any[] = [];
-  provincias: any[] = [];
-  municipios: any[] = [];
-  comunidades: any[] = [];
-  tiposOrganizacion: any[] = [];
-  actividades: any[] = [];
-  organizacionTipo: any[] = [];
-  tiposConvenio: any[] = [];
-  peronsaRegistro:any="";
+      departamentos: any[] = [];
+      provincias: any[] = [];
+      municipios: any[] = [];
+      comunidades: any[] = [];
 
-  beneficiariosActividad: any = [];
-  beneficiariosTipoOrganizacion: any = [];
-  beneficiariosOrganizacion: any[] = [];
-
-  parametrosGenerales: any[] = [];
+      beneficiariosOrganizacion: any[] = [];
+      beneficiariosActividad: any[] = [];
+      beneficiariosOrganizacionTipo: any[] = [];
   
   // ======= ======= HEADER SECTION ======= =======
-  idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+    idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
     idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
     namePersonaReg: any = localStorage.getItem('userFullName');
     currentPerProRol: any = localStorage.getItem('currentPerProRol');
@@ -119,7 +109,8 @@ export class BeneficiariosComponent implements OnInit {
       this.initForm();
       this.loadDepartamentos();
       this.loadRangosEdad();
-      
+      //General
+      this.getParametricasOrganizaciones();
       //Aliados
       this.getParametricasAliados();
       this.getAliados();
@@ -144,6 +135,8 @@ export class BeneficiariosComponent implements OnInit {
     this.initForm();
     this.loadDepartamentos();
     this.loadRangosEdad();
+    //General
+    this.getParametricasOrganizaciones();
     //Beneficiarios
     this.getParametricasBeneficiarios();
     //Aliados
@@ -168,6 +161,16 @@ export class BeneficiariosComponent implements OnInit {
     const org = paramList.find(elem => elem.id_organizacion == idRegistro);
     return org ? org.organizacion : 'Null';
   }
+  // GET ACTIVIDAD
+  getActividad(idRegistro: any, paramList: any): string{
+    const actividad = paramList.find(elem => elem.id_proy_actividad == idRegistro);
+    return actividad ? actividad.actividad : 'Null';
+  }
+  // GET ORGANIZACION TIPO
+  getOrganizacionTipo(idRegistro: any, paramList: any): string{
+  const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
+  return subtipo ? subtipo.descripcion_subtipo : 'Null';
+  }
 
   getCurrentDateTime(): string {
     const date: Date = new Date();
@@ -183,75 +186,66 @@ export class BeneficiariosComponent implements OnInit {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
-    getParametricasBeneficiarios(){
-      //Actividad
-        this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
-          (data) => {
-            this.beneficiariosActividad = data[0].dato;
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
-      // Tipos de organización
-        this.servicios.getParametricaByIdTipo(18).subscribe(
-          (data) => {
-            this.beneficiariosTipoOrganizacion = data[0].dato;
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
-      // Organización
-        this.ServOrganizacion.getOrganizacionByIdProy(this.idProyecto).subscribe(
-          (data) => {
-            this.beneficiariosOrganizacion = data[0].dato;
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
+getParametricasBeneficiarios(){
+  // Actividad
+  this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
+    (data) => {
+      console.log('Actividades cargadas:', data);
+      if(data[0]?.dato) {
+        this.beneficiariosActividad = data[0].dato;
       }
-      getActividad(idRegistro: any, paramList: any): string{
-              const actividad = paramList.find(elem => elem.id_proy_actividad == idRegistro);
-              return actividad ? actividad.actividad : 'Null';
-            }
-      
-      getIdActividad(nombre: string): number | undefined {
-          const actividad = this.beneficiariosActividad.find(act => act.actividad === nombre);
-          return actividad ? actividad.id_proy_actividad : undefined;
+    },
+    (error) => {
+      console.error('Error al cargar actividades:', error);
+    }
+  );
+
+  // Tipos de organización
+  this.servicios.getParametricaByIdTipo(18).subscribe(
+    (data) => {
+      console.log('Tipos de organización cargados:', data);
+      if(data[0]?.dato) {
+        this.beneficiariosOrganizacionTipo = data[0].dato;
       }
+    },
+    (error) => {
+      console.error('Error al cargar tipos de organización:', error);
+    }
+  );
 
-// inicializar formulario con los campos del beneficiario
-   initForm(): void {
-    this.beneficiariesForm = this.fb.group({
-      id: [{ value: '', disabled: true }],
-      fecha: ['', Validators.required],
-      departamento: [''],
-      municipio: [{ value: '', disabled: true }],
-      comunidad: [{ value: '', disabled: true }],
-      tipoOrganizacion: ['', Validators.required],
-      organizacion: ['', Validators.required],
-      actividad: ['', Validators.required],
-      evento: ['', Validators.required],
-      mujeres: [{value: 0, disabled: true}],
-      hombres: [{value: 0, disabled: true}],
-      total: [{value: 0, disabled: true}],
-      details:['', Validators.required],
-      registeredBy: [{ value: '' ,disabled: true }] // Este campo es solo lectura
-    });
-  
+  // Organización
+  this.ServOrganizacion.getOrganizacionByIdProy(this.idProyecto).subscribe(
+    (data) => {
+      console.log('Organizaciones cargadas:', data);
+      if(data[0]?.dato) {
+        this.beneficiariosOrganizacion = data[0].dato;
+      }
+    },
+    (error) => {
+      console.error('Error al cargar organizaciones:', error);
+    }
+  );
+}
 
-this.beneficiariesFormUbicacion=this.fb.group({
-
-  departamento: [''],
-  municipio: [''],
-  comunidad: ['']
-});
-    
-  }
-  
-
+      // inicializar formulario con los campos del beneficiario
+      initForm(): void {
+        this.beneficiariesForm = this.fb.group({
+          id: [{ value: '', disabled: true }],
+          fecha: ['', [Validators.required]],
+          departamento: ['', [Validators.required]],
+          municipio: [{ value: '', disabled: true }, [Validators.required]],
+          comunidad: [{ value: '', disabled: true }, [Validators.required]],
+          id_proy_actividad: ['', [Validators.required]],
+          idp_organizacion_tipo: ['', [Validators.required]],
+          id_organizacion: ['', [Validators.required]],
+          evento: ['', [Validators.required]],
+          mujeres: [{value: 0, disabled: true}],
+          hombres: [{value: 0, disabled: true}],
+          total: [{value: 0, disabled: true}],
+          details: ['', [Validators.required]],
+          registeredBy: [{ value: '', disabled: true }]
+        });
+      }
   loadGeografica():void{
     this.ubicaGeograficaService.getUbicaGeografica().subscribe(
       (response) => {
@@ -291,11 +285,6 @@ this.beneficiariesFormUbicacion=this.fb.group({
   getIdComunidad(nombre: string): number | undefined {  
     const comunidad =  this.geografia.find(comu => comu.nombre === nombre);
     return comunidad ? comunidad.id_ubica_geo : undefined;
-  }
-
-  getIdTipoOrganizacion(nombre: string): number | undefined {
-    const tipoOrganizacion = this.beneficiariosTipoOrganizacion.find(tipo => tipo.descripcion_subtipo === nombre);
-    return tipoOrganizacion ? tipoOrganizacion.id_subtipo : undefined;
   }
 
   onDepartamentoChange(p_orden_departamento: any): void {
@@ -373,44 +362,40 @@ this.beneficiariesFormUbicacion=this.fb.group({
     this.beneficiariesForm.get('comunidad')?.enable();
   }
 
-  
   loadBeneficiarios(): void {
     this.beneficiariosService.getBeneficiarios(this.idProyecto).subscribe(
       (response) => {
-        console.log('Datos recibidos del servicio:', response);
-        console.log('nombre de la persona', this.namePersonaReg);
-  
         if (response[0]?.res === 'OK') {
           const rawBeneficiarios = Array.isArray(response[0]?.dato) ? response[0].dato : [];
+          
+          this.beneficiariosTable = rawBeneficiarios.map((item: any) => {
+            // Buscar el tipo de organización
+            const tipoOrg = this.beneficiariosOrganizacionTipo.find(
+              tipo => tipo.id_subtipo === item.idp_organizacion_tipo
+            );
   
-          console.log('Beneficiarios procesados:', rawBeneficiarios);
-  
-          this.beneficiariosTable = rawBeneficiarios.map((item: any) => ({
-            id: item.id,
-            fecha: item.fecha,
-            departamento:item.departamento,
-            municipio: item.municipio || null,
-            comunidad: item.comunidad ||null,
-            tipoOrganizacion: item.organizacion_tipo || null,
-            organizacion: item.organizacion || null,
-            actividad: item.actividad || null,
-            evento: item.titulo_evento ||null,
-            details: item.evento_detalle ||null,
-            mujeres: item.mujeres || 0,
-            hombres: item.hombres || 0,
-            total: item.total || 0,
-          }));
+            return {
+              id: item.id,
+              fecha: item.fecha,
+              departamento: item.departamento,
+              municipio: item.municipio || null,
+              comunidad: item.comunidad || null,
+              tipoOrganizacion: tipoOrg ? tipoOrg.descripcion_subtipo : null,
+              organizacion: item.organizacion || null,
+              actividad: item.actividad || null,
+              evento: item.titulo_evento || null,
+              details: item.evento_detalle || null,
+              mujeres: item.mujeres || 0,
+              hombres: item.hombres || 0,
+              total: item.total || 0,
+            };
+          });
   
           this.totalLengthBeneficiarios = this.beneficiariosTable.length;
-         this.countHeaderData();
-  
-        } else {
-          console.error('Respuesta inválida del servicio:', response);
+          this.countHeaderData();
         }
       },
-      (error) => {
-        console.error('Error al cargar los beneficiarios:', error);
-      }
+      (error) => console.error('Error al cargar los beneficiarios:', error)
     );
   }
   
@@ -434,7 +419,7 @@ this.beneficiariesFormUbicacion=this.fb.group({
     
     // Filtrar el ID de la organización por el nombre proporcionado
     if (selectedBeneficiario.organizacion) {
-      const organizacion = this.organizacionTipo.find(
+      const organizacion = this.beneficiariosOrganizacionTipo.find(
         org => org.organizacion === selectedBeneficiario.organizacion
       );
 
@@ -532,108 +517,88 @@ this.beneficiariesForm.patchValue({
 
    // Guardar o actualizar beneficiario
    onSubmit(): void {
+    Object.keys(this.beneficiariesForm.controls).forEach(key => {
+      const control = this.beneficiariesForm.get(key);
+      control?.markAsTouched();
+    });
+  
     if (this.beneficiariesForm.invalid) {
-      // Marca todos los controles como tocados para activar los mensajes de error
-      this.beneficiariesForm.markAllAsTouched();
+      console.log('Formulario inválido:', this.beneficiariesForm.errors);
       return;
-  }
-
+    }
+  
     const formValue = this.beneficiariesForm.getRawValue();
-    const isEditingOrganizacion = !!formValue.organizacion; // Verifica si hay una organización existente
-
-    // Usar el ID global de la organización
-    const organizacionId = this.selectedOrganizacionId || null;
-
-    console.log('ID de organización seleccionado:', organizacionId);
-
-
-   
-    const organizacionObservable = isEditingOrganizacion
-      ? this.ServOrganizacion.editOrganizacion({ id: organizacionId, ...formValue })
-      : this.ServOrganizacion.addOrganizacion({ ...formValue });
-
-    organizacionObservable.subscribe(
-        (response) => {
-            console.log(
-              organizacionId!=null ? 'Organización editada con éxito:' : 'Organización creada con éxito:',
-                response
-            );
-
-            const organizacionResponse = Array.isArray(response) ? response[0] : response;
-            const finalOrganizacionId = organizacionResponse?.dato?.id || organizacionId;
-
-           
-
-            // Beneficiario
-            const isEditingBeneficiario = !!formValue.id; // Verifica si hay un beneficiario existente
-            const beneficiarioData = {
-                id: isEditingBeneficiario ? formValue.id : null,
-                id_proyecto: parseInt(this.idProyecto, 10),
-                fecha: formValue.fecha || null,
-                departamento: formValue.departamento || null,
-                municipio: this.getIdMunicipio(formValue.municipio) || null,
-                comunidad: this.getIdComunidad(formValue.comunidad) || null,
-                tipoOrganizacion: this.getIdTipoOrganizacion(formValue.tipoOrganizacion) || null,
-                organizacion: finalOrganizacionId,
-                actividad: this.getIdActividad(formValue.actividad) || null,
-                evento: formValue.evento || '',
-                mujeres: formValue.mujeres || 0,
-                hombres: formValue.hombres || 0,
-                total: (formValue.mujeres || 0) + (formValue.hombres || 0),
-                details: formValue.details || '',
-                registeredBy: this.idPersonaReg || null,
-            };
-
-            console.log('Datos normalizados para beneficiario:', beneficiarioData);
-
-            if (isEditingBeneficiario) {
-                this.editBeneficiario(beneficiarioData);
-                this.modalService.dismissAll();// esto es para cerrar el modal
-
-            } else {
-                this.addBeneficiario(beneficiarioData);
-                this.modalService.dismissAll();// esto es para cerrar el modal
-            }
-        },
-        (error) => {
-            console.error('Error al procesar la organización:', error);
-            alert('No se pudo procesar la organización. Por favor, intenta de nuevo.');
-        }
-    );
-}
+    
+    // Validaciones adicionales
+    if (!formValue.departamento || !formValue.municipio || !formValue.comunidad) {
+      console.log('Faltan campos de ubicación');
+      return;
+    }
+  
+    // Validar campos específicos
+    if (!formValue.id_proy_actividad || !formValue.idp_organizacion_tipo || !formValue.id_organizacion) {
+      console.log('Faltan campos obligatorios de organización o actividad');
+      return;
+    }
+  
+    const beneficiarioData = {
+      id: formValue.id || null,
+      id_proyecto: parseInt(this.idProyecto, 10),
+      fecha: formValue.fecha,
+      departamento: formValue.departamento,
+      municipio: formValue.municipio ? this.getIdMunicipio(formValue.municipio) : null,
+      comunidad: formValue.comunidad ? this.getIdComunidad(formValue.comunidad) : null,
+      id_proy_actividad: parseInt(formValue.id_proy_actividad),
+      idp_organizacion_tipo: parseInt(formValue.idp_organizacion_tipo),
+      id_organizacion: parseInt(formValue.id_organizacion),
+      evento: formValue.evento,
+      mujeres: formValue.mujeres || 0,
+      hombres: formValue.hombres || 0,
+      total: (formValue.mujeres || 0) + (formValue.hombres || 0),
+      details: formValue.details,
+      registeredBy: this.idPersonaReg
+    };
+  
+    console.log('Datos a enviar:', beneficiarioData);
+  
+    if (formValue.id) {
+      this.editBeneficiario(beneficiarioData);
+    } else {
+      this.addBeneficiario(beneficiarioData);
+    }
+  }
   
   // Método para editar beneficiario
   editBeneficiario(beneficiarioData: any): void {
-      this.beneficiariosService.editBeneficiario(beneficiarioData).subscribe(
-          (response) => {
-              console.log('Respuesta del backend (edición):', response);
-              if (response[0]?.res === 'OK') {
-                  this.loadBeneficiarios();
-                  this.initForm();
-                  this.modalService.dismissAll();
-              } else {
-                  console.error('Error en la respuesta del backend (edición):', response);
-              }
-          },
-          (error) => console.error('Error al editar beneficiario:', error)
-      );
+    this.beneficiariosService.editBeneficiario(beneficiarioData).subscribe({
+      next: (response) => {
+        if (response[0]?.res === 'OK') {
+          this.loadBeneficiarios();
+          this.modalService.dismissAll();
+        } else {
+          console.error('Error en la respuesta:', response);
+        }
+      },
+      error: (error) => {
+        console.error('Error al editar:', error);
+      }
+    });
   }
   
-  // Método para agregar beneficiario
   addBeneficiario(beneficiarioData: any): void {
-      this.beneficiariosService.addBeneficiario(beneficiarioData).subscribe(
-          (response) => {
-              console.log('Respuesta del backend (creación):', response);
-              if (response[0]?.res === 'OK') {
-                  this.loadBeneficiarios();
-                this.initForm();
-                  this.modalService.dismissAll();
-              } else {
-                  console.error('Error en la respuesta del backend (creación):', response);
-              }
-          },
-          (error) => console.error('Error al guardar beneficiario:', error)
-      );
+    this.beneficiariosService.addBeneficiario(beneficiarioData).subscribe({
+      next: (response) => {
+        if (response[0]?.res === 'OK') {
+          this.loadBeneficiarios();
+          this.modalService.dismissAll();
+        } else {
+          console.error('Error en la respuesta:', response);
+        }
+      },
+      error: (error) => {
+        console.error('Error al añadir:', error);
+      }
+    });
   }
 
   openDeleteBeneficiarioModal(deleteBeneficiarioModal: TemplateRef<any>): void {
