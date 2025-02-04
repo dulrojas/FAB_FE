@@ -374,13 +374,13 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.servIndicadorAvance.editIndicadorAvance(avanceEditado).subscribe(
         (response) => {
           console.log('Actualización exitosa:', response);
-  
+          this.cargarIndicadoresAvance();
         },
         (error) => {
           console.error('Error al actualizar:', error);
         }
       );
-      this.cargarIndicadoresAvance();
+      
     }
   
   
