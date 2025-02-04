@@ -293,15 +293,22 @@ export class LogrosComponent implements OnInit {
     getLogros(){
       this.servLogros.getLogrosByIdProy(this.idProyecto).subscribe(
         async (data) => {
-          this.logros = data[0]?.dato || [];
+          this.logros = (data[0].dato)?(data[0].dato):([]);
           this.logros.forEach((logro: any) => {
             logro.selected = false
           });
     
           await Promise.all(
-            this.logros.map(async (logro: any) => {
-              logro.imagen_src = await this.downloadFile("proy_logros", "ruta_imagen", "id_proy_logro", logro.id_proy_logro);
-            })
+            this.logros
+              .filter((logro: any) => (logro.ruta_imagen))
+              .map(async (logro: any) => {
+                logro.imagen_src = await this.downloadFile(
+                  "proy_logros",
+                  "ruta_imagen",
+                  "id_proy_logro",
+                  logro.id_proy_logro
+                );
+              })
           );
     
           this.countHeaderData();
@@ -365,7 +372,9 @@ export class LogrosComponent implements OnInit {
       this.fecha_logro = this.logrosSelected.fecha_logro;
 
       this.imageSelected = this.images.find((image) => image.ruta_icono == this.logrosSelected.ruta_imagen);
-      this.imageSelected.selected = true;
+      if(this.imageSelected){
+        this.imageSelected.selected = true;
+      }
       this.ruta_imagen = this.logrosSelected.imagen_src;
       
       this.sigla = this.logrosSelected.sigla;

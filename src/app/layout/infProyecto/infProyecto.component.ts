@@ -286,9 +286,16 @@ export class InfProyectoComponent implements OnInit {
         });
     
         this.instObjetivos = data[0].dato;
+        this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 2);
+        this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 1);
     
         for (const objetivo of this.instObjetivos) {
-          objetivo.imagen_src = await this.downloadFile("inst_objetivos", "objetivo_imagen", "id_inst_objetivos", objetivo.id_inst_objetivos);
+          objetivo.imagen_src = await this.downloadFile(
+            "inst_objetivos", 
+            "objetivo_imagen", 
+            "id_inst_objetivos", 
+            objetivo.id_inst_objetivos
+          );
         }
 
         // ======= GET OBJETIVOS =======

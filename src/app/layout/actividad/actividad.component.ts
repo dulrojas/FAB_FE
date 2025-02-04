@@ -119,7 +119,10 @@ export class ActividadComponent implements OnInit {
       }
 
       let presupuestoFormated = (this.presupuestoProy)?(this.presupuestoProy):(1);
-      let porcentajeGrafico = parseFloat((100*(this.ejecutadoProy / presupuestoFormated)).toFixed(2));
+      let porcentajeGrafico = 0;
+      if(this.presupuestoProy){
+        porcentajeGrafico = parseFloat((100*(this.ejecutadoProy / presupuestoFormated)).toFixed(2));
+      }
 
       this.doughnutChartProy = new Chart(ctx, {
         type: 'doughnut',
@@ -188,7 +191,10 @@ export class ActividadComponent implements OnInit {
       }
 
       let presupuestoFormated = (this.presupuestoGest)?(this.presupuestoGest):(1);
-      let porcentajeGrafico = parseFloat((100*(this.ejecutadoGest / presupuestoFormated)).toFixed(2));
+      let porcentajeGrafico = 0;
+      if(this.presupuestoGest){
+        porcentajeGrafico = parseFloat((100*(this.ejecutadoGest / presupuestoFormated)).toFixed(2));
+      }
     
       this.doughnutChartGest = new Chart(ctx, {
         type: 'doughnut',
