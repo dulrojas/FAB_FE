@@ -82,14 +82,14 @@ export class servAprendizaje{
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET PREGUNTAS ======= ======= =======
-  getPreguntas(idProy: any): Observable<any> {
+  getPreguntas(): Observable<any> {
     const params = {
         "procedure_name": "sp_aprendizaje",
         "body": {
             "params": [
                 {"name": "p_accion", "value": "C4", "type": "string"},
                 {"name": "p_id_proy_aprende", "value": null, "type": "int"},
-                {"name": "p_id_proyecto", "value": idProy, "type": "int"},
+                {"name": "p_id_proyecto", "value": null, "type": "int"},
                 {"name": "p_aprendizaje", "value": null, "type": "string"},
                 {"name": "p_problema", "value": null, "type": "string"},
                 {"name": "p_accion_aprendizaje", "value": null, "type": "string"},

@@ -152,63 +152,48 @@
             <!-- ======= ======= ======= ======= ======= -->
             <!-- ======= ======= BUTTONS SECTION ======= ======= -->
             <div class="row">
-                <div class="col col-md-5 col-lg-5">
-                    <!-- ======= HEADER SECTION ======= -->
+                <div class="col col-md-1 col-lg-1">
                     <div class="row custom-actividad-header">
-                        <div class="col col-md-2 col-lg-2">
+                        <div class="col col-md-12 col-lg-12">
                             RES
                         </div>
-                        <div class="col col-md-5 col-lg-5">
-                            ACTIVIDADES
-                        </div>
-                        <div class="col col-md-3 col-lg-3">
-                            PRESUPUESTO
-                        </div>
-                        <div class="col col-md-2 col-lg-2">
-                            AVANCE
-                        </div>
                     </div>
-                    <!-- ======= ======= ======= -->
-                    <!-- ======= ACTIVIDADES SECTION ======= -->
-                    <div class="row my-1" *ngFor="let elementoGant of elementosGant">
-                        <div class="col col-md-2 col-lg-2 custom-elemento-container">
-                            <span class="custom-vertical-text custom-elemento-span">
-                                Res {{ elementoGant.codigo }}
-                            </span>
-                        </div>
-                        <div class="col col-md-10 col-lg-10">
-                            <div class="row mb-1 custom-actividad-gant-container" 
-                                *ngFor="let actividadGant of elementoGant.childrens"
-                                [ngClass]="{'custom-actividad-gant-container-selected': actividadGant.selected}"
-                                (click)="onActividadClick(actividadGant)">
-                                <div class="col col-md-6 col-lg-6 custom-elemento-actividad">
-                                    {{ actividadGant.actividad }}
+                </div>
+                <div class="col col-md-11 col-lg-11">
+                    <div class="row">
+                        <div class="col col-md-5 col-lg-5">
+                            <!-- ======= HEADER SECTION ======= -->
+                            <div class="row custom-actividad-header">
+                                <div class="col col-md-6 col-lg-6">
+                                    ACTIVIDADES
                                 </div>
-                                <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
-                                    {{ actividadGant.presupuesto }}
+                                <div class="col col-md-4 col-lg-4">
+                                    PRESUPUESTO
                                 </div>
-                                <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
-                                    {{ actividadGant.porcentajeAvance }}%
-                                    <canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="50" height="50"></canvas>
+                                <div class="col col-md-2 col-lg-2">
+                                    AVANCE
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- ======= ======= ======= -->
-                </div>
-                <!-- ======= ======= ======= ======= ======= -->
-                <!-- ======= ======= GANT CHART SECTION ======= ======= -->
-                <div class="col col-md-7 col-lg-7">
-                    <div class="row">
-                        <div class="col col-md-12 col-lg-12">
+                        <div class="col col-md-7 col-lg-7">
                             <label class="custom-gant-header">
                                 {{ gestion }}
                             </label>
                         </div>
-                        <div class="col col-md-12 col-lg-12">
-                            <div class="row custom-row-relative">
-                                <div class="col col-md-12 col-lg-12 custom-gant-chart-background">
-                                    <div class="row mx-1">
+
+                    </div>
+                </div>
+                <div class="col col-md-12 col-lg-12 custom-row-relative">
+                    <div class="row custom-gant-chart-background">
+                        <div class="col col-md-1 col-lg-1">
+                        </div>
+
+                        <div class="col col-md-11 col-lg-11">
+                            <div class="row">
+                                <div class="col col-md-5 col-lg-5">
+                                </div>
+                                <div class="col col-md-7 col-lg-7">
+                                    <div class="row">
                                         <div class="col col-md-1 col-lg-1 custom-month-col">
                                             <span class="custom-month-span">
                                                 Ene
@@ -271,23 +256,49 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col col-md-12 col-lg-12 custom-gant-chart-content progress-bar-container">
-                                    
-                                    <div class="row" *ngFor="let elementoGant of elementosGant">
-                                        <div class="col col-md-12 col-lg-12">
-                                            <div class="row" *ngFor="let actividadGant of elementoGant.childrens">
-                                                
-                                                <div [style.width.%]="actividadGant.init_date_gap">
-                                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                                                <div class="custom-actividad-progress-bar"
-                                                    [style.width.%]="actividadGant.date_gap">
-                                                    <div 
-                                                        class="custom-actividad-progress-fill" 
-                                                        [style.width.%]="actividadGant.porcentajeAvance">
-                                                    </div>
-                                                </div>
-
+                <div class="col col-md-12 col-lg-12 pt-4">
+                    <!-- ======= ACTIVIDADES SECTION ======= -->
+                    <div class="row my-1" *ngFor="let elementoGant of elementosGant">
+                        <div class="col col-md-1 col-lg-1 custom-elemento-container">
+                            <span class="custom-vertical-text custom-elemento-span">
+                                Res {{ elementoGant.codigo }}
+                            </span>
+                        </div>
+                        <div class="col col-md-11 col-lg-11">
+                            <div class="row mb-1 custom-actividad-gant-container" 
+                                *ngFor="let actividadGant of elementoGant.childrens"
+                                [ngClass]="{'custom-actividad-gant-container-selected': actividadGant.selected}"
+                                (click)="onActividadClick(actividadGant)">
+                                <div class="col col-md-5 col-lg-5">
+                                    <div class="row">
+                                        <div class="col col-md-6 col-lg-6 custom-elemento-actividad">
+                                            {{ actividadGant.actividad }}
+                                        </div>
+                                        <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
+                                            {{ parseAmountFloatToStr(actividadGant.presupuesto) }}
+                                        </div>
+                                        <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
+                                            {{ actividadGant.porcentajeAvance }}%
+                                            <!--canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="50" height="50"></canvas-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col col-md-7 col-lg-7">
+                                            
+                                    <div class="row">
+                                        <div [style.width.%]="actividadGant.init_date_gap_por">
+                                        </div>
+    
+                                        <div class="custom-actividad-progress-bar"
+                                            [style.width.%]="actividadGant.date_gap_por">
+                                            <div 
+                                                class="custom-actividad-progress-fill" 
+                                                [style.width.%]="actividadGant.porcentajeAvance">
                                             </div>
                                         </div>
                                     </div>
@@ -296,8 +307,10 @@
                             </div>
                         </div>
                     </div>
+                    <!-- ======= ======= ======= -->
                 </div>
                 <!-- ======= ======= ======= ======= ======= -->
+
             </div>
         </div>
     </div>
@@ -486,10 +499,10 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr *ngFor="let aprendizaje of aprendizajesTable; let i = index">
-                                                            <td>{{ row.Declaracion }}</td>
-                                                            <td>{{ row.Avance }}</td>
-                                                            <td>{{ row.Ejecucion }}</td>
+                                                        <tr *ngFor="let actividadAvance of actividadAvances">
+                                                            <td>{{ ((actividadAvance.fecha_hora).slice(0,10)) }}</td>
+                                                            <td>{{ actividadAvance.avance }}</td>
+                                                            <td>{{ actividadAvance.monto_ejecutado }}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -503,21 +516,10 @@
                                         <label for="resultado">Factores que impidieron el cumplimiento</label>
                                         <textarea class="form-control" type="text" 
                                             id="resultado" name="resultado" 
-                                            [(ngModel)]="resultado" [disabled]="modalAction == 'add'">
+                                            placeholder="Si sera reprogramado ingrese el motivo de incumplimiento"
+                                            [(ngModel)]="resultado" 
+                                            [disabled]="modalAction == 'add'">
                                         </textarea>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <div class="d-flex justify-content-center">
-                                        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                                            <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                                        </button>
-                                        <button type="button" class="btn btn-bg-2" [disabled]="modalAction == 'add'" (click)="modal.close('Cerrar')">
-                                            <i aria-hidden="true"></i> Reprogramar
-                                        </button>
-                                        <button type="button" class="btn btn-bg-1" (click)="onSubmit()">
-                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -525,6 +527,24 @@
                     </div>
                 </div>
             </form>
+        </div>
+        
+        <div class="modal-footer">
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-bg-3" 
+                    (click)="modal.close('Cerrar')">
+                    <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-bg-2" 
+                    [disabled]="modalAction == 'add'" 
+                    (click)="modal.close('Cerrar')">
+                    <i aria-hidden="true"></i> Reprogramar
+                </button>
+                <button type="button" class="btn btn-bg-1" 
+                    (click)="onSubmit()">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+                </button>
+            </div>
         </div>
     </ng-template>
 </div>

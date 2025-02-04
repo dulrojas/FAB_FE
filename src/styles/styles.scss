@@ -421,6 +421,7 @@ select.form-control {
 }
 .custom-info-proy-sub-title{
     color: $primary-color;
+    margin: 3px;
     font-weight: bold;
     font-size: 12px;
 }
@@ -669,13 +670,16 @@ select.form-control {
 
 .custom-actividad-progress-fill{
     height: 100%;
-    background-color: green;
+    background-color: $bg-3-color;
     transition: width 0.3s ease-in-out;
 }
 
 .custom-elemento-actividad{
     border: 10px;
     border-radius: 10px;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
 
     background-color: $bg-3-color;
 

@@ -1405,14 +1405,16 @@ export class InfProyectoComponent implements OnInit {
 
       this.servObligaciones.editObligaciones(objObligacion).subscribe(
         (data) => {
-          this.uploadFile(
-            this.obligacionesModel.selectedFile,
-            'proy_obligaciones',
-            'ruta_documento',
-            'id_proy_obliga',
-            this.obligacionesModel.obligacion,
-            this.obligacionesModel.id_proy_obliga
-          );
+          if(this.obligacionesModel.selectedFile){
+            this.uploadFile(
+              this.obligacionesModel.selectedFile,
+              'proy_obligaciones',
+              'ruta_documento',
+              'id_proy_obliga',
+              this.obligacionesModel.obligacion,
+              this.obligacionesModel.id_proy_obliga
+            );
+          }
 
           this.getObligaciones();
           this.obligacionesSelected = null;
