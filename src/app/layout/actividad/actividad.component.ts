@@ -123,6 +123,7 @@ export class ActividadComponent implements OnInit {
       if(this.presupuestoProy){
         porcentajeGrafico = parseFloat((100*(this.ejecutadoProy / presupuestoFormated)).toFixed(2));
       }
+      porcentajeGrafico = (porcentajeGrafico>100)?(100):(porcentajeGrafico);
 
       this.doughnutChartProy = new Chart(ctx, {
         type: 'doughnut',
@@ -195,6 +196,7 @@ export class ActividadComponent implements OnInit {
       if(this.presupuestoGest){
         porcentajeGrafico = parseFloat((100*(this.ejecutadoGest / presupuestoFormated)).toFixed(2));
       }
+      porcentajeGrafico = (porcentajeGrafico>100)?(100):(porcentajeGrafico);
     
       this.doughnutChartGest = new Chart(ctx, {
         type: 'doughnut',
@@ -520,7 +522,8 @@ export class ActividadComponent implements OnInit {
     validateIdProyElementoPadre() {
       if (this.id_proy_elemento_padre) {
         this.valIdProyElementoPadre = true;
-      } else {
+      } 
+      else {
         this.valIdProyElementoPadre = false;
       }
     }

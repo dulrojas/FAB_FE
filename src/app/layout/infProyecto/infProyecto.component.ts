@@ -346,6 +346,7 @@ export class InfProyectoComponent implements OnInit {
 
       if(this.proyectoScope.total_ejecutado){
         this.headerDataNro04 = (parseFloat((this.proyectoScope.total_ejecutado.toString()).slice(1))) / (parseFloat(this.proyectoScope.presupuesto_me.toString()));
+        this.headerDataNro04 = (this.headerDataNro04).toFixed(2);
       }
       else{
         this.headerDataNro04 = 0;
@@ -899,7 +900,7 @@ export class InfProyectoComponent implements OnInit {
             presupuesto.total_presup = this.parseAmountFloatToStr(presup_sum);
           });
 
-          if (this.proyectoScope.fecha_inicio && (this.proyectoScope.fecha_fin || this.proyectoScope.fecha_fin_ampliada)) {
+          if(Boolean(this.proyectoScope.fecha_inicio) && (Boolean(this.proyectoScope.fecha_fin) || Boolean(this.proyectoScope.fecha_fin_ampliada))) {
             let startYear = null;
             let endYear = null;
 
@@ -930,29 +931,28 @@ export class InfProyectoComponent implements OnInit {
               endYear = new Date(this.proyectoScope.fecha_fin).getFullYear();
             }
             // ======= ======= =======
-            if (startYear > endYear) {
-              return;
-            }
             // ======= ADD ADITIONAL YEARS =======
-            for (let year = startYear; year <= endYear; year++) {
-              let presupObjAux = {
-                id_proy_presupuesto: 0,
-                id_proyecto: this.idProyecto,
-                anio: year,
-                presup_actividades: "0.00",
-                presup_adicional: "0.00",
-                ejec_actividades: "0.00",
-                ejec_manual: "0.00",
-                total_actividades_presupuesto: "0.00",
-                total_presup: "0.00"
-              };
-
-              this.presupuestos.push(presupObjAux);
-
-              if( year == this.proyectoScope.gestion_actual){
-                this.presupuestoActual = presupObjAux;
-                this.addPresupuesto();
-                return;
+            if (startYear <= endYear){
+              for (let year = startYear; year <= endYear; year++) {
+                let presupObjAux = {
+                  id_proy_presupuesto: 0,
+                  id_proyecto: this.idProyecto,
+                  anio: year,
+                  presup_actividades: "0.00",
+                  presup_adicional: "0.00",
+                  ejec_actividades: "0.00",
+                  ejec_manual: "0.00",
+                  total_actividades_presupuesto: "0.00",
+                  total_presup: "0.00"
+                };
+  
+                this.presupuestos.push(presupObjAux);
+  
+                if( year == this.proyectoScope.gestion_actual){
+                  this.presupuestoActual = presupObjAux;
+                  this.addPresupuesto();
+                  return;
+                }
               }
             }
             // ======= ======= =======
@@ -1261,6 +1261,7 @@ export class InfProyectoComponent implements OnInit {
       const file = event.target.files[0];
       if (file) {
         this.obligacionesModel.selectedFile = file;
+        this.obligacionesModel.documento_entrega_flag = true;
       }
     }
     // ======= ======= INIT PERSONA ROLES NGMODEL ======= =======
@@ -1279,6 +1280,9 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.ruta_plantilla = "";
       this.obligacionesModel.ruta_documento = "";
       this.obligacionesModel.persona_entrega = this.namePersonaReg;
+
+      this.obligacionesModel.selectedFile = null;
+      this.obligacionesModel.documento_entrega_flag = false;
 
       this.valObligacion = true;
       this.valDescripcion = true;
@@ -1406,7 +1410,48 @@ export class InfProyectoComponent implements OnInit {
         p_idp_estado_entrega: parseInt(this.obligacionesModel.idp_estado_entrega),
         p_ruta_documento: this.obligacionesModel.ruta_documento,
         p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
-        p_id_persona_entrega: parseInt(this.obligacionesModel.idPersonaReg),
+        p_id_persona_entrega: parseInt(this.idPersonaReg),
+        p_id_persona_reg: parseInt(this.idPersonaReg)
+      };
+
+      this.servObligaciones.editObligaciones(objObligacion).subscribe(
+        (data) => {
+          if(this.obligacionesModel.selectedFile){
+            this.uploadFile(
+              this.obligacionesModel.selectedFile,
+              'proy_obligaciones',
+              'ruta_documento',
+              'id_proy_obliga',
+              this.obligacionesModel.obligacion,
+              this.obligacionesModel.id_proy_obliga
+            );
+          }
+
+          this.getObligaciones();
+          this.obligacionesSelected = null;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= EDIT OBLIGACIONES ======= =======
+    editObligacionesEntrega(){
+      const objObligacion = {
+        p_id_proy_obliga: this.obligacionesModel.id_proy_obliga,
+        p_id_proyecto: this.idProyecto,
+        p_id_inst_obligaciones: parseInt(this.obligacionesModel.id_inst_obligaciones),
+        p_obligacion: this.obligacionesModel.obligacion,
+        p_descripcion: this.obligacionesModel.descripcion,
+        p_fecha_obligacion: this.obligacionesModel.fecha_obligacion,
+        p_ruta_plantilla: this.obligacionesModel.ruta_plantilla,
+        p_id_institucion_exige: parseInt(this.obligacionesModel.id_institucion_exige),
+        p_idp_estado_entrega: 2,
+        p_ruta_documento: this.obligacionesModel.ruta_documento,
+        p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
+        p_id_persona_entrega: parseInt(this.idPersonaReg),
         p_id_persona_reg: parseInt(this.idPersonaReg)
       };
 
@@ -1483,7 +1528,12 @@ export class InfProyectoComponent implements OnInit {
           this.addObligaciones();
         }
         else{
-          this.editObligaciones();
+          if(!this.obligacionesModel.documento_entrega_flag){
+            this.editObligaciones();
+          }
+          else{
+            this.editObligacionesEntrega();
+          }
         }
         this.closeModal();
       }
