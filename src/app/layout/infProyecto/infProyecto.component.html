@@ -318,19 +318,20 @@
                         <div class="col col-md-6 pl-2 pr-0">
                             <div class="row">
                                 <!-- ======= INPUT PRESUPUESTOS SECTION ======= -->
-                                <div class="col col-md-4">
+                                <div class="col col-md-4 pe-0">
                                     <label class="custom-info-proy-sub-title" for="">Moneda</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="moneda_presupuesto" name="moneda_presupuesto" 
-                                        [(ngModel)]="proyectoScope.moneda_presupuesto" [disabled]="!buttonValidations.editMode"/>
+                                        [(ngModel)]="proyectoScope.moneda_presupuesto" 
+                                        disabled/>
                                 </div>
-                                <div class="col col-md-4">
+                                <!--div class="col col-md-4">
                                     <label class="custom-info-proy-sub-title" for="">Total</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="presupuesto_me" name="presupuesto_me" 
                                         [(ngModel)]="proyectoScope.presupuesto_me" [disabled]="!buttonValidations.editMode"/>
-                                </div>
-                                <div class="col col-md-4">
+                                </div-->
+                                <div class="col col-md-8 ps-0">
                                     <label class="custom-info-proy-sub-title" for="">Total (Bs)</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="presupuesto_mn" name="presupuesto_mn" 
@@ -547,8 +548,9 @@
                                         <th>Compromiso</th>
                                         <th>Requisitos y/o documentos</th>
                                         <th>Fecha obligacion</th>
-                                        <th>Entrega</th>
+                                        <th>Avance Fecha</th>
                                         <th>Fecha entrega</th>
+                                        <th>Estado entrega</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -571,6 +573,18 @@
                                             </div>
                                         </td>
                                         <td>{{ obligacion.fecha_hora_entrega }}</td>
+                                        <td>
+                                            <ng-container *ngIf="obligacion.idp_estado_entrega == 1">
+                                                <span class="btn-bg-2">
+                                                    Pendiente
+                                                </span>
+                                            </ng-container>
+                                            <ng-container *ngIf="obligacion.idp_estado_entrega == 2">
+                                                <span class="btn-bg-1">
+                                                    Entregado
+                                                </span>
+                                            </ng-container>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1007,7 +1021,14 @@
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="obligacionesForm.invalid" (click)="obligacionesOnSubmit()">
+            <button type="button" class="btn btn-bg-2" 
+                [disabled]="(!obligacionesModel.documento_entrega_flag)||(modalAction=='add')"
+                (click)="obligacionesOnSubmit()">
+                <i class="fa fa-check" aria-hidden="true"></i> Entregar
+            </button>
+            <button type="button" class="btn btn-bg-1" 
+                [disabled]="obligacionesForm.invalid" 
+                (click)="obligacionesOnSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
             </button>
         </div>
