@@ -134,8 +134,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.proyectoService.seleccionarProyecto(this.idProyecto);
         this.currentPerProRol = selectedPro.rol;
       this.ngOnInit()
-      // this.getParametricas();
-      // this.getPlanifEstrategica();
+      this.getParametricas();
+      this.getPlanifEstrategica();
       this.initPlanifEstrategicaModel();
       this.planifEstrategicaSelected = null
     }
@@ -150,15 +150,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.countHeaderData();
     }
     getParametricas() {
-        // ======= GET METO ELEMENTOS =======
-        // this.servApredizaje.getMetoElementos(this.idProyecto).subscribe(
-        //   (data) => {
-        //     this.componentes = data[0].dato;
-        //   },
-        //   (error) => {
-        //     console.error(error);
-        //   }
-        // );
+      // Cargar categorías de nivel 1
       this.servInstCategorias.getCategoriaById(1).subscribe(
         (data: any) => {
           this.planifCategoria = data[0]?.dato || [];
@@ -167,26 +159,44 @@ export class PlanifEstrategicaComponent implements OnInit {
           console.error("Error al cargar categorías:", error);
         }
       );
-  
-      this.servInstCategorias.getCategoriaById(2).subscribe(
-        (data: any) => {
-          this.planifSubCategoria = data[0]?.dato || [];
-        },
-        (error) => {
-          console.error("Error al cargar categorías:", error);
-        }
-      );
-  
-      this.servInstCategorias.getCategoriaById(3).subscribe(
-        (data: any) => {
-          this.planifTipoCategoria = data[0]?.dato || [];
-        },
-        (error) => {
-          console.error("Error al cargar categorías:", error);
-        }
-      );
-  
     }
+    
+    // Cuando el usuario seleccione una categoría, cargamos las subcategorías
+    onCategoriaChange() {
+      if (this.inst_categoria_1) {
+        this.servInstCategorias.getCategoriasByNivelYPadre(2, this.inst_categoria_1).subscribe(
+          (data: any) => {
+            this.planifSubCategoria = data[0]?.dato || [];
+            this.inst_categoria_2 = null; // Resetear la selección de subcategoría
+            this.planifTipoCategoria = []; // Resetear los tipos
+          },
+          (error) => {
+            console.error("Error al cargar subcategorías:", error);
+          }
+        );
+      } else {
+        this.planifSubCategoria = [];
+        this.planifTipoCategoria = [];
+      }
+    }
+    
+    // Cuando el usuario seleccione una subcategoría, cargamos los tipos
+    onSubCategoriaChange() {
+      if (this.inst_categoria_2) {
+        this.servInstCategorias.getCategoriasByNivelYPadre(3, this.inst_categoria_1).subscribe(
+          (data: any) => {
+            this.planifTipoCategoria = data[0]?.dato || [];
+            this.inst_categoria_3 = null; // Resetear la selección de tipo
+          },
+          (error) => {
+            console.error("Error al cargar tipos:", error);
+          }
+        );
+      } else {
+        this.planifTipoCategoria = [];
+      }
+    }
+
       // ======= ======= GET INDICADORES ======= =======
       getPlanifEstrategica() {
         this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(

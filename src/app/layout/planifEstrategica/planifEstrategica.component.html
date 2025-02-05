@@ -213,7 +213,7 @@
                                         class="form-control"
                                         id="id_proy_elem_padre"
                                         [value]="getElementoNombre(sigla)"
-                                        readonly
+                                        disabled
                                     />
                                 </div>
                                 <div class="col col-xl-1 col-lg-1 mt-auto">
@@ -250,6 +250,7 @@
                                         [(ngModel)]="codigo"
                                         [readonly]="true"
                                         placeholder="Ingresa el Código"
+                                        disabled
                                     />
                                 </div>
 
@@ -335,7 +336,7 @@
                                         class="form-control"
                                         id="id_proy_elem_padre"
                                         [value]="getElementoNombre(id_proy_elem_padre)"
-                                        readonly
+                                        disabled
                                     />
                                 </div>
                                                              <div class="col col-xl-1 col-lg-1 mt-auto">
@@ -373,71 +374,45 @@
                                         [(ngModel)]="codigo"
                                         [readonly]="true"
                                         placeholder="Ingresa el Código"
+                                        disabled
                                     />
                                 </div>
 
                                 <!-- Categoría -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
-                                    <label for="inst_categoria_1">Categoría</label>
-                                    <select
-                                        class="form-control"
-                                        id="inst_categoria_1"
-                                        name="inst_categoria_1"
-                                        [(ngModel)]="inst_categoria_1"
-                                       
-                                    >
-                                        <option value="" disabled selected>Seleccione una categoría</option>
-                                        <option
-                                            *ngFor="let categoria of planifCategoria"
-                                            [value]="categoria.id_inst_categoria"
-                                        >
-                                            {{ categoria.nombre }}
-                                        </option>
-                                    </select>
-                                  
-                                </div>
+                                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                                        <label for="inst_categoria_1">Categoría</label>
+                                        <select class="form-control" id="inst_categoria_1" name="inst_categoria_1"
+                                            [(ngModel)]="inst_categoria_1" (change)="onCategoriaChange()">
+                                            <option value="" disabled selected>Seleccione una categoría</option>
+                                            <option *ngFor="let categoria of planifCategoria" [value]="categoria.id_inst_categoria">
+                                                {{ categoria.nombre }}
+                                            </option>
+                                        </select>
+                                    </div>
 
-                                <!-- SubCategoría -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
-                                    <label for="inst_categoria_2">SubCategoría</label>
-                                    <select
-                                        class="form-control"
-                                        id="inst_categoria_2"
-                                        name="inst_categoria_2"
-                                        [(ngModel)]="inst_categoria_2"
-                                      
-                                    >
-                                        <option value="" disabled selected>Seleccione una SubCategoría</option>
-                                        <option
-                                            *ngFor="let categoria of planifSubCategoria"
-                                            [value]="categoria.id_inst_categoria"
-                                        >
-                                            {{ categoria.nombre }}
-                                        </option>
-                                    </select>
-                               
-                                </div>
+                                    <!-- SubCategoría -->
+                                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                                        <label for="inst_categoria_2">SubCategoría</label>
+                                        <select class="form-control" id="inst_categoria_2" name="inst_categoria_2"
+                                            [(ngModel)]="inst_categoria_2" (change)="onSubCategoriaChange()">
+                                            <option value="" disabled selected>Seleccione una SubCategoría</option>
+                                            <option *ngFor="let categoria of planifSubCategoria" [value]="categoria.id_inst_categoria">
+                                                {{ categoria.nombre }}
+                                            </option>
+                                        </select>
+                                    </div>
 
-                                <!-- Tipo -->
-                                <div class="col col-xl-4 col-lg-4 mt-auto">
-                                    <label for="tipoIndicador">Tipo</label>
-                                    <select
-                                        class="form-control"
-                                        id="inst_categoria_3"
-                                        name="inst_categoria_3"
-                                        [(ngModel)]="inst_categoria_3"
-                                     
-                                    >
-                                        <option value="" disabled selected>Seleccione un Tipo</option>
-                                        <option
-                                            *ngFor="let categoria of planifTipoCategoria"
-                                            [value]="categoria.id_inst_categoria"
-                                        >
-                                            {{ categoria.nombre }}
-                                        </option>
-                                    </select>
-                              
-                                </div>
+                                    <!-- Tipo -->
+                                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                                        <label for="tipoIndicador">Tipo</label>
+                                        <select class="form-control" id="inst_categoria_3" name="inst_categoria_3" [(ngModel)]="inst_categoria_3">
+                                            <option value="" disabled selected>Seleccione un Tipo</option>
+                                            <option *ngFor="let categoria of planifTipoCategoria" [value]="categoria.id_inst_categoria">
+                                                {{ categoria.nombre }}
+                                            </option>
+                                        </select>
+                                    </div>
+
 
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
                                     <label for="indicador">Nombre de elemento</label>

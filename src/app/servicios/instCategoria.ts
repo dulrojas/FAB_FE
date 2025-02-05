@@ -67,4 +67,32 @@ export class servInstCategorias{
   
     return this.http.post<any>(this.URL, params, { headers });
   }
+  // ======= ======= ======= ======= ======= ======= ======= ======= =======
+  //        GET INST_CATEGORIAS POR NIVEL Y CATEGORÍA PADRE (C3)
+  // ======= ======= ======= ======= ======= ======= ======= ======= =======
+  getCategoriasByNivelYPadre(nivel: number, idPadre: number): Observable<any> {
+    const params = {
+      "procedure_name": "sp_inst_categorias",
+      "body": {
+        "params": [
+          { "name": "p_accion", "value": "C3", "type": "string" },
+          { "name": "p_id_inst_categoria", "value": null, "type": "int" },
+          { "name": "p_id_institucion", "value": null, "type": "int" },
+          { "name": "p_nombre", "value": null, "type": "string" },
+          { "name": "p_idp_tipo_categoria", "value": null, "type": "int" },
+          { "name": "p_id_inst_categoria_padre", "value": idPadre, "type": "int" },
+          { "name": "p_codigo", "value": null, "type": "string" },
+          { "name": "p_nivel", "value": nivel, "type": "int" },
+          { "name": "p_orden", "value": null, "type": "int" },
+          { "name": "p_idp_estado", "value": null, "type": "string" }
+        ]
+      }
+    };
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+  
+    return this.http.post<any>(this.URL, params, { headers });
+  }
 }

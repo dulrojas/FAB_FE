@@ -527,6 +527,7 @@ export class RiesgosComponent implements OnInit {
     this.servRiesgos.editRiesgo(objRiesgo).subscribe(
       (data) => {
         this.getRiesgos();
+        this.riesgosSelected = null;
       },
       (error) => {
         console.error(error);
@@ -548,6 +549,7 @@ export class RiesgosComponent implements OnInit {
       (data) => {
         this.closeModal();
         this.getRiesgos();
+        this.riesgosSelected = null;
       },
       (error) => {
         console.error(error);
@@ -555,32 +557,45 @@ export class RiesgosComponent implements OnInit {
     );
   }
 
-      mapNivel(value: any): string {
-        switch (value) {
-          case '1':
-            return 'Bajo';
-          case '2':
-            return 'Medio';
-          case '3':
-            return 'Alto';
-          default:
-            return 'Desconocido';
-        }
-      }
-      calcularNivelRiesgo() {
-        if (this.impacto && this.probabilidad) {
-            const impactoNum = parseInt(this.impacto);
-            const probabilidadNum = parseInt(this.probabilidad);
-            // Matriz de riesgo
-            const matrizRiesgo = [
-                ['1', '1', '1'], // Impacto bajo (1)
-                ['1', '2', '2'], // Impacto medio (2)
-                ['1', '2', '3']  // Impacto alto (3)
-            ];
-            // Obtener nivel de riesgo según matriz
-            this.nivel = matrizRiesgo[impactoNum - 1][probabilidadNum - 1];
-        }
+  mapProbabilidadImpacto(value: any): string {
+    switch (value) {
+      case '1':
+        return 'Bajo';
+      case '2':
+        return 'Medio';
+      case '3':
+        return 'Alto';
+      default:
+        return 'Desconocido';
     }
+  }
+
+  mapNivel(value: string): string {
+    const numValue = parseInt(value, 10);
+
+    if (numValue >= 6 && numValue <= 9) return 'Alto';
+    if (numValue >= 3 && numValue <= 4) return 'Medio';
+    if (numValue >= 1 && numValue <= 2) return 'Bajo';
+
+    return 'Desconocido';
+}
+
+
+calcularNivelRiesgo() {
+  if (this.impacto && this.probabilidad) {
+      const impactoNum = parseInt(this.impacto, 10);
+      const probabilidadNum = parseInt(this.probabilidad, 10);
+
+      // Validación de valores esperados (1 a 3)
+      if (impactoNum >= 1 && impactoNum <= 3 && probabilidadNum >= 1 && probabilidadNum <= 3) {
+          // Multiplicación para obtener el nivel de riesgo
+          this.nivel = (impactoNum * probabilidadNum).toString();
+      } else {
+          this.nivel = ''; // Si los valores no son válidos, se limpia el nivel
+      }
+  }
+}
+
 
  
   // ======= ======= COUNT HEADER DATA FUNCTION ======= =======

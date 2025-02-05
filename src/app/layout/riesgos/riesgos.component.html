@@ -89,18 +89,18 @@
           <td>{{ riesgo.riesgo }}</td>
           <td>
             <div class="impacto-button" [ngClass]="{
-              'impacto-alto': mapNivel(riesgo.impacto)  === 'Alto',
-              'impacto-medio':mapNivel(riesgo.impacto)  === 'Medio',
-              'impacto-bajo':  mapNivel(riesgo.impacto) === 'Bajo'
+              'impacto-alto': mapProbabilidadImpacto(riesgo.impacto)  === 'Alto',
+              'impacto-medio':mapProbabilidadImpacto(riesgo.impacto)  === 'Medio',
+              'impacto-bajo':  mapProbabilidadImpacto(riesgo.impacto) === 'Bajo'
             }">
-              {{ mapNivel(riesgo.impacto) }}
+              {{ mapProbabilidadImpacto(riesgo.impacto) }}
             </div>
           </td>
           <td>
             <div class="probabilidad-shape" [ngClass]="{
-              'probabilidad-alto':mapNivel(riesgo.probabilidad) === 'Alto',
-              'probabilidad-medio':mapNivel(riesgo.probabilidad)=== 'Medio',
-              'probabilidad-bajo':mapNivel(riesgo.probabilidad) === 'Bajo'}">
+              'probabilidad-alto':mapProbabilidadImpacto(riesgo.probabilidad) === 'Alto',
+              'probabilidad-medio':mapProbabilidadImpacto(riesgo.probabilidad)=== 'Medio',
+              'probabilidad-bajo':mapProbabilidadImpacto(riesgo.probabilidad) === 'Bajo'}">
             </div>
           </td>
           <td>
@@ -215,7 +215,7 @@
                     <label for="riesgo">Título de Riesgo</label>
                     <input  class="form-control" type="text" 
                           id="riesgo" name="riesgo"  placeholder="Ingresa el titulo del Riesgo"
-                          [(ngModel)]="riesgo" (change)="ValidateRiesgo()" />
+                          [(ngModel)]="riesgo" (change)="ValidateRiesgo()" maxlength="99"/>
                     <span class="custom-alert-message" *ngIf="!valRiesgo">Debe elegir un Riesgo</span>      
                   </div>
 
@@ -232,7 +232,7 @@
                       <label>Riesgo/Supuesto/Hipótesis</label>
                         <textarea class="form-control" id="descripcion" name="descripcion"
                           placeholder="Ingresa la descripcion del riesgo"
-                          [(ngModel)]="descripcion" (change)="ValidateDescripcion()">
+                          [(ngModel)]="descripcion" (change)="ValidateDescripcion()" maxlength="254">
                         </textarea>
                       <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la Descripcion</span>
                     </div>
@@ -243,7 +243,7 @@
                     <label for="vinculados">Individuales/Instituciones Vinculados</label>
                       <input  class="form-control" type="text" 
                               id="vinculados" name="vinculados" placeholder="Ingresa un Vinculo"
-                              [(ngModel)]="vinculados" (change)="ValidateVinculados()" />
+                              [(ngModel)]="vinculados" (change)="ValidateVinculados()" maxlength="99"/>
                     <span class="custom-alert-message" *ngIf="!valVinculados">Debe ingresar la Descripcion</span>
                   </div>
     
@@ -282,7 +282,7 @@
                           'impacto-medio': impacto === '2',
                           'impacto-bajo': impacto === '1'
                         }">
-                        {{ mapNivel(impacto) }}</div>
+                        {{ mapProbabilidadImpacto(impacto) }}</div>
                       </div>
                     </div>
                   </div>
@@ -323,26 +323,24 @@
                       [ngModel]="nivel ? mapNivel(nivel) : ''"
                       disabled
                       [ngClass]="{
-                        'nivel-alto': nivel === '3',
-                        'nivel-medio': nivel === '2',
-                        'nivel-bajo': nivel === '1'
+                        'nivel-alto': nivel === '6' || nivel === '9',
+                        'nivel-medio': nivel === '3' || nivel === '4',
+                        'nivel-bajo': nivel === '1' || nivel === '2'
                       }">
                     <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
                       <div *ngIf="nivel" class="riesgo-circle" style="transform: scale(0.6);"
                         [ngClass]="{
-                          'riesgo-alto': nivel === '3',
-                          'riesgo-medio': nivel === '2',
-                          'riesgo-bajo': nivel === '1'
+                          'riesgo-alto': nivel === '6' || nivel === '9',
+                          'riesgo-medio': nivel === '3' || nivel === '4',
+                          'riesgo-bajo': nivel === '1' || nivel === '2'
                         }">
-                        <span class="symbol" *ngIf="nivel === '3'">✕</span>
-                        <span class="symbol" *ngIf="nivel === '2'">!</span>
-                        <span class="symbol" *ngIf="nivel === '1'">✓</span>
+                        <span class="symbol" *ngIf="nivel === '6' || nivel === '9'">✕</span>
+                        <span class="symbol" *ngIf="nivel === '3' || nivel === '4'">!</span>
+                        <span class="symbol" *ngIf="nivel === '1' || nivel === '2'">✓</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                
-
                 <!-- Quinta Fila:  Ocurrencia durante la Gestión, Necesidad de Tomar Acciones -->
                   <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"></div>
                   <!-- Ocurrencia durante la Gestión-->
@@ -377,7 +375,7 @@
                     <label for="medidas">Medidas de Respuesta al Riesgo</label>
                     <input  class="form-control" type="text" 
                           id="medidas" name="medidas" placeholder="Ingresa Medidas de Respuesta al Riesgo"
-                          [(ngModel)]="medidas" (change)="this.ValidateMedida()"/>
+                          [(ngModel)]="medidas" (change)="this.ValidateMedida()" maxlength="254"/>
                           <span class="custom-alert-message" *ngIf="!valMedida">Ingresa Medidas de Respuesta al Riesgo</span>
                   </div>
 
@@ -400,7 +398,7 @@
                   <label for="comentarios">Comentarios Adicionales</label>
                   <input  class="form-control" type="text" 
                           id="comentarios" name="comentarios" placeholder="Ingresa Comentarios Adicionales"
-                          [(ngModel)]="comentarios" (change)="ValidateComentarios()"/>
+                          [(ngModel)]="comentarios" (change)="ValidateComentarios()" maxlength="254"/>
                   <span class="custom-alert-message" *ngIf="!valComentarios">Debe ingresar Comentarios Adicionales</span>
                 </div>
 
