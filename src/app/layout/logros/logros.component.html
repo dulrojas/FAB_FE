@@ -78,12 +78,15 @@
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
 </div>
 
-<!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+<!-- ======= ======= ======= ADD LOGROS MODAL ======= ======= ======= -->
 <ng-template #logrosFormModal let-modal class="custom-modal">
     <div class="modal-header">
         <h4 class="modal-title">{{ modalTitle }}</h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')">
+        </button>
     </div>
+
     <div class="modal-body">
         <form #logrosForm="ngForm" (ngSubmit)="onSubmit(logrosForm)">
             <div class="row">
@@ -143,7 +146,7 @@
                                         placeholder="Agregar una descripción"
                                         [(ngModel)]="descripcion" (change)="ValidateDescripcion()" style="height: 80%;">
                                     </textarea>
-                                    <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la descripción del logro, con menos de 255 caracteres.</span>
+                                    <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la descripción del logro, con menos de 500 caracteres.</span>
                                 </div>
 
                                 <!-- ======= ======= IMAGE SECTION ======= ======= -->
@@ -170,6 +173,7 @@
             </div>
         </form>
     </div>
+    
     <div class="modal-footer">
         <div class="d-flex justify-content-center" style="width: 100%;">
             <!-- ======= ======= BUTTONS SECTION ======= ======= -->

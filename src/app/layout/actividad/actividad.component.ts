@@ -11,7 +11,6 @@ import { servPresupuesto } from "../../servicios/presupuesto";
 import { servPresuAvance } from "../../servicios/presuAvance";
 
 import { Chart } from 'chart.js/auto';
-import { log } from 'console';
 
 @Component({
     selector: 'app-actividades',
@@ -47,9 +46,9 @@ export class ActividadComponent implements OnInit {
       this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.currentPerProRol = selectedPro.rol;
       
+      this.getParametricas();
       this.getPresupuestoEjecutado();
       this.getPresuAvance();
-      this.getActividades();
     }
 
     headerDataNro01: any = 0;
@@ -78,6 +77,7 @@ export class ActividadComponent implements OnInit {
     actAvaAvance: any = "";
     actAvaMonto: any = "";
 
+    idPresupuestoGest: any = 0;
     periodo: any = "";
     presupuestoProy: any = 0;
     ejecutadoProy: any = 0;
@@ -118,10 +118,13 @@ export class ActividadComponent implements OnInit {
         this.doughnutChartProy = null;
       }
 
-      let presupuestoFormated = (this.presupuestoProy)?(this.presupuestoProy):(1);
+      let presupuestoProy = this.parseAmountStrToFloat(this.presupuestoProy);
+      let ejecutadoProy = this.parseAmountStrToFloat(this.ejecutadoProy);
+
+      let presupuestoFormated = (presupuestoProy)?(presupuestoProy):(1);
       let porcentajeGrafico = 0;
       if(this.presupuestoProy){
-        porcentajeGrafico = parseFloat((100*(this.ejecutadoProy / presupuestoFormated)).toFixed(2));
+        porcentajeGrafico = parseFloat((100*(ejecutadoProy / presupuestoFormated)).toFixed(2));
       }
       porcentajeGrafico = (porcentajeGrafico>100)?(100):(porcentajeGrafico);
 
@@ -191,10 +194,13 @@ export class ActividadComponent implements OnInit {
         this.doughnutChartGest = null;
       }
 
-      let presupuestoFormated = (this.presupuestoGest)?(this.presupuestoGest):(1);
+      let presupuestoGest = this.parseAmountStrToFloat(this.presupuestoGest);
+      let ejecutadoGest = this.parseAmountStrToFloat(this.ejecutadoGest);
+
+      let presupuestoFormated = (presupuestoGest)?(presupuestoGest):(1);
       let porcentajeGrafico = 0;
       if(this.presupuestoGest){
-        porcentajeGrafico = parseFloat((100*(this.ejecutadoGest / presupuestoFormated)).toFixed(2));
+        porcentajeGrafico = parseFloat((100*(ejecutadoGest / presupuestoFormated)).toFixed(2));
       }
       porcentajeGrafico = (porcentajeGrafico>100)?(100):(porcentajeGrafico);
     
@@ -316,7 +322,6 @@ export class ActividadComponent implements OnInit {
       this.getParametricas();
       this.getPresupuestoEjecutado();
       this.getPresuAvance();
-      this.getActividades();
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OPEN MODALS FUN ======= =======
@@ -344,6 +349,7 @@ export class ActividadComponent implements OnInit {
       this.ElementosService.getElementosByProyecto(this.idProyecto).subscribe(
         (data) => {
           this.elementos = (data[0].dato)?(data[0].dato):([]);
+          this.getActividades();
         },
         (error) => {
           console.error(error);
@@ -460,6 +466,8 @@ export class ActividadComponent implements OnInit {
         (data) => {
           let dataReq = data[0].dato[0];
 
+          this.idPresupuestoGest = (dataReq.id_proy_presupuesto)?(dataReq.id_proy_presupuesto):(0);
+
           dataReq.presupuesto_mn = this.parseAmountStrToFloat(dataReq.presupuesto_mn.slice(1));
 
           dataReq.pro_act_ava_ejecutado = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado.slice(1));
@@ -469,12 +477,12 @@ export class ActividadComponent implements OnInit {
           dataReq.pro_act_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado_gestion.slice(1))
           dataReq.pro_pre_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado_gestion.slice(1))
 
-          this.presupuestoProy = dataReq.presupuesto_mn;
-          this.ejecutadoProy = dataReq.pro_act_ava_ejecutado + dataReq.pro_pre_ava_ejecutado;
+          this.presupuestoProy = this.parseAmountFloatToStr(dataReq.presupuesto_mn);
+          this.ejecutadoProy = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado + dataReq.pro_pre_ava_ejecutado);
     
           this.gestion = dataReq.gestion_actual;
-          this.presupuestoGest = dataReq.pro_act_presupuesto_gestion;
-          this.ejecutadoGest = dataReq.pro_act_ava_ejecutado_gestion + dataReq.pro_pre_ava_ejecutado_gestion;
+          this.presupuestoGest = this.parseAmountFloatToStr(dataReq.pro_act_presupuesto_gestion);
+          this.ejecutadoGest = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado_gestion + dataReq.pro_pre_ava_ejecutado_gestion);
           
           this.createDoughnutChartProyecto();
           this.createDoughnutChartGestion();
@@ -623,7 +631,7 @@ export class ActividadComponent implements OnInit {
       if(valPreAva){  
         let objPresuAvance = {
           p_id_proy_presu_avance: null,
-          p_id_proy_presupuesto: 1,
+          p_id_proy_presupuesto: this.idPresupuestoGest,
           p_monto_avance: this.parseAmountStrToFloat(this.montoNuevoEjecutado),
           p_id_persona: this.idPersonaReg,
           p_fecha_hora: null,
@@ -660,7 +668,8 @@ export class ActividadComponent implements OnInit {
             let elementoToAdd = {...elemento};
             elementoToAdd.childrens = this.actividades.filter(
               (actividadObj) =>
-                actividadObj.codigo.startsWith(elemento.codigo.slice(0, -2))
+                //actividadObj.codigo.startsWith(elemento.codigo.slice(0, -2))
+                (actividadObj.id_proy_elem_padre == elemento.id_proy_elemento)
             );
 
             this.elementosGant.push(elementoToAdd);
@@ -689,8 +698,6 @@ export class ActividadComponent implements OnInit {
             
             });
           });
-
-          console.log(this.elementosGant);
 
           this.countHeaderData();
           //this.initializeCharts();

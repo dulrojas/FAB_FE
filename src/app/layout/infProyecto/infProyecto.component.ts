@@ -932,7 +932,7 @@ export class InfProyectoComponent implements OnInit {
             }
             // ======= ======= =======
             // ======= ADD ADITIONAL YEARS =======
-            if (startYear <= endYear){
+            if (startYear <=-  endYear){
               for (let year = startYear; year <= endYear; year++) {
                 let presupObjAux = {
                   id_proy_presupuesto: 0,

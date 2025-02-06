@@ -99,7 +99,7 @@ export class LogrosComponent implements OnInit {
     valDescripcion: any = true;
     ValidateDescripcion() {
       this.valDescripcion = true;
-      if ((!this.descripcion)||(this.descripcion.length >= 255)) {
+      if ((!this.descripcion)||(this.descripcion.length >= 500)) {
         this.valDescripcion = false;
       }
     }
