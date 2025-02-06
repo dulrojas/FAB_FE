@@ -4,18 +4,17 @@ import { NgbModal,NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ProyectoService } from '../../services/proyectoData.service';
-import { BeneficiariosService } from "../../servicios/Beneficiarios";
 import { servPersona } from "../../servicios/persona"; 
-import {servListBenef} from "../../servicios/ListBeneficiarios";
-import { servPersonaRoles } from "../../servicios/personaRoles";
 import {Params_generales} from "../../servicios/Params_generales";
 import { ChangeDetectorRef } from '@angular/core';
-import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
-import { register } from 'module';
+
 //General
 import { servicios } from "../../servicios/servicios";
 import { ServOrganizacion } from "../../servicios/organizaciones";
 //Beneficiarios
+import { BeneficiariosService } from "../../servicios/Beneficiarios";
+import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
+import {servListBenef} from "../../servicios/ListBeneficiarios";
 import { servActividad } from "../../servicios/actividad";
 //Aliados
 import { servAliados } from "../../servicios/aliados";
@@ -27,9 +26,9 @@ interface Beneficiario {
   departamento: string;
   municipio: string;
   comunidad: string;
-  tipoOrganizacion: string;
-  organizacion: string;
-  actividad: string;
+  idp_organizacion_tipo: string;
+  id_organizacion: string;
+  id_proy_actividad: string;
   evento: string;
   details: string;
   mujeres: number;
@@ -72,7 +71,6 @@ export class BeneficiariosComponent implements OnInit {
     private servicios: servicios,
     private ServOrganizacion: ServOrganizacion,
     //Beneficiarios
-    //private servBeneficiarios: servBeneficiarios,
     private servUbicaGeografica: servUbicaGeografica,
     private servListBenef: servListBenef,
     private servActividad: servActividad,
@@ -159,17 +157,17 @@ export class BeneficiariosComponent implements OnInit {
       // GET ORGANIZACION
       getOrganizacion(idRegistro: any, paramList: any): string{
         const org = paramList.find(elem => elem.id_organizacion == idRegistro);
-        return org ? org.organizacion : 'Null';
+        return org ? org.organizacion : '';
       }
       // GET ACTIVIDAD
       getActividad(idRegistro: any, paramList: any): string{
         const actividad = paramList.find(elem => elem.id_proy_actividad == idRegistro);
-        return actividad ? actividad.actividad : 'Null';
+        return actividad ? actividad.actividad : '';
       }
       // GET ORGANIZACION TIPO
       getOrganizacionTipo(idRegistro: any, paramList: any): string{
       const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
-      return subtipo ? subtipo.descripcion_subtipo : 'Null';
+      return subtipo ? subtipo.descripcion_subtipo : '';
       }
       // GET DE FECHA Y HORA
       getCurrentDateTime(): string {
@@ -233,9 +231,9 @@ export class BeneficiariosComponent implements OnInit {
           departamento: ['', [Validators.required]],
           municipio: [{value: '', disabled: true}, [Validators.required]],
           comunidad: [{value: '', disabled: true}, [Validators.required]],
-          id_proy_actividad: ['', [Validators.required]],
-          idp_organizacion_tipo: ['', [Validators.required]],
-          id_organizacion: ['', [Validators.required]],
+          id_proy_actividad: [null, [Validators.required]], 
+          idp_organizacion_tipo: [null, [Validators.required]], 
+          id_organizacion: [null, [Validators.required]],
           evento: ['', [Validators.required]],
           mujeres: [{value: 0, disabled: true}],
           hombres: [{value: 0, disabled: true}],
@@ -417,9 +415,9 @@ export class BeneficiariosComponent implements OnInit {
     this.beneficiariosTable.forEach(b => (b.selected = b.id === selectedBeneficiario.id));
     
     // Filtrar el ID de la organización por el nombre proporcionado
-    if (selectedBeneficiario.organizacion) {
+    if (selectedBeneficiario.id_organizacion) {
       const organizacion = this.beneficiariosOrganizacionTipo.find(
-        org => org.organizacion === selectedBeneficiario.organizacion
+        org => org.organizacion === selectedBeneficiario.id_organizacion
       );
 
       if (organizacion) {
@@ -442,44 +440,41 @@ openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario, isListModal: boo
     this.selectedBeneficiarios = beneficiario || null;
 
     if (beneficiario) {
-      // Primero cargar el departamento y esperar que se actualicen las listas
+      // Convertir explícitamente a números
+      const idPoryActividad = beneficiario.id_proy_actividad ? Number(beneficiario.id_proy_actividad) : null;
+      const idpOrganizacionTipo = beneficiario.idp_organizacion_tipo ? Number(beneficiario.idp_organizacion_tipo) : null;
+      const idOrganizacion = beneficiario.id_organizacion ? Number(beneficiario.id_organizacion) : null;
+
       this.beneficiariesForm.patchValue({
         id: beneficiario.id,
         fecha: beneficiario.fecha,
-        departamento: beneficiario.departamento
+        departamento: beneficiario.departamento,
+        id_proy_actividad: idPoryActividad,
+        idp_organizacion_tipo: idpOrganizacionTipo,
+        id_organizacion: idOrganizacion,
+        evento: beneficiario.evento,
+        mujeres: Number(beneficiario.mujeres),
+        hombres: Number(beneficiario.hombres),
+        total: Number(beneficiario.total),
+        details: beneficiario.details,
+        registeredBy: this.namePersonaReg
       });
 
-      // Forzar la carga de municipios
+      // Forzar la carga de datos dependientes
       this.onDepartamentoChange(beneficiario.departamento);
-
-      // Esperar un momento para que se actualicen las listas
+      
       setTimeout(() => {
         this.beneficiariesForm.patchValue({
-          municipio: beneficiario.municipio
+          municipio: beneficiario.municipio,
+          comunidad: beneficiario.comunidad
         });
-        
-        // Forzar la carga de comunidades
-        this.onMunicipioChange(beneficiario.municipio);
-
-        // Esperar otro momento para que se carguen las comunidades
-        setTimeout(() => {
-          this.beneficiariesForm.patchValue({
-            comunidad: beneficiario.comunidad,
-            tipoOrganizacion: beneficiario.tipoOrganizacion,
-            organizacion: beneficiario.organizacion,
-            actividad: beneficiario.actividad,
-            evento: beneficiario.evento,
-            mujeres: beneficiario.mujeres,
-            hombres: beneficiario.hombres,
-            total: beneficiario.total,
-            details: beneficiario.details,
-            registeredBy: this.namePersonaReg
-          });
-        }, 100);
       }, 100);
     } else {
       this.beneficiariesForm.reset({
-        registeredBy: this.namePersonaReg
+        registeredBy: this.namePersonaReg,
+        mujeres: 0,
+        hombres: 0,
+        total: 0
       });
     }
   }
@@ -505,52 +500,62 @@ this.beneficiariesForm.patchValue({
 })
 }
 
-   // Guardar o actualizar beneficiario
-   onSubmit(): void {
+onSubmit(): void {
+  // Habilitar temporalmente los campos deshabilitados para obtener sus valores
+  const mujeres = this.beneficiariesForm.get('mujeres');
+  const hombres = this.beneficiariesForm.get('hombres');
+  const total = this.beneficiariesForm.get('total');
+  
+  mujeres?.enable();
+  hombres?.enable();
+  total?.enable();
+
+  if (this.beneficiariesForm.invalid) {
     Object.keys(this.beneficiariesForm.controls).forEach(key => {
       const control = this.beneficiariesForm.get(key);
       control?.markAsTouched();
     });
-  
-    if (this.beneficiariesForm.invalid) {
-      console.log('Formulario inválido:', this.beneficiariesForm.errors);
-      return;
-    }
-  
-    const formValue = this.beneficiariesForm.getRawValue();
+    console.log('Formulario inválido', this.beneficiariesForm.errors);
     
-    // Validaciones adicionales
-    if (!formValue.departamento || !formValue.municipio || !formValue.comunidad) {
-      console.log('Faltan campos de ubicación');
-      return;
-    }
-  
-    const beneficiarioData = {
-      id: formValue.id || null,
-      id_proyecto: this.idProyecto ? parseInt(this.idProyecto, 10) : null,
-      fecha: formValue.fecha || new Date().toISOString().split('T')[0],
-      departamento: formValue.departamento,
-      municipio: formValue.municipio ? this.getIdMunicipio(formValue.municipio) : null,
-      comunidad: formValue.comunidad ? this.getIdComunidad(formValue.comunidad) : null,
-      id_proy_actividad: formValue.id_proy_actividad ? parseInt(formValue.id_proy_actividad, 10) : 0, // Ahora opcional
-      idp_organizacion_tipo: formValue.idp_organizacion_tipo ? parseInt(formValue.idp_organizacion_tipo, 10) : 0, // Ahora opcional
-      id_organizacion: formValue.id_organizacion ? parseInt(formValue.id_organizacion, 10) : 0, // Ahora opcional
-      evento: formValue.evento || '',
-      mujeres: formValue.mujeres || 0,
-      hombres: formValue.hombres || 0,
-      total: (formValue.mujeres || 0) + (formValue.hombres || 0),
-      details: formValue.details || '',
-      registeredBy: this.idPersonaReg || null
-    };    
-  
-    console.log('Datos a enviar:', beneficiarioData);
-  
-    if (formValue.id) {
-      this.editBeneficiario(beneficiarioData);
-    } else {
-      this.addBeneficiario(beneficiarioData);
-    }
+    // Volver a deshabilitar los campos
+    mujeres?.disable();
+    hombres?.disable();
+    total?.disable();
+    return;
   }
+
+  const formValue = this.beneficiariesForm.getRawValue();
+  
+  // Asegurarnos de que los valores numéricos sean números y no null
+  const beneficiarioData = {
+    id: formValue.id || null,
+    id_proyecto: this.idProyecto ? Number(this.idProyecto) : null,
+    fecha: formValue.fecha || new Date().toISOString().split('T')[0],
+    departamento: formValue.departamento,
+    municipio: formValue.municipio ? this.getIdMunicipio(formValue.municipio) : null,
+    comunidad: formValue.comunidad ? this.getIdComunidad(formValue.comunidad) : null,
+    id_proy_actividad: Number(formValue.id_proy_actividad),
+    idp_organizacion_tipo: Number(formValue.idp_organizacion_tipo),
+    id_organizacion: Number(formValue.id_organizacion),
+    evento: formValue.evento || '',
+    mujeres: Number(formValue.mujeres) || 0,
+    hombres: Number(formValue.hombres) || 0,
+    total: Number(formValue.mujeres || 0) + Number(formValue.hombres || 0),
+    details: formValue.details || '',
+    registeredBy: this.idPersonaReg ? Number(this.idPersonaReg) : null
+  };
+
+  // Volver a deshabilitar los campos
+  mujeres?.disable();
+  hombres?.disable();
+  total?.disable();
+
+  if (formValue.id) {
+    this.editBeneficiario(beneficiarioData);
+  } else {
+    this.addBeneficiario(beneficiarioData);
+  }
+}
   
   // Método para editar beneficiario
   editBeneficiario(beneficiarioData: any): void {
@@ -644,7 +649,10 @@ this.beneficiariesForm.patchValue({
     this.participanteForm = this.fb.group({
       id_proy_bene_lista: [null],
       id_proy_beneficiario: [null],
-      comunidad: [{ value: '', disabled: true }],
+      comunidad: ['', [
+        Validators.required,
+        Validators.maxLength(50)
+      ]],
       num_doc_identidad: ['', [
         Validators.required,
         Validators.minLength(5),
@@ -707,7 +715,7 @@ this.beneficiariesForm.patchValue({
   
     this.tablaPersonas = this.planifData.map((persona) => ({
       id: this.contadorParticipantes++,
-      comunidad: this.selectedBeneficiarios.comunidad || 'Sin comunidad',
+      comunidad: persona.comunidad || 'Sin comunidad',
       docIden: persona.num_doc_identidad || 'Sin documento',
       nombreCompleto: persona.nombre || 'Sin nombre',
       rangoEdad: this.getRangoEdadNombre(persona.idp_rango_edad),
@@ -717,15 +725,6 @@ this.beneficiariesForm.patchValue({
     }));
   }
 
-  getComunidad(id: any): any {
-    const comunidad = this.geografia.find(muni => muni.id_ubica_geo === Number(id));
-    if (comunidad) {      
-      return comunidad.nombre;
-    } else {
-      console.warn(`No se encontró la comunidad con id: ${id}`);
-      return 'Desconocida'; 
-    }
-  }
   getRangoEdadNombre(id: number): string {
     if (!id || !this.rangosEdad) return 'N/A';
     
@@ -771,7 +770,6 @@ this.beneficiariesForm.patchValue({
     this.initParticipanteForm();
     this.participanteForm.patchValue({
       id_proy_beneficiario: this.selectedBeneficiarios.id,
-      comunidad: this.selectedBeneficiarios.comunidad 
     });
 
     this.modalRefParticipante = this.modalService.open(modal, { 
@@ -795,7 +793,7 @@ this.beneficiariesForm.patchValue({
   
     const participanteData = {
       id_proy_beneficiario: this.selectedBeneficiarios.id,
-      comunidad: this.getIdComunidad(this.selectedBeneficiarios.comunidad),
+      comunidad: formValue.comunidad,
       num_doc_identidad: formValue.num_doc_identidad,
       nombre: formValue.nombre,
       idp_rango_edad: formValue.idp_rango_edad,
@@ -1281,6 +1279,7 @@ this.beneficiariesForm.patchValue({
               alert('Organización agregada exitosamente');
               this.getOrganizaciones();
               this.getParametricasAliados();
+              this.getParametricasBeneficiarios();
               this.closeModalOrg();              
             },
             (error) => {
