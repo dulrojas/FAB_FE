@@ -1095,10 +1095,12 @@ this.beneficiariesForm.patchValue({
         };
         this.servAliados.addAliado(objAliado).subscribe(
           (data) => {
+            alert('Aliado agregado exitosamente');
             this.getAliados();
             console.error('Error al guardar aliado');
           },
           (error) => {
+            alert('Error al guardar aliado');
             console.error(error);
           }
         );

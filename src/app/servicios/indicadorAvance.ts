@@ -42,16 +42,16 @@ export class servIndicadorAvance {
   }
 
   // ======= ======= ======= ======= ======= ======= =======
-  // ======= =======  GET INDICADOR_AVANCE POR ID  ======= =======
+  // ======= =======  GET INDICADOR_AVANCE POR ID_INDICADOR ======= =======
   // ======= ======= ======= ======= ======= ======= =======
-  getIndicadoresAvanceById(idProy: any): Observable<any> {
+  getIndicadoresAvanceById(idProyIn: any): Observable<any> {
     const params = {
       "procedure_name": "sp_indicador_avance",
       "body": {
         "params": [
           { "name": "p_accion", "value": "C2", "type": "string" },
           { "name": "p_id_proy_indica_avance", "value": null, "type": "int" },
-          { "name": "p_id_proy_indicador", "value": idProy, "type": "int" },
+          { "name": "p_id_proy_indicador", "value": idProyIn, "type": "int" },
           { "name": "p_fecha_reportar", "value": null, "type": "string" },
           { "name": "p_valor_esperado", "value": null, "type": "numeric" },
           { "name": "p_fecha_hora_reporte", "value": null, "type": "string" },
