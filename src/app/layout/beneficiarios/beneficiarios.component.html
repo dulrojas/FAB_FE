@@ -79,6 +79,7 @@
                         <th>Total</th>
                     </tr>
                 </thead>
+                <!-- Cuerpo de la Tabla -->
                 <tbody>
                     <tr *ngFor="let beneficiario of paginatedBeneficiarios">
                         <td>
@@ -111,8 +112,7 @@
                     [collectionSize]="totalLengthBeneficiarios"
                     [maxSize]="3"
                     [rotate]="true"
-                    [boundaryLinks]="true"
-                >
+                    [boundaryLinks]="true">
                 </ngb-pagination>
             </div>
         </div>
@@ -214,7 +214,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <div class="col col-xl-4 col-lg-4 mt-auto">
                                         <label for="comunidad">Comunidad</label>
                                         <select
                                             class="form-control"
@@ -229,27 +229,6 @@
                                                 {{ comunidad.nombre }}
                                             </option>
                                         </select>
-                                    </div>
-
-                                    <div class="col col-xl-1 col-lg-1 mt-auto">
-                                        <button
-                                            type="button"
-                                            (click)="openModalUbicaciones(beneficiaUBIModal);"
-                                            style="
-                                                background-color: #d67600;
-                                                color: white;
-                                                border: none;
-                                                border-radius: 30%;
-                                                width: 35px;
-                                                height: 35px;
-                                                font-size: 15px;
-                                                display: flex;
-                                                justify-content: center;
-                                                align-items: center;
-                                            "
-                                        >
-                                            +
-                                        </button>
                                     </div>
                                 </div>
                                 <!-- Tipo de Organización y Organización -->
@@ -373,73 +352,6 @@
     </div>
 </ng-template>
 
-
-
-
-<ng-template #beneficiaUBIModal let-modal class="custom-modal">
-  <div class="modal-header">
-    <h4 class="modal-title">Ubicación Geográfica</h4>
-  </div>
-  <div class="modal-body">
-    <form [formGroup]="beneficiariesFormUbicacion" (ngSubmit)="saveLocationSelection()">
-        <div class="row g-3">
-        <div class="col col-xl-3 col-lg-3 mt-auto">
-            <label for="departamento">Departamento</label>
-            <select
-                class="form-control"
-                formControlName="departamento"
-                (change)="onDepartamentoChange($event.target.value)"
-            >
-                <option value="" selected>Seleccione un departamento</option>
-                <option *ngFor="let depto of departamentos" [value]="depto.nombre">
-                    {{ depto.nombre }}
-                </option>
-            </select>
-        </div>
-
-        <div class="col col-xl-4 col-lg-4 mt-auto">
-            <label for="municipio">Municipio</label>
-            <select
-                class="form-control"
-                formControlName="municipio"
-                [disabled]="!municipios.length"
-                (change)="onMunicipioChange($event.target.value)"
-            >
-                <option value="" selected>Seleccione un municipio</option>
-                <option *ngFor="let muni of municipios" [value]="muni.nombre">
-                    {{ muni.nombre }}
-                </option>
-            </select>
-        </div>
-
-        <div class="col col-xl-3 col-lg-3 mt-auto">
-            <label for="comunidad">Comunidad</label>
-            <select
-                class="form-control"
-                formControlName="comunidad"
-               
-            >
-                <option value="" selected>Seleccione una comunidad</option>
-                <option
-                    *ngFor="let comunidad of comunidades"
-                    [value]="comunidad.nombre"
-                >
-                    {{ comunidad.nombre }}
-                </option>
-            </select>
-        </div>
-        </div>
-        <div class="modal-footer mt-2 d-flex justify-content-center">
-        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-          <i class="fa fa-times"></i> Cancelar
-        </button>
-        <button type="button" class="btn btn-bg-1" (click)="saveLocationSelection();modal.close('Cerrar')">
-          <i class="fa fa-check"></i> Guardar
-        </button>
-      </div>
-    </form>
-  </div>
-</ng-template>
 <!-- ====== ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
 <ng-template #deleteBeneficiarioModal let-modal>
     <div class="modal-header">

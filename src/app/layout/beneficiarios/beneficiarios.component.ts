@@ -145,96 +145,94 @@ export class BeneficiariosComponent implements OnInit {
 
   }
   // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
-  jsonToString(json: object): string {
-    return JSON.stringify(json);
-  }
-  stringToJson(jsonString: string): object {
-    return JSON.parse(jsonString);
-  }
-  // GET PARAMETRICAS
-  getDescripcionSubtipo(idRegistro: any, paramList: any): string{
-    const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
-    return subtipo ? subtipo.descripcion_subtipo : 'Null';
-  }
-  // GET ORGANIZACION
-  getOrganizacion(idRegistro: any, paramList: any): string{
-    const org = paramList.find(elem => elem.id_organizacion == idRegistro);
-    return org ? org.organizacion : 'Null';
-  }
-  // GET ACTIVIDAD
-  getActividad(idRegistro: any, paramList: any): string{
-    const actividad = paramList.find(elem => elem.id_proy_actividad == idRegistro);
-    return actividad ? actividad.actividad : 'Null';
-  }
-  // GET ORGANIZACION TIPO
-  getOrganizacionTipo(idRegistro: any, paramList: any): string{
-  const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
-  return subtipo ? subtipo.descripcion_subtipo : 'Null';
-  }
-
-  getCurrentDateTime(): string {
-    const date: Date = new Date();
-    
-    const day: string = String(date.getDate()).padStart(2, '0');
-    const month: string = String(date.getMonth() + 1).padStart(2, '0');
-    const year: number = date.getFullYear();
-    
-    const hours: string = String(date.getHours()).padStart(2, '0');
-    const minutes: string = String(date.getMinutes()).padStart(2, '0');
-    const seconds: string = String(date.getSeconds()).padStart(2, '0');
-    
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  }
+      jsonToString(json: object): string {
+        return JSON.stringify(json);
+      }
+      stringToJson(jsonString: string): object {
+        return JSON.parse(jsonString);
+      }
+      // GET PARAMETRICAS
+      getDescripcionSubtipo(idRegistro: any, paramList: any): string{
+        const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
+        return subtipo ? subtipo.descripcion_subtipo : 'Null';
+      }
+      // GET ORGANIZACION
+      getOrganizacion(idRegistro: any, paramList: any): string{
+        const org = paramList.find(elem => elem.id_organizacion == idRegistro);
+        return org ? org.organizacion : 'Null';
+      }
+      // GET ACTIVIDAD
+      getActividad(idRegistro: any, paramList: any): string{
+        const actividad = paramList.find(elem => elem.id_proy_actividad == idRegistro);
+        return actividad ? actividad.actividad : 'Null';
+      }
+      // GET ORGANIZACION TIPO
+      getOrganizacionTipo(idRegistro: any, paramList: any): string{
+      const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
+      return subtipo ? subtipo.descripcion_subtipo : 'Null';
+      }
+      // GET DE FECHA Y HORA
+      getCurrentDateTime(): string {
+        const date: Date = new Date();
+        
+        const day: string = String(date.getDate()).padStart(2, '0');
+        const month: string = String(date.getMonth() + 1).padStart(2, '0');
+        const year: number = date.getFullYear();
+        
+        const hours: string = String(date.getHours()).padStart(2, '0');
+        const minutes: string = String(date.getMinutes()).padStart(2, '0');
+        const seconds: string = String(date.getSeconds()).padStart(2, '0');
+        
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      }
 // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
-getParametricasBeneficiarios(){
-  // Actividad
-  this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
-    (data) => {
-      console.log('Actividades cargadas:', data);
-      if(data[0]?.dato) {
-        this.beneficiariosActividad = data[0].dato;
-      }
-    },
-    (error) => {
-      console.error('Error al cargar actividades:', error);
+    getParametricasBeneficiarios(){
+      // ACTIVIDADES POR ID_PROYECTO
+      this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
+        (data) => {
+          console.log('Actividades cargadas:', data);
+          if(data[0]?.dato) {
+            this.beneficiariosActividad = data[0].dato;
+          }
+        },
+        (error) => {
+          console.error('Error al cargar actividades:', error);
+        }
+      );
+      // TIPOS DE ORGANIZACIÓN
+      this.servicios.getParametricaByIdTipo(18).subscribe(
+        (data) => {
+          console.log('Tipos de organización cargados:', data);
+          if(data[0]?.dato) {
+            this.beneficiariosOrganizacionTipo = data[0].dato;
+          }
+        },
+        (error) => {
+          console.error('Error al cargar tipos de organización:', error);
+        }
+      );
+      // ORGANIZACIONES POR ID PROYECTO
+      this.ServOrganizacion.getOrganizacionByIdProy(this.idProyecto).subscribe(
+        (data) => {
+          console.log('Organizaciones cargadas:', data);
+          if(data[0]?.dato) {
+            this.beneficiariosOrganizacion = data[0].dato;
+          }
+        },
+        (error) => {
+          console.error('Error al cargar organizaciones:', error);
+        }
+      );
     }
-  );
-
-  // Tipos de organización
-  this.servicios.getParametricaByIdTipo(18).subscribe(
-    (data) => {
-      console.log('Tipos de organización cargados:', data);
-      if(data[0]?.dato) {
-        this.beneficiariosOrganizacionTipo = data[0].dato;
-      }
-    },
-    (error) => {
-      console.error('Error al cargar tipos de organización:', error);
-    }
-  );
-
-  // Organización
-  this.ServOrganizacion.getOrganizacionByIdProy(this.idProyecto).subscribe(
-    (data) => {
-      console.log('Organizaciones cargadas:', data);
-      if(data[0]?.dato) {
-        this.beneficiariosOrganizacion = data[0].dato;
-      }
-    },
-    (error) => {
-      console.error('Error al cargar organizaciones:', error);
-    }
-  );
-}
 
       // inicializar formulario con los campos del beneficiario
       initForm(): void {
         this.beneficiariesForm = this.fb.group({
-          id: [{ value: '', disabled: true }],
+          id: [{value: '', disabled: true}],
           fecha: ['', [Validators.required]],
           departamento: ['', [Validators.required]],
-          municipio: [{ value: '', disabled: true }, [Validators.required]],
-          comunidad: [{ value: '', disabled: true }, [Validators.required]],
+          municipio: [{value: '', disabled: true}, [Validators.required]],
+          comunidad: [{value: '', disabled: true}, [Validators.required]],
           id_proy_actividad: ['', [Validators.required]],
           idp_organizacion_tipo: ['', [Validators.required]],
           id_organizacion: ['', [Validators.required]],
@@ -243,124 +241,125 @@ getParametricasBeneficiarios(){
           hombres: [{value: 0, disabled: true}],
           total: [{value: 0, disabled: true}],
           details: ['', [Validators.required]],
-          registeredBy: [{ value: '', disabled: true }]
+          registeredBy: [{value: '', disabled: true}]
         });
       }
-  loadGeografica():void{
-    this.ubicaGeograficaService.getUbicaGeografica().subscribe(
-      (response) => {
-        console.log('Datos recibidos del servicio:', response);
-        if (response[0]?.res === 'OK') {
-          this.geografia = response[0].dato;
-          console.log('tpdas las obucaiones recibidas:', this.geografia);
-        } else {
-          console.error('Respuesta inválida del servicio:', response);
-        }
-      },
-      (error) => console.error('Error al cargar departamentos:', error)
-    );
-  }
-  loadDepartamentos(): void {
-   
-      this.ubicaGeograficaService.getUbicaciones(2, 1, 1).subscribe(
+      // 
+    loadGeografica():void{
+      this.ubicaGeograficaService.getUbicaGeografica().subscribe(
         (response) => {
+          console.log('Datos recibidos del servicio:', response);
           if (response[0]?.res === 'OK') {
-            this.departamentos = response[0].dato;
-            console.log('Departamentos recibidos :', this.departamentos); 
+            this.geografia = response[0].dato;
+            console.log('tpdas las obucaiones recibidas:', this.geografia);
+          } else {
+            console.error('Respuesta inválida del servicio:', response);
           }
         },
         (error) => console.error('Error al cargar departamentos:', error)
       );
     }
-  getIdDepartamento(nombre:any): number | undefined {
-    const departamento =  this.geografia.find(muni => muni.nombre === nombre);
-    console.log(' vamos a  filtrar el departamento aqui : ',this.geografia)
-    return departamento ? departamento.id_ubica_geo : undefined;
-  }
-  getIdMunicipio(nombre: any): number | undefined {
-    const municipio =  this.geografia.find(muni => muni.nombre === nombre);
-    console.log( ' para obtener eñ id del municipiooooo: ', this.geografia)
-    return municipio ? municipio.id_ubica_geo : undefined;
-  }
-  getIdComunidad(nombre: string): number | undefined {  
-    const comunidad =  this.geografia.find(comu => comu.nombre === nombre);
-    return comunidad ? comunidad.id_ubica_geo : undefined;
-  }
 
-  onDepartamentoChange(p_orden_departamento: any): void {
-    console.log('nombre recibido de departamento : ', p_orden_departamento)
-    const idDepartamento = this.getIdDepartamento(p_orden_departamento);
-    console.log('Departamento seleccionado en el select: ', idDepartamento);
+    loadDepartamentos(): void {
+        this.ubicaGeograficaService.getUbicaciones(2, 1, 1).subscribe(
+          (response) => {
+            if (response[0]?.res === 'OK') {
+              this.departamentos = response[0].dato;
+              console.log('Departamentos recibidos :', this.departamentos); 
+            }
+          },
+          (error) => console.error('Error al cargar departamentos:', error)
+        );
+      }
+    getIdDepartamento(nombre:any): number | undefined {
+      const departamento =  this.geografia.find(muni => muni.nombre === nombre);
+      console.log(' vamos a  filtrar el departamento aqui : ',this.geografia)
+      return departamento ? departamento.id_ubica_geo : undefined;
+    }
+    getIdMunicipio(nombre: any): number | undefined {
+      const municipio =  this.geografia.find(muni => muni.nombre === nombre);
+      console.log( ' para obtener eñ id del municipiooooo: ', this.geografia)
+      return municipio ? municipio.id_ubica_geo : undefined;
+    }
+    getIdComunidad(nombre: string): number | undefined {  
+      const comunidad =  this.geografia.find(comu => comu.nombre === nombre);
+      return comunidad ? comunidad.id_ubica_geo : undefined;
+    }
 
-    if (!idDepartamento) {
-        console.error('ID de departamento no encontrado');
-        this.provincias = [];
-        this.municipios = [];
+    onDepartamentoChange(p_orden_departamento: any): void {
+      console.log('nombre recibido de departamento : ', p_orden_departamento)
+      const idDepartamento = this.getIdDepartamento(p_orden_departamento);
+      console.log('Departamento seleccionado en el select: ', idDepartamento);
+
+      if (!idDepartamento) {
+          console.error('ID de departamento no encontrado');
+          this.provincias = [];
+          this.municipios = [];
+          this.comunidades = [];
+          return;
+      }
+
+      const nivelProvincia = 3; // Nivel correspondiente a las provincias
+      const nivelMunicipio = 4; // Nivel correspondiente a los municipios
+      const nivelComunidad = 5; // Nivel correspondiente a las comunidades
+      const ramaDeseada = 1; // Ajustar según el valor correcto para "rama"
+
+      // Filtrar provincias
+      this.provincias = this.geografia.filter(
+          (geo) =>
+              geo.nivel === nivelProvincia &&
+              geo.rama === ramaDeseada &&
+              geo.id_ubica_geo_padre === idDepartamento
+      );
+      console.log('Provincias filtradas:', this.provincias);
+
+      // Filtrar municipios basados en las provincias
+      const idProvincias = this.provincias.map(provincia => provincia.id_ubica_geo);
+      this.municipios = this.geografia.filter(
+          (geo) =>
+              geo.nivel === nivelMunicipio &&
+              geo.rama === ramaDeseada &&
+              idProvincias.includes(geo.id_ubica_geo_padre)
+      );
+      console.log('Municipios filtrados:', this.municipios);
+
+      // Filtrar comunidades basadas en los municipios
+      const idMunicipios = this.municipios.map(municipio => municipio.id_ubica_geo);
+      this.comunidades = this.geografia.filter(
+          (geo) =>
+              geo.nivel === nivelComunidad &&
+              geo.rama === ramaDeseada &&
+              idMunicipios.includes(geo.id_ubica_geo_padre)
+      );
+      console.log('Comunidades filtradas:', this.comunidades);
+      this.beneficiariesForm.get('municipio')?.enable();
+      this.beneficiariesForm.get('comunidad')?.disable();
+      this.beneficiariesForm.get('municipio')?.setValue('');
+      this.beneficiariesForm.get('comunidad')?.setValue('');
+    }
+    onMunicipioChange(p_orden_municipio: any): void {
+      if (!p_orden_municipio) {
         this.comunidades = [];
         return;
+      }
+
+      const idMunicipio = this.getIdMunicipio(p_orden_municipio);
+      
+      if (!idMunicipio) {
+        console.error('ID de municipio no encontrado');
+        return;
+      }
+
+      // Filtrar comunidades directamente usando el ID del municipio
+      this.comunidades = this.geografia.filter(geo => 
+        geo.nivel === 5 && 
+        geo.rama === 1 && 
+        geo.id_ubica_geo_padre === idMunicipio
+      );
+
+      // Habilitar campo de comunidad
+      this.beneficiariesForm.get('comunidad')?.enable();
     }
-
-    const nivelProvincia = 3; // Nivel correspondiente a las provincias
-    const nivelMunicipio = 4; // Nivel correspondiente a los municipios
-    const nivelComunidad = 5; // Nivel correspondiente a las comunidades
-    const ramaDeseada = 1; // Ajustar según el valor correcto para "rama"
-
-    // Filtrar provincias
-    this.provincias = this.geografia.filter(
-        (geo) =>
-            geo.nivel === nivelProvincia &&
-            geo.rama === ramaDeseada &&
-            geo.id_ubica_geo_padre === idDepartamento
-    );
-    console.log('Provincias filtradas:', this.provincias);
-
-    // Filtrar municipios basados en las provincias
-    const idProvincias = this.provincias.map(provincia => provincia.id_ubica_geo);
-    this.municipios = this.geografia.filter(
-        (geo) =>
-            geo.nivel === nivelMunicipio &&
-            geo.rama === ramaDeseada &&
-            idProvincias.includes(geo.id_ubica_geo_padre)
-    );
-    console.log('Municipios filtrados:', this.municipios);
-
-    // Filtrar comunidades basadas en los municipios
-    const idMunicipios = this.municipios.map(municipio => municipio.id_ubica_geo);
-    this.comunidades = this.geografia.filter(
-        (geo) =>
-            geo.nivel === nivelComunidad &&
-            geo.rama === ramaDeseada &&
-            idMunicipios.includes(geo.id_ubica_geo_padre)
-    );
-    console.log('Comunidades filtradas:', this.comunidades);
-    this.beneficiariesForm.get('municipio')?.enable();
-    this.beneficiariesForm.get('comunidad')?.disable();
-    this.beneficiariesForm.get('municipio')?.setValue('');
-    this.beneficiariesForm.get('comunidad')?.setValue('');
-  }
-  onMunicipioChange(p_orden_municipio: any): void {
-    if (!p_orden_municipio) {
-      this.comunidades = [];
-      return;
-    }
-
-    const idMunicipio = this.getIdMunicipio(p_orden_municipio);
-    
-    if (!idMunicipio) {
-      console.error('ID de municipio no encontrado');
-      return;
-    }
-
-    // Filtrar comunidades directamente usando el ID del municipio
-    this.comunidades = this.geografia.filter(geo => 
-      geo.nivel === 5 && 
-      geo.rama === 1 && 
-      geo.id_ubica_geo_padre === idMunicipio
-    );
-
-    // Habilitar campo de comunidad
-    this.beneficiariesForm.get('comunidad')?.enable();
-  }
 
   loadBeneficiarios(): void {
     this.beneficiariosService.getBeneficiarios(this.idProyecto).subscribe(
@@ -380,9 +379,9 @@ getParametricasBeneficiarios(){
               departamento: item.departamento,
               municipio: item.municipio || null,
               comunidad: item.comunidad || null,
-              tipoOrganizacion: tipoOrg ? tipoOrg.descripcion_subtipo : null,
-              organizacion: item.organizacion || null,
-              actividad: item.actividad || null,
+              idp_organizacion_tipo: item.idp_organizacion_tipo || null,
+              id_organizacion: item.id_organizacion || null,
+              id_proy_actividad: item.id_proy_actividad || null,
               evento: item.titulo_evento || null,
               details: item.evento_detalle || null,
               mujeres: item.mujeres || 0,
@@ -436,15 +435,6 @@ getParametricasBeneficiarios(){
       this.cargarPersona(this.selectedBeneficiarios.id);
     }
   }
-
-openModalUbicaciones(modal: TemplateRef<any>){
-  this.beneficiariesFormUbicacion.reset();
-  // Abrir el modal
-  document.querySelector('app-root')?.setAttribute('inert', 'true');
-  this.modalService.open(modal, { size: 'xl' }).result.finally(() => {
-    document.querySelector('app-root')?.removeAttribute('inert');
-  });
-}
 
 // Método para abrir el modal en modo edición o creación
 openModal(modal: TemplateRef<any>, beneficiario?: Beneficiario, isListModal: boolean = false): void {
@@ -535,29 +525,23 @@ this.beneficiariesForm.patchValue({
       return;
     }
   
-    // Validar campos específicos
-    if (!formValue.id_proy_actividad || !formValue.idp_organizacion_tipo || !formValue.id_organizacion) {
-      console.log('Faltan campos obligatorios de organización o actividad');
-      return;
-    }
-  
     const beneficiarioData = {
       id: formValue.id || null,
-      id_proyecto: parseInt(this.idProyecto, 10),
-      fecha: formValue.fecha,
+      id_proyecto: this.idProyecto ? parseInt(this.idProyecto, 10) : null,
+      fecha: formValue.fecha || new Date().toISOString().split('T')[0],
       departamento: formValue.departamento,
       municipio: formValue.municipio ? this.getIdMunicipio(formValue.municipio) : null,
       comunidad: formValue.comunidad ? this.getIdComunidad(formValue.comunidad) : null,
-      id_proy_actividad: parseInt(formValue.id_proy_actividad),
-      idp_organizacion_tipo: parseInt(formValue.idp_organizacion_tipo),
-      id_organizacion: parseInt(formValue.id_organizacion),
-      evento: formValue.evento,
+      id_proy_actividad: formValue.id_proy_actividad ? parseInt(formValue.id_proy_actividad, 10) : 0, // Ahora opcional
+      idp_organizacion_tipo: formValue.idp_organizacion_tipo ? parseInt(formValue.idp_organizacion_tipo, 10) : 0, // Ahora opcional
+      id_organizacion: formValue.id_organizacion ? parseInt(formValue.id_organizacion, 10) : 0, // Ahora opcional
+      evento: formValue.evento || '',
       mujeres: formValue.mujeres || 0,
       hombres: formValue.hombres || 0,
       total: (formValue.mujeres || 0) + (formValue.hombres || 0),
-      details: formValue.details,
-      registeredBy: this.idPersonaReg
-    };
+      details: formValue.details || '',
+      registeredBy: this.idPersonaReg || null
+    };    
   
     console.log('Datos a enviar:', beneficiarioData);
   
@@ -575,28 +559,37 @@ this.beneficiariesForm.patchValue({
         if (response[0]?.res === 'OK') {
           this.loadBeneficiarios();
           this.modalService.dismissAll();
+          this.selectedBeneficiarios = null;
+          alert('Beneficiario editado exitosamente');
         } else {
           console.error('Error en la respuesta:', response);
         }
       },
       error: (error) => {
         console.error('Error al editar:', error);
+        alert('Error al editar beneficiario');
       }
     });
   }
   
   addBeneficiario(beneficiarioData: any): void {
+    console.log("Enviando datos al backend:", beneficiarioData);  // <-- Agregar este log
+    
     this.beneficiariosService.addBeneficiario(beneficiarioData).subscribe({
       next: (response) => {
+        console.log("Respuesta del backend:", response); // <-- Verificar respuesta
+        
         if (response[0]?.res === 'OK') {
-          this.loadBeneficiarios();
+          this.loadBeneficiarios();          
           this.modalService.dismissAll();
+          alert('Beneficiario agregado exitosamente');
         } else {
-          console.error('Error en la respuesta:', response);
+          console.error('Error en la respuesta del backend:', response);
         }
       },
       error: (error) => {
-        console.error('Error al añadir:', error);
+        console.error('Error al añadir beneficiario:', error);
+        alert('Error al añadir beneficiario');
       }
     });
   }
@@ -607,7 +600,7 @@ this.beneficiariesForm.patchValue({
     modalRef.result.then(
       (result) => {
         if (result === 'Eliminar') {
-          this.onDeleteBeneficiario(); // Proceder con la eliminación solo si se confirma
+          this.onDeleteBeneficiario(); 
         }
       },
       (reason) => {
@@ -624,8 +617,9 @@ this.beneficiariesForm.patchValue({
           console.log('Respuesta del backend (eliminar):', response);
           if (response[0]?.res === 'OK') {
             console.log('Beneficiario eliminado correctamente');
-            this.loadBeneficiarios(); // Recargar la lista después de eliminar
-            this.selectedBeneficiarios = null; // Reiniciar selección
+            this.loadBeneficiarios(); 
+            this.selectedBeneficiarios = null;
+            alert('Beneficiario eliminado correctamente'); 
           } else {
             console.error('Error en la respuesta del backend (eliminar):', response);
           }
