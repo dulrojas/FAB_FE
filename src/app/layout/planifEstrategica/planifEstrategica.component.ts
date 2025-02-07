@@ -142,6 +142,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.getPlanifEstrategica(); 
       this.loadData();
       this.countHeaderData();
+      this.cargarIndicadoresAvance();
       //this.initPlanifEstrategicaModel();
       //this.onCategoriaChange();
       //this.onSubCategoriaChange();
