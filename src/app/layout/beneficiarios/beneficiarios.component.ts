@@ -784,16 +784,15 @@ onSubmit(): void {
     this.servListBenef.addListBene(participanteData).subscribe({
       next: (response) => {
         if (response[0]?.res === 'OK') {
-          // Primero cargar la persona
           this.cargarPersona(this.selectedBeneficiarios.id);
-          // Luego actualizar totales
           this.actualizarTotales();
-          // Actualizar la vista completa
           this.loadBeneficiarios();
           this.participanteForm.reset();
           this.modalRefParticipante.close();
+          alert('Participante agregado exitosamente');
         } else {
           console.error('Error en la respuesta:', response);
+          alert('Error al guardar participante');
         }
       },
       error: (error) => {
@@ -826,6 +825,7 @@ onSubmit(): void {
                 this.selectedBeneficiarios.mujeres - 1 : 
                 this.selectedBeneficiarios.mujeres              
             };
+            alert('Participante eliminado exitosamente');
   
             // Forzar actualización de totales
             this.actualizarTotales();
@@ -834,6 +834,7 @@ onSubmit(): void {
             this.cdr.detectChanges();
           }
         } else {
+          alert('Error al eliminar participante');
           console.error('Error en la respuesta:', response);
         }
       },
@@ -1111,9 +1112,11 @@ onSubmit(): void {
         };
         this.servAliados.editAliado(objAliado).subscribe(
           (data) => {
+            alert('Aliado editado exitosamente');
             this.getAliados();
           },
           (error) => {
+            alert('Error al editar aliado');
             console.error(error);
           }
         );
@@ -1130,11 +1133,13 @@ onSubmit(): void {
         deleteAliado(){
         this.servAliados.deleteAliado(this.aliadosSelected.id_proy_aliado).subscribe(
           (data) => {
+            alert('Aliado eliminado exitosamente');
             this.closeModalAliado();
             this.aliadosSelected = null;
             this.getAliados();
           },
           (error) => {
+            alert('Error al eliminar aliado');
             console.error(error);
           }
         );
