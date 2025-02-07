@@ -82,18 +82,18 @@ export class servIndicadorAvance {
           { "name": "p_id_proy_indica_avance", "value": null, "type": "int" },
           { "name": "p_id_proy_indicador", "value": obj.p_id_proy_indicador, "type": "int" },
           { "name": "p_fecha_reportar", "value": obj.p_fecha_reportar, "type": "string" },
-          { "name": "p_valor_esperado", "value": obj.p_valor_esperado, "type": "numeric" },
+          { "name": "p_valor_esperado", "value": obj.p_valor_esperado, "type": "string" },
           { "name": "p_fecha_hora_reporte", "value": obj.p_fecha_hora_reporte, "type": "string" },
           { "name": "p_id_persona_reporte", "value": obj.p_id_persona_reporte, "type": "int" },
-          { "name": "p_valor_reportado", "value": obj.p_valor_reportado, "type": "numeric" },
+          { "name": "p_valor_reportado", "value": obj.p_valor_reportado, "type": "string" },
           { "name": "p_comentarios", "value": obj.p_comentarios, "type": "string" },
           { "name": "p_ruta_evidencia", "value": obj.p_ruta_evidencia, "type": "string" }
         ]
       }
     };
-    const ip = sessionStorage.getItem('ip') || '';
+  
     const headers = new HttpHeaders({
-      'ip': "127.0.0.1"
+      'ip': sessionStorage.getItem('ip') || '127.0.0.1'
     });
   
     return this.http.post<any>(this.URL, params, { headers });

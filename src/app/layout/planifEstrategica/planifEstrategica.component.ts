@@ -307,9 +307,11 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.servIndicadorAvance.editIndicadorAvance(avanceEditado).subscribe(
         (response) => {
           this.cargarIndicadoresAvance();
+          alert('Avance aditado correctamente');
         },
         (error) => {
           console.error('Error al actualizar:', error);
+          alert('Error al actualizar el avance');
         }
       );
       
@@ -951,7 +953,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.getPlanifEstrategica();
       this.loadData();
     }
-    
+
     // ======= ======= ======= ======= EDITAR ELEMENTO ======= =======  ======= =======
     initEditPlanifEstrategica(planifEstrategicaOGOERE: TemplateRef<any>, planifEstrategicaIN: TemplateRef<any>) {
         if (!this.planifEstrategicaSelected) {
@@ -1418,6 +1420,11 @@ export class PlanifEstrategicaComponent implements OnInit {
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
     // ======= ======= NGMODEL VARIABLES GENERALES ======= =======
     indicadorAvance: any[] = [];
+
+      // Esta función debe llamarse cuando se selecciona un indicador
+      setSelectedIndicador(indicador: any) {
+        this.planifEstrategicaSelected = indicador;
+      }
     // ======= NGMODEL VARIABLES SECTION INDICADOR AVANCE ======= 
         //modalTitleInAvance: string = "";
         modalActionInAvance: string = "";
@@ -1428,7 +1435,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         valor_esperado: any = "";
         fecha_hora_reporte: any = "";
         id_persona_reporte: any = "";
-        valor_reportado: any = "";
+        valor_reportado: number = 0;
         comentarios: any = "";
         ruta_evidencia: any = "";
 
@@ -1452,10 +1459,19 @@ export class PlanifEstrategicaComponent implements OnInit {
         }
     // ======= ======= OPEN MODALS FUN ======= =======
         //private modalRef: NgbModalRef | null = null;
-          openModalIndicadorAvance(content: TemplateRef<any>) {
-          this.initIndicadorAvanceModel()  
-          this.modalRef = this.modalService.open(content, { size: 'xl' });
+        openModalIndicadorAvance(content: TemplateRef<any>) {
+          // Asegurarnos de que tenemos un indicador seleccionado
+          if (!this.planifEstrategicaSelected?.id_proy_indicador) {
+            alert('Por favor seleccione un indicador primero');
+            return;
           }
+          
+          this.initIndicadorAvanceModel();
+          // Asignar el id_proy_indicador del indicador seleccionado
+          this.id_proy_indicador = this.planifEstrategicaSelected.id_proy_indicador;
+          
+          this.modalRef = this.modalService.open(content, { size: 'xl' });
+        }
           closeModalIndicadorAvance() {
           if (this.modalRef) {
             this.modalRef.close(); 
@@ -1472,7 +1488,7 @@ export class PlanifEstrategicaComponent implements OnInit {
           this.valor_esperado = "";
           this.fecha_hora_reporte = null;
           this.id_persona_reporte = "";
-          this.valor_reportado = null;
+          this.valor_reportado = 0;
           this.comentarios = "";
           this.ruta_evidencia = null;
 
@@ -1502,45 +1518,56 @@ export class PlanifEstrategicaComponent implements OnInit {
           this.openModalIndicadorAvance(modalScope);
         }     
     // ======= ======= ADD INDICADOR AVANCE ======= =======
-        addIndicadorAvance() {
-          if (!this.planifEstrategicaSelected?.id_proy_indicador) {
-            console.error('No hay un indicador seleccionado');
-            return;
-          }
-          const objIndicadorAvance = {
-            p_id_proy_indica_avance: 0,
-            p_id_proy_indicador: this.id_proy_indicador,
-            p_fecha_reportar: this.fecha_reportar,
-            p_valor_esperado: this.valor_esperado,
-            p_fecha_hora_reporte: null,
-            p_id_persona_reporte: parseInt(this.idPersonaReg,10),
-            p_valor_reportado: null,
-            p_comentarios: this.comentarios,
-            p_ruta_evidencia: null
-          };
-          
-          this.servIndicadorAvance.addIndicadorAvance(objIndicadorAvance).subscribe(
-            (data) => {
-              alert('Avance agregado exitosamente');
-              this.getIndicadorAvance();
-              this.closeModalIndicadorAvance();
-              this.cargarIndicadoresAvance();
-            },
-            (error) => {
-              console.error('Error al guardar los datos:', error);
-              alert('Error al guardar los datos');
-            }
-          );
+    addIndicadorAvance() {
+      // Validar que tenemos todos los campos requeridos
+      if (!this.fecha_reportar || !this.valor_esperado || !this.comentarios) {
+        alert('Por favor complete todos los campos requeridos');
+        return;
+      }
+      
+      const objIndicadorAvance = {
+        p_id_proy_indica_avance: 0,
+        p_id_proy_indicador: this.id_proy_indicador,
+        p_fecha_reportar: this.fecha_reportar,
+        p_valor_esperado: this.valor_esperado,
+        p_fecha_hora_reporte: null,
+        p_id_persona_reporte: parseInt(this.idPersonaReg, 10),
+        p_valor_reportado: 0,
+        p_comentarios: this.comentarios,
+        p_ruta_evidencia: null
+      };
+
+      this.servIndicadorAvance.addIndicadorAvance(objIndicadorAvance).subscribe({
+        next: (data) => {
+          alert('Avance agregado exitosamente');
+          this.cargarIndicadoresAvance();
+          this.getIndicadorAvance();
+          this.closeModalIndicadorAvance();
+        },
+        error: (error) => {
+          console.error('Error al guardar los datos:', error);
+          alert('Error al guardar los datos');
         }
+      });
+    }
 
     // ======= ======= ======= ======= VALIDATION INDICADOR AVANCE ======= =======
     onSudmidIndicadorAvance(): void {
-      let valForm = false;
+      // Validar los campos
       this.ValidateComentarios();
       this.ValidateValorEsperado();
+    
+      if (!this.fecha_reportar) {
+        alert('La fecha es requerida');
+        return;
+      }
+    
       if (this.valComentarios && this.valValorEsperado) {
         this.addIndicadorAvance();
+      } else {
+        alert('Por favor corrija los errores en el formulario');
       }
     }
+    
   
   }

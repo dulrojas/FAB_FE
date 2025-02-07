@@ -550,8 +550,10 @@
                                                     <tr>
                                                         <td colspan="4" class="text-center">
                                                             <button type="button" class="btn btn-bg-1" 
-                                                                    (click)="openModalIndicadorAvance(indicadorAvance)">
-                                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir Nuevo Avance
+                                                                    (click)="openModalIndicadorAvance(indicadorAvance)"
+                                                                    [disabled]="!planifEstrategicaSelected?.id_proy_indicador">
+                                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> 
+                                                                Añadir Nuevo Avance
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -712,11 +714,12 @@
                                 <!-- Primera Fila: FECHA REPORTAR, VALOR ESPERADO-->
                                 <!-- ======= ======= FECHA ======= ======= --> 
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="fecha_reportar">Fecha reportar</label>
+                                    <label for="fecha_reportar">Fecha reportar <span class="text-danger">*</span></label>
                                     <input class="form-control" type="date" 
-                                                id="fecha_reportar" name="fecha_reportar" 
-                                                [(ngModel)]="fecha_reportar"/>
-                                </div>
+                                           id="fecha_reportar" name="fecha_reportar" 
+                                           [(ngModel)]="fecha_reportar"
+                                           required/>
+                                  </div>
                                 <!-- ======= ======= VALOR ESPERADO ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
                                     <label for="valor_esperado">Valor Esperado</label>
