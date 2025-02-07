@@ -91,7 +91,6 @@ export class servIndicador {
   // ======= ======= ======= ADD INDICADOR ======= ======= =======
   // ======= ======= ======= ======= ======= ======= =======
       addIndicador(obj: any): Observable<any> {
-        console.log('datos enm eel metodo de add  antes  ',obj);
         const params = {
           "procedure_name": "sp_indicador",
           "body": {
@@ -125,9 +124,6 @@ export class servIndicador {
       
         return this.http.post<any>(this.URL, params, { headers });
       }
-  
-
-
   // ======= ======= ======= ======= ======= ======= =======
   // ======= =======  EDIT INDICADOR  ======= =======
   // ======= ======= ======= ======= ======= ======= =======
@@ -156,7 +152,6 @@ export class servIndicador {
             ]
           }
         };
-        console.log('datos enm eel metodo de edit des pues ',params);
       
         const ip = sessionStorage.getItem('ip') || '';
         const headers = new HttpHeaders({

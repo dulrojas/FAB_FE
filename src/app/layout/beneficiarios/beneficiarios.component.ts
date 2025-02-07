@@ -188,7 +188,6 @@ export class BeneficiariosComponent implements OnInit {
       // ACTIVIDADES POR ID_PROYECTO
       this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
         (data) => {
-          console.log('Actividades cargadas:', data);
           if(data[0]?.dato) {
             this.beneficiariosActividad = data[0].dato;
           }
@@ -200,7 +199,6 @@ export class BeneficiariosComponent implements OnInit {
       // TIPOS DE ORGANIZACIÓN
       this.servicios.getParametricaByIdTipo(18).subscribe(
         (data) => {
-          console.log('Tipos de organización cargados:', data);
           if(data[0]?.dato) {
             this.beneficiariosOrganizacionTipo = data[0].dato;
           }
@@ -212,7 +210,6 @@ export class BeneficiariosComponent implements OnInit {
       // ORGANIZACIONES POR ID PROYECTO
       this.ServOrganizacion.getOrganizacionByIdProy(this.idProyecto).subscribe(
         (data) => {
-          console.log('Organizaciones cargadas:', data);
           if(data[0]?.dato) {
             this.beneficiariosOrganizacion = data[0].dato;
           }
@@ -246,10 +243,8 @@ export class BeneficiariosComponent implements OnInit {
     loadGeografica():void{
       this.ubicaGeograficaService.getUbicaGeografica().subscribe(
         (response) => {
-          console.log('Datos recibidos del servicio:', response);
           if (response[0]?.res === 'OK') {
             this.geografia = response[0].dato;
-            console.log('tpdas las obucaiones recibidas:', this.geografia);
           } else {
             console.error('Respuesta inválida del servicio:', response);
           }
@@ -263,7 +258,6 @@ export class BeneficiariosComponent implements OnInit {
           (response) => {
             if (response[0]?.res === 'OK') {
               this.departamentos = response[0].dato;
-              console.log('Departamentos recibidos :', this.departamentos); 
             }
           },
           (error) => console.error('Error al cargar departamentos:', error)
@@ -271,12 +265,10 @@ export class BeneficiariosComponent implements OnInit {
       }
     getIdDepartamento(nombre:any): number | undefined {
       const departamento =  this.geografia.find(muni => muni.nombre === nombre);
-      console.log(' vamos a  filtrar el departamento aqui : ',this.geografia)
       return departamento ? departamento.id_ubica_geo : undefined;
     }
     getIdMunicipio(nombre: any): number | undefined {
       const municipio =  this.geografia.find(muni => muni.nombre === nombre);
-      console.log( ' para obtener eñ id del municipiooooo: ', this.geografia)
       return municipio ? municipio.id_ubica_geo : undefined;
     }
     getIdComunidad(nombre: string): number | undefined {  
@@ -285,9 +277,7 @@ export class BeneficiariosComponent implements OnInit {
     }
 
     onDepartamentoChange(p_orden_departamento: any): void {
-      console.log('nombre recibido de departamento : ', p_orden_departamento)
       const idDepartamento = this.getIdDepartamento(p_orden_departamento);
-      console.log('Departamento seleccionado en el select: ', idDepartamento);
 
       if (!idDepartamento) {
           console.error('ID de departamento no encontrado');
@@ -309,7 +299,6 @@ export class BeneficiariosComponent implements OnInit {
               geo.rama === ramaDeseada &&
               geo.id_ubica_geo_padre === idDepartamento
       );
-      console.log('Provincias filtradas:', this.provincias);
 
       // Filtrar municipios basados en las provincias
       const idProvincias = this.provincias.map(provincia => provincia.id_ubica_geo);
@@ -319,7 +308,6 @@ export class BeneficiariosComponent implements OnInit {
               geo.rama === ramaDeseada &&
               idProvincias.includes(geo.id_ubica_geo_padre)
       );
-      console.log('Municipios filtrados:', this.municipios);
 
       // Filtrar comunidades basadas en los municipios
       const idMunicipios = this.municipios.map(municipio => municipio.id_ubica_geo);
@@ -329,7 +317,7 @@ export class BeneficiariosComponent implements OnInit {
               geo.rama === ramaDeseada &&
               idMunicipios.includes(geo.id_ubica_geo_padre)
       );
-      console.log('Comunidades filtradas:', this.comunidades);
+      
       this.beneficiariesForm.get('municipio')?.enable();
       this.beneficiariesForm.get('comunidad')?.disable();
       this.beneficiariesForm.get('municipio')?.setValue('');
@@ -515,7 +503,6 @@ onSubmit(): void {
       const control = this.beneficiariesForm.get(key);
       control?.markAsTouched();
     });
-    console.log('Formulario inválido', this.beneficiariesForm.errors);
     
     // Volver a deshabilitar los campos
     mujeres?.disable();
@@ -578,12 +565,8 @@ onSubmit(): void {
   }
   
   addBeneficiario(beneficiarioData: any): void {
-    console.log("Enviando datos al backend:", beneficiarioData);  // <-- Agregar este log
-    
     this.beneficiariosService.addBeneficiario(beneficiarioData).subscribe({
       next: (response) => {
-        console.log("Respuesta del backend:", response); // <-- Verificar respuesta
-        
         if (response[0]?.res === 'OK') {
           this.loadBeneficiarios();          
           this.modalService.dismissAll();
@@ -609,7 +592,7 @@ onSubmit(): void {
         }
       },
       (reason) => {
-        console.log('Modal cerrado sin eliminar:', reason);
+        console.error('Modal cerrado sin eliminar:', reason);
       }
     );
   }
@@ -619,9 +602,7 @@ onSubmit(): void {
     if (this.selectedBeneficiarios) {
       this.beneficiariosService.deleteBeneficiario(this.selectedBeneficiarios.id).subscribe(
         (response) => {
-          console.log('Respuesta del backend (eliminar):', response);
           if (response[0]?.res === 'OK') {
-            console.log('Beneficiario eliminado correctamente');
             this.loadBeneficiarios(); 
             this.selectedBeneficiarios = null;
             alert('Beneficiario eliminado correctamente'); 

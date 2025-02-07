@@ -6,7 +6,7 @@ import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { ServDashboard } from "../../servicios/dashboard";
 import { environment } from '../../../environments/environment';
-import { PlanifEstrategicaService } from '../../servicios/planifEstrategica';
+import { ElementosService } from '../../servicios/elementos';
 import { Chart } from 'chart.js/auto';
 
 @Component({
@@ -26,7 +26,7 @@ export class Dashboard2Component implements OnInit {
         private proyectoService: ProyectoService,
         private servicios: servicios,
         private servDashboard: ServDashboard,
-        private planifEstrategicaService: PlanifEstrategicaService,
+        private ElementosService : ElementosService,
         private cdr: ChangeDetectorRef
       ) {}
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
@@ -127,25 +127,18 @@ export class Dashboard2Component implements OnInit {
         console.error('Error al obtener datos del dashboard:', error);
       }
     );
-    this.planifEstrategicaService.getAllPlanifElements().subscribe(
+    this.ElementosService. getAllElementos().subscribe(
       (data) => {
-        console.log('Datos recibidos del servicio:', data);
         if (data && data[0]?.dato) {
           const elementos = data[0].dato;
   
           const elementosProyecto = elementos.filter((elem: any) => elem.id_proyecto === this.idProyecto);
-          console.log('Elementos filtrados por proyecto:', elementosProyecto);
-  
+
           const conteoPlanificacion = elementosProyecto.filter((elem: any) => elem.id_meto_elemento === 2).length;
           const conteoResultados = elementosProyecto.filter((elem: any) => elem.id_meto_elemento === 3).length;
   
-          console.log('Conteo planificación:', conteoPlanificacion, 'Conteo resultados:', conteoResultados);
-  
           this.headerDataNro01 = conteoPlanificacion;
           this.headerDataNro02 = conteoResultados;
-  
-          console.log('Valor final headerDataNro01:', this.headerDataNro01);
-          console.log('Valor final headerDataNro02:', this.headerDataNro02);
         }
       },
       (error) => {
@@ -396,12 +389,6 @@ export class Dashboard2Component implements OnInit {
         ejecutado_formateado: this.formatearMoneda(ejecutadoTotal),
         presupuesto_formateado: this.formatearMoneda(presupuestoGestion)
       };
-
-      console.log('Datos procesados:', {
-        presupuestoGestion,
-        ejecutadoTotal,
-        porcentajeEjecutado
-      });
 
       // 6. Forzar actualización de la vista y crear gráfico
       this.cdr.detectChanges();
@@ -902,7 +889,6 @@ export class Dashboard2Component implements OnInit {
     
       // Objetivos Específicos (del proyecto)
       this.headerDataNro01 = this.headerDataNro01 ?? 0;
-      console.log('Valor final headerDataNro01:', this.headerDataNro01);
     
       // Resultados (resultados esperados del proyecto)
       this.headerDataNro02 = this.headerDataNro02 ?? 0;
