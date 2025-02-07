@@ -1231,6 +1231,16 @@ export class InfProyectoComponent implements OnInit {
       });
     }
 
+    validateObligacionesModal(){
+      let obligacionesBtns = false;
+
+      if(this.obligacionesSelected){
+        obligacionesBtns = (this.obligacionesSelected.idp_estado_entrega == 2)?(true):(false);  
+      }
+
+      return obligacionesBtns;
+    }
+
     getPersonaName(objPersona: any){
       const nameToReturn = objPersona.nombres+" "+objPersona.apellido_1+((objPersona.apellido_2)?(" "+objPersona.apellido_2):(""));
       return nameToReturn;
@@ -1261,6 +1271,8 @@ export class InfProyectoComponent implements OnInit {
       const file = event.target.files[0];
       if (file) {
         this.obligacionesModel.selectedFile = file;
+        this.obligacionesModel.idp_estado_entrega = 2;
+        this.obligacionesModel.fecha_hora_entrega = new Date().toISOString().split('T')[0];
         this.obligacionesModel.documento_entrega_flag = true;
       }
     }
@@ -1307,11 +1319,17 @@ export class InfProyectoComponent implements OnInit {
             // ======= PROGRESO SECTION =======
             let fechaObligacion = new Date(obligacion.fecha_obligacion);
             let fechaEntrega = new Date(obligacion.fecha_hora_entrega);
+            let currentDate = new Date();
 
-            let currentDateGap = (currentDate.getTime() - fechaObligacion.getTime()) / (1000 * 60 * 60 * 24);
-            let datesGap = (fechaEntrega.getTime() - fechaObligacion.getTime()) / (1000 * 60 * 60 * 24);
+            if (fechaObligacion > currentDate) {
+              obligacion.progreso = 0;
+            } 
+            else {
+              let currentDateGap = (currentDate.getTime() - fechaObligacion.getTime()) / (1000 * 60 * 60 * 24);
+              let datesGap = (fechaEntrega.getTime() - fechaObligacion.getTime()) / (1000 * 60 * 60 * 24);
 
-            obligacion.progreso = Math.round(100*(currentDateGap / datesGap));
+              obligacion.progreso = Math.round(100 * (currentDateGap / datesGap));
+            }
             // ======= ======= =======
           });
         },

@@ -522,19 +522,19 @@
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
                                 (click)="initAddObligaciones(obligacionesFormModal)"
-                                [disabled]="((obligacionesSelected)||(!buttonValidations.editMode))">
+                                [disabled]="((obligacionesSelected)||(validateObligacionesModal())||(!buttonValidations.editMode))">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
                             </button>
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
                                 (click)="initEditObligaciones(obligacionesFormModal)"
-                                [disabled]="((!obligacionesSelected)||(!buttonValidations.editMode))">
+                                [disabled]="((!obligacionesSelected)||(validateObligacionesModal())||(!buttonValidations.editMode))">
                                 <i class="fa fa-caret-up" aria-hidden="true"></i>
                             </button>
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
                                 (click)="initDeleteObligacion(deleteObligacionModal)"
-                                [disabled]="((!obligacionesSelected)||(!buttonValidations.editMode))">
+                                [disabled]="((!obligacionesSelected)||(validateObligacionesModal())||(!buttonValidations.editMode))">
                                 <i class="fa fa-minus" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -955,7 +955,9 @@
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="idp_estado_entrega">Estado entrega</label>
                                     <select class="form-control" id="idp_estado_entrega" name="idp_estado_entrega" 
-                                        [(ngModel)]="obligacionesModel.idp_estado_entrega" (change)="ValidateIdpEstadoEntrega()">
+                                        [disabled]="obligacionesModel.documento_entrega_flag"
+                                        [(ngModel)]="obligacionesModel.idp_estado_entrega" 
+                                        (change)="ValidateIdpEstadoEntrega()">
                                         <option value="" disabled selected>Selecciona un estado</option>
                                         <option *ngFor="let estadoEntrega of estadosEntrega" [value]="estadoEntrega.id_subtipo">
                                             {{ estadoEntrega.descripcion_subtipo }}
@@ -965,10 +967,12 @@
                                 </div>
                                 <!-- ======= ======= FECHA HORA ENTREGA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
-                                    <label for="fecha_hora_entrega">Fecha hora entrega</label>
+                                    <label for="fecha_hora_entrega">Fecha entrega</label>
                                     <input class="form-control" type="date" 
                                         id="fecha_hora_entrega" name="fecha_hora_entrega" 
-                                        [(ngModel)]="obligacionesModel.fecha_hora_entrega" (change)="ValidateFechaHoraEntrega()"/>
+                                        [disabled]="obligacionesModel.documento_entrega_flag"
+                                        [(ngModel)]="obligacionesModel.fecha_hora_entrega" 
+                                        (change)="ValidateFechaHoraEntrega()"/>
                                     <span class="custom-alert-message" *ngIf="!valFechaHoraEntrega">Debe seleccionar una fecha y hora de entrega.</span>
                                     <span class="custom-alert-message" *ngIf="!valFechaHoraEntrega2">La fecha de entrega debe ser posterior a la fecha de obligación.</span>
                                 </div>
@@ -998,7 +1002,7 @@
                                     </div>
                                 </div>
                                 <!-- ======= ======= PLANTILLA DOWNLOAD SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 my-auto">
+                                <!--div class="col col-xl-6 col-lg-6 my-auto">
                                     <div class="d-flex justify-content-center mt-2">
                                         <button type="button" class="btn btn-bg-2 mx-auto" 
                                             [disabled]="!obligacionesModel.ruta_plantilla"
@@ -1006,7 +1010,7 @@
                                             Descargar plantilla
                                         </button>
                                     </div>
-                                </div>
+                                </div-->
 
                             </div>
                         </div>

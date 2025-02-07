@@ -11,6 +11,7 @@ import { servPresupuesto } from "../../servicios/presupuesto";
 import { servPresuAvance } from "../../servicios/presuAvance";
 
 import { Chart } from 'chart.js/auto';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-actividades',
@@ -97,6 +98,7 @@ export class ActividadComponent implements OnInit {
     elementosGant: any[] = [];
 
     actividades: any[] = [];
+    actividadesReprogIds: any[] = [];
     presuAvances: any[] = [];
     
     // ====== ======= ====== CHARTS CONFIG SECTION ====== ======= ======
@@ -328,14 +330,16 @@ export class ActividadComponent implements OnInit {
     modalAction: any = "";
     modalTitle: any = "";
 
-    private modalRef: NgbModalRef | null = null;
+    private modalRefs: NgbModalRef[] = [];
+
     openModal(content: TemplateRef<any>) {
-      this.modalRef = this.modalService.open(content, { size: 'xl' });
+      const modalRef = this.modalService.open(content, { size: 'xl' });
+      this.modalRefs.push(modalRef);
     }
     closeModal() {
-      if (this.modalRef) {
-        this.modalRef.close(); 
-        this.modalRef = null;
+      if (this.modalRefs.length > 0) {
+        const lastModal = this.modalRefs.pop();
+        lastModal?.close();
       }
     }
     getModalTitle(modalAction: any){
@@ -380,6 +384,7 @@ export class ActividadComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= ACTIVIDADES FUN ======= =======
     parseAmountStrToFloat(amount: any): number {
+      amount = amount.replace('$', '');
       amount = amount.replace(',', '');
       amount = parseFloat(amount);
 
@@ -502,6 +507,10 @@ export class ActividadComponent implements OnInit {
       dateDiference = Math.floor(dateDiference / (1000 * 60 * 60 * 24));
     
       return dateDiference;
+    }
+
+    esActividadReprog(id_actividad: number): boolean {
+      return this.actividadesReprogIds.includes(id_actividad);
     }
 
     // ======= PRESU EJECUTADO VALIDATIONS =======
@@ -658,6 +667,7 @@ export class ActividadComponent implements OnInit {
       this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
         (data) => {
           this.actividades = (data[0].dato)?(data[0].dato):([]);
+          this.actividadesReprogIds = (this.actividades.map(a => a.id_proy_acti_repro).filter(id => id !== null));
 
           this.actividades.forEach((actividad)=>{
             actividad.presupuesto = (actividad.presupuesto)?(this.parseAmountStrToFloat(actividad.presupuesto.slice(1))):(0);
@@ -696,6 +706,8 @@ export class ActividadComponent implements OnInit {
               }, 0);
               actividadGant.porcentajeAvance = (100*(totalEjecutado / actividadGant.presupuesto)).toFixed(2);
             
+              actividadGant.esActividadReprog = this.esActividadReprog(actividadGant.id_proy_actividad);
+
             });
           });
 
@@ -792,7 +804,6 @@ export class ActividadComponent implements OnInit {
       this.resultado = this.actividadSelected.resultado;
 
       this.actividadAvances = this.actividadSelected.avances;
-      console.log(this.actividadSelected);
 
       this.openModal(modalScope);
     }
@@ -855,6 +866,100 @@ export class ActividadComponent implements OnInit {
           this.avanceActividad();
         }
       }
+      this.closeModal();
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= INIT REPROGRAMAR FUNCTION ======= =======
+    initReprogramarActividad(modalScope: TemplateRef<any>){
+      this.validateResultado();
+
+      if(!this.valResultado){
+        return;
+      }
+
+      this.id_proy_acti_repro = this.id_proy_actividad;
+      this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= REPROGRAMAR FUNCTION ======= =======
+    reprogramarActividad(){
+      this.validateFechaInicio();
+      this.validateFechaFin();
+
+      if((!this.valFechaInicio) && (!this.valFechaFin)){
+        return;
+      }
+
+      let actividadCodigo = ((this.elementos.find(
+        (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
+      )).codigo);
+      actividadCodigo = actividadCodigo.slice(0,(actividadCodigo.length - 1));
+
+      let elementoPadre = (this.elementosGant.find(
+        (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
+      ));
+
+      if( elementoPadre ){
+        let childrensCodigos = elementoPadre.childrens
+          .map(item => item.codigo)
+          .filter(codigo => codigo.startsWith(actividadCodigo))
+          .map(codigo => parseInt(codigo.split(actividadCodigo)[1], 10)) 
+          .filter(x => !isNaN(x));
+        let maxChildrenCodigo = (childrensCodigos.length > 0)?(Math.max(...childrensCodigos)):(null);
+
+        actividadCodigo = actividadCodigo+ (maxChildrenCodigo+1).toString();
+      }
+      else{
+        actividadCodigo = actividadCodigo+"1";
+      }
+
+      const objActividad = {
+        p_id_proy_actividad: 0,
+        p_id_proyecto: parseInt(this.idProyecto,10),
+        p_id_proy_elemento_padre: parseInt(this.id_proy_elemento_padre, 10),
+        p_codigo: actividadCodigo,
+        p_actividad: this.actividadText,
+        p_descripcion: this.descripcion,
+        p_orden: parseInt(this.orden,10),
+        p_id_proy_acti_repro: this.id_proy_actividad,
+        p_presupuesto: this.parseAmountStrToFloat(this.presupuesto),
+        p_fecha_inicio: this.fecha_inicio,
+        p_fecha_fin: this.fecha_fin,
+        p_resultado: this.resultado,
+        p_idp_actividad_estado: parseInt(this.idp_actividad_estado, 10)
+      };
+
+      this.servActividad.addActividad(objActividad).subscribe(
+        (data) => {
+          let idActiRepro = data[0].dato[0].id_proy_actividad;
+
+          const requests = this.actividadSelected.avances.map((actividadAvaGantSel) => {
+            const objActAvance = {
+              p_id_proy_actividad_avance: null,
+              p_id_proy_actividad: idActiRepro,
+              p_fecha_hora: null,
+              p_avance: actividadAvaGantSel.avance,
+              p_monto_ejecutado: this.parseAmountStrToFloat(actividadAvaGantSel.monto_ejecutado),
+              p_id_persona_reg: this.idPersonaReg
+            };
+            return this.servActAvance.addActAvance(objActAvance);
+          });
+          
+          forkJoin(requests).subscribe(
+            (results) => {
+              this.getActividades();
+            },
+            (error) => {
+              console.error(error);
+            }
+          );
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
+      this.closeModal();
       this.closeModal();
     }
     // ======= ======= ======= ======= =======

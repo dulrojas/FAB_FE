@@ -160,7 +160,7 @@
                         </button>
                         <button type="button" class="btn btn-view-bg-1"
                             (click)="initAvanceActividad(actividadModal)"
-                            [disabled]="!actividadSelected">
+                            [disabled]="(!actividadSelected)||(actividadSelected.esActividadReprog)">
                             <i aria-hidden="true"></i> Avance
                         </button>
                     </div>
@@ -293,13 +293,16 @@
                                 (click)="onActividadClick(actividadGant)">
                                 <div class="col col-md-5 col-lg-5">
                                     <div class="row">
-                                        <div class="col col-md-6 col-lg-6 custom-elemento-actividad">
+                                        <div class="col col-md-6 col-lg-6 custom-elemento-actividad"
+                                            [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
                                             {{ actividadGant.actividad }}
                                         </div>
-                                        <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
+                                        <div class="col col-md-3 col-lg-3 custom-elemento-actividad"
+                                            [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
                                             {{ parseAmountFloatToStr(actividadGant.presupuesto) }}
                                         </div>
-                                        <div class="col col-md-3 col-lg-3 custom-elemento-actividad">
+                                        <div class="col col-md-3 col-lg-3 custom-elemento-actividad"
+                                            [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
                                             {{ actividadGant.porcentajeAvance }}%
                                             <!--canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="50" height="50"></canvas-->
                                         </div>
@@ -315,7 +318,8 @@
                                             [style.width.%]="actividadGant.date_gap_por">
                                             <div 
                                                 class="custom-actividad-progress-fill" 
-                                                [style.width.%]="actividadGant.porcentajeAvance">
+                                                [style.width.%]="actividadGant.porcentajeAvance"
+                                                [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
                                             </div>
                                         </div>
                                     </div>
@@ -333,6 +337,7 @@
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
 </div>
+
 <!-- ======= ======= ======= ACTIVIDAD MODAL ======= ======= ======= -->
 <ng-template #actividadModal let-modal class="custom-modal">
     <div class="modal-header">
@@ -427,7 +432,7 @@
                                         [(ngModel)]="fecha_inicio" [disabled]="modalAction == 'edit'"
                                         (change)="validateFechaInicio()">
                                     <span class="custom-alert-message" *ngIf="!valFechaInicio">
-                                        Debe ingresar un monto valido.
+                                        Debe ingresar una fecha valida.
                                     </span>
                                 </div>
                                 <!-- ======= FECHA FIN SECTION ======= -->
@@ -438,7 +443,7 @@
                                         [(ngModel)]="fecha_fin" [disabled]="modalAction == 'edit'"
                                         (change)="validateFechaFin()">
                                     <span class="custom-alert-message" *ngIf="!valFechaFin">
-                                        Debe ingresar un monto valido.
+                                        Debe ingresar una fecha valida.
                                     </span>
                                 </div>
                                 <!-- ======= PRESUPUESTO SECTION ======= -->
@@ -536,8 +541,12 @@
                                         id="resultado" name="resultado" 
                                         placeholder="Si sera reprogramado ingrese el motivo de incumplimiento"
                                         [(ngModel)]="resultado" 
+                                        (change)="validateResultado()"
                                         [disabled]="modalAction == 'add'">
                                     </textarea>
+                                    <span class="custom-alert-message" *ngIf="!valResultado">
+                                        Debe ingresar un factor valido.
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -555,7 +564,7 @@
             </button>
             <button type="button" class="btn btn-bg-2" 
                 [disabled]="modalAction == 'add'" 
-                (click)="reprogramasActividad()">
+                (click)="initReprogramarActividad(reprogramarActividadModal)">
                 <i aria-hidden="true"></i> Reprogramar
             </button>
             <button type="button" class="btn btn-bg-1" 
@@ -566,3 +575,55 @@
     </div>
     
 </ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= REPROGRAMAR ACTIV MODAL ======= ======= ======= -->
+<ng-template #reprogramarActividadModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Reprogramar Actividad</h4>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer reprogramar esta actividad?</p>
+            <p>Porfavor ingrese las nuevas fechas.</p>
+        </div>
+        <div class="row">
+            <!-- ======= FECHA INICIO SECTION ======= -->
+            <div class="col col-md-6 col-lg-6">
+                <label for="fecha_inicio">Inicio</label>
+                <input class="form-control" type="date" 
+                    id="fecha_inicio" name="fecha_inicio" 
+                    [(ngModel)]="fecha_inicio"
+                    (change)="validateFechaInicio()">
+                <span class="custom-alert-message" *ngIf="!valFechaInicio">
+                    Debe ingresar una fecha valida.
+                </span>
+            </div>
+            <!-- ======= FECHA FIN SECTION ======= -->
+            <div class="col col-md-6 col-lg-6">
+                <label for="fecha_fin">Fin</label>
+                <input class="form-control" type="date" 
+                    id="fecha_fin" name="fecha_fin" 
+                    [(ngModel)]="fecha_fin"
+                    (change)="validateFechaFin()">
+                <span class="custom-alert-message" *ngIf="!valFechaFin">
+                    Debe ingresar una fecha valida.
+                </span>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="reprogramarActividad()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Reprogramar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
