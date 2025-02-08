@@ -86,6 +86,31 @@ export class servPersonaRoles {
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= GET PERSONA PROYECTOS ======= ======= =======
+  getPersonaRolesActivos(): Observable<any> {
+    const params = {
+      "procedure_name": "sp_persona_proyecto",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "C6","type": "string"},
+          {"name": "p_id_persona_proyecto","value": null,"type": "int"},
+          {"name": "p_id_persona","value": null,"type": "int"},
+          {"name": "p_id_institucion","value": null,"type": "int"},
+          {"name": "p_id_proyecto","value": null,"type": "int"},
+          {"name": "p_rol","value": null,"type": "string"},
+          {"name": "p_id_persona_reg","value": null,"type": "int"}
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= ADD PERSONAS ======= ======= =======
   addPersonaRol(obj: any): Observable<any> {
     const params = {

@@ -660,9 +660,9 @@ select.form-control {
 }
 
 .custom-actividad-progress-bar{
-    height: 20px;
+    height: 2rem;
 
-    border-radius: 5px;
+    border-radius: 10px;
     
     background-color: $bg-7-color;
     overflow: hidden;
@@ -675,11 +675,18 @@ select.form-control {
 }
 
 .custom-elemento-actividad{
+    height: 100%;
+
     border: 10px;
     border-radius: 10px;
 
     padding-top: 5px;
     padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    display: flex;
+    align-items: center;
 
     background-color: $bg-3-color;
 

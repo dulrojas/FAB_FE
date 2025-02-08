@@ -30,7 +30,8 @@ export class servActividad {
           { "name": "p_fecha_inicio", "value": null, "type": "string" },
           { "name": "p_fecha_fin", "value": null, "type": "string" },
           { "name": "p_resultado", "value": null, "type": "string" },
-          { "name": "p_idp_actividad_estado", "value": null, "type": "int" }
+          { "name": "p_idp_actividad_estado", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": null, "type": "int" }
         ]
       }
     };
@@ -62,7 +63,8 @@ export class servActividad {
           { "name": "p_fecha_inicio", "value": obj.p_fecha_inicio, "type": "string" },
           { "name": "p_fecha_fin", "value": obj.p_fecha_fin, "type": "string" },
           { "name": "p_resultado", "value": obj.p_resultado, "type": "string" },
-          { "name": "p_idp_actividad_estado", "value": obj.p_idp_actividad_estado, "type": "int" }
+          { "name": "p_idp_actividad_estado", "value": obj.p_idp_actividad_estado, "type": "int" },
+          { "name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int" }
         ]
       }
     };
@@ -94,7 +96,8 @@ export class servActividad {
           { "name": "p_fecha_inicio", "value": obj.p_fecha_inicio, "type": "string" },
           { "name": "p_fecha_fin", "value": obj.p_fecha_fin, "type": "string" },
           { "name": "p_resultado", "value": obj.p_resultado, "type": "string" },
-          { "name": "p_idp_actividad_estado", "value": obj.p_idp_actividad_estado, "type": "int" }
+          { "name": "p_idp_actividad_estado", "value": obj.p_idp_actividad_estado, "type": "int" },
+          { "name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int" }
         ]
       }
     };
@@ -108,7 +111,7 @@ export class servActividad {
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET ACTIVIDADES ======= ======= =======
-  deleteActividad(idAct: any): Observable<any> {
+  deleteActividad(idAct: any, idPer: any): Observable<any> {
     const params = {
       "procedure_name": "sp_proy_actividad",
       "body": {
@@ -126,7 +129,8 @@ export class servActividad {
           { "name": "fecha_inicio", "value": null, "type": "string" },
           { "name": "fecha_fin", "value": null, "type": "string" },
           { "name": "resultado", "value": null, "type": "string" },
-          { "name": "idp_actividad_estado", "value": null, "type": "int" }
+          { "name": "idp_actividad_estado", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": idPer, "type": "int" }
         ]
       }
     };

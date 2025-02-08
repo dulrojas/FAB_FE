@@ -951,20 +951,6 @@
                                     <span class="custom-alert-message" *ngIf="!valIdInstitucionExige">Debe seleccionar una institución.</span>
                                 </div>
 
-                                <!-- ======= ======= ESTADO ENTREGA SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4 mb-auto">
-                                    <label for="idp_estado_entrega">Estado entrega</label>
-                                    <select class="form-control" id="idp_estado_entrega" name="idp_estado_entrega" 
-                                        [disabled]="obligacionesModel.documento_entrega_flag"
-                                        [(ngModel)]="obligacionesModel.idp_estado_entrega" 
-                                        (change)="ValidateIdpEstadoEntrega()">
-                                        <option value="" disabled selected>Selecciona un estado</option>
-                                        <option *ngFor="let estadoEntrega of estadosEntrega" [value]="estadoEntrega.id_subtipo">
-                                            {{ estadoEntrega.descripcion_subtipo }}
-                                        </option>
-                                    </select>
-                                    <span class="custom-alert-message" *ngIf="!valIdpEstadoEntrega">Debe seleccionar un estado de entrega.</span>
-                                </div>
                                 <!-- ======= ======= FECHA HORA ENTREGA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="fecha_hora_entrega">Fecha entrega</label>
@@ -975,6 +961,19 @@
                                         (change)="ValidateFechaHoraEntrega()"/>
                                     <span class="custom-alert-message" *ngIf="!valFechaHoraEntrega">Debe seleccionar una fecha y hora de entrega.</span>
                                     <span class="custom-alert-message" *ngIf="!valFechaHoraEntrega2">La fecha de entrega debe ser posterior a la fecha de obligación.</span>
+                                </div>
+                                <!-- ======= ======= ESTADO ENTREGA SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mb-auto">
+                                    <label for="idp_estado_entrega">Estado entrega</label>
+                                    <select class="form-control" id="idp_estado_entrega" name="idp_estado_entrega" 
+                                        [(ngModel)]="obligacionesModel.idp_estado_entrega" 
+                                        (change)="ValidateIdpEstadoEntrega()" disabled>
+                                        <option value="" disabled selected>Selecciona un estado</option>
+                                        <option *ngFor="let estadoEntrega of estadosEntrega" [value]="estadoEntrega.id_subtipo">
+                                            {{ estadoEntrega.descripcion_subtipo }}
+                                        </option>
+                                    </select>
+                                    <span class="custom-alert-message" *ngIf="!valIdpEstadoEntrega">Debe seleccionar un estado de entrega.</span>
                                 </div>
                                 <!-- ======= ======= ID PERSONA ENTREGA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mb-auto">

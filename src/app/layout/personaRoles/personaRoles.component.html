@@ -171,7 +171,7 @@
                                     <label for="idp_tipo_documento">Tipo de Documento</label>
                                     <select class="form-control" id="idp_tipo_documento" name="idp_tipo_documento" 
                                         [(ngModel)]="idp_tipo_documento" (change)="ValidateTipoDocumento()">
-                                        <option value="" disabled selected>Selecciona un rol</option>
+                                        <option value="" disabled selected>Selecciona un tipo de documento.</option>
                                         <option *ngFor="let tipo of tipoDoc" [value]="tipo.id_subtipo">{{ tipo.descripcion_subtipo }}</option>
                                     </select>
                                     <span class="custom-alert-message" *ngIf="!valTipoDocumento">

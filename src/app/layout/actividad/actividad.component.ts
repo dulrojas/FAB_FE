@@ -768,7 +768,8 @@ export class ActividadComponent implements OnInit {
         p_fecha_inicio: this.fecha_inicio,
         p_fecha_fin: this.fecha_fin,
         p_resultado: this.resultado,
-        p_idp_actividad_estado: parseInt(this.idp_actividad_estado, 10)
+        p_idp_actividad_estado: parseInt(this.idp_actividad_estado, 10),
+        p_id_persona_reg: parseInt( this.idPersonaReg, 10)
       };
 
       this.servActividad.addActividad(objActividad).subscribe(
@@ -926,7 +927,8 @@ export class ActividadComponent implements OnInit {
         p_fecha_inicio: this.fecha_inicio,
         p_fecha_fin: this.fecha_fin,
         p_resultado: this.resultado,
-        p_idp_actividad_estado: parseInt(this.idp_actividad_estado, 10)
+        p_idp_actividad_estado: parseInt(this.idp_actividad_estado, 10),
+        p_id_persona_reg: parseInt( this.idPersonaReg, 10)
       };
 
       this.servActividad.addActividad(objActividad).subscribe(

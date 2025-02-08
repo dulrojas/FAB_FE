@@ -133,8 +133,8 @@
                                     <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" 
                                         [(ngModel)]="id_proy_elemento" (change)="onSelectionChange()">
                                         <option value="" disabled selected>Selecciona un elemento</option>
-                                        <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
-                                            {{ componente.meto_elemento }}
+                                        <option *ngFor="let componente of componentes" [value]="componente.id_proy_elemento">
+                                            {{ componente.elemento }}
                                         </option>
                                     </select>
                                     <span class="custom-alert-message" *ngIf="!valComponente">Debe elegir un componente</span>

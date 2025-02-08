@@ -5,7 +5,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servAprendizaje } from "../../servicios/aprendizajes";
-import {servInstCategorias} from '../../servicios/instCategoria';
+import { ElementosService } from "../../servicios/elementos";
 
 @Component({
     selector: 'app-aprendizajes',
@@ -24,7 +24,7 @@ export class AprendizajesComponent implements OnInit {
       private proyectoService: ProyectoService,
       private servicios: servicios,
       private servApredizaje: servAprendizaje,
-      private servInstCategorias: servInstCategorias,
+      private servElementos: ElementosService,
       private cdr: ChangeDetectorRef
     ){}
 
@@ -177,7 +177,7 @@ export class AprendizajesComponent implements OnInit {
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
       // ======= GET METO ELEMENTOS =======
-      this.servApredizaje.getMetoElementos(this.idProyecto).subscribe(
+      this.servElementos.getElementosMetoEleByIdProy(this.idProyecto).subscribe(
         (data) => {
           this.componentes = data[0].dato;
         },
@@ -275,7 +275,7 @@ export class AprendizajesComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     onSelectionChange() {
-      const selectedComponente = this.componentes.find(comp => comp.id_meto_elemento == this.id_proy_elemento);
+      const selectedComponente = this.componentes.find(comp => comp.id_proy_elemento == this.id_proy_elemento);
       if (selectedComponente) {
           this.color = selectedComponente.color;
           this.sigla = selectedComponente.sigla;

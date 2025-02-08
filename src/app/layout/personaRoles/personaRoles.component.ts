@@ -222,7 +222,7 @@ export class PersonaRolesComponent implements OnInit {
       );
       // ======= ======= =======
       // ======= GET PROYECTOS =======
-      this.servProyectos.getProyectos().subscribe(
+      this.servProyectos.getProyectosActivos().subscribe(
         (data) => {
           this.detalle_proyectos_to_add = data[0].dato;
           this.detalle_proyectos_to_add_inited = data[0].dato;
@@ -394,9 +394,9 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= GET PERSONAS ======= =======
     getPersonaRoles(){
-      this.servPersonaRoles.getPersonaRoles().subscribe(
+      this.servPersonaRoles.getPersonaRolesActivos().subscribe(
         (data) => {
-          this.personasRoles = data[0].dato;
+          this.personasRoles = (data[0].dato)?(data[0].dato):([]);
           this.totalLength = this.personasRoles.length;
           this.countHeaderData();
         },
@@ -518,7 +518,7 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= INIT EDIT PERSONA ROLES ======= =======
     initEditPersonaRoles(modalScope: TemplateRef<any>){
       this.initPersonaRolesModel();
-      
+
       this.personaRolesSelected.detalle_proyectos.forEach((proyecto)=>{
         proyecto.rol = (proyecto.rol)?(proyecto.rol):("");
       });

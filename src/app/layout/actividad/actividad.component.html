@@ -293,33 +293,41 @@
                                 (click)="onActividadClick(actividadGant)">
                                 <div class="col col-md-5 col-lg-5">
                                     <div class="row">
-                                        <div class="col col-md-6 col-lg-6 custom-elemento-actividad"
-                                            [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
-                                            {{ actividadGant.actividad }}
+                                        <div class="col col-md-6 col-lg-6 px-1">
+                                            <div class="col custom-elemento-actividad"
+                                                [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
+                                                {{ actividadGant.actividad }}
+                                            </div>
                                         </div>
-                                        <div class="col col-md-3 col-lg-3 custom-elemento-actividad"
-                                            [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
-                                            {{ parseAmountFloatToStr(actividadGant.presupuesto) }}
+                                        <div class="col col-md-3 col-lg-3 px-1">
+                                            <div class="col custom-elemento-actividad"
+                                                [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
+                                                {{ parseAmountFloatToStr(actividadGant.presupuesto) }}
+                                            </div>
                                         </div>
-                                        <div class="col col-md-3 col-lg-3 custom-elemento-actividad"
-                                            [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
-                                            {{ actividadGant.porcentajeAvance }}%
-                                            <!--canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="50" height="50"></canvas-->
+                                        <div class="col col-md-3 col-lg-3 px-1">
+                                            <div class="col custom-elemento-actividad"
+                                                [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
+                                                {{ actividadGant.porcentajeAvance }}%
+                                                <!--canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="50" height="50"></canvas-->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col col-md-7 col-lg-7">
                                             
-                                    <div class="row">
-                                        <div [style.width.%]="actividadGant.init_date_gap_por">
-                                        </div>
-    
-                                        <div class="custom-actividad-progress-bar px-0"
-                                            [style.width.%]="actividadGant.date_gap_por">
-                                            <div 
-                                                class="custom-actividad-progress-fill" 
-                                                [style.width.%]="actividadGant.porcentajeAvance"
-                                                [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
+                                    <div class="row" style="height: 100%;">
+                                        <div class="col col-md-12 col-lg-12 d-flex align-items-center">
+                                            <div [style.width.%]="actividadGant.init_date_gap_por">
+                                            </div>
+        
+                                            <div class="custom-actividad-progress-bar px-0"
+                                                [style.width.%]="actividadGant.date_gap_por">
+                                                <div 
+                                                    class="custom-actividad-progress-fill" 
+                                                    [style.width.%]="actividadGant.porcentajeAvance"
+                                                    [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -1287,7 +1287,7 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.descripcion = null;
       this.obligacionesModel.fecha_obligacion = null;
       this.obligacionesModel.id_institucion_exige = "";
-      this.obligacionesModel.idp_estado_entrega = "";
+      this.obligacionesModel.idp_estado_entrega = 1;
       this.obligacionesModel.fecha_hora_entrega = null;
       this.obligacionesModel.ruta_plantilla = "";
       this.obligacionesModel.ruta_documento = "";
