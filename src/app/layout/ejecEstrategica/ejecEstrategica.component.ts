@@ -11,6 +11,7 @@ import {servInstCategorias} from '../../servicios/instCategoria';
 import {ElementosService } from '../../servicios/elementos';
 import {MetoElementosService} from '../../servicios/metoElementos';
 import { servicios } from "../../servicios/servicios";
+import { firstValueFrom } from 'rxjs';
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
 @Component({
   selector: 'app-ejec-estrategica',
@@ -55,7 +56,6 @@ export class EjecEstrategicaComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-
   // ======= ======= HEADER SECTION  "NO TOCAR"======= =======
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
   idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
@@ -84,7 +84,7 @@ export class EjecEstrategicaComponent implements OnInit {
   // ======= ======= INIT VIEW FUN ======= =======
   ngOnInit(): void {
     this.getEjecucionEstrategicaData();
-    this.loadCategorias();       
+    this.loadCategorias();      
   }
   // ======= ======= COMBINACION DE DATOS LLAMADOS PARA LA TABLA PRINCIPAL ======= =======
 
@@ -461,7 +461,7 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     // Verificar si el avance anterior es válido para editar
     const fechaValidaParaEditar = this.verificarPermisoEdicionConAvanceAnterior(item);
     if (!fechaValidaParaEditar) {
-      alert('No se puede editar este avance porque el avance anterior aún está vigente.');
+      alert('No se puede reportar el avance por que el anterior aún está vigente.');
       return; // No abrir el modal si la fecha no es válida
     }
     
@@ -577,9 +577,9 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       const fechaHoraActual = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
 
       let rutaEvidencia = this.editAvance.ruta_evidencia;
-      if (this.fileData) {
-        rutaEvidencia = await this.uploadAvanceFile(this.editAvance.id_proy_indica_avance);
-      }
+    if (this.fileData) {
+      rutaEvidencia = await this.uploadAvanceFile(this.editAvance.id_proy_indica_avance);
+    }
 
       const datosActualizados = {
         p_accion: 'M1',
@@ -657,105 +657,50 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       throw error;
     }
   }
-//  ======= ======= ======= ======= ======= ======= =======  ======= =======  ======= =======
-// Variables para el manejo de archivos
-fileData: any = null;
-fileName: string = '';
-fileUrl: string | null = null;
-readonly allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
-readonly maxFileSize = 5 * 1024 * 1024;
+// ======= ======= ======= ======= FUNCION PARA ARCHIVOS ======= =======  ======= =======
 
-onFileSelected(event: any): void {
-  const file = event.target.files[0];
-  
-  if (file) {
-    // Verificar el tipo de archivo
-    const fileExtension = file.name.toLowerCase().slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
-    if (!this.allowedFileTypes.includes('.' + fileExtension)) {
-      alert('Tipo de archivo no permitido. Los formatos permitidos son: ' + this.allowedFileTypes.join(', '));
-      return;
-    }
+    fileData: any = null;
+    fileName: string = '';
+    fileUrl: string | null = null;
+    readonly allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
+    readonly maxFileSize = 5 * 1024 * 1024;
 
-    // Verificar el tamaño
-    if (file.size > this.maxFileSize) {
-      alert('El archivo es demasiado grande. El tamaño máximo permitido es 5MB');
-      return;
-    }
+    // Función para subir archivo
+    async uploadAvanceFile(idAvance: number): Promise<string> {
+      if (!this.fileData) {
+        return ''; // Si no hay archivo, retorna vacío
+      }
 
-    this.fileData = file;
-    this.fileName = file.name;
-    
-    // Si es una imagen, crear preview
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.fileUrl = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      this.fileUrl = null;
-    }
+      try {
+        const formData = new FormData();
+        formData.append('file', this.fileData);
+        formData.append('nombre_tabla', 'proy_indicador_avance');
+        formData.append('campo_tabla', 'ruta_evidencia');
+        formData.append('id_en_tabla', 'id_proy_indicador_avance');
+        formData.append('fileName', this.fileName);
+        formData.append('id_registro', idAvance.toString());
 
-    // Actualizar el valor en editAvance
-    this.editAvance.ruta_evidencia = this.fileName;
-  }
-}
-// Función para subir archivo
-async uploadAvanceFile(idAvance: number): Promise<string> {
-  if (!this.fileData) {
-    return '';
-  }
+        // Usar firstValueFrom en lugar de toPromise()
+        const response: any = await firstValueFrom(this.servicios.uploadFile(
+            this.fileData, 
+            'proy_indicador_avance', 
+            'ruta_evidencia', 
+            'id_proy_indicador_avance', 
+            this.fileName, 
+            idAvance.toString()
+        ));
 
-  try {
-    const response = await this.servicios.uploadFile(
-      this.fileData,
-      'proy_indicador_avance',
-      'ruta_evidencia',
-      'id_proy_indicador_avance',
-      this.fileName,
-      idAvance
-    ).toPromise();
-
-    return response?.ruta || '';
-  } catch (error) {
-    console.error('Error al subir el archivo:', error);
-    throw error;
-  }
-}
-
-// Función para descargar archivo
-downloadAvanceFile(idAvance: number, fileName: string): void {
-  this.servicios.downloadFile(
-    'proy_indicador_avance',
-    'ruta_evidencia',
-    'id_proy_indicador_avance',
-    idAvance
-  ).subscribe(
-    (response: Blob) => {
-      // Crear URL del blob
-      const url = window.URL.createObjectURL(response);
-      
-      // Crear elemento anchor temporal
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName || 'evidencia';
-      document.body.appendChild(a);
-      a.click();
-      
-      // Limpiar
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    },
-    (error) => {
-      console.error('Error al descargar el archivo:', error);
-      if (error.status === 404) {
-        alert('No se encontró el archivo solicitado');
-      } else {
-        alert('Error al descargar el archivo');
+        if (response?.ruta) {
+          return response.ruta;  // Retorna la ruta del archivo si está disponible
+        } else {
+          throw new Error('Error al obtener la ruta del archivo');
+        }
+      } catch (error) {
+        console.error('Error al subir el archivo:', error);
+        throw error; 
       }
     }
-  );
-}
+
 //  ======= ======= ======= ======= ======= ======= =======  ======= =======  ======= =======
 // Variable para controlar si se puede editar
 puedeEditar: boolean = false;
@@ -852,8 +797,6 @@ getProximaFechaReporte(avances: any[]): string {
     proximaFecha.fecha_reportar : 
     avancesOrdenados[avancesOrdenados.length - 1].fecha_reportar;
 }
-
-
 
 countHeaderData() {
   if (this.ejecEstrategicaTable && this.ejecEstrategicaTable.length > 0) {
