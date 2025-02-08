@@ -73,8 +73,8 @@ export class ServOrganizacion {
             "params": [
               { "name": "p_accion", "value": "C3", "type": "string" },
               { "name": "p_id_organizacion", "value": idOrganizacion, "type": "int" },
-              { "name": "p_id_institucion" , "value": null, "type": "int"},
-              { "name": "p_id_proyecto", "value": null, "type": "int" },              
+              { "name": "p_id_proyecto", "value": null, "type": "int" },  
+              { "name": "p_id_institucion" , "value": null, "type": "int"},                          
               { "name": "p_idp_tipo_organizacion", "value": null, "type": "int" },
               { "name": "p_organizacion", "value": null, "type": "string" }
             ]
@@ -99,8 +99,8 @@ export class ServOrganizacion {
             "params": [
               { "name": "p_accion", "value": "A1", "type": "string" },
               { "name": "p_id_organizacion", "value": null, "type": "int" },
-              { "name": "p_id_institucion" , "value": obj.p_id_institucion, "type": "int"},
-              { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },              
+              { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },
+              { "name": "p_id_institucion" , "value": obj.p_id_institucion, "type": "int"},              
               { "name": "p_idp_tipo_organizacion", "value": obj.p_idp_tipo_organizacion, "type": "int" },
               { "name": "p_organizacion", "value": obj.p_organizacion, "type": "string" }
             ]
@@ -125,8 +125,8 @@ export class ServOrganizacion {
             "params": [
               { "name": "p_accion", "value": "M1", "type": "string" },
               { "name": "p_id_organizacion", "value": obj.p_id_organizacion, "type": "int" },
-              { "name": "p_id_institucion" , "value": obj.p_id_institucion, "type": "int"},
-              { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" },              
+              { "name": "p_id_proyecto", "value": obj.p_id_proyecto, "type": "int" }, 
+              { "name": "p_id_institucion" , "value": obj.p_id_institucion, "type": "int"},                           
               { "name": "p_idp_tipo_organizacion", "value": obj.p_idp_tipo_organizacion, "type": "int" },
               { "name": "p_organizacion", "value": obj.p_organizacion, "type": "string" }
             ]
@@ -150,8 +150,8 @@ export class ServOrganizacion {
             "params": [
               { "name": "p_accion", "value": "B1", "type": "string" },
               { "name": "p_id_organizacion", "value": idOrganizacion, "type": "int" },
+              { "name": "p_id_proyecto", "value": null, "type": "int" }, 
               { "name": "p_id_institucion" , "value": null, "type": "int"},
-              { "name": "p_id_proyecto", "value": null, "type": "int" },              
               { "name": "p_idp_tipo_organizacion", "value": null, "type": "int" },
               { "name": "p_organizacion", "value": null, "type": "string" }
             ]

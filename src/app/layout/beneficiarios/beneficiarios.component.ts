@@ -128,6 +128,7 @@ export class BeneficiariosComponent implements OnInit {
   totalLengthBeneficiarios = 0;
   
   ngOnInit(): void {
+    console.log(this.idProyecto,);
     this.loadGeografica();
     this.loadBeneficiarios();
     this.initForm();
@@ -140,7 +141,7 @@ export class BeneficiariosComponent implements OnInit {
     //Aliados
     this.getParametricasAliados();
     this.getAliados();
-
+    
   }
   // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
       jsonToString(json: object): string {
@@ -1274,13 +1275,15 @@ onSubmit(): void {
         }
       // ======= ======= ADD ORGANIZACIONES ======= =======
           addOrganizacion(){
+          console.log(this.idProyecto,this.idInstitucion);
           const objOrganizacion = {
             p_id_organizacion: 0,
-            p_id_institucion: this.idProyecto,
-            p_id_proyecto: this.idInstitucion,
+            p_id_institucion: this.idInstitucion,
+            p_id_proyecto: this.idProyecto,
             p_idp_tipo_organizacion: this.idp_tipo_organizacion,
             p_organizacion: this.organizacion,
           };
+          console.log(objOrganizacion,this.idProyecto,this.idInstitucion);
           this.ServOrganizacion.addOrganizacion(objOrganizacion).subscribe(
             (data) => {
               alert('Organización agregada exitosamente');
