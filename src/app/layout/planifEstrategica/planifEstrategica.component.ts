@@ -35,19 +35,19 @@ export class PlanifEstrategicaComponent implements OnInit {
   combinedData: any[] = [];
 
   periodos: any;
-  periodosForm: any; // Add this line to define periodosForm
-  editPeriodo = { periodo: '', valorEsperado: 0 }; // Valores iniciales
+  periodosForm: any; 
+  editPeriodo = { periodo: '', valorEsperado: 0 }; 
   metoElementoData: any[] = [];
   datosAliados: any;
   editAvance: {
     id_proy_indica_avance: any,
-    id_proy_indicador: any,  // Asegúrate de que el campo correcto sea id_proy_indicador
-    fecha_reportar: any,  // Asegúrate de que se cargue correctamente
+    id_proy_indicador: any, 
+    fecha_reportar: any,  
     fecha_hora_reporte: any,
-    valor_reportado: any,  // Eliminar símbolo de dólar y coma si la hay
-    valor_esperado: any,  // Lo mismo para valor_esperado
+    valor_reportado: any,  
+    valor_esperado: any,  
     id_persona_reporte: any,
-    comentarios: any,  // Cargar comentarios si existen
+    comentarios: any,  
     ruta_evidencia: any,
   };
 
@@ -88,8 +88,7 @@ export class PlanifEstrategicaComponent implements OnInit {
 
   sigla: any = "";
   color: any = "";
-  // Variables de Selección
-  //com/nentes: any[] = [];
+
   selectedParentCodigo: any = '';
   planifCategoria: any[] = [];
   planifSubCategoria: any[] = [];
@@ -143,9 +142,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.loadData();
       this.countHeaderData();
       this.cargarIndicadoresAvance();
-      //this.initPlanifEstrategicaModel();
-      //this.onCategoriaChange();
-      //this.onSubCategoriaChange();
     }
 
       // ======= ======= GET INDICADORES ======= =======
@@ -250,22 +246,32 @@ export class PlanifEstrategicaComponent implements OnInit {
     selectedIdProyIndicador: number | null = null; 
   
     cargarIndicadoresAvance() {
-      this.selectedIdProyIndicador; 
-      this.isEditing = true; 
-      this.servIndicadorAvance.getIndicadoresAvanceById(this.selectedIdProyIndicador).subscribe(
-        (response: any) => {
-          this.datosAliados = response[0]?.dato || [];
-  
-          // Extraer los valores necesarios
-          this.planifIDindAvance = this.datosAliados.map((item: any) => item.id_proy_indica_avance);
-          this.planifPeriodofecha = this.datosAliados.map((item: any) => item.fecha_reportar);
-          this.planifMetaEsperada = this.datosAliados.map((item: any) => item.valor_esperado);
-        },
-        (error) => {
-          console.error('Error al cargar los datos:', error);
-        }
-      );
+      this.isEditing = true;
+      
+      // Reiniciar los datos antes de cargar nuevos valores
+      this.datosAliados = [];
+      this.planifIDindAvance = [];
+      this.planifPeriodofecha = [];
+      this.planifMetaEsperada = [];
+    
+      if (this.selectedIdProyIndicador) {
+        this.servIndicadorAvance.getIndicadoresAvanceById(this.selectedIdProyIndicador).subscribe(
+          (response: any) => {
+            this.datosAliados = response[0]?.dato || [];
+    
+            if (this.datosAliados.length > 0) {
+              this.planifIDindAvance = this.datosAliados.map((item: any) => item.id_proy_indica_avance);
+              this.planifPeriodofecha = this.datosAliados.map((item: any) => item.fecha_reportar);
+              this.planifMetaEsperada = this.datosAliados.map((item: any) => item.valor_esperado);
+            }
+          },
+          (error) => {
+            console.error('Error al cargar los datos:', error);
+          }
+        );
+      }
     }
+    
   
     openEditPeriodoModal(content: any, id: number) {
       const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
@@ -817,7 +823,12 @@ export class PlanifEstrategicaComponent implements OnInit {
         }
   
       }
-  
+      this.isEditing = false;
+      this.datosAliados = [];
+      this.planifIDindAvance = [];
+      this.planifPeriodofecha = [];
+      this.planifMetaEsperada = [];
+
       this.openModal(modalScope);
     }
 
@@ -910,6 +921,7 @@ export class PlanifEstrategicaComponent implements OnInit {
           alert('Indicador añadido correctamente.');
           this.getPlanifEstrategica();
           this.loadData()
+          this.cargarIndicadoresAvance();
         },
         (error) => {
           alert('Error al añadir el indicador.');
@@ -945,6 +957,8 @@ export class PlanifEstrategicaComponent implements OnInit {
           alert('Indicador editado correctamente.');
           this.getPlanifEstrategica();
           this.loadData();
+          this.getIndicadorAvance();
+          this.cargarIndicadoresAvance();
         },
         (error) => {
           alert('Error al editar el indicador.');
@@ -1006,34 +1020,33 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
   }
 
-    editElemento() {
-      const objElemento = {
-        
-        p_id_proy_elemento: this.planifEstrategicaSelected.id_proy_elemento || null,
-        p_id_proyecto: this.planifEstrategicaSelected.id_proyecto || null,
-        p_id_meto_elemento: this.id_proy_elem_padre || null,
-        p_id_proy_elem_padre: this.getIdPadreByCodig(this.selectedParentCodigo),
-        p_codigo: this.planifEstrategicaSelected.codigo || null,
-        p_elemento: this.planifEstrategicaSelected.elemento || null,
-        p_descripcion: this.planifEstrategicaSelected.descripcion || null,
-        p_comentario: this.planifEstrategicaSelected.comentario || null,
-        p_nivel: this.planifEstrategicaSelected.nivel || null,
-        p_orden: this.planifEstrategicaSelected.orden || null,
-        p_idp_estado: this.planifEstrategicaSelected.idp_estado || null,
-        p_peso: this.planifEstrategicaSelected.peso || null
-      };
+  editElemento() {
+    const objElemento = {
+      p_id_proy_elemento: this.planifEstrategicaSelected.id_proy_elemento || null,
+      p_id_proyecto: this.planifEstrategicaSelected.id_proyecto || null,
+      p_id_meto_elemento: this.planifEstrategicaSelected.id_meto_elemento || null, 
+      p_id_proy_elem_padre: this.planifEstrategicaSelected.id_proy_elem_padre || null,
+      p_codigo: this.planifEstrategicaSelected.codigo || null,
+      p_elemento: this.planifEstrategicaSelected.elemento || null,
+      p_descripcion: this.planifEstrategicaSelected.descripcion || null,
+      p_comentario: this.planifEstrategicaSelected.comentario || null,
+      p_nivel: this.planifEstrategicaSelected.nivel || null,
+      p_orden: this.planifEstrategicaSelected.orden || null,
+      p_idp_estado: this.planifEstrategicaSelected.idp_estado || null,
+      p_peso: this.planifEstrategicaSelected.peso || null
+    };
   
-      this.proyElementosService.editElemento(objElemento).subscribe(
-        (response) => {
-          alert('Elemento editado correctamente.');
-          this.getPlanifEstrategica(); // Refrescar datos
-        },
-        (error) => {
-          alert('Error al editar el elemento.');
-          console.error("Error al editar el elemento:", error);
-        }
-      );
-    }
+    this.proyElementosService.editElemento(objElemento).subscribe(
+      (response) => {
+        alert('Elemento editado correctamente.');
+        this.getPlanifEstrategica(); // Refrescar datos
+      },
+      (error) => {
+        alert('Error al editar el elemento.');
+        console.error("Error al editar el elemento:", error);
+      }
+    );
+  }
   
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
     initDeletePlanifEstrategica(modalScope: TemplateRef<any>) {
@@ -1142,6 +1155,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       
         return color? `#${color?.color}` : '#000000';
       }
+
       getColorIndicador(idPadreElemento: number): string {
         if (idPadreElemento == null) {
           return '#000000'; 
@@ -1175,7 +1189,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       }else{
       return '120px'
       }
-    }
+      }
 
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
     getCodigoPadre(id_meto:number):string{

@@ -457,6 +457,13 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       
     // Ajustar a zona horaria de Bolivia (UTC-4)
     fechaHoraReporte.setHours(fechaHoraReporte.getHours() - 4);
+
+    // Verificar si el avance anterior es válido para editar
+    const fechaValidaParaEditar = this.verificarPermisoEdicionConAvanceAnterior(item);
+    if (!fechaValidaParaEditar) {
+      alert('No se puede editar este avance porque el avance anterior aún está vigente.');
+      return; // No abrir el modal si la fecha no es válida
+    }
     
     this.editAvance = {
       ...item,
@@ -471,7 +478,29 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     this.puedeEditar = this.verificarPermisoEdicion(item.fecha_reportar);
     this.modalService.open(modal, { size: 'lg' });
   }
-  
+  // Función para verificar si se puede editar el avance si la fecha actual aun no vencio
+    verificarPermisoEdicionConAvanceAnterior(item: any): boolean {
+      // Obtiene el avance anterior en función de la fecha
+      const indiceAvanceAnterior = this.getValidIndexByDate(item.fecha_reportar);
+      
+      if (indiceAvanceAnterior > 0) {
+        const avanceAnterior = this.indicadoresAvance[indiceAvanceAnterior - 1];
+        const fechaReporteAnterior = new Date(avanceAnterior.fecha_reportar);
+        const fechaActual = new Date();
+        
+        // Convertir a UTC-4 (Bolivia)
+        fechaReporteAnterior.setHours(fechaReporteAnterior.getHours() - 4);
+        fechaActual.setHours(fechaActual.getHours() - 4);
+        
+        // Comparar si la fecha del avance anterior aún está vigente
+        if (fechaReporteAnterior >= fechaActual) {
+          return false; // No se puede editar si la fecha del avance anterior es posterior o igual a la actual
+        }
+      }
+
+      return true; // Si el avance anterior no existe o su fecha es válida para editar
+    }
+
   // Función auxiliar para limpiar valores numéricos
   limpiarValorNumerico(valor: string | number): number {
     if (typeof valor === 'string') {
@@ -628,7 +657,7 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       throw error;
     }
   }
-
+//  ======= ======= ======= ======= ======= ======= =======  ======= =======  ======= =======
 // Variables para el manejo de archivos
 fileData: any = null;
 fileName: string = '';
@@ -727,12 +756,11 @@ downloadAvanceFile(idAvance: number, fileName: string): void {
     }
   );
 }
-
+//  ======= ======= ======= ======= ======= ======= =======  ======= =======  ======= =======
 // Variable para controlar si se puede editar
 puedeEditar: boolean = false;
 
 /// Nueva función para validar el progreso acumulativo
-// Mejora de la función validateAccumulativeProgress
 validateAccumulativeProgress(newValue: number, currentIndex: number): boolean {
   // Permitir siempre el valor 0
   if (newValue === 0) return true;
@@ -772,6 +800,7 @@ verificarPermisoEdicion(fechaReportar: string): boolean {
   // Comparar solo las fechas
   return fechaReporte.toISOString().split('T')[0] >= fechaActual.toISOString().split('T')[0];
 }
+
 getUltimoAvanceValido(avances: any[]): any {
   if (!avances || avances.length === 0) return null;
   

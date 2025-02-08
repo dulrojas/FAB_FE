@@ -81,8 +81,6 @@ export class Dashboard2Component implements OnInit {
             fecha_fin_ampliada: data[0].dato[0].fecha_fin_ampliada,
             fecha_fin_real: data[0].dato[0].fecha_fin_real
           };
-          this.calculatePeriodoActual();
-          this.getProyectDateGaps();
         //TARJETA 3
           this.procesarDatosPresupuesto(data[0].dato[0]);
           this.moneda_presupuesto = data[0].dato[0].moneda_presupuesto || 'Bs';      
@@ -115,7 +113,8 @@ export class Dashboard2Component implements OnInit {
           const beneficiarios = data[0].dato[0].beneficiarios || [];
           this.numeroMujeres = beneficiarios.reduce((sum, b) => sum + (b.mujeres || 0), 0);
           this.numeroHombres = beneficiarios.reduce((sum, b) => sum + (b.hombres || 0), 0);
-          this.totalBeneficiarios = this.numeroMujeres + this.numeroHombres;
+          const aliados = data[0].dato[0].aliados || [];
+          this.totalAliado = aliados.length;
         // TARJETA 11: SIGUIENTES OBLIGACIONES
           this.obligaciones = data[0].dato[0].obligaciones || [];
           
@@ -188,46 +187,14 @@ export class Dashboard2Component implements OnInit {
           );
         }
 
-  // ====== ======= ====== ====== SEGUNDA TARJETA DE FECHA DE INICIO-FIN Y PERIODO ACTUAL DEL PROYECTO ====== ======= ====== ====== 
+  // ====== ======= ====== ====== SEGUNDA TARJETA DE FECHA DE INICIO-FIN Y FIN AMPLIADO ====== ======= ====== ====== 
     // Variables para tarjeta 2
       proyectoScope: any = {
         fecha_inicio: '',
         fecha_fin: '',
         fecha_fin_ampliada: '',
         fecha_fin_real: '',
-      };
-      currentDateGap: number = 0;
-      finalDateGap: number = 0;
-      realFinalDate: string = '';
-      periodoActual: string = '';
-      fechaFinMostrar: string = '';
-
-      getProyectDateGaps() {
-        // Paso 1: Asignar fecha final inicial desde `fecha_fin`
-        this.fechaFinMostrar = this.proyectoScope.fecha_fin;
-        // Paso 2: Verificar y sobrescribir con `fecha_fin_ampliada` si está disponible
-        if (this.proyectoScope.fecha_fin_ampliada && this.proyectoScope.fecha_fin_ampliada !== '0') {
-          this.fechaFinMostrar = this.proyectoScope.fecha_fin_ampliada;
-        }
-        // Paso 3: Verificar y sobrescribir con `fecha_fin_real` si está disponible
-        if (this.proyectoScope.fecha_fin_real) {
-          this.fechaFinMostrar = this.proyectoScope.fecha_fin_real;
-        }
-        // Paso 4: Actualizar el periodo actual formateado a DD/MM/AAAA
-        this.calculatePeriodoActual();
-        // Paso 5: Actualizar los contadores del header
-        this.countHeaderData(this.proyectoScope);
-        }
-        calculatePeriodoActual() {
-          // Obtener la fecha actual
-          const today = new Date();
-          const day = today.getDate().toString().padStart(2, '0');  // Aseguramos 2 dígitos para el día
-          const month = (today.getMonth() + 1).toString().padStart(2, '0');  // El mes empieza desde 0, por eso sumamos 1
-          const year = today.getFullYear().toString(); // Año como cadena
-          // Actualizar la variable `periodoActual` con el formato DD/MM/AAAA de la fecha actual
-          this.periodoActual = `${day}/${month}/${year}`;         
-        }
-        
+      };    
 
   // ====== ======= ====== ====== TERCERA TARJETA DONA DE PRESUPUESTO DEL PROYECTO ====== ======= ====== ======   
       // Variables para tarjeta 3
@@ -867,7 +834,6 @@ export class Dashboard2Component implements OnInit {
     });
   }
   
-
   // ====== ======= ====== ====== NOVENA TARJETA LOGROS ====== ======= ====== ======
     // Variables para la novena tarjeta
        numeroLogros: number = 0;
@@ -876,7 +842,7 @@ export class Dashboard2Component implements OnInit {
     // Variables para la décima tarjeta
       numeroMujeres: number = 0;
       numeroHombres: number = 0;
-      totalBeneficiarios: number = 0;
+      totalAliado: number = 0;
 
   // ====== ======= ====== ====== UNDECIMA TARJETA DE SIGUIENTES OBLIGACIONES ====== ======= ====== ======
     // Variables para la undécima tarjeta

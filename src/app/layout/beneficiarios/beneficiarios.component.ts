@@ -346,6 +346,20 @@ export class BeneficiariosComponent implements OnInit {
       // Habilitar campo de comunidad
       this.beneficiariesForm.get('comunidad')?.enable();
     }
+    limpiarSeleccion(): void {
+      this.beneficiariosTable.forEach(b => b.selected = false);
+      this.selectedBeneficiarios = null;
+      this.selectedOrganizacionId = null;
+      this.mostrarTablaParticipantes = false;
+      this.planifData = [];
+      this.tablaPersonas = [];
+    }
+    closeModal(): void {
+      this.modalService.dismissAll();
+      this.limpiarSeleccion();
+      this.initForm(); 
+    }
+
 
   loadBeneficiarios(): void {
     this.beneficiariosService.getBeneficiarios(this.idProyecto).subscribe(
@@ -394,27 +408,33 @@ export class BeneficiariosComponent implements OnInit {
 
   // Manejo de selección en la tabla
   checkboxChanged(selectedBeneficiario: Beneficiario): void {
+    // Si el beneficiario que se está clickeando ya está seleccionado, lo deseleccionamos
+    if (selectedBeneficiario.selected && this.selectedBeneficiarios?.id === selectedBeneficiario.id) {
+      this.limpiarSeleccion();
+      return;
+    }
+    
     // Limpiar la tabla de participantes antes de cargar los nuevos
     this.mostrarTablaParticipantes = false;
     this.planifData = [];
     this.tablaPersonas = [];
     
     // Actualizar selección en la tabla
-    this.beneficiariosTable.forEach(b => (b.selected = b.id === selectedBeneficiario.id));
+    this.beneficiariosTable.forEach(b => b.selected = b.id === selectedBeneficiario.id);
     
     // Filtrar el ID de la organización por el nombre proporcionado
     if (selectedBeneficiario.id_organizacion) {
       const organizacion = this.beneficiariosOrganizacionTipo.find(
         org => org.organizacion === selectedBeneficiario.id_organizacion
       );
-
+  
       if (organizacion) {
         this.selectedOrganizacionId = organizacion.id_organizacion;
       } else {
         this.selectedOrganizacionId = null;
       }
     }
-
+  
     // Actualizar el beneficiario seleccionado
     this.selectedBeneficiarios = selectedBeneficiario.selected ? selectedBeneficiario : null;
     if (this.selectedBeneficiarios) {
@@ -1166,7 +1186,7 @@ onSubmit(): void {
           this.closeModalAliado();
           }
         }
-    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+  // ======= ======= ======= ======= ======= ======= =======  ======= =======
   // ======= ======= =======      ORGANIZACIONES      ======= ======= =======
   // ======= ======= ======= ======= ======= ======= =======  ======= =======  
       // ======= ======= NGMODEL VARIABLES GENERALES ======= =======
@@ -1175,7 +1195,8 @@ onSubmit(): void {
           modalActionOrganizacion: any = '';
       
           //id_organizacion: any = '';
-          id_institucion: number = 1;
+          id_institucion: any = '';
+          idInstitucion: number = 1;
           //id_proyecto: any = '';
           idp_tipo_organizacion: any = '';
           organizacion: any = '';
@@ -1224,7 +1245,7 @@ onSubmit(): void {
           initOrganizacionModel(){
 
           this.id_organizacion = 0;
-          this.id_institucion = 1;
+          this.id_institucion = "";
           this.id_proyecto = "";
           this.idp_tipo_organizacion = '';
           this.organizacion = '';
@@ -1255,8 +1276,8 @@ onSubmit(): void {
           addOrganizacion(){
           const objOrganizacion = {
             p_id_organizacion: 0,
-            p_id_institucion: 1,
-            p_id_proyecto: this.idProyecto,
+            p_id_institucion: this.idProyecto,
+            p_id_proyecto: this.idInstitucion,
             p_idp_tipo_organizacion: this.idp_tipo_organizacion,
             p_organizacion: this.organizacion,
           };
