@@ -114,8 +114,8 @@ export class EjecEstrategicaComponent implements OnInit {
     this.servIndicadorAvance.getIndicadoresAvance().subscribe(
       (data) => {
         if (data && data[0]?.dato?.[0]) {
-          this.datosIndicadoresAvance = data[0].dato; // Guardamos los datos originales
-          this.indicadoresAvance = [...this.datosIndicadoresAvance]; // Hacemos una copia
+          this.datosIndicadoresAvance = data[0].dato; 
+          this.indicadoresAvance = [...this.datosIndicadoresAvance]; 
           this.combinarDatos();
         }
       },
@@ -129,7 +129,7 @@ export class EjecEstrategicaComponent implements OnInit {
       (data) => {
         if (data && data[0]?.dato?.[0]) {
           this.elementosData = data[0].dato;
-          this.combinarDatos(); // Llamar a función para combinar datos
+          this.combinarDatos();
         }
       },
       (error) => {
@@ -493,12 +493,11 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         fechaActual.setHours(fechaActual.getHours() - 4);
         
         // Comparar si la fecha del avance anterior aún está vigente
-        if (fechaReporteAnterior >= fechaActual) {
-          return false; // No se puede editar si la fecha del avance anterior es posterior o igual a la actual
+        if (fechaReporteAnterior > fechaActual) {
+          return false; // No se puede editar si la fecha del avance anterior es posterior a la actual
         }
       }
-
-      return true; // Si el avance anterior no existe o su fecha es válida para editar
+      return true; 
     }
 
   // Función auxiliar para limpiar valores numéricos
@@ -780,7 +779,7 @@ getUltimoAvanceValido(avances: any[]): any {
 
 // Función para obtener la próxima fecha a reportar
 getProximaFechaReporte(avances: any[]): string {
-  if (!avances || avances.length === 0) return '-';
+  if (!avances || avances.length === 0) return null;
   
   const fechaActual = new Date();
   const avancesOrdenados = [...avances].sort((a, b) => 

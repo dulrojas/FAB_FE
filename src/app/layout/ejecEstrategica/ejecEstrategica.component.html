@@ -86,7 +86,9 @@
                 <!-- NOMBRE DEL INDICADOR -->
                 <td>{{ ejecEstrategica.indicador }}</td>
                 <!-- FECHA A REPORTAR -->                
-                <td>{{ getProximaFechaReporte(ejecEstrategica.avances) | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  {{ getProximaFechaReporte(ejecEstrategica.avances) ? (getProximaFechaReporte(ejecEstrategica.avances) | date:'dd/MM/yyyy') : 'Sin fecha' }}
+                </td>                
                 <!-- PROGRESO SE CONECTA A VALOR REPORTADO-->
                 <td>{{ ejecEstrategica.avance?.valor_reportado || '-' }}</td>
                 <!-- MEDIDA -->
