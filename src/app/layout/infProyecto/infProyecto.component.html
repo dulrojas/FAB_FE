@@ -39,14 +39,17 @@
                                 <div class="col col-lg-12 col-md-12 my-auto">
                                     <h2 class="custom-info-proy-sub-title">Nombre corto del proyecto</h2>
                                     <input class="form-control custom-info-proy-input" type="text" 
-                                        id="proyecto" name="proyecto" [(ngModel)]="proyectoScope.proyecto" 
-                                        [disabled]="!buttonValidations.editMode"/>
+                                        id="proyecto" name="proyecto" 
+                                        [(ngModel)]="proyectoScope.proyecto" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                 </div>
                                 <div class="col col-lg-12 col-md-12">
                                     <!-- ======= ======= ======= NOMBRE COMPLETO PROYECTO ======= ======= ======= -->
                                     <h2 class="custom-info-proy-sub-title">Nombre completo del proyecto</h2>
                                     <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" 
-                                        [(ngModel)]="proyectoScope.descrpcion" [disabled]="!buttonValidations.editMode"></textarea>
+                                        [(ngModel)]="proyectoScope.descrpcion" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))">
+                                    </textarea>
                                 </div>
                             </div>
                             <div class="row">
@@ -54,7 +57,8 @@
                                 <div class="col col-lg-6 col-md-6 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Responsable de registro</h2>
                                     <select class="form-control custom-info-proy-input" id="id_person_resp" name="id_person_resp" 
-                                        [(ngModel)]="proyectoScope.id_person_resp" [disabled]="!buttonValidations.editMode">
+                                        [(ngModel)]="proyectoScope.id_person_resp" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))">
                                         <option value="" disabled selected>Selecciona un responsable</option>
                                         <option *ngFor="let persona of personas" [value]="persona.id_persona">
                                             {{ persona.nombres +" "+ persona.apellido_1 +" "+((persona.apellido_2)?(persona.apellido_2):("")) }}
@@ -65,7 +69,8 @@
                                 <div class="col col-lg-6 col-md-6 my-auto pr-0">
                                     <h2 class="custom-info-proy-sub-title">Unidad ejecutora</h2>
                                     <select class="form-control custom-info-proy-input" id="id_inst_unidad" name="id_inst_unidad" 
-                                        [(ngModel)]="proyectoScope.id_inst_unidad" [disabled]="!buttonValidations.editMode">
+                                        [(ngModel)]="proyectoScope.id_inst_unidad" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))">
                                         <option value="" disabled selected>Selecciona una unidad</option>
                                         <option *ngFor="let unidad of unidades" [value]="unidad.id_inst_unidad">
                                             {{ unidad.unidad }}
@@ -76,7 +81,8 @@
                                 <div class="col col-md-12"> 
                                     <h2 class="custom-info-proy-sub-title">Notas adicionales</h2>
                                     <textarea class="form-control custom-info-proy-input" id="notas" name="notas" 
-                                        [(ngModel)]="proyectoScope.notas" [disabled]="!buttonValidations.editMode"></textarea>
+                                        [(ngModel)]="proyectoScope.notas" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -172,12 +178,12 @@
                             Concluir/Cancelar
                         </button>
                         <!-- ======= ======= ======= ANADIR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="openModal(aniadirProyectoModal)"
+                        <button type="button" class="btn btn-bg-2" (click)="initAddProyecto(addProyectoModal)"
                             [disabled]="(!buttonValidations.aniadir)||(buttonValidations.editMode)">
                             Añadir
                         </button>
                         <!-- ======= ======= ======= ELIMINAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="openModal(eliminarProyectoModal)"
+                        <button type="button" class="btn btn-bg-2" (click)="initDeleteProyecto(deleteProyectoModal)"
                             [disabled]="(!buttonValidations.eliminar)||(buttonValidations.editMode)">
                             Eliminar
                         </button>
@@ -201,7 +207,8 @@
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_convenio" name="fecha_convenio" 
-                                        [(ngModel)]="proyectoScope.fecha_convenio" [disabled]="!buttonValidations.editMode"/>
+                                        [(ngModel)]="proyectoScope.fecha_convenio" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= DESEMBOLSO DATE ======= ======= ======= -->
@@ -211,7 +218,9 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_desembolso_1" name="fecha_desembolso_1" [(ngModel)]="proyectoScope.fecha_desembolso_1" [disabled]="!buttonValidations.editMode"/>
+                                        id="fecha_desembolso_1" name="fecha_desembolso_1" 
+                                        [(ngModel)]="proyectoScope.fecha_desembolso_1" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= INICIO REAL DATE ======= ======= ======= -->
@@ -221,8 +230,10 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_inicio" name="fecha_inicio" [(ngModel)]="proyectoScope.fecha_inicio" 
-                                        (change)="getProyectDateGaps()" [disabled]="!buttonValidations.editMode"/>
+                                        id="fecha_inicio" name="fecha_inicio" 
+                                        [(ngModel)]="proyectoScope.fecha_inicio" 
+                                        (change)="getProyectDateGaps()" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= FIN PLANIFICADO DATE ======= ======= ======= -->
@@ -232,8 +243,10 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
-                                        id="fecha_fin" name="fecha_fin" [(ngModel)]="proyectoScope.fecha_fin" 
-                                        (change)="getProyectDateGaps()" [disabled]="!buttonValidations.editMode"/>
+                                        id="fecha_fin" name="fecha_fin" 
+                                        [(ngModel)]="proyectoScope.fecha_fin" 
+                                        (change)="getProyectDateGaps()" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                 </div>
                             </div>
                         </div>
@@ -245,7 +258,8 @@
                                 </div>
                                 <div class="col col-md-6 my-auto px-0">
                                     <select class="form-control custom-info-proy-input" id="idp_periodo_evaluacion" name="idp_periodo_evaluacion" 
-                                        [(ngModel)]="proyectoScope.idp_periodo_evaluacion" [disabled]="!buttonValidations.editMode">
+                                        [(ngModel)]="proyectoScope.idp_periodo_evaluacion" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))">
                                         <option value="" disabled selected>Selecciona un elemento</option>
                                         <option *ngFor="let periodo of periodos" [value]="periodo.id_subtipo">
                                             {{ periodo.descripcion_subtipo }}
@@ -261,7 +275,8 @@
                                 <div class="col col-md-6 my-auto px-0">
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_evaluacion_1" name="fecha_evaluacion_1" 
-                                        [(ngModel)]="proyectoScope.fecha_evaluacion_1" [disabled]="!buttonValidations.editMode"/>
+                                        [(ngModel)]="proyectoScope.fecha_evaluacion_1" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
@@ -273,7 +288,8 @@
                                     <input class="form-control custom-info-proy-input" type="date" 
                                         id="fecha_fin_ampliada" name="fecha_fin_ampliada" 
                                         [(ngModel)]="proyectoScope.fecha_fin_ampliada" 
-                                        (change)="getProyectDateGaps()" [disabled]="!buttonValidations.editMode"/>
+                                        (change)="getProyectDateGaps()" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                 </div>
                             </div>
                             <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
@@ -335,7 +351,8 @@
                                     <label class="custom-info-proy-sub-title" for="">Total (Bs)</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
                                         id="presupuesto_mn" name="presupuesto_mn" 
-                                        [(ngModel)]="proyectoScope.presupuesto_mn" [disabled]="!buttonValidations.editMode"/>
+                                        [(ngModel)]="proyectoScope.presupuesto_mn" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                 </div>
                                 <!-- ======= ======= ======= -->
                                 <!-- ======= TABLE PRESUPUESTOS SECTION ======= -->
@@ -345,17 +362,17 @@
                                 <div class="col col-md-5 text-end">
                                     <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initAddFinanciadores(presupuestoFormModal)"
-                                        [disabled]="((financiadoresSelected)||(!buttonValidations.editMode))">
+                                        [disabled]="((financiadoresSelected)||((!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))))">
                                         <i class="fa fa-plus" aria-hidden="true"></i>
                                     </button>
                                     <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initEditFinanciadores(presupuestoFormModal)"
-                                        [disabled]="((!financiadoresSelected)||(!buttonValidations.editMode))">
+                                        [disabled]="((!financiadoresSelected)||((!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))))">
                                         <i class="fa fa-caret-up" aria-hidden="true"></i>
                                     </button>
                                     <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
                                         (click)="initDeleteFinanciadores(deletePresupuestoModal)"
-                                        [disabled]="((!financiadoresSelected)||(!buttonValidations.editMode))">
+                                        [disabled]="((!financiadoresSelected)||((!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))))">
                                         <i class="fa fa-minus" aria-hidden="true"></i>
                                     </button>
                                 </div>
@@ -377,7 +394,8 @@
                                                 <td>
                                                     <input type="checkbox" [(ngModel)]="financiador.selected"
                                                         id="checkbox-{{ i }}" name="checkbox-{{ i }}"
-                                                        (change)="finanCheckboxChanged(financiador)" [disabled]="!buttonValidations.editMode"/>
+                                                        (change)="finanCheckboxChanged(financiador)" 
+                                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                                 </td>
                                                 <td>{{ financiador.id_proy_finan }}</td>
                                                 <td>{{ getInstitucionName(financiador.id_institucion_fin) }}</td>
@@ -399,7 +417,7 @@
                             <div class="col col-md-12 text-end">
                                 <button type="button" class="btn btn-bg-1 custom-btn-info" style="font-size: 10px;"
                                     (click)="initPresuAdicionalForm(presuAdicionalFormModal)"
-                                    [disabled]="!buttonValidations.editMode">
+                                    [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))">
                                     Editar Adicional de gestión
                                 </button>
                             </div>
@@ -444,7 +462,8 @@
                             <div class="row">
                                 <div class="col col-md-12 text-end">
                                     <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
-                                        (click)="initUbicaGeo(geograficoFormModal)" [disabled]="!buttonValidations.editMode">
+                                        (click)="initUbicaGeo(geograficoFormModal)" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))">
                                         <i class="fa fa-tree" aria-hidden="true"></i>
                                     </button>
                                 </div>
@@ -494,7 +513,9 @@
                                         </td>
                                         <td>
                                             <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
-                                                [(ngModel)]="item.selected" (change)="ubiInfCheckboxChanged(item)" [disabled]="!buttonValidations.editMode"/>
+                                                [(ngModel)]="item.selected" 
+                                                (change)="ubiInfCheckboxChanged(item)" 
+                                                [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
                                         </td>
                                         <td>
                                             {{ item.nombre }}
@@ -668,6 +689,74 @@
             </button>
             <button type="button" class="btn btn-bg-1" (click)="setEstadoProyecto(2)">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Concluir
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= ADD PROYECTO MODAL ======= ======= ======= -->
+<ng-template #addProyectoModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Agregar nuevo Proyecto</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col col-xl-3 col-lg-3">
+            </div>
+            <!-- ======= ======= PROYECTO NAME SECTION ======= ======= -->
+            <div class="col col-xl-6 col-lg-6">
+                <label for="addProyectoName">Ingrese el nombre del nuevo Proyecto.</label>
+                <input class="form-control" type="text" 
+                    id="addProyectoName" name="addProyectoName" 
+                    placeholder="Ingrese un nombre de proyecto" 
+                    [(ngModel)]="addProyectoName"
+                    (change)="validateAddProyectoName()"/>
+                <span class="custom-alert-message" 
+                    *ngIf="!valAddProyectoName">
+                    Debe ingresar un nombre de proyecto válido, con menos de 150 caracteres.
+                </span>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" 
+                (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" 
+                (click)="addProyecto()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Agregar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE OBLIGACON MODAL ======= ======= ======= -->
+<ng-template #deleteProyectoModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar proyecto</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de este Proyecto?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" 
+                (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" 
+                (click)="deleteProyecto()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
             </button>
         </div>
     </div>

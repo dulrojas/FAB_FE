@@ -100,6 +100,8 @@ export class ActividadComponent implements OnInit {
     actividades: any[] = [];
     actividadesReprogIds: any[] = [];
     presuAvances: any[] = [];
+
+    showReprogramados: any = true;
     
     // ====== ======= ====== CHARTS CONFIG SECTION ====== ======= ======
     chartLabels: any = [
@@ -264,6 +266,7 @@ export class ActividadComponent implements OnInit {
     }
     // ====== ======= ====== ======= ====== ======= ======
     // ====== ======= ====== HALF CIRCLE SECTION ====== ======= ====== 
+    /*
     @ViewChildren('canvas') canvases!: QueryList<ElementRef>;
 
     ngAfterViewInit() {
@@ -318,6 +321,7 @@ export class ActividadComponent implements OnInit {
         },
       });
     }
+    */
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
@@ -361,8 +365,8 @@ export class ActividadComponent implements OnInit {
       );
     }
     // ======= ======= ======= ======= =======
-    actividadSelected: any = null;
     // ======= ======= CHECKBOX CHANGED ======= =======
+    actividadSelected: any = null;
     onActividadClick(actividadSel: any) {
       this.elementosGant.forEach((elementoGant) =>{
         elementoGant.childrens.forEach((actividadGant)=>{
@@ -452,6 +456,7 @@ export class ActividadComponent implements OnInit {
       this.valPresupuesto = true;
       this.valFechaInicio = true;
       this.valFechaFin = true;
+      this.valFechaFin2 = true;
       this.valResultado = true;
 
       this.valActAvaAvance = true;
@@ -565,7 +570,7 @@ export class ActividadComponent implements OnInit {
 
     valFechaInicio: any = true;
     validateFechaInicio() {
-      if (this.fecha_inicio) {
+      if ((this.fecha_inicio)&&( new Date(this.fecha_inicio).getFullYear().toString() == this.gestion )) {
         this.valFechaInicio = true;
       } else {
         this.valFechaInicio = false;
@@ -573,10 +578,18 @@ export class ActividadComponent implements OnInit {
     }
 
     valFechaFin: any = true;
+    valFechaFin2: any = true;
     validateFechaFin() {
-      if (this.fecha_fin) {
+      if ((this.fecha_fin)&&( new Date(this.fecha_fin).getFullYear().toString() == this.gestion )) {
         this.valFechaFin = true;
-      } else {
+        if( (new Date(this.fecha_inicio)) < (new Date(this.fecha_fin)) ){
+          this.valFechaFin2 = true;
+        }
+        else{
+          this.valFechaFin2 = false;
+        }
+      } 
+      else {
         this.valFechaFin = false;
       }
     }
@@ -847,7 +860,8 @@ export class ActividadComponent implements OnInit {
           this.valDescripcion &&
           this.valPresupuesto &&
           this.valFechaInicio &&
-          this.valFechaFin
+          this.valFechaFin &&
+          this.valFechaFin2
         );
 
         if(valForm){
@@ -887,7 +901,7 @@ export class ActividadComponent implements OnInit {
       this.validateFechaInicio();
       this.validateFechaFin();
 
-      if((!this.valFechaInicio) && (!this.valFechaFin)){
+      if((!this.valFechaInicio) && (!this.valFechaFin) && (!this.valFechaFin2)){
         return;
       }
 
