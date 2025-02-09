@@ -259,6 +259,9 @@ export class PlanifEstrategicaComponent implements OnInit {
           (response: any) => {
             this.datosAliados = response[0]?.dato || [];
     
+            // Ordenar por fecha de la más antigua a la más nueva
+            this.datosAliados.sort((a: any, b: any) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime());
+    
             if (this.datosAliados.length > 0) {
               this.planifIDindAvance = this.datosAliados.map((item: any) => item.id_proy_indica_avance);
               this.planifPeriodofecha = this.datosAliados.map((item: any) => item.fecha_reportar);
@@ -272,11 +275,27 @@ export class PlanifEstrategicaComponent implements OnInit {
       }
     }
     
-  
     openEditPeriodoModal(content: any, id: number) {
       const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
-  
+    
       if (avanceData) {
+        // Obtener la fecha límite (23:59:59 del día en Bolivia)
+        const fechaAvance = new Date(avanceData.fecha_reportar + 'T23:59:59-04:00'); // Aseguramos la zona horaria UTC-4
+    
+        // Obtener la hora actual en UTC y convertirla manualmente a Bolivia (UTC-4)
+        const nowUTC = new Date();
+        const nowBolivia = new Date(nowUTC.getTime() - (4 * 60 * 60 * 1000)); // Restamos 4 horas para Bolivia
+    
+        console.log("Fecha del avance (hasta las 23:59):", fechaAvance);
+        console.log("Fecha actual en Bolivia:", nowBolivia);
+    
+        // Verificar si la fecha ya venció
+        if (nowBolivia > fechaAvance) {
+          alert('No puedes editar este avance porque la fecha ya ha vencido.');
+          return; // Bloqueamos la edición
+        }
+    
+        // Si la fecha aún es válida, continuar con la edición
         this.editAvance = {
           id_proy_indica_avance: avanceData.id_proy_indica_avance,
           id_proy_indicador: avanceData.id_proy_indicador || null,  
@@ -288,13 +307,15 @@ export class PlanifEstrategicaComponent implements OnInit {
           comentarios: avanceData.comentarios || '',  
           ruta_evidencia: avanceData.ruta_evidencia || '',  
         };
-  
+    
+        this.modalService.open(content, { size: 'lg', backdrop: 'static' });
+    
       } else {
         console.warn('No se encontraron datos para el ID especificado:', id);
       }
-  
-      this.modalService.open(content, { size: 'lg', backdrop: 'static' });
     }
+    
+    
   
     onEditAvanceSubmit() {
       // Crear el objeto con los datos editados
