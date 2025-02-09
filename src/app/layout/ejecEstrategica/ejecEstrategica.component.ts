@@ -480,23 +480,34 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
   }
   // Función para verificar si se puede editar el avance si la fecha actual aun no vencio
   verificarPermisoEdicionConAvanceAnterior(item: any): boolean {
-    const indiceAvanceAnterior = this.getValidIndexByDate(item.fecha_reportar);
+    const avancesOrdenados = [...this.indicadoresAvance].sort(
+      (a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
+    );
     
-    if (indiceAvanceAnterior > 0) {
-      const avanceAnterior = this.indicadoresAvance[indiceAvanceAnterior - 1];
-      const fechaReporteAnterior = new Date(avanceAnterior.fecha_reportar);
-      const fechaActual = new Date();
-      
-      // Convertir a UTC-4 (Bolivia)
-      fechaReporteAnterior.setHours(23, 59, 59, 999); // Establecer al final del día
-      fechaActual.setHours(fechaActual.getHours() - 4);
-      
-      // Comparar si la fecha del avance anterior aún está vigente
-      if (fechaReporteAnterior > fechaActual) {
-        return false; // No se puede editar si la fecha del avance anterior es posterior a la actual
-      }
+    const indiceActual = avancesOrdenados.findIndex(
+      avance => avance.id_proy_indica_avance === item.id_proy_indica_avance
+    );
+    
+    // Si es el primer avance, siempre se puede editar dentro de su período
+    if (indiceActual === 0) {
+      return this.verificarPermisoEdicion(item.fecha_reportar);
     }
-    return true; 
+    
+    // Obtener el avance anterior
+    const avanceAnterior = avancesOrdenados[indiceActual - 1];
+    const fechaLimiteAnterior = new Date(avanceAnterior.fecha_reportar);
+    fechaLimiteAnterior.setUTCHours(23, 59, 59, 999);
+    
+    // Obtener fecha actual en Bolivia
+    const fechaActual = new Date();
+    const horaBolivia = fechaActual.getTime() + (fechaActual.getTimezoneOffset() * 60000) - (4 * 3600000);
+    const fechaBolivia = new Date(horaBolivia);
+    
+    // Verificar si el periodo anterior ya venció
+    const periodoAnteriorVencido = fechaBolivia > fechaLimiteAnterior;
+    
+    // Solo permitir editar si el periodo anterior ya venció y el actual está vigente
+    return periodoAnteriorVencido && this.verificarPermisoEdicion(item.fecha_reportar);
   }
 
   // Función auxiliar para limpiar valores numéricos
@@ -575,8 +586,15 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       const fechaHoraActual = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
 
       let rutaEvidencia = this.editAvance.ruta_evidencia;
-    if (this.fileData) {
-      rutaEvidencia = await this.uploadAvanceFile(this.editAvance.id_proy_indica_avance);
+    if (this.selectedFile) {
+      rutaEvidencia = await this.uploadFile(
+        this.selectedFile,
+        'proy_avances',
+        'campoTabla',
+        'id_proy_indica_avance',
+        this.editAvance.id_proy_indica_avance,
+        'idRegistro'
+      );
     }
 
       const datosActualizados = {
@@ -597,9 +615,6 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       if (response && response[0]?.dato) {
         await this.actualizarDatosIndicador(this.editAvance.id_proy_indicador);
         
-        this.fileData = null;
-        this.fileName = '';
-        this.fileUrl = null;
         
         alert('Avance actualizado exitosamente');
         this.modalService.dismissAll();
@@ -656,47 +671,124 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     }
   }
 // ======= ======= ======= ======= FUNCION PARA ARCHIVOS ======= =======  ======= =======
+     // ======= ======= GET INST OBJETIVOS ======= =======
+     async getAvances(){
+      //Modificar para avances
+      /*try{
+        const data: any = await new Promise((resolve, reject) => {
+          this.servInstObjetivos.getInstObjetivos().subscribe(
+            (response) => resolve(response),
+            (error) => reject(error)
+          );
+        });
+    
+        this.instObjetivos = data[0].dato;
+        this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 2);
+        this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 1);
+    
+        for (const objetivo of this.instObjetivos) {
+          objetivo.imagen_src = await this.downloadFile(
+            "inst_objetivos", 
+            "objetivo_imagen", 
+            "id_inst_objetivos", 
+            objetivo.id_inst_objetivos
+          );
+        }
 
-    fileData: any = null;
-    fileName: string = '';
-    fileUrl: string | null = null;
-    readonly allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
-    readonly maxFileSize = 5 * 1024 * 1024;
-
-    // Función para subir archivo
-    async uploadAvanceFile(idAvance: number): Promise<string> {
-      if (!this.fileData) {
-        return ''; // Si no hay archivo, retorna vacío
       }
+      catch(error){
+        console.error('Error en getIconos:', error);
+      }*/
+    }
 
+    onFileChange(event: any) {
+      const file = event.target.files[0];
+    
+      if (file) {
+        const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg', 'pdf', 'doc', 'docx'];
+        const fileSizeLimit = 5 * 1024 * 1024; // 5MB
+        const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    
+        if (!allowedExtensions.includes(fileExtension!)) {
+          alert('Formato no permitido. Solo PDF, PNG, JPG, JPEG, DOC y DOCX.');
+          return;
+        }
+    
+        if (file.size > fileSizeLimit) {
+          alert('El archivo es demasiado grande. Máximo permitido: 5MB.');
+          return;
+        }
+    
+        this.selectedFile = file;
+        this.editAvance.idp_estado_entrega = 2;
+        this.editAvance.fecha_hora_entrega = new Date().toISOString().split('T')[0];
+        this.editAvance.documento_entrega_flag = true;
+      }
+    }
+    // ======= ======= UPLOAD FILE FUN ======= =======
+    async uploadFile(file: File, nombreTabla: string, campoTabla: string, idEnTabla: string, fileName: string, idRegistro: string): Promise<string> {
+      return new Promise((resolve, reject) => {
+        this.servicios.uploadFile(file, nombreTabla, campoTabla, idEnTabla, fileName, idRegistro).subscribe(
+          (response: any) => {
+            if (response && response.rutaArchivo) {
+              resolve(response.rutaArchivo); // Retorna la ruta para guardarla en BD
+            } else {
+              reject('No se pudo obtener la ruta del archivo.');
+            }
+          },
+          (error) => {
+            console.error('Error al subir el archivo:', error);
+            reject(error);
+          }
+        );
+      });
+    }
+    // ======= ======= DOWNLOAD FILE FUN ======= =======
+    async avanceDownload(campo_avance: string) {
       try {
-        const formData = new FormData();
-        formData.append('file', this.fileData);
-        formData.append('nombre_tabla', 'proy_indicador_avance');
-        formData.append('campo_tabla', 'ruta_evidencia');
-        formData.append('id_en_tabla', 'id_proy_indicador_avance');
-        formData.append('fileName', this.fileName);
-        formData.append('id_registro', idAvance.toString());
-
-        // Usar firstValueFrom en lugar de toPromise()
-        const response: any = await firstValueFrom(this.servicios.uploadFile(
-            this.fileData, 
-            'proy_indicador_avance', 
-            'ruta_evidencia', 
-            'id_proy_indicador_avance', 
-            this.fileName, 
-            idAvance.toString()
-        ));
-
-        if (response?.ruta) {
-          return response.ruta;  // Retorna la ruta del archivo si está disponible
+        let avanceDocumentoURL = await this.downloadFile(
+          'proy_avances',
+          campo_avance,
+          'id_proy_indica_avance',
+          this.editAvance.id_proy_indica_avance
+        );
+    
+        if (avanceDocumentoURL) {
+          const a = document.createElement('a');
+          a.href = avanceDocumentoURL as string;
+          a.download = `avance_${this.editAvance.id_proy_indica_avance}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(avanceDocumentoURL as string);
         } else {
-          throw new Error('Error al obtener la ruta del archivo');
+          console.error('No se pudo obtener el archivo.');
         }
       } catch (error) {
-        console.error('Error al subir el archivo:', error);
-        throw error; 
+        console.error('Error en la descarga del archivo:', error);
       }
+    }
+    // ======= ======= DOWNLOAD FILE ======= =======
+    downloadFile(nombreTabla: string, campoTabla: string, idEnTabla: string, idRegistro: string): Promise<string | null> {
+      return new Promise((resolve, reject) => {
+        this.servicios.downloadFile(nombreTabla, campoTabla, idEnTabla, idRegistro).subscribe(
+          (response: Blob) => {
+            if (response instanceof Blob) {
+              const url = window.URL.createObjectURL(response);
+              resolve(url);
+            } else {
+              resolve(null);
+            }
+          },
+          (error) => {
+            if (error.status === 404) {
+              resolve(null);
+            } else {
+              reject(error);
+            }
+          }
+        );
+      });
     }
 
 //  ======= ======= ======= ======= ======= ======= =======  ======= =======  ======= =======
@@ -742,14 +834,18 @@ validateAccumulativeProgress(newValue: number, currentIndex: number): boolean {
 
 // Actualiza la función de verificación de permisos de edición
 verificarPermisoEdicion(fechaReportar: string): boolean {
+  // Convertir la fecha de reporte a objeto Date y ajustar al final del día
   const fechaReporte = new Date(fechaReportar);
+  fechaReporte.setUTCHours(23, 59, 59, 999);
+  
+  // Obtener fecha actual en Bolivia
   const fechaActual = new Date();
-  
-  // Convertir a UTC-4 (Bolivia)
-  fechaReporte.setHours(23, 59, 59, 999);
-  fechaActual.setHours(fechaActual.getHours() - 4);
-  
-  return fechaActual <= fechaReporte;
+  // Ajustar a hora Bolivia (UTC-4)
+  const horaBolivia = fechaActual.getTime() + (fechaActual.getTimezoneOffset() * 60000) - (4 * 3600000);
+  const fechaBolivia = new Date(horaBolivia);
+
+  // Permitir edición si la fecha actual es menor o igual a la fecha límite
+  return fechaBolivia <= fechaReporte;
 }
 
 // Función auxiliar actualizada para obtener el último avance válido
