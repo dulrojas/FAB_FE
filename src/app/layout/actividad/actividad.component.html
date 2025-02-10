@@ -149,7 +149,8 @@
                 <div class="row">
                     <div class="col col-xl-12 col-lg-12 text-end">
                         <input class="form-check-input custom-form-actividades-checkbox" type="checkbox" 
-                            id="showReprogramados" name="showReprogramados" [(ngModel)]="showReprogramados">
+                            id="showReprogramados" name="showReprogramados" 
+                            [(ngModel)]="showReprogramados">
                         <label class="custom-form-lable-checkbox" for="showReprogramados">
                             Ver reprogramados
                         </label>
@@ -288,7 +289,8 @@
                         </div>
                         <div class="col col-md-11 col-lg-11">
                             <div class="row mb-1 custom-actividad-gant-container" 
-                                *ngFor="let actividadGant of elementoGant.childrens"
+                                *ngFor="let actividadGant of elementoGant.childrens" 
+                                [hidden]="(( actividadGant.esActividadReprog )&&( !showReprogramados ))"
                                 [ngClass]="{'custom-actividad-gant-container-selected': actividadGant.selected}"
                                 (click)="onActividadClick(actividadGant)">
                                 <div class="col col-md-5 col-lg-5">
@@ -440,7 +442,7 @@
                                         [(ngModel)]="fecha_inicio" [disabled]="modalAction == 'edit'"
                                         (change)="validateFechaInicio()">
                                     <span class="custom-alert-message" *ngIf="!valFechaInicio">
-                                        Debe ingresar una fecha valida.
+                                        Debe ingresar una fecha valida dentro de la gestion actual.
                                     </span>
                                 </div>
                                 <!-- ======= FECHA FIN SECTION ======= -->
@@ -451,7 +453,10 @@
                                         [(ngModel)]="fecha_fin" [disabled]="modalAction == 'edit'"
                                         (change)="validateFechaFin()">
                                     <span class="custom-alert-message" *ngIf="!valFechaFin">
-                                        Debe ingresar una fecha valida.
+                                        Debe ingresar una fecha valida dentro de la gestion actual.
+                                    </span>
+                                    <span class="custom-alert-message" *ngIf="!valFechaInicio">
+                                        La fecha de finalizacion debe ser mayor a la de inicio.
                                     </span>
                                 </div>
                                 <!-- ======= PRESUPUESTO SECTION ======= -->

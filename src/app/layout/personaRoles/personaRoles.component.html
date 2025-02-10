@@ -259,33 +259,7 @@
                                         id="logedBy" name="logedBy" [(ngModel)]="logedBy" disabled/>
                                 </div>
 
-                                <div class="custom-form-separator mx-auto my-3"></div>
-
-                                <!-- ======= ======= PROYECTO ROL SECTION ======= ======= -->
-                                <table class="table custom-table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Proyecto</th>
-                                            <th>Rol</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let proyecto of proyectosTable; let i = index">
-                                            <td>{{ proyecto.id_proyecto }}</td>
-                                            <td>{{ proyecto.proyecto }}</td>
-                                            <td>
-                                                <select class="form-control" id="rol-{{ i }}" name="rol-{{ i }}" [(ngModel)]="proyecto.rol" 
-                                                    (change)="personaProyectoRolChange($event, proyecto)">
-                                                    <option value="" disabled selected>...</option>
-                                                    <option *ngFor="let rol of roles" [value]="rol.descripcion_subtipo">
-                                                        {{ rol.descripcion_subtipo }}
-                                                    </option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <!--div class="custom-form-separator mx-auto my-3"></div-->
 
                             </div>
                         </div>
@@ -306,6 +280,45 @@
                         <label class="form-check-label custom-form-lable-checkbox" for="admi_sistema">Administra Sistema</label>
                     </div>
                 </div>
+
+                <!-- ======= ======= PROYECTO ROL SECTION ======= ======= -->
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+
+                                <table class="table custom-table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Proyecto</th>
+                                            <th>Estado proyecto</th>
+                                            <th>Rol</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let proyecto of proyectosTable; let i = index">
+                                            <td>{{ proyecto.id_proyecto }}</td>
+                                            <td>{{ proyecto.proyecto }}</td>
+                                            <td>{{ proyecto.idp_estado_proy }}</td>
+                                            <td>
+                                                <select class="form-control" id="rol-{{ i }}" name="rol-{{ i }}" [(ngModel)]="proyecto.rol" 
+                                                    (change)="personaProyectoRolChange($event, proyecto)">
+                                                    <option value="" disabled selected>...</option>
+                                                    <option *ngFor="let rol of roles" [value]="rol.descripcion_subtipo">
+                                                        {{ rol.descripcion_subtipo }}
+                                                    </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 
             </div>
         </form>

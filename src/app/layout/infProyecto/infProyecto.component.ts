@@ -75,6 +75,8 @@ export class InfProyectoComponent implements OnInit {
 
     proyectoScope: any = {};
 
+    addProyectoName: any = null;
+
     editMode: any = false;
 
     person_resp: any = "";
@@ -360,8 +362,8 @@ export class InfProyectoComponent implements OnInit {
           this.proyectoScope = data[0].dato[0];
 
           this.person_resp = this.proyectoScope.nombres +" "+ this.proyectoScope.apellido_1 +" "+ this.proyectoScope.apellido_2;
-          this.proyectoScope.presupuesto_me = (this.proyectoScope.presupuesto_me).slice(1);
-          this.proyectoScope.presupuesto_mn = (this.proyectoScope.presupuesto_mn).slice(1);
+          this.proyectoScope.presupuesto_me = (this.proyectoScope.presupuesto_mn)?((this.proyectoScope.presupuesto_me).slice(1)):("0.00");
+          this.proyectoScope.presupuesto_mn = (this.proyectoScope.presupuesto_mn)?((this.proyectoScope.presupuesto_mn).slice(1)):("0.00");
           
           this.getProyectDateGaps();
           this.getPresupuestos();
@@ -372,6 +374,82 @@ export class InfProyectoComponent implements OnInit {
         },
         (error) => {
           console.error(error);
+        }
+      );
+    }
+    // ======= ======= ======= ======= =======
+    valAddProyectoName: any = true;
+    validateAddProyectoName(){
+      if( (this.addProyectoName)&&(this.addProyectoName.length < 150) ){
+        this.valAddProyectoName = true;
+      }
+      else{
+        this.valAddProyectoName = false;
+      }
+    }
+    // ======= ======= INIT ADD PROYECTO ======= =======
+    initAddProyecto(modalScope: TemplateRef<any>){
+      this.addProyectoName = null;
+      this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= ADD PROYECTO ======= =======
+    addProyecto(){
+      this.validateAddProyectoName();
+      if( this.valAddProyectoName ){
+        let objProyecto = {
+          id_proyecto: null,
+          proyecto: this.addProyectoName,
+          descrpcion: null,
+          id_person_resp: this.idPersonaReg,
+          fecha_convenio: null,
+          fecha_desembolso_1: null,
+          fecha_inicio: null,
+          fecha_fin: null,
+          fecha_fin_ampliada: null,
+          fecha_fin_real: null,
+          moneda_presupuesto: "Bs",
+          presupuesto_me: null,
+          presupuesto_mn: null,
+          id_institucion_ejecutora: null,
+          idp_estado_proy: 4,
+          notas: null,
+          ubica_geo_otros: null,
+          id_inst_unidad: null,
+          id_metodologia: null,
+          id_preguntas_1: null,
+          id_preguntas_2: null,
+          idp_periodo_evaluacion: null,
+          fecha_evaluacion_1: null,
+          id_persona_reg: this.idPersonaReg
+        };
+
+        this.servProyectos.addProyecto(objProyecto).subscribe(
+          (data)=>{
+            console.log(data[0].dato);
+            this.closeModal();
+          },
+          (error)=>{
+            console.error('Error en la adición del proyecto:', error);
+          }
+        );
+      }      
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= INIT DELETE PROYECTO ======= =======
+    initDeleteProyecto(modalScope: TemplateRef<any>){
+      this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= ADD PROYECTO ======= =======
+    deleteProyecto(){
+      this.servProyectos.deleteProyectoByIdPro(this.proyectoScope.id_proyecto).subscribe(
+        (data)=>{
+          console.log(data[0].dato);
+          this.closeModal();
+        },
+        (error)=>{
+          console.error('Error en la adición del proyecto:', error);
         }
       );
     }

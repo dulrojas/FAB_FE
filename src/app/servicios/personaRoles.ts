@@ -87,7 +87,7 @@ export class servPersonaRoles {
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET PERSONA PROYECTOS ======= ======= =======
-  getPersonaRolesActivos(): Observable<any> {
+  getPersonaRolesActPen(): Observable<any> {
     const params = {
       "procedure_name": "sp_persona_proyecto",
       "body": {

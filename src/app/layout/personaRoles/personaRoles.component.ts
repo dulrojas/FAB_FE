@@ -394,7 +394,7 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= GET PERSONAS ======= =======
     getPersonaRoles(){
-      this.servPersonaRoles.getPersonaRolesActivos().subscribe(
+      this.servPersonaRoles.getPersonaRolesActPen().subscribe(
         (data) => {
           this.personasRoles = (data[0].dato)?(data[0].dato):([]);
           this.totalLength = this.personasRoles.length;
@@ -518,6 +518,8 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= INIT EDIT PERSONA ROLES ======= =======
     initEditPersonaRoles(modalScope: TemplateRef<any>){
       this.initPersonaRolesModel();
+
+      console.log(this.personaRolesSelected.detalle_proyectos);
 
       this.personaRolesSelected.detalle_proyectos.forEach((proyecto)=>{
         proyecto.rol = (proyecto.rol)?(proyecto.rol):("");
