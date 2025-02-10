@@ -530,11 +530,15 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let id of planifIDindAvance; let i = index">
-                                                        <td style="text-align: center">{{ id }}</td>
+                                                        <!-- Índice -->
+                                                        <td style="text-align: center">{{ i + 1 }}</td>
+                                                        <!-- Fecha -->
                                                         <td>{{ planifPeriodofecha[i] || 'N/A' | date:'dd/MM/yyyy' }}</td>
+                                                        <!-- Meta esperada-->
                                                         <td style="text-align: end">
                                                             {{ planifMetaEsperada[i] || 'N/A' }}
                                                         </td>
+                                                        <!-- Botón Editar -->
                                                         <td>
                                                             <button
                                                                 type="button"

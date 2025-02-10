@@ -340,66 +340,74 @@
                 <div class="row col col-xl-12 col-lg-12 mt-2">
                   <label for="comentario">Reporte</label>
                   <div class="col-12 mt-2 mb-2 p-2" style="border: 1px solid white">
-                    <!-- Tabla Reporte -->
-                    <table class="table custom-table-planifEstrategica table-striped table-bordered table-responsive">
-                      <thead>
-                        <tr>
-                          <th style="text-align: center">#</th>
-                          <th style="text-align: center">Periodo</th>
-                          <th style="text-align: end">Valor Esperado</th>
-                          <th style="text-align: center">Progreso</th>
-                          <th style="text-align: center">Notas</th>
-                          <th style="text-align: center">Evidencia</th>
-                          <th style="text-align: center"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let item of indicadoresAvance; let i = index">
-                          <!-- Índice -->
-                          <td style="text-align: center">{{ i + 1 }}</td>
+                    <div class="table-responsive">
+                      <!-- Tabla Reporte -->
+                      <table class="table custom-table-planifEstrategica table-striped table-bordered">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center">#</th>
+                            <th style="text-align: center">Periodo</th>
+                            <th style="text-align: center">Valor Esperado</th>
+                            <th style="text-align: center">Progreso</th>
+                            <th style="text-align: center">Notas</th>
+                            <th style="text-align: center">Evidencia</th>
+                            <th style="text-align: center"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let item of indicadoresAvance; let i = index">
+                            <!-- Índice -->
+                            <td style="text-align: center">{{ i + 1 }}</td>
 
-                          <!-- Periodo   this.indicadoresAvance[] -->
-                          <td style="text-align: center">
-                            {{ item.fecha_reportar | date:'dd/MM/yyyy' }}
-                          </td>
+                            <!-- Periodo   this.indicadoresAvance[] -->
+                            <td style="text-align: center">
+                              {{ item.fecha_reportar | date:'dd/MM/yyyy' }}
+                            </td>
 
-                          <!-- Valor esperado -->
-                          <td style="text-align: center">
-                            {{
-                            convertToNumber(this.indicadoresAvance[i]?.valor_esperado)
-                            | number : '1.0-0'
-                            }}
-                          </td>
+                            <!-- Valor esperado -->
+                            <td style="text-align: center">
+                              {{convertToNumber(this.indicadoresAvance[i]?.valor_esperado)
+                              | number : '1.0-0'}}
+                            </td>
 
-                          <!-- Progreso -->
-                          <td style="text-align: center">
-                            {{ convertToNumber(this.indicadoresAvance[i]?.valor_reportado)
-                            | number:'1.0-2' }}
-                          </td>
+                            <!-- Progreso -->
+                            <td style="text-align: center">
+                              {{ convertToNumber(this.indicadoresAvance[i]?.valor_reportado)
+                              | number:'1.0-2' }}
+                            </td>
 
-                          <!-- Notas -->
-                          <td style="text-align: center">
-                            {{ this.indicadoresAvance[i]?.comentarios || '-' }}
-                          </td>
-                           
-                          <!-- Evidencia -->
-                          <td style="text-align: center">
-                            <a *ngIf="item.ruta_evidencia" [href]="this.indicadoresAvance[i]?.ruta_evidencia"
-                              target="_blank">{{ this.indicadoresAvance[i]?.ruta_evidencia }}</a>
-                            <span *ngIf="!item.ruta_evidencia">Sin evidencia</span>
-                          </td>
+                            <!-- Notas -->
+                            <td style="text-align: center">
+                              {{ this.indicadoresAvance[i]?.comentarios || '-' }}
+                            </td>
+                            
+                            <!-- Evidencia -->
+                            <td style="text-align: center">
+                              <div *ngIf="item.ruta_evidencia; else sinEvidencia">
+                                <div class="d-flex align-items-center gap-2">
+                                  <i class="fas fa-file-alt"></i>
+                                  <a href="javascript:void(0);" (click)="avancesDownload('ruta_evidencia')" title="Descargar evidencia">
+                                    {{ getFileName(item.ruta_evidencia) }}
+                                  </a>
+                                </div>
+                              </div>
+                              <ng-template #sinEvidencia>
+                                <span>Sin evidencia</span>
+                              </ng-template>
+                            </td>
 
-                          <!-- Botón de edición -->
-                          <td style="text-align: center">                            
-                            <button 
-                              class="btn btn-link" 
-                              (click)="openEditAvanceModal(editAvanceModal, item)">
-                              <i class="fa fa-ellipsis-h"></i>
-                            </button>                            
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                            <!-- Botón de edición -->
+                            <td style="text-align: center">                            
+                              <button 
+                                class="btn btn-link" 
+                                (click)="openEditAvanceModal(editAvanceModal, item)">
+                                <i class="fa fa-ellipsis-h"></i>
+                              </button>                            
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                   <div class="modal-footer">
                     <div class="d-flex justify-content-end" style="width: 100%">
@@ -460,40 +468,43 @@
           <!-- ======= ======= UPLOAD FILE SECTION ======= ======= -->
           <!-- Evidencia -->
           <div class="form-group mb-3">
-            <label for="evidencia">Evidencia</label>
-
+            <label for="evidencia" class="form-label">Evidencia</label>
             <input 
               class="form-control" 
               type="file" 
               id="evidencia" 
               name="evidencia" 
               (change)="onFileChange($event)" 
-              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              accept=".pdf,.jpg,.jpeg,.png"
             />
-
-            <small class="text-muted d-block mt-1">
-              Formatos permitidos: PDF, DOC, DOCX, JPG, PNG. Tamaño máximo: 5MB
+            <small class="form-text text-muted">
+              Tamaño máximo: 5MB
             </small>
-
-            <!-- Vista previa de imagen -->
-            <div *ngIf="fileUrl && fileData?.type?.startsWith('image/')" class="mt-2 text-center">
-              <img [src]="fileUrl" class="img-fluid" style="max-height: 200px;">
+          
+            <!-- Mostrar archivo actual y opción de descarga -->
+            <div *ngIf="editAvance.ruta_evidencia" class="mt-2">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-file-alt"></i>
+                <span>{{ getFileName(editAvance.ruta_evidencia) }}</span>
+                <button 
+                  type="button" 
+                  class="btn btn-bg-2 mx-auto" 
+                  (click)="avancesDownload('ruta_evidencia')"
+                  title="Descargar evidencia">
+                  <i class="fa fa-floppy-o"></i> Descargar
+                </button>
+              </div>
             </div>
-
-            <!-- Mostrar archivo actual -->
-            <div *ngIf="editAvance.ruta_evidencia" class="mt-2 text-center">
-              <small>Archivo actual: {{ editAvance.ruta_evidencia }}</small>
-              <button 
-                type="button" 
-                class="btn btn-bg-2 mt-2"
-                [disabled]="!editAvance.ruta_evidencia"
-                (click)="downloadAvanceFile(editAvance.id_proy_indica_avance, editAvance.ruta_evidencia)"
-              >
-                Descargar evidencia
-              </button>
+          
+            <!-- Mostrar archivo seleccionado -->
+            <div *ngIf="selectedFile" class="mt-2">
+              <div class="alert alert-info d-flex align-items-center gap-2">
+                <i class="fas fa-info-circle"></i>
+                <span>Nuevo archivo seleccionado: {{ selectedFile.name }}</span>
+              </div>
             </div>
           </div>
-         
+          <!-- ======= ======= BUTTONS SECTION ======= ======= -->         
           <div class="d-flex justify-content-center mt-4">
             <button
               type="button"

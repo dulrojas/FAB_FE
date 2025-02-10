@@ -409,8 +409,7 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
 
   // Función para manejar el envío del formulario
   onSubmit(form: NgForm) {
-    if (form.valid) {
-      // Aquí puedes implementar la lógica para guardar los cambios
+    if (form.valid) {      
       console.log('Formulario enviado:', form.value);
       this.modalService.dismissAll();
     }
@@ -518,22 +517,20 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     return valor || 0;
   }
 
-  
   // Guardar cambios en el avance
   saveAvance(avance: any) {
     // Aquí implementarías la llamada al servicio para guardar los cambios
     this.servIndicadorAvance.editIndicadorAvance(avance).subscribe(
-      (response) => {
+      (data) => {
         console.log('Avance actualizado exitosamente');
         this.modalService.dismissAll();
-        this.getEjecucionEstrategicaData(); // Recargar datos
+        this.getEjecucionEstrategicaData(); 
       },
       (error) => {
         console.error('Error al actualizar avance:', error);
       }
     );
   }
-  
   
   // Convertir valor a número para la barra de progreso
   convertToNumber(value: any): number {
@@ -567,36 +564,22 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       alert('No se puede editar el avance');
       return;
     }
-
-    // Encontrar el índice del avance actual
+  
     const currentIndex = this.indicadoresAvance.findIndex(
       avance => avance.id_proy_indica_avance === this.editAvance.id_proy_indica_avance
     );
-
-    // Validar el nuevo valor reportado
+  
     const nuevoValor = this.convertToNumber(this.editAvance.valor_reportado);
     if (!this.validateAccumulativeProgress(nuevoValor, currentIndex)) {
       alert('El valor reportado debe ser mayor al último valor reportado en caso de ser el primero debe ser mayor o igual a la linea base');
       return;
     }
-
+  
     try {
       const fechaActual = new Date();
       fechaActual.setHours(fechaActual.getHours() - 4);
       const fechaHoraActual = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
-
-      let rutaEvidencia = this.editAvance.ruta_evidencia;
-    if (this.selectedFile) {
-      rutaEvidencia = await this.uploadFile(
-        this.selectedFile,
-        'proy_avances',
-        'campoTabla',
-        'id_proy_indica_avance',
-        this.editAvance.id_proy_indica_avance,
-        'idRegistro'
-      );
-    }
-
+  
       const datosActualizados = {
         p_accion: 'M1',
         p_id_proy_indicador_avance: this.editAvance.id_proy_indica_avance,
@@ -606,22 +589,42 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         p_valor_esperado: this.editAvance.valor_esperado.toString(),
         p_valor_reportado: nuevoValor.toString(),
         p_comentarios: this.editAvance.comentarios || '',
-        p_ruta_evidencia: rutaEvidencia,
+        p_ruta_evidencia: this.editAvance.ruta_evidencia || '',
         p_id_persona_reporte: this.idPersonaReg
       };
-
-      const response = await this.servIndicadorAvance.editIndicadorAvance(datosActualizados).toPromise();
-      
-      if (response && response[0]?.dato) {
-        await this.actualizarDatosIndicador(this.editAvance.id_proy_indicador);
-        
-        
-        alert('Avance actualizado exitosamente');
-        this.modalService.dismissAll();
-      } else {
-        throw new Error('No se recibió respuesta del servidor');
-      }
-      
+  
+      // Primero actualizamos los datos del avance
+      this.servIndicadorAvance.editIndicadorAvance(datosActualizados).subscribe(
+        async (data) => {
+          if (data && data[0]?.dato) {
+            // Si hay un archivo seleccionado, lo subimos
+            if (this.selectedFile) {
+              await this.uploadFile(
+                this.selectedFile,
+                'proy_indicador_avance',
+                'ruta_evidencia',
+                'id_proy_indica_avance',
+                "Evidencia_file_" + data[0].dato[0].id_proy_indica_avance,
+                data[0].dato[0].id_proy_indica_avance
+              );
+            }
+            
+            // Actualizamos los datos del indicador
+            await this.actualizarDatosIndicador(this.editAvance.id_proy_indicador);
+            
+            alert('Avance actualizado exitosamente');
+            this.modalService.dismissAll();
+            this.selectedFile = null; // Limpiamos la selección del archivo
+            
+            // Actualizamos la vista
+            this.getEjecucionEstrategicaData();
+          }
+        },
+        (error) => {
+          console.error('Error al actualizar el avance:', error);
+          alert('Error al actualizar el avance');
+        }
+      );
     } catch (error) {
       console.error('Error:', error);
       alert('Error en el proceso de actualización');
@@ -672,45 +675,17 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
   }
 // ======= ======= ======= ======= FUNCION PARA ARCHIVOS ======= =======  ======= =======
      // ======= ======= GET INST OBJETIVOS ======= =======
-     async getAvances(){
-      //Modificar para avances
-      /*try{
-        const data: any = await new Promise((resolve, reject) => {
-          this.servInstObjetivos.getInstObjetivos().subscribe(
-            (response) => resolve(response),
-            (error) => reject(error)
-          );
-        });
-    
-        this.instObjetivos = data[0].dato;
-        this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 2);
-        this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 1);
-    
-        for (const objetivo of this.instObjetivos) {
-          objetivo.imagen_src = await this.downloadFile(
-            "inst_objetivos", 
-            "objetivo_imagen", 
-            "id_inst_objetivos", 
-            objetivo.id_inst_objetivos
-          );
-        }
 
-      }
-      catch(error){
-        console.error('Error en getIconos:', error);
-      }*/
-    }
-
-    onFileChange(event: any) {
+     onFileChange(event: any) {
       const file = event.target.files[0];
     
       if (file) {
-        const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg', 'pdf', 'doc', 'docx'];
+        const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
         const fileSizeLimit = 5 * 1024 * 1024; // 5MB
         const fileExtension = file.name.split('.').pop()?.toLowerCase();
     
         if (!allowedExtensions.includes(fileExtension!)) {
-          alert('Formato no permitido. Solo PDF, PNG, JPG, JPEG, DOC y DOCX.');
+          alert('Formato no permitido. Solo PDF, PNG, JPG, JPEG');
           return;
         }
     
@@ -720,21 +695,20 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         }
     
         this.selectedFile = file;
-        this.editAvance.idp_estado_entrega = 2;
-        this.editAvance.fecha_hora_entrega = new Date().toISOString().split('T')[0];
-        this.editAvance.documento_entrega_flag = true;
       }
     }
     // ======= ======= UPLOAD FILE FUN ======= =======
-    async uploadFile(file: File, nombreTabla: string, campoTabla: string, idEnTabla: string, fileName: string, idRegistro: string): Promise<string> {
+    uploadFile(file: any, nombreTabla: any, campoTabla: any, idEnTabla: any, fileName: any, idRegistro: any) {
       return new Promise((resolve, reject) => {
+        if (!file) {
+          resolve(null);
+          return;
+        }
+    
         this.servicios.uploadFile(file, nombreTabla, campoTabla, idEnTabla, fileName, idRegistro).subscribe(
-          (response: any) => {
-            if (response && response.rutaArchivo) {
-              resolve(response.rutaArchivo); // Retorna la ruta para guardarla en BD
-            } else {
-              reject('No se pudo obtener la ruta del archivo.');
-            }
+          (response) => {
+            console.log('Archivo subido correctamente');
+            resolve(response);
           },
           (error) => {
             console.error('Error al subir el archivo:', error);
@@ -743,12 +717,13 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         );
       });
     }
+
     // ======= ======= DOWNLOAD FILE FUN ======= =======
-    async avanceDownload(campo_avance: string) {
+    async avancesDownload(campo_avances: string) {
       try {
-        let avanceDocumentoURL = await this.downloadFile(
-          'proy_avances',
-          campo_avance,
+        const avanceDocumentoURL = await this.downloadFile(
+          'proy_indicador_avance',
+          campo_avances,
           'id_proy_indica_avance',
           this.editAvance.id_proy_indica_avance
         );
@@ -756,34 +731,43 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         if (avanceDocumentoURL) {
           const a = document.createElement('a');
           a.href = avanceDocumentoURL as string;
-          a.download = `avance_${this.editAvance.id_proy_indica_avance}.pdf`;
+          a.download = this.getFileName(this.editAvance.ruta_evidencia) || `Evidencia_${this.editAvance.id_proy_indica_avance}.pdf`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(avanceDocumentoURL as string);
         } else {
-          console.error('No se pudo obtener el archivo.');
+          alert('No se encontró ningún archivo adjunto.');
         }
       } catch (error) {
-        console.error('Error en la descarga del archivo:', error);
+        alert('Error al descargar el archivo. Por favor, intente nuevamente.');
       }
+    }    
+    
+    // Función auxiliar para obtener el nombre del archivo de la ruta
+    getFileName(rutaCompleta: string): string {
+      if (!rutaCompleta) return '';
+      const partes = rutaCompleta.split('/');
+      return partes[partes.length - 1];
     }
     // ======= ======= DOWNLOAD FILE ======= =======
-    downloadFile(nombreTabla: string, campoTabla: string, idEnTabla: string, idRegistro: string): Promise<string | null> {
+    downloadFile(nombreTabla: any, campoTabla: any, idEnTabla: any, idRegistro: any){
       return new Promise((resolve, reject) => {
         this.servicios.downloadFile(nombreTabla, campoTabla, idEnTabla, idRegistro).subscribe(
           (response: Blob) => {
             if (response instanceof Blob) {
               const url = window.URL.createObjectURL(response);
               resolve(url);
-            } else {
-              resolve(null);
+            } 
+            else {
+              resolve(null); 
             }
           },
           (error) => {
             if (error.status === 404) {
               resolve(null);
-            } else {
+            } 
+            else {
               reject(error);
             }
           }
