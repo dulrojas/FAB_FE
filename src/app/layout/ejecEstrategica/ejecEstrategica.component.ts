@@ -460,7 +460,7 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     // Verificar si el avance anterior es válido para editar
     const fechaValidaParaEditar = this.verificarPermisoEdicionConAvanceAnterior(item);
     if (!fechaValidaParaEditar) {
-      alert('No se puede reportar el avance por que se encuentra otro vigente.');
+      alert('No se puede reportar el avance por que se encuentra otro vigente o ya vencio la fecha de para el reporte.');
       return; // No abrir el modal si la fecha no es válida
     }
     

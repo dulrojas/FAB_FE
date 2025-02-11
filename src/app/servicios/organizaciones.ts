@@ -66,16 +66,16 @@ export class ServOrganizacion {
   // ======= ======= ======= ======= ======= ======= =======
   // ======= = GET ORGANIZACIONES POR ID ORGANIZACION  = =======
   // ======= ======= ======= ======= ======= ======= =======
-      getOrganizacionById(idOrganizacion: number): Observable<any> {
+      getOrganizacionById(idProy: any, idTipo: any): Observable<any> {
         const params =  {
           "procedure_name": "sp_organizaciones",
           "body": {
             "params": [
               { "name": "p_accion", "value": "C3", "type": "string" },
-              { "name": "p_id_organizacion", "value": idOrganizacion, "type": "int" },
-              { "name": "p_id_proyecto", "value": null, "type": "int" },  
+              { "name": "p_id_organizacion", "value": null, "type": "int" },
+              { "name": "p_id_proyecto", "value": idProy, "type": "int" },  
               { "name": "p_id_institucion" , "value": null, "type": "int"},                          
-              { "name": "p_idp_tipo_organizacion", "value": null, "type": "int" },
+              { "name": "p_idp_tipo_organizacion", "value": idTipo, "type": "int" },
               { "name": "p_organizacion", "value": null, "type": "string" }
             ]
           }

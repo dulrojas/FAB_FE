@@ -287,24 +287,31 @@ export class PlanifEstrategicaComponent implements OnInit {
         const nowUTC = new Date();
         const nowBolivia = new Date(nowUTC.getTime() - (4 * 60 * 60 * 1000)); // Restamos 4 horas para Bolivia
     
-        console.log("Fecha del avance (hasta las 23:59):", fechaAvance);
-        console.log("Fecha actual en Bolivia:", nowBolivia);
-    
         // Verificar si la fecha ya venció
         if (nowBolivia > fechaAvance) {
           alert('No puedes editar este avance porque la fecha ya ha vencido.');
           return; // Bloqueamos la edición
         }
+
+         // Convertir valores a números para comparación
+          const lineaBase = parseFloat(this.linea_base);
+          const valorEsperado = parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', ''));
+
+          // Validar que el valor esperado no sea menor que la línea base
+          if (valorEsperado < lineaBase) {
+            alert('El valor esperado no puede ser menor que la línea base.');
+            return;
+          }
     
         // Si la fecha aún es válida, continuar con la edición
         this.editAvance = {
           id_proy_indica_avance: avanceData.id_proy_indica_avance,
           id_proy_indicador: avanceData.id_proy_indicador || null,  
-          fecha_reportar: avanceData.fecha_reportar || '',  
+          fecha_reportar: avanceData.fecha_reportar || '', 
+          valor_esperado: parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', '')) || 0,   
           fecha_hora_reporte: new Date().toISOString(),
-          valor_reportado: parseFloat(avanceData.valor_reportado.replace('$', '').replace(',', '')) || 0 || null ,  
-          valor_esperado: parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', '')) || 0,  
           id_persona_reporte: avanceData.id_persona_reporte || null,
+          valor_reportado: 0 ,
           comentarios: avanceData.comentarios || '',  
           ruta_evidencia: avanceData.ruta_evidencia || '',  
         };
@@ -316,18 +323,23 @@ export class PlanifEstrategicaComponent implements OnInit {
       }
     }
     
-    
-  
     onEditAvanceSubmit() {
+      const lineaBase = parseFloat(this.linea_base);
+      const valorEsperado = parseFloat(this.editAvance.valor_esperado);
+
+      if (valorEsperado < lineaBase) {
+        alert('El valor esperado no puede ser menor que la línea base.');
+        return;
+      }
       // Crear el objeto con los datos editados
       const avanceEditado = {
         p_id_proy_indicador_avance: this.editAvance.id_proy_indica_avance,
         p_id_proy_indicador: this.editAvance.id_proy_indicador,
         p_fecha_reportar: this.editAvance.fecha_reportar,
-        p_fecha_hora_reporte: this.editAvance.fecha_hora_reporte,
-        p_valor_reportado: this.editAvance.valor_reportado,
         p_valor_esperado: this.editAvance.valor_esperado,
+        p_fecha_hora_reporte: this.editAvance.fecha_hora_reporte,               
         p_id_persona_reporte: this.editAvance.id_persona_reporte,
+        p_valor_reportado: 0, 
         p_comentarios: this.editAvance.comentarios,
         p_ruta_evidencia: this.editAvance.ruta_evidencia,
       };
@@ -347,8 +359,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
   
     cerrarFormulario() {
-      this.isEditing = false; // Desactiva el modo de edición
-      this.selectedIdProyIndicador = null; // Limpia el ID seleccionado
+      this.isEditing = false; 
+      this.selectedIdProyIndicador = null; 
     }
   
     // ======= ======= ======= ======= ======= ======= =======  ======= =======        
@@ -1578,7 +1590,15 @@ export class PlanifEstrategicaComponent implements OnInit {
         alert('Por favor complete todos los campos requeridos');
         return;
       }
-      
+      // Validar que el valor esperado no sea menor que la línea base
+        const lineaBase = parseFloat(this.linea_base);
+        const valorEsperado = parseFloat(this.valor_esperado);
+
+        if (valorEsperado < lineaBase) {
+          alert('El valor esperado no puede ser menor que la línea base.');
+          return;
+        }
+            
       const objIndicadorAvance = {
         p_id_proy_indica_avance: 0,
         p_id_proy_indicador: this.id_proy_indicador,

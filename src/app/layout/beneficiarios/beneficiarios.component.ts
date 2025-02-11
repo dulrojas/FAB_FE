@@ -185,6 +185,7 @@ export class BeneficiariosComponent implements OnInit {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
       }
 // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
+      
     getParametricasBeneficiarios(){
       // ACTIVIDADES POR ID_PROYECTO
       this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
@@ -207,8 +208,8 @@ export class BeneficiariosComponent implements OnInit {
         (error) => {
           console.error('Error al cargar tipos de organización:', error);
         }
-      );
-      // ORGANIZACIONES POR ID PROYECTO
+      );      
+      // ORGANIZACIONES POR ID PROYECTO y TIPO DE ORGANIZACIÓN
       this.ServOrganizacion.getOrganizacionByIdProy(this.idProyecto).subscribe(
         (data) => {
           if(data[0]?.dato) {
