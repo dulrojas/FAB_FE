@@ -322,7 +322,7 @@
         </div>
     </ng-template>
 
-<!-- ====== ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
+<!-- ====== ======= ======= DELETE BENEFICIARIOS ======= ======= ======= -->
 <ng-template #deleteBeneficiarioModal let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Eliminar Beneficiario</h4>
@@ -514,10 +514,28 @@
     </form>
   </div>
 </ng-template>
-
-
-
-
+<!-- ====== ======= ======= DELETE PARTICIPANTE ======= ======= ======= -->
+<ng-template #deleteparticipanteModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Participante</h4>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <p>¿Está seguro de querer eliminar este participante?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <!-- ======= Botones ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="modal.close('Eliminar')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
 
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- ////////////////////////////////////////  TABLA ALIADOS PROY-ALIADOS //////////////////////////////////////// -->
@@ -691,7 +709,7 @@
                                         <!-- ======= ======= BUTTONS SECTION ======= ======= -->
                                         <div class="modal-footer">
                                             <div class="d-flex justify-content-center" style="width: 100%">
-                                                <button type="button" class="btn btn-bg-3" (click)="closeModalAliado('Cerrar')">
+                                                <button type="button" class="btn btn-bg-3" (click)="closeModalAliado()">
                                                     <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                                 </button>
                                                 <button type="button" class="btn btn-bg-1" 

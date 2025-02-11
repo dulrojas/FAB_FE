@@ -766,7 +766,6 @@ onSubmit(): void {
   // Función para abrir el modal de nuevo participante
   openParticipanteModal(modal: any): void {
     if (!this.selectedBeneficiarios) {
-      console.error('No hay beneficiario seleccionado');
       alert('No se pueden añadir participantes hasta que el beneficiario esté guardado. Por favor, guarde el beneficiario primero.');
       return;
     }
@@ -794,6 +793,13 @@ onSubmit(): void {
     }
      
     const formValue = this.participanteForm.getRawValue();
+    // Verificar si el num_doc_identidad ya existe en planifData
+    const docIdentExistente = this.planifData.find(persona => persona.num_doc_identidad === formValue.num_doc_identidad);
+    
+    if (docIdentExistente) {
+      alert('El número de documento de identidad ya existe para este beneficiario.');
+      return;
+    }
   
     const participanteData = {
       id_proy_beneficiario: this.selectedBeneficiarios.id,
@@ -825,6 +831,13 @@ onSubmit(): void {
   }
   // Función para eliminar participante
   deleteParticipante(index: number): void {
+
+    const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este participante?');
+      // Si el usuario no confirma, no hacer nada
+      if (!confirmDelete) {
+        return;
+      }
+
     const participante = this.tablaPersonas.find(p => p.id === index);
     if (!participante?.id_real) {
       console.error('ID de participante no válido');
