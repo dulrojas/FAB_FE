@@ -71,6 +71,7 @@ export class PlanifEstrategicaComponent implements OnInit {
   // Variables PROY_INDICADOR 
   id_proy_indicador: any = "";
   id_proyecto: any = "";
+  id_meto_elemento: any = "";
   id_proy_elem_padre: any = "";
   codigo: any = "";
   indicador: any = "";
@@ -369,9 +370,9 @@ export class PlanifEstrategicaComponent implements OnInit {
       return this.modalTitle;
     }
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
-    get planifEstrategicaTable() {
+    get combinedDataPaginated() {
       const start = (this.mainPage - 1) * this.mainPageSize;
-      return this.planifEstrategica.slice(start, start + this.mainPageSize);
+      return this.combinedData.slice(start, start + this.mainPageSize);
     }
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
     planifEstrategicaSelected: any = null;
@@ -450,7 +451,21 @@ export class PlanifEstrategicaComponent implements OnInit {
           return [];
       }
     }
-  
+    getMetoElementoId(tipo: string): number {
+      switch (tipo) {
+        case 'OG':
+          return 1; // ID para Objetivo General
+        case 'OE':
+          return 2; // ID para Objetivo Específico
+        case 'RE':
+          return 3; // ID para Resultado Estratégico
+        case 'IN':
+          return 4; // ID para Indicador
+        default:
+          return 0;
+      }
+    }
+
     // Validar si un padre seleccionado es válido para el tipo actual
     validarPadre(tipo: string, parentCodigo: string): boolean {
       if (!parentCodigo || !tipo) {
@@ -802,6 +817,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.selectedParentCodigo="";
       this.id_proy_indicador = 0;
       this.id_proyecto = "";
+      this.id_meto_elemento = 0;
       this.id_proy_elem_padre = "";
       this.codigo = "";
       this.indicador = "";
@@ -896,7 +912,6 @@ export class PlanifEstrategicaComponent implements OnInit {
         sigla:this.getSiglaElemento(item.id_meto_elemento),
         peso: item.peso,
       }));
-  
       // Combinar ambas tablas
       this.combinedData = [...planifEstrategicaMapped, ...elementosTablaMapped];
   
@@ -1000,10 +1015,13 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.cargarCategoriasParaEdicion();
         this.modalAction = "edit";
         this.modalTitle = this.getModalTitle("edit");
+
+        console.log(this.planifEstrategicaSelected);
         
         this.selectedParentCodigo=this.getCodigoPadre(this.planifEstrategicaSelected.id_proy_elem_padre);
         this.id_proy_indicador = this.planifEstrategicaSelected.id_proy_indicador;
         this.id_proyecto = this.planifEstrategicaSelected.id_proyecto;
+        this.id_meto_elemento = this.planifEstrategicaSelected.id_meto_elemento;
         this.id_proy_elem_padre = this.planifEstrategicaSelected.id_proy_elem_padre;
         this.codigo = this.planifEstrategicaSelected.codigo;
         this.indicador = this.planifEstrategicaSelected.elemento||this.planifEstrategicaSelected.indicador ;
@@ -1024,50 +1042,85 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.tipo = this.getSiglaElemento(this.planifEstrategicaSelected.id_meto_elemento); 
         this.validParents = this.getValidParents(this.tipo);
     if( this.planifEstrategicaSelected.tipo=='Elemento')
-    {
-        // Abrir el modal correspondiente
-        switch (this.planifEstrategicaSelected.id_meto_elemento) {
-          case 1: // Objetivo General
-          case 2: // Objetivo Específico
-          case 3: // Resultado Estratégico
-            this.openModal(planifEstrategicaOGOERE);
-    
-            break;
-          default:
-            console.error("Tipo de elemento desconocido.");
+      {
+          // Abrir el modal correspondiente
+          switch (this.planifEstrategicaSelected.id_meto_elemento) {
+            case 1: // Objetivo General
+            case 2: // Objetivo Específico
+            case 3: // Resultado Estratégico
+              this.openModal(planifEstrategicaOGOERE);
+      
+              break;
+            default:
+              console.error("Tipo de elemento desconocido.");
+          }
+      }else {
+        this.openModal(planifEstrategicaIN);
+      }
+  }
+
+  // ======= ======= ======= ======= =======
+  onSubmitElemento(form: NgForm): void {
+    if (form.valid) {
+      // Obtener el id_meto_elemento basado en el tipo
+      const metoElementoId = this.getMetoElementoId(this.tipo);
+
+      const elemento = {
+        id_proyecto: parseInt(this.idProyecto, 10),
+        id_meto_elemento: metoElementoId, // Usar el ID mapeado
+        id_proy_elem_padre: this.getIdPadreByCodig(this.selectedParentCodigo),
+        codigo: this.codigo,
+        elemento: this.indicador,
+        indicador: this.indicador,
+        descripcion: this.descripcion,
+        comentario: this.comentario,
+        nivel: this.tipo === 'OG' ? 1 : this.tipo === 'OE' ? 2 : this.tipo === 'RE' ? 3 : 4,
+        orden: this.orden || 1,
+        idp_estado: 1, // Estado activo por defecto
+        peso: 0 // Valor por defecto si es necesario
+      };
+
+      if (this.modalAction === "add") {
+        // Validar que tengamos un id_meto_elemento válido
+        if (!elemento.id_meto_elemento) {
+          console.error('Error: id_meto_elemento no válido');
+          alert('Error al guardar: Tipo de elemento no válido');
+          return;
         }
-    }else {
-      this.openModal(planifEstrategicaIN);
+
+        this.proyElementosService.addElemento(elemento).subscribe(
+          (response) => {
+            alert('Elemento guardado correctamente');
+            form.resetForm();
+            this.closeModal();
+            this.loadData();
+            this.getPlanifEstrategica();
+          },
+          (error) => {
+            console.error('Error al añadir elemento:', error);
+            alert('Error al guardar el elemento');
+          }
+        );
+      } else if (this.modalAction === "edit") {
+        elemento['id_proy_elemento'] = this.planifEstrategicaSelected.id_proy_elemento;
+        
+        this.proyElementosService.editElemento(elemento).subscribe(
+          (response) => {
+            alert('Elemento actualizado correctamente');
+            form.resetForm();
+            this.closeModal();
+            this.loadData();
+            this.getPlanifEstrategica();
+          },
+          (error) => {
+            console.error('Error al editar elemento:', error);
+            alert('Error al actualizar el elemento');
+          }
+        );
+      }
     }
   }
 
-  editElemento() {
-    const objElemento = {
-      p_id_proy_elemento: this.planifEstrategicaSelected.id_proy_elemento || null,
-      p_id_proyecto: this.planifEstrategicaSelected.id_proyecto || null,
-      p_id_meto_elemento: this.planifEstrategicaSelected.id_meto_elemento || null, 
-      p_id_proy_elem_padre: this.planifEstrategicaSelected.id_proy_elem_padre || null,
-      p_codigo: this.planifEstrategicaSelected.codigo || null,
-      p_elemento: this.planifEstrategicaSelected.elemento || null,
-      p_descripcion: this.planifEstrategicaSelected.descripcion || null,
-      p_comentario: this.planifEstrategicaSelected.comentario || null,
-      p_nivel: this.planifEstrategicaSelected.nivel || null,
-      p_orden: this.planifEstrategicaSelected.orden || null,
-      p_idp_estado: this.planifEstrategicaSelected.idp_estado || null,
-      p_peso: this.planifEstrategicaSelected.peso || null
-    };
-  
-    this.proyElementosService.editElemento(objElemento).subscribe(
-      (response) => {
-        alert('Elemento editado correctamente.');
-        this.getPlanifEstrategica(); // Refrescar datos
-      },
-      (error) => {
-        alert('Error al editar el elemento.');
-        console.error("Error al editar el elemento:", error);
-      }
-    );
-  }
   
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
     initDeletePlanifEstrategica(modalScope: TemplateRef<any>) {
@@ -1405,52 +1458,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       return elemento ? elemento.id_proy_elemento : 1;
     }
   
-    // ======= ======= ======= ======= =======
-    onSubmitElemento(form: NgForm): void {
-      if (form.valid) {
-        const elemento = {
-          id_proyecto: this.idProyecto,
-          id_meto_elemento: this.id_proy_elem_padre,
-          id_proy_elem_padre:this.getIdPadreByCodig(this.selectedParentCodigo),
-          codigo: this.codigo,
-          elemento: this.indicador,
-          indicador: this.indicador,
-          descripcion: this.descripcion,
-          comentario: this.comentario,
-          tipo: this.tipo,
-          parentCodigo: this.selectedParentCodigo,
-        };
-        // Identificar si es una acción de agregar o editar
-        if (this.modalAction === "add") {
-          // Agregar nuevo elemento
-          this.proyElementosService.addElemento(elemento).subscribe(
-            (response) => {
-              form.resetForm(); // Limpia el formulario
-              this.ngOnInit();
-            },
-            (error) => {
-              console.error('Error al añadir elemento:', error);
-            }
-          );
-        } else if (this.modalAction === "edit") {
-          // Editar elemento existente
-          elemento['id_proy_elemento'] = this.planifEstrategicaSelected.id_proy_elemento; // Agregar el ID para identificar el elemento
-          this.proyElementosService.editElemento(elemento).subscribe(
-            (response) => {
-              form.resetForm(); // Limpia el formulario
-              this.ngOnInit();
-            },
-            (error) => {
-              console.error('Error al editar elemento:', error);
-            }
-          );
-        }
-  
-        // Cerrar modal después de la acción
-        this.closeModal();
-      }
-      this.ngOnInit();
-    }
+    
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
 // ============== INDICADOR AVANCE - PROY_INDICADOR_AVANCE  ==============
 // ======= ======= ======= ======= ======= ======= ======= ======= =======

@@ -147,7 +147,7 @@
 
                 <!-- Contenido de la Tabla -->
                 <tbody>
-                    <tr *ngFor="let planifEstrategica of combinedData; let i = index">
+                    <tr *ngFor="let planifEstrategica of combinedDataPaginated; let i = index">
                         <td>
                             <input
                                 type="checkbox"
@@ -176,8 +176,6 @@
                     </tr>
                 </tbody>
             </table>
-
-            <!-- Paginación 
             <div class="d-flex justify-content-center">
                 <ngb-pagination
                     [(page)]="mainPage"
@@ -188,7 +186,7 @@
                     [boundaryLinks]="true"
                 >
                 </ngb-pagination>
-            </div>-->
+            </div>
         </div>
     </div>
 </div>
@@ -213,9 +211,9 @@
                                         class="form-control"
                                         id="id_proy_elem_padre"
                                         [value]="getElementoNombre(sigla)"
-                                        disabled
+                                        disabled                                        
                                     />
-                                </div>
+                                </div>                                
                                 <div class="col col-xl-1 col-lg-1 mt-auto">
                                     <label class="btn-view-bg-3" [style.backgroundColor]="color">{{
                                         sigla
