@@ -90,13 +90,13 @@
                   {{ getProximaFechaReporte(ejecEstrategica.avances) ? (getProximaFechaReporte(ejecEstrategica.avances) | date:'dd/MM/yyyy') : 'Sin fecha' }}
                 </td>                
                 <!-- PROGRESO SE CONECTA A VALOR REPORTADO-->
-                <td>{{ ejecEstrategica.avance?.valor_reportado || '-' }}</td>
+                <td>{{ convertToNumber(ejecEstrategica.avance?.valor_reportado || '-') }}</td>
                 <!-- MEDIDA -->
                 <td>{{ ejecEstrategica.medida_descripcion }}</td>
                 <!-- NOTAS SE CONECTA A COMENTARIOS DE IND.AVANCE -->
                 <td>{{ ejecEstrategica.avance?.comentarios || '-' }}</td>
                 <!-- META PER SE CONECTA A VALOR ESPERADO -->
-                <td>{{ ejecEstrategica.avance?.valor_esperado || '-' }}</td>
+                <td>{{ convertToNumber(ejecEstrategica.avance?.valor_esperado || '-') }}</td>
                 <!-- AVANCE PORCENTUAL -->
                 <td>
                   <div class="progress-container">
@@ -107,7 +107,7 @@
                   </div>
                 </td>
                 <!-- META FINAL -->
-                <td>{{ ejecEstrategica.meta_final }}</td>
+                <td>{{ convertToNumber(ejecEstrategica.meta_final) }}</td>
                 <!-- AVANCE TOTAL -->
                 <td>
                   <div class="progress-container">

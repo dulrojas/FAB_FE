@@ -263,9 +263,9 @@ export class EjecEstrategicaComponent implements OnInit {
       this.inst_categoria_3 = this.ejecEstrategicaSelected.id_inst_categoria_3;
       this.indicador = this.ejecEstrategicaSelected.indicador;
       this.descripcion = this.ejecEstrategicaSelected.descripcion;
-      this.linea_base = this.ejecEstrategicaSelected.linea_base;
+      this.linea_base = this.convertToNumber(this.ejecEstrategicaSelected.linea_base).toString();
       this.medida = this.ejecEstrategicaSelected.medida;
-      this.meta_final = this.ejecEstrategicaSelected.meta_final;
+      this.meta_final = this.convertToNumber(this.ejecEstrategicaSelected.meta_final).toString();
       this.medio_verifica = this.ejecEstrategicaSelected.medio_verifica;
       this.comentario = this.ejecEstrategicaSelected.comentario;
       this.sigla = this.ejecEstrategicaSelected.sigla;
@@ -534,11 +534,10 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
   
   // Convertir valor a número para la barra de progreso
   convertToNumber(value: any): number {
-    if (!value) return 0;
-    if (typeof value === 'string') {
-      value = value.replace('$', '').replace(',', '');
+    if (!value) {
+      return 0;
     }
-    return parseFloat(value);
+    return parseFloat(value.toString().replace(/[$,]/g, '')) || 0;
   }
 
   // Variables para el manejo de avances

@@ -167,9 +167,9 @@
                         </td>
                         <td>{{ planifEstrategica.codigo }}</td>
                         <td>{{ planifEstrategica.indicador }} {{planifEstrategica.elemento}}</td>
-                        <td>{{ planifEstrategica.linea_base }}</td>
+                        <td>{{ convertToNumber(planifEstrategica.linea_base) }}</td>
                         <td>{{ planifEstrategica.medida }}</td>
-                        <td>{{ planifEstrategica.meta_final }}</td>
+                        <td>{{ convertToNumber(planifEstrategica.meta_final) }}</td>
                         <td>{{ planifEstrategica.descripcion }}</td>
                         <td>{{ planifEstrategica.medio_verifica }}</td>
                         <td>{{ planifEstrategica.comentario }}</td>
@@ -447,8 +447,9 @@
                                         id="linea_base"
                                         name="linea_base"
                                         placeholder="Ingresa una Línea base"
-                                        [(ngModel)]="linea_base"                                        
-                                    />                                   
+                                        [(ngModel)]="linea_base"
+                                        (ngModelChange)="linea_base = convertToNumber($event)"
+                                    />                                  
                                 </div>
 
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
@@ -474,7 +475,7 @@
                                         name="meta_final"
                                         placeholder="Ingresa una Meta Final"
                                         [(ngModel)]="meta_final"
-                                        
+                                        (ngModelChange)="meta_final = convertToNumber($event)"
                                     />
                               
                                 </div>
@@ -533,9 +534,7 @@
                                                         <!-- Fecha -->
                                                         <td>{{ planifPeriodofecha[i] || 'N/A' | date:'dd/MM/yyyy' }}</td>
                                                         <!-- Meta esperada-->
-                                                        <td style="text-align: end">
-                                                            {{ planifMetaEsperada[i] || 'N/A' }}
-                                                        </td>
+                                                        <td style="text-align: end">{{ convertToNumber(planifMetaEsperada[i]) || 'N/A' }}</td>
                                                         <!-- Botón Editar -->
                                                         <td>
                                                             <button
@@ -623,6 +622,7 @@
                     id="editValorEsperado"
                     class="form-control"
                     [(ngModel)]="editAvance.valor_esperado"
+                    (ngModelChange)="editAvance.valor_esperado = convertToNumber($event)"
                     name="valor_esperado"
                     required
                 />
@@ -728,6 +728,7 @@
                                            id="valor_esperado" name="valor_esperado"  
                                            placeholder="Ingresa el valor esperado"
                                            [(ngModel)]="valor_esperado"
+                                           (ngModelChange)="valor_esperado = convertToNumber($event)"
                                            (change)="ValidateValorEsperado()"/> 
                                     <span class="custom-alert-message" *ngIf="!valValorEsperado">
                                         El valor esperado debe ser mayor o igual a 0

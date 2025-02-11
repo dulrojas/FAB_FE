@@ -409,35 +409,36 @@ export class BeneficiariosComponent implements OnInit {
 
   // Manejo de selección en la tabla
   checkboxChanged(selectedBeneficiario: Beneficiario): void {
-    // Si el beneficiario que se está clickeando ya está seleccionado, lo deseleccionamos
-    if (selectedBeneficiario.selected && this.selectedBeneficiarios?.id === selectedBeneficiario.id) {
+    // Actualizar el estado seleccionado del beneficiario manualmente
+    selectedBeneficiario.selected = !selectedBeneficiario.selected;
+    
+    // Si el beneficiario está deseleccionado, limpiar la selección
+    if (!selectedBeneficiario.selected) {
       this.limpiarSeleccion();
       return;
     }
-    
+  
     // Limpiar la tabla de participantes antes de cargar los nuevos
     this.mostrarTablaParticipantes = false;
     this.planifData = [];
     this.tablaPersonas = [];
-    
+  
     // Actualizar selección en la tabla
     this.beneficiariosTable.forEach(b => b.selected = b.id === selectedBeneficiario.id);
-    
+  
     // Filtrar el ID de la organización por el nombre proporcionado
     if (selectedBeneficiario.id_organizacion) {
       const organizacion = this.beneficiariosOrganizacionTipo.find(
         org => org.organizacion === selectedBeneficiario.id_organizacion
       );
   
-      if (organizacion) {
-        this.selectedOrganizacionId = organizacion.id_organizacion;
-      } else {
-        this.selectedOrganizacionId = null;
-      }
+      this.selectedOrganizacionId = organizacion ? organizacion.id_organizacion : null;
     }
   
     // Actualizar el beneficiario seleccionado
-    this.selectedBeneficiarios = selectedBeneficiario.selected ? selectedBeneficiario : null;
+    this.selectedBeneficiarios = selectedBeneficiario;
+    
+    // Cargar datos si hay un beneficiario seleccionado
     if (this.selectedBeneficiarios) {
       this.cargarPersona(this.selectedBeneficiarios.id);
     }
@@ -766,6 +767,7 @@ onSubmit(): void {
   openParticipanteModal(modal: any): void {
     if (!this.selectedBeneficiarios) {
       console.error('No hay beneficiario seleccionado');
+      alert('No se pueden añadir participantes hasta que el beneficiario esté guardado. Por favor, guarde el beneficiario primero.');
       return;
     }
 

@@ -84,9 +84,9 @@
                             <td>
                                 <input
                                     type="checkbox"
-                                    [(ngModel)]="beneficiario.selected"
+                                    [checked]="beneficiario.selected"
                                     (change)="checkboxChanged(beneficiario)"
-                                    id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
+                                    id="checkbox-{{ i }}" name="checkbox-{{ i }}">
                             </td>
                             <td style="text-align: center;">{{ beneficiario.id }}</td>
                             <td style="text-align: center;">{{ beneficiario.fecha | date:'dd/MM/yyyy' }}</td>
@@ -138,7 +138,7 @@
                                             type="text"
                                             id="id"
                                             name="id"
-                                            formControlName="id" />
+                                            formControlName="id" disabled />
                                     </div>
                                     <div class="col col-xl-6 col-lg-6 mt-auto"></div>
 
@@ -691,7 +691,7 @@
                                         <!-- ======= ======= BUTTONS SECTION ======= ======= -->
                                         <div class="modal-footer">
                                             <div class="d-flex justify-content-center" style="width: 100%">
-                                                <button type="button" class="btn btn-bg-3" (click)="closeModalAliado()">
+                                                <button type="button" class="btn btn-bg-3" (click)="closeModalAliado('Cerrar')">
                                                     <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                                 </button>
                                                 <button type="button" class="btn btn-bg-1" 

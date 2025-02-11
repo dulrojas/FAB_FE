@@ -421,7 +421,17 @@ export class PlanifEstrategicaComponent implements OnInit {
     // ======= ======= JERARQUIA DE PADRE ======= =======
     validParents: any[] = [];
     tipo: string = '';
-  
+    
+    convertToNumber(value: any): number | string {
+      if (!value) {
+        return "";
+      }
+    
+      const numberValue = parseFloat(value.toString().replace(/[$,]/g, ''));
+      
+      return isNaN(numberValue) ? "" : numberValue;
+    }
+    
   
     // Filtrar padres válidos en función del tipo del elemento a crear
     getValidParents(tipo: string): any[] {
@@ -942,9 +952,9 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_descripcion: this.descripcion || null,
         p_comentario: this.comentario || null,
         p_orden: this.orden || null,
-        p_linea_base: this.linea_base,
+        p_linea_base: this.convertToNumber(this.linea_base),
         p_medida: this.medida || null,
-        p_meta_final: this.meta_final,
+        p_meta_final: this.convertToNumber(this.meta_final),
         p_medio_verifica: this.medio_verifica || null,
         p_id_estado: this.id_estado || null,
         p_inst_categoria_1: parseInt(this.inst_categoria_1, 10) || null,
@@ -978,9 +988,9 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_descripcion: this.descripcion,
         p_comentario: this.comentario,
         p_orden: this.orden,
-        p_linea_base: this.linea_base,
+        p_linea_base: this.convertToNumber(this.linea_base),
         p_medida: this.medida,
-        p_meta_final: this.meta_final,
+        p_meta_final: this.convertToNumber(this.meta_final),
         p_medio_verifica: this.medio_verifica,
         p_id_estado: this.id_estado,
         p_inst_categoria_1: parseInt(this.inst_categoria_1, 10),
@@ -1028,9 +1038,9 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.descripcion = this.planifEstrategicaSelected.descripcion;
         this.comentario = this.planifEstrategicaSelected.comentario;
         this.orden = this.planifEstrategicaSelected.orden;
-        this.linea_base = this.planifEstrategicaSelected.linea_base;
+        this.linea_base = this.convertToNumber(this.planifEstrategicaSelected.linea_base);
         this.medida = this.planifEstrategicaSelected.medida;
-        this.meta_final = this.planifEstrategicaSelected.meta_final;
+        this.meta_final = this.convertToNumber(this.planifEstrategicaSelected.meta_final);
         this.medio_verifica = this.planifEstrategicaSelected.medio_verifica;
         this.id_estado = this.planifEstrategicaSelected.id_estado;
         this.inst_categoria_1 = this.planifEstrategicaSelected.id_inst_categoria_1;
