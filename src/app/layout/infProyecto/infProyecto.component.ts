@@ -708,7 +708,7 @@ export class InfProyectoComponent implements OnInit {
 
     parseAmountStrToFloat(amount: any): number {
       amount = amount.replace('$', '');
-      amount = amount.replace(',', '');
+      amount = amount.replace(/,/g, '');
       amount = parseFloat(amount);
 
       return amount;
@@ -1010,7 +1010,7 @@ export class InfProyectoComponent implements OnInit {
             }
             // ======= ======= =======
             // ======= ADD ADITIONAL YEARS =======
-            if (startYear <=-  endYear){
+            if (startYear <= endYear){
               for (let year = startYear; year <= endYear; year++) {
                 let presupObjAux = {
                   id_proy_presupuesto: 0,
@@ -1023,7 +1023,6 @@ export class InfProyectoComponent implements OnInit {
                   total_actividades_presupuesto: "0.00",
                   total_presup: "0.00"
                 };
-  
                 this.presupuestos.push(presupObjAux);
   
                 if( year == this.proyectoScope.gestion_actual){
@@ -1388,11 +1387,9 @@ export class InfProyectoComponent implements OnInit {
         (data) => {
           this.obligaciones = (data[0].dato)?(data[0].dato):([]);
 
-          let currentDate = new Date();
-
           this.obligaciones.forEach((obligacion) => {
 
-            obligacion.fecha_hora_entrega = (obligacion.fecha_hora_entrega).slice(0,10);
+            obligacion.fecha_hora_entrega = (obligacion.fecha_hora_entrega)?((obligacion.fecha_hora_entrega).slice(0,10)):(null);
 
             // ======= PROGRESO SECTION =======
             let fechaObligacion = new Date(obligacion.fecha_obligacion);

@@ -389,7 +389,7 @@ export class ActividadComponent implements OnInit {
     // ======= ======= ACTIVIDADES FUN ======= =======
     parseAmountStrToFloat(amount: any): number {
       amount = amount.replace('$', '');
-      amount = amount.replace(',', '');
+      amount = amount.replace(/,/g, '');
       amount = parseFloat(amount);
 
       return amount;
