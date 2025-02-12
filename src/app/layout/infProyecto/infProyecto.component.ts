@@ -1034,6 +1034,9 @@ export class InfProyectoComponent implements OnInit {
             }
             // ======= ======= =======
             // ======= GET CURRENT PRESUPUESTO =======
+            this.presupuestos.sort((a, b) => Number(a.anio) - Number(b.anio));
+            // ======= ======= =======
+            // ======= GET CURRENT PRESUPUESTO =======
             this.presupuestoActual = this.presupuestos.find((presupuesto)=> (presupuesto.anio == this.proyectoScope.gestion_actual));
             this.presupuestoActual.presup_adicional = this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional);
             this.presupuestoActual.presup_adicional = this.parseAmountFloatToStr(this.presupuestoActual.presup_adicional);
