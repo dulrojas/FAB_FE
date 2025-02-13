@@ -99,10 +99,15 @@
                                 <div class="col col-md-4 custom-obj-pool px-0">
                                     <div class=""
                                         *ngFor="let objetivo of objetivosFAN"
-                                        [ngClass]="getObjOptCSSClass(objetivo)"
+                                        [ngClass]="[
+                                            getObjOptCSSClass(objetivo),
+                                            getObjOptCSSClassPointer()
+                                        ]"
                                         (click)="onObjetivoClick(objetivo)">
                                         <div class="row mt-auto">
-                                            <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="(objetivo.imagen_src)||(defaultImageSrc)" alt="Imagen del objetivo">
+                                            <img class="col col-lg-12 col-md-12 custom_logro_img" 
+                                                [src]="(objetivo.objetivo_imagen)||(defaultImageSrc)" 
+                                                alt="Imagen del objetivo">
                                         </div>
                                     </div>
                                 </div>
@@ -111,10 +116,15 @@
 
                                         <div class="col col-md-2 px-0"
                                             *ngFor="let objetivo of objetivosODS"
-                                            [ngClass]="getObjOptCSSClass(objetivo)"
+                                            [ngClass]="[
+                                                getObjOptCSSClass(objetivo),
+                                                getObjOptCSSClassPointer()
+                                            ]"
                                             (click)="onObjetivoClick(objetivo)">
                                             <div class="row mt-auto">
-                                                <img class="col col-lg-12 col-md-12 custom_logro_img" [src]="(objetivo.imagen_src)||(defaultImageSrc)" alt="Imagen del objetivo">
+                                                <img class="col col-lg-12 col-md-12 custom_logro_img" 
+                                                    [src]="(objetivo.objetivo_imagen)||(defaultImageSrc)" 
+                                                    alt="Imagen del objetivo">
                                             </div>
                                         </div>
 
@@ -125,11 +135,17 @@
                                 <div class="col col-md-12">
                                     <span class="custom-info-proy-sub-title my-0">Guia</span>
                                     <!-- ======= ======= ======= PRINCIPAL ======= ======= ======= -->
-                                    <button type="button" class="btn" [class]="getObjBttnCSSClass(1)" (click)="onObjetivoButtonChange(1)" [disabled]="!buttonValidations.editMode">
+                                    <button type="button" class="btn" 
+                                        [class]="getObjBttnCSSClass(1)" 
+                                        (click)="onObjetivoButtonChange(1)" 
+                                        [disabled]="!buttonValidations.editMode">
                                         PRINCIPAL
                                     </button>
                                     <!-- ======= ======= ======= SIGNIFICATIVO ======= ======= ======= -->
-                                    <button type="button" class="btn" [class]="getObjBttnCSSClass(2)" (click)="onObjetivoButtonChange(2)" [disabled]="!buttonValidations.editMode">
+                                    <button type="button" class="btn" 
+                                        [class]="getObjBttnCSSClass(2)" 
+                                        (click)="onObjetivoButtonChange(2)" 
+                                        [disabled]="!buttonValidations.editMode">
                                         SIGNIFICATIVO
                                     </button>
                                 </div>
@@ -569,8 +585,8 @@
                                         <th>Compromiso</th>
                                         <th>Requisitos y/o documentos</th>
                                         <th>Fecha obligacion</th>
-                                        <th>Avance Fecha</th>
-                                        <th>Fecha entrega</th>
+                                        <!--th>Avance Fecha</th>
+                                        <th>Fecha entrega</th-->
                                         <th>Estado entrega</th>
                                     </tr>
                                 </thead>
@@ -585,7 +601,7 @@
                                         <td>{{ obligacion.obligacion }}</td>
                                         <td>{{ obligacion.descripcion }}</td>
                                         <td>{{ obligacion.fecha_obligacion }}</td>
-                                        <td>
+                                        <!--td>
                                             <div class="custom-obligacion-progress-bar">
                                                 <div 
                                                     class="custom-obligacion-progress-fill" 
@@ -593,7 +609,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{{ obligacion.fecha_hora_entrega }}</td>
+                                        <td>{{ obligacion.fecha_hora_entrega }}</td-->
                                         <td>
                                             <ng-container *ngIf="obligacion.idp_estado_entrega == 1">
                                                 <span class="btn-bg-2">

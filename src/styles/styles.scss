@@ -455,18 +455,18 @@ select.form-control {
     line-height: 2;
 }
 .custom-obj-container{
-    border-radius: 4px;
-    border: solid 4px rgba(0,0,0,0);
-    cursor: pointer;
+    border-radius: 6px;
+    border: solid 6px rgba(0,0,0,0);
 }
 .custom-obj-container-1-selected{
-    border-radius: 4px;
-    border: dashed 4px $primary-color;
-    cursor: pointer;
+    border-radius: 6px;
+    border: dashed 6px $primary-color;
 }
 .custom-obj-container-2-selected{
-    border-radius: 4px;
-    border: dashed 4px $secondary-color;
+    border-radius: 6px;
+    border: dashed 6px $secondary-color;
+}
+.custom-obj-img-pointer{
     cursor: pointer;
 }
 .custom-info-text-box{

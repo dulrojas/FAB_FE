@@ -38,7 +38,6 @@ export class servInstituciones{
   }
   // ======= ======= ======= ======= ======= ======= =======
   getInstitucionesById(idInt:number): Observable<any> {
-    console.log('idInt reibido',idInt);
     const params = {
       "procedure_name": "sp_instituciones",
       "body": {

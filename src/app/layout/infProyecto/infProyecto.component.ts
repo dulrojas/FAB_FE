@@ -287,10 +287,18 @@ export class InfProyectoComponent implements OnInit {
           );
         });
     
-        this.instObjetivos = data[0].dato;
-        this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 2);
-        this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 1);
+        this.instObjetivos = (data[0].dato)?(data[0].dato):([]);
+        this.instObjetivos = this.instObjetivos.map(
+          (insObj)=>({
+            ...insObj,
+            objetivo_imagen: environment.assetsPath+insObj.objetivo_imagen
+          })
+        );
+        console.log(this.instObjetivos);
+        this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo == 2);
+        this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo == 1);
     
+        /*
         for (const objetivo of this.instObjetivos) {
           objetivo.imagen_src = await this.downloadFile(
             "inst_objetivos", 
@@ -299,6 +307,7 @@ export class InfProyectoComponent implements OnInit {
             objetivo.id_inst_objetivos
           );
         }
+        */
 
         // ======= GET OBJETIVOS =======
         this.servProyObjetivos.getProyObjetivosByIdProy(this.idProyecto).subscribe(
@@ -313,8 +322,8 @@ export class InfProyectoComponent implements OnInit {
               }
             });
 
-            this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 2);
-            this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo === 1);
+            this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo == 2);
+            this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo == 1);
           },
           (error) => {
             console.error(error);
@@ -656,12 +665,20 @@ export class InfProyectoComponent implements OnInit {
 
       return classToReturn;
     }
-    onObjetivoClick(objetivo: any){
-      if(objetivo.selected == this.objetivoButtonValue){
-        objetivo.selected = 0;
+    getObjOptCSSClassPointer(){
+      if(this.buttonValidations.editMode){
+        return "custom-obj-img-pointer";
       }
-      else{
-        objetivo.selected = this.objetivoButtonValue;
+      return "";
+    }
+    onObjetivoClick(objetivo: any){
+      if(this.buttonValidations.editMode){
+        if(objetivo.selected == this.objetivoButtonValue){
+          objetivo.selected = 0;
+        }
+        else{
+          objetivo.selected = this.objetivoButtonValue;
+        }
       }
     }
     getProyObjetivos(){
@@ -1391,24 +1408,7 @@ export class InfProyectoComponent implements OnInit {
           this.obligaciones = (data[0].dato)?(data[0].dato):([]);
 
           this.obligaciones.forEach((obligacion) => {
-
             obligacion.fecha_hora_entrega = (obligacion.fecha_hora_entrega)?((obligacion.fecha_hora_entrega).slice(0,10)):(null);
-
-            // ======= PROGRESO SECTION =======
-            let fechaObligacion = new Date(obligacion.fecha_obligacion);
-            let fechaEntrega = new Date(obligacion.fecha_hora_entrega);
-            let currentDate = new Date();
-
-            if (fechaObligacion > currentDate) {
-              obligacion.progreso = 0;
-            } 
-            else {
-              let currentDateGap = (currentDate.getTime() - fechaObligacion.getTime()) / (1000 * 60 * 60 * 24);
-              let datesGap = (fechaEntrega.getTime() - fechaObligacion.getTime()) / (1000 * 60 * 60 * 24);
-
-              obligacion.progreso = Math.round(100 * (currentDateGap / datesGap));
-            }
-            // ======= ======= =======
           });
         },
         (error) => {
