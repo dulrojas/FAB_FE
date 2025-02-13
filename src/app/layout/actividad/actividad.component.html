@@ -302,13 +302,13 @@
                                             </div>
                                         </div>
                                         <div class="col col-md-3 col-lg-3 px-1">
-                                            <div class="col custom-elemento-actividad"
+                                            <div class="col custom-elemento-actividad justify-content-end"
                                                 [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
                                                 {{ parseAmountFloatToStr(actividadGant.presupuesto) }}
                                             </div>
                                         </div>
                                         <div class="col col-md-3 col-lg-3 px-1">
-                                            <div class="col custom-elemento-actividad"
+                                            <div class="col custom-elemento-actividad justify-content-end"
                                                 [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
                                                 {{ actividadGant.porcentajeAvance }}%
                                                 <!--canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="50" height="50"></canvas-->
@@ -328,7 +328,7 @@
                                                 <div 
                                                     class="custom-actividad-progress-fill" 
                                                     [style.width.%]="actividadGant.porcentajeAvance"
-                                                    [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
+                                                    [ngClass]="{'custom-elemento-actividad-reprog-fill': (actividadGant.esActividadReprog)}">
                                                 </div>
                                             </div>
                                         </div>

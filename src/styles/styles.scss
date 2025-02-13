@@ -560,7 +560,7 @@ select.form-control {
 
 .custom-obligacion-progress-fill{
     height: 100%;
-    background-color: green;
+    background-color: $primary-color;
     transition: width 0.3s ease-in-out;
 }
 
@@ -628,6 +628,7 @@ select.form-control {
 
 .custom-elemento-container {
     position: relative;
+    min-height: 4rem;
 }
 
 .custom-elemento-span{
@@ -640,9 +641,13 @@ select.form-control {
     align-items: center;
     justify-content: center;
 
+    min-height: 4rem;
+
     padding: 1rem;
 
     background-color: $bg-2-color;
+    
+    color: $txt-1-color;
 }
 
 .custom-actividad-gant-container{
@@ -662,15 +667,15 @@ select.form-control {
 .custom-actividad-progress-bar{
     height: 2rem;
 
+    border: 2px solid black;
     border-radius: 10px;
     
-    background-color: $bg-7-color;
     overflow: hidden;
 }
 
 .custom-actividad-progress-fill{
     height: 100%;
-    background-color: $bg-3-color;
+    background-color: $primary-color;
     transition: width 0.3s ease-in-out;
 }
 
@@ -688,13 +693,20 @@ select.form-control {
     display: flex;
     align-items: center;
 
-    background-color: $bg-3-color;
+    //background-color: $bg-3-color;
+    border: solid $bg-3-color;
 
-    color: $txt-2-color;
+    color: $txt-1-color;
+    //color: $txt-2-color;
     font-weight: bold;
 }
 
 .custom-elemento-actividad-reprog{
+    //background-color: $bg-7-color !important;
+    border: solid $bg-7-color !important;
+}
+
+.custom-elemento-actividad-reprog-fill{
     background-color: $bg-7-color !important;
 }
 

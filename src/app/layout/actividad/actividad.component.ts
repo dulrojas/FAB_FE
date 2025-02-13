@@ -686,6 +686,8 @@ export class ActividadComponent implements OnInit {
             actividad.presupuesto = (actividad.presupuesto)?(this.parseAmountStrToFloat(actividad.presupuesto.slice(1))):(0);
           });
 
+          this.actividades = this.actividades.filter((actividad)=>( actividad.fecha_inicio.slice(0,4) == this.gestion ));
+
           this.elementosGant = [];
           this.elementos.forEach((elemento)=>{
             let elementoToAdd = {...elemento};
@@ -707,11 +709,11 @@ export class ActividadComponent implements OnInit {
           this.elementosGant.forEach((elementoGant)=>{
             elementoGant.childrens.forEach((actividadGant)=>{
 
-              actividadGant.init_date_gap = this.getDateDaysGap(actividadGant.fecha_inicio, (this.gestion+"/01/01"));
+              actividadGant.init_date_gap = this.getDateDaysGap(actividadGant.fecha_inicio, (this.gestion+"-01-01"));
               actividadGant.init_date_gap_por = 100*(actividadGant.init_date_gap / 365);
 
               actividadGant.date_gap = this.getDateDaysGap(actividadGant.fecha_fin, actividadGant.fecha_inicio);
-              actividadGant.date_gap_por = 100*(actividadGant.init_date_gap / 365);
+              actividadGant.date_gap_por = 100*(actividadGant.date_gap / 365);
               
               const totalEjecutado = actividadGant.avances.reduce((sum, item) => {
                 const monto = parseFloat(item.monto_ejecutado.replace("$", "").replace(",", ""));
