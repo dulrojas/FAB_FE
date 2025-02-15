@@ -443,8 +443,8 @@
                                     <thead>
                                         <tr>
                                             <th>Año</th>
-                                            <th>Actividades</th>
-                                            <th>Adicionales</th>
+                                            <th>Presupuesto anual planificado en actividades</th>
+                                            <th>“Presupuesto fuera de actividades</th>
                                             <th>Total</th>
                                         </tr>
                                     </thead>
@@ -559,19 +559,19 @@
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
                                 (click)="initAddObligaciones(obligacionesFormModal)"
-                                [disabled]="((obligacionesSelected)||(validateObligacionesModal())||(!buttonValidations.editMode))">
+                                [disabled]="((obligacionesSelected)||(!buttonValidations.editMode))">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
                             </button>
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
                                 (click)="initEditObligaciones(obligacionesFormModal)"
-                                [disabled]="((!obligacionesSelected)||(validateObligacionesModal())||(!buttonValidations.editMode))">
+                                [disabled]="((!obligacionesSelected)||(!buttonValidations.editMode))">
                                 <i class="fa fa-caret-up" aria-hidden="true"></i>
                             </button>
                             
                             <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
                                 (click)="initDeleteObligacion(deleteObligacionModal)"
-                                [disabled]="((!obligacionesSelected)||(validateObligacionesModal())||(!buttonValidations.editMode))">
+                                [disabled]="((!obligacionesSelected)||(!buttonValidations.editMode))">
                                 <i class="fa fa-minus" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -1130,12 +1130,12 @@
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
             <button type="button" class="btn btn-bg-2" 
-                [disabled]="(!obligacionesModel.documento_entrega_flag)||(modalAction=='add')"
+                [disabled]="(obligacionesModel.idp_estado_entrega_init==2)"
                 (click)="obligacionesOnSubmit()">
                 <i class="fa fa-check" aria-hidden="true"></i> Entregar
             </button>
             <button type="button" class="btn btn-bg-1" 
-                [disabled]="obligacionesForm.invalid" 
+                [disabled]="(obligacionesModel.idp_estado_entrega_init==2)" 
                 (click)="obligacionesOnSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
             </button>

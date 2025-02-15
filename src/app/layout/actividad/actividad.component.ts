@@ -74,6 +74,8 @@ export class ActividadComponent implements OnInit {
     idp_actividad_estado: any = "";
 
     actividadAvances: any = [];
+    actividadAvanceMonto: any = [];
+    actividadAvanceAvances: any = [];
 
     actAvaAvance: any = "";
     actAvaMonto: any = "";
@@ -605,19 +607,35 @@ export class ActividadComponent implements OnInit {
     // ======= ======= =======
     // ======= ACTIVIDAD AVANCE VALIDATIONS =======
     valActAvaAvance: any = true;
+    valActAvaAvance2: any = true;
     validateActAvaAvance() {
       if(this.actAvaAvance) {
         this.valActAvaAvance = true;
-      } else {
+        if( (parseFloat(this.actAvaAvance) + parseFloat(this.actividadAvanceAvances)) <= 100 ){
+          this.valActAvaAvance2 = true;
+        }
+        else{
+          this.valActAvaAvance2 = false;
+        }
+      } 
+      else {
         this.valActAvaAvance = false;
       }
     }
 
     valActAvaMonto: any = true;
+    valActAvaMonto2: any = true;
     validateActAvaMonto() {
       if(this.actAvaMonto) {
         this.valActAvaMonto = true;
-      } else {
+        if( (parseFloat(this.actAvaMonto) + parseFloat(this.actividadAvanceMonto)) <= ( this.parseAmountStrToFloat(this.presupuesto) ) ){
+          this.valActAvaMonto2 = true;
+        }
+        else{
+          this.valActAvaMonto2 = false;
+        }
+      } 
+      else {
         this.valActAvaMonto = false;
       }
     }
@@ -719,7 +737,11 @@ export class ActividadComponent implements OnInit {
                 const monto = parseFloat(item.monto_ejecutado.replace("$", "").replace(",", ""));
                 return sum + monto;
               }, 0);
-              actividadGant.porcentajeAvance = (100*(totalEjecutado / actividadGant.presupuesto)).toFixed(2);
+              //actividadGant.porcentajeAvance = (100*(totalEjecutado / actividadGant.presupuesto)).toFixed(2);
+              actividadGant.porcentajeAvance = 0;
+              actividadGant.avances.forEach(actAva => {
+                actividadGant.porcentajeAvance += parseInt(actAva.avance);
+              });
             
               actividadGant.esActividadReprog = this.esActividadReprog(actividadGant.id_proy_actividad);
 
@@ -820,6 +842,14 @@ export class ActividadComponent implements OnInit {
       this.resultado = this.actividadSelected.resultado;
 
       this.actividadAvances = this.actividadSelected.avances;
+
+      console.log(this.actividadAvances);
+      this.actividadAvances.forEach((actAvance) => {
+        this.actividadAvanceAvances += actAvance.avance;
+        this.actividadAvanceMonto += this.parseAmountStrToFloat(actAvance.monto_ejecutado);
+      });
+
+      this.actividadAvanceMonto = (this.actividadAvanceMonto);
 
       this.openModal(modalScope);
     }

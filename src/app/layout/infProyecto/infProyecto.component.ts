@@ -1072,7 +1072,7 @@ export class InfProyectoComponent implements OnInit {
       this.initFinanciadoresModel();
 
       this.modalAction = "add";
-      this.modalTitle = "Editar Presupuesto Adicional";
+      this.modalTitle = "Presupuesto Adicional al planificado en Actividades";
 
       this.openModal(modalScope);
     }
@@ -1328,16 +1328,6 @@ export class InfProyectoComponent implements OnInit {
       });
     }
 
-    validateObligacionesModal(){
-      let obligacionesBtns = false;
-
-      if(this.obligacionesSelected){
-        obligacionesBtns = (this.obligacionesSelected.idp_estado_entrega == 2)?(true):(false);  
-      }
-
-      return obligacionesBtns;
-    }
-
     getPersonaName(objPersona: any){
       const nameToReturn = objPersona.nombres+" "+objPersona.apellido_1+((objPersona.apellido_2)?(" "+objPersona.apellido_2):(""));
       return nameToReturn;
@@ -1409,6 +1399,7 @@ export class InfProyectoComponent implements OnInit {
 
           this.obligaciones.forEach((obligacion) => {
             obligacion.fecha_hora_entrega = (obligacion.fecha_hora_entrega)?((obligacion.fecha_hora_entrega).slice(0,10)):(null);
+            obligacion.idp_estado_entrega_init = obligacion.idp_estado_entrega;
           });
         },
         (error) => {
@@ -1606,17 +1597,12 @@ export class InfProyectoComponent implements OnInit {
       this.ValidateDescripcion();
       this.ValidateFechaObligacion();
       this.ValidateIdInstitucionExige();
-      this.ValidateIdpEstadoEntrega();
-      this.ValidateFechaHoraEntrega();
 
       valForm = 
         this.valObligacion &&
         this.valDescripcion &&
         this.valFechaObligacion &&
-        this.valIdInstitucionExige &&
-        this.valIdpEstadoEntrega &&
-        this.valFechaHoraEntrega &&
-        this.valFechaHoraEntrega2;
+        this.valIdInstitucionExige;
 
       // ======= SUBMIT SECTION =======
       if(valForm){

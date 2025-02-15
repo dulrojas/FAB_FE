@@ -185,7 +185,7 @@
                                 <div class="col col-xl-12 col-lg-12 mb-auto">
                                     <label for="problema">Problema</label>
                                     <textarea class="form-control" id="problema" name="problema" 
-                                        placeholder="Ingresa el problema del aprendizaje" 
+                                        placeholder="¿Cual fue el problema enfrentado?" 
                                         [(ngModel)]="problema" (change)="ValidateProblema()">
                                     </textarea>
                                     <span class="custom-alert-message" *ngIf="!valProblema">Debe ingresar un problema valido, con menos de 500 caracteres</span>
@@ -195,7 +195,7 @@
                                 <div class="col col-xl-12 col-lg-12 mb-auto">
                                     <label for="accion">Acción desarrollada</label>
                                     <textarea class="form-control" id="accion" name="accion" 
-                                        placeholder="Ingresa la acción del aprendizaje" 
+                                        placeholder="¿Que se hizo para ayudar al problema?" 
                                         [(ngModel)]="accion" (change)="ValidateAccion()">
                                     </textarea>
                                     <span class="custom-alert-message" *ngIf="!valAccion">Debe ingresar una accion valida, con menos de 500 caracteres</span>

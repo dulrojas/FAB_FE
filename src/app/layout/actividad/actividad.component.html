@@ -496,6 +496,9 @@
                                             <span class="custom-alert-message" *ngIf="!valActAvaAvance">
                                                 Debe ingresar un monto valido.
                                             </span>
+                                            <span class="custom-alert-message" *ngIf="!valActAvaAvance2">
+                                                El valor ingresado sobrepasa el porcentaje.
+                                            </span>
                                         </div>
                                         <!-- ======= EJECUTADO SECTION ======= -->
                                         <div class="col col-md-6 col-lg-6">
@@ -507,6 +510,9 @@
                                                 (change)="onChangedAvanceNuevoEjecutado()">
                                             <span class="custom-alert-message" *ngIf="!valActAvaMonto">
                                                 Debe ingresar un monto valido.
+                                            </span>
+                                            <span class="custom-alert-message" *ngIf="!valActAvaMonto2">
+                                                El valor ingresado sobrepasa el presupuesto.
                                             </span>
                                         </div>
                                         <!-- ======= ADD AVANCE SECTION ======= -->
