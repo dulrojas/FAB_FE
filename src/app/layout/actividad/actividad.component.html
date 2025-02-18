@@ -50,7 +50,7 @@
                             <!-- ======= ======= ======= ======= ======= -->
                             <!-- ======= ======= GESTION SECTION ======= ======= -->
                             <div class="col col-md-3 col-lg-3">
-                                <label class="custom-actividad-sub-title">Presupuesto de la Gestión {{ gestion }}</label>
+                                <label class="custom-actividad-sub-title">Presupuesto de la Gestión {{ initGestion }}</label>
                                 <input class="form-control" type="text" 
                                     id="presupuestoGest" name="presupuestoGest" 
                                     [(ngModel)]="presupuestoGest" disabled/>
@@ -156,12 +156,12 @@
                         </label>
                         <button type="button" class="btn btn-view-bg-1 mx-2"
                             (click)="initAddActividad(actividadModal)"
-                            [disabled]="actividadSelected">
+                            [disabled]="(actividadSelected)||(gestion < initGestion)">
                             <i aria-hidden="true"></i> Añadir
                         </button>
                         <button type="button" class="btn btn-view-bg-1"
                             (click)="initAvanceActividad(actividadModal)"
-                            [disabled]="(!actividadSelected)||(actividadSelected.esActividadReprog)">
+                            [disabled]="(!actividadSelected)||(gestion < initGestion)||(actividadSelected.esActividadReprog)">
                             <i aria-hidden="true"></i> Avance
                         </button>
                     </div>
@@ -193,10 +193,27 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col col-md-7 col-lg-7">
-                            <label class="custom-gant-header">
-                                {{ gestion }}
-                            </label>
+
+                            <div class="custom-gant-header">
+                                <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
+                                    [disabled]="gestionIsStartYear()"
+                                    (click)="onGestionChanged(-1)">
+                                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                </button>
+
+                                <label class="custom-gant-header-label">
+                                    {{ gestion }}
+                                </label>
+
+                                <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
+                                    [disabled]="gestionIsEndYear()"
+                                    (click)="onGestionChanged(1)">
+                                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
                         </div>
 
                     </div>

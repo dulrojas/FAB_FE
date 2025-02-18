@@ -619,11 +619,21 @@ select.form-control {
     border-bottom: solid 3px;
     border-color: $txt-1-color;
 
+    justify-content: center;
+    text-align: center;
+
+    background-color: $primary-color;
+}
+
+.custom-gant-header-label{
+    justify-content: center;
     text-align: center;
 
     color: $txt-2-color;
+    font-weight: bold;
 
-    background-color: $primary-color;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .custom-elemento-container {

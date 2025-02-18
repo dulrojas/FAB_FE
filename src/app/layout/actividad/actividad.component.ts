@@ -84,7 +84,10 @@ export class ActividadComponent implements OnInit {
     periodo: any = "";
     presupuestoProy: any = 0;
     ejecutadoProy: any = 0;
+    initGestion: any = "";
     gestion: any = "";
+    startYear: any = "";
+    endYear: any = "";
     presupuestoGest: any = 0;
     ejecutadoGest: any = 0;
 
@@ -100,6 +103,7 @@ export class ActividadComponent implements OnInit {
     elementosGant: any[] = [];
 
     actividades: any[] = [];
+    actividadesGest: any[] = [];
     actividadesReprogIds: any[] = [];
     presuAvances: any[] = [];
 
@@ -492,7 +496,15 @@ export class ActividadComponent implements OnInit {
           this.presupuestoProy = this.parseAmountFloatToStr(dataReq.presupuesto_mn);
           this.ejecutadoProy = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado + dataReq.pro_pre_ava_ejecutado);
     
+          this.initGestion = dataReq.gestion_actual;
           this.gestion = dataReq.gestion_actual;
+
+          this.startYear = dataReq.fecha_inicio;
+          this.endYear = (dataReq.fecha_fin_ampliado)?(dataReq.fecha_fin_ampliado):(dataReq.fecha_fin);
+
+          this.startYear = (this.startYear)?(this.startYear.slice(0,4)):(new Date().getFullYear().toString());
+          this.endYear = (this.endYear)?(this.endYear.slice(0,4)):(new Date().getFullYear().toString());
+
           this.presupuestoGest = this.parseAmountFloatToStr(dataReq.pro_act_presupuesto_gestion);
           this.ejecutadoGest = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado_gestion + dataReq.pro_pre_ava_ejecutado_gestion);
           
@@ -572,7 +584,7 @@ export class ActividadComponent implements OnInit {
 
     valFechaInicio: any = true;
     validateFechaInicio() {
-      if ((this.fecha_inicio)&&( new Date(this.fecha_inicio).getFullYear().toString() == this.gestion )) {
+      if ((this.fecha_inicio)&&( new Date(this.fecha_inicio).getFullYear().toString() >= this.initGestion )) {
         this.valFechaInicio = true;
       } else {
         this.valFechaInicio = false;
@@ -582,7 +594,7 @@ export class ActividadComponent implements OnInit {
     valFechaFin: any = true;
     valFechaFin2: any = true;
     validateFechaFin() {
-      if ((this.fecha_fin)&&( new Date(this.fecha_fin).getFullYear().toString() == this.gestion )) {
+      if ((this.fecha_fin)&&( new Date(this.fecha_fin).getFullYear().toString() >= this.initGestion )) {
         this.valFechaFin = true;
         if( (new Date(this.fecha_inicio)) < (new Date(this.fecha_fin)) ){
           this.valFechaFin2 = true;
@@ -693,6 +705,75 @@ export class ActividadComponent implements OnInit {
       }
     }
     // ======= ======= ======= ======= =======
+    // ======= ======= ON GESTION CHANGED ======= =======
+    onGestionChanged(gestionChange: number){
+      this.gestion = parseInt(this.gestion) + gestionChange;
+      this.groupActividadesGant();
+    }
+    gestionIsStartYear(){
+      let boolToReturn = false;
+      if( this.gestion == this.startYear ){
+        boolToReturn = true;
+      }
+      return boolToReturn;
+    }
+    gestionIsEndYear(){
+      let boolToReturn = false;
+      if( this.gestion == this.endYear ){
+        boolToReturn = true;
+      }
+      return boolToReturn;
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= GROUP ACTIVIDADES BY ELEMENT AND GESTION ======= =======
+    groupActividadesGant(){
+      this.actividadesGest = this.actividades.filter((actividad)=>( actividad.fecha_inicio.slice(0,4) == this.gestion ));
+
+      this.elementosGant = [];
+      this.elementos.forEach((elemento)=>{
+        let elementoToAdd = {...elemento};
+        elementoToAdd.childrens = this.actividadesGest.filter(
+          (actividadObj) =>
+            //actividadObj.codigo.startsWith(elemento.codigo.slice(0, -2))
+            (actividadObj.id_proy_elem_padre == elemento.id_proy_elemento)
+        );
+
+        this.elementosGant.push(elementoToAdd);
+      });
+
+      this.elementosGant = this.elementosGant.filter(
+        (elementoGant)=>(
+          elementoGant.childrens.length > 0
+        )
+      );
+
+      this.elementosGant.forEach((elementoGant)=>{
+        elementoGant.childrens.forEach((actividadGant)=>{
+
+          actividadGant.init_date_gap = this.getDateDaysGap(actividadGant.fecha_inicio, (this.gestion+"-01-01"));
+          actividadGant.init_date_gap_por = 100*(actividadGant.init_date_gap / 365);
+
+          actividadGant.date_gap = this.getDateDaysGap(actividadGant.fecha_fin, actividadGant.fecha_inicio);
+          actividadGant.date_gap_por = 100*(actividadGant.date_gap / 365);
+          
+          const totalEjecutado = actividadGant.avances.reduce((sum, item) => {
+            const monto = parseFloat(item.monto_ejecutado.replace("$", "").replace(",", ""));
+            return sum + monto;
+          }, 0);
+          //actividadGant.porcentajeAvance = (100*(totalEjecutado / actividadGant.presupuesto)).toFixed(2);
+          actividadGant.porcentajeAvance = 0;
+          actividadGant.avances.forEach(actAva => {
+            actividadGant.porcentajeAvance += parseInt(actAva.avance);
+          });
+        
+          actividadGant.esActividadReprog = this.esActividadReprog(actividadGant.id_proy_actividad);
+
+        });
+      });
+
+      this.countHeaderData();
+    }
+    // ======= ======= ======= ======= =======
     // ======= ======= GET ACTIVIDADES ======= =======
     getActividades(){
       this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
@@ -704,52 +785,8 @@ export class ActividadComponent implements OnInit {
             actividad.presupuesto = (actividad.presupuesto)?(this.parseAmountStrToFloat(actividad.presupuesto.slice(1))):(0);
           });
 
-          this.actividades = this.actividades.filter((actividad)=>( actividad.fecha_inicio.slice(0,4) == this.gestion ));
+          this.groupActividadesGant();
 
-          this.elementosGant = [];
-          this.elementos.forEach((elemento)=>{
-            let elementoToAdd = {...elemento};
-            elementoToAdd.childrens = this.actividades.filter(
-              (actividadObj) =>
-                //actividadObj.codigo.startsWith(elemento.codigo.slice(0, -2))
-                (actividadObj.id_proy_elem_padre == elemento.id_proy_elemento)
-            );
-
-            this.elementosGant.push(elementoToAdd);
-          });
-
-          this.elementosGant = this.elementosGant.filter(
-            (elementoGant)=>(
-              elementoGant.childrens.length > 0
-            )
-          );
-
-          this.elementosGant.forEach((elementoGant)=>{
-            elementoGant.childrens.forEach((actividadGant)=>{
-
-              actividadGant.init_date_gap = this.getDateDaysGap(actividadGant.fecha_inicio, (this.gestion+"-01-01"));
-              actividadGant.init_date_gap_por = 100*(actividadGant.init_date_gap / 365);
-
-              actividadGant.date_gap = this.getDateDaysGap(actividadGant.fecha_fin, actividadGant.fecha_inicio);
-              actividadGant.date_gap_por = 100*(actividadGant.date_gap / 365);
-              
-              const totalEjecutado = actividadGant.avances.reduce((sum, item) => {
-                const monto = parseFloat(item.monto_ejecutado.replace("$", "").replace(",", ""));
-                return sum + monto;
-              }, 0);
-              //actividadGant.porcentajeAvance = (100*(totalEjecutado / actividadGant.presupuesto)).toFixed(2);
-              actividadGant.porcentajeAvance = 0;
-              actividadGant.avances.forEach(actAva => {
-                actividadGant.porcentajeAvance += parseInt(actAva.avance);
-              });
-            
-              actividadGant.esActividadReprog = this.esActividadReprog(actividadGant.id_proy_actividad);
-
-            });
-          });
-
-          this.countHeaderData();
-          //this.initializeCharts();
         },
         (error) => {
           console.error(error);
