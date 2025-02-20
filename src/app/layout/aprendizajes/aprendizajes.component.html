@@ -36,17 +36,17 @@
                 <div class="col col-xl-12 col-lg-12 text-end">
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initAddAprendizajes(aprendizajesFormModal)"
-                        [disabled]="(aprendizajesSelected)||(currentPerProRol=='LEC')">
+                        [disabled]="(aprendizajesSelected)||(currentPerProRol=='LEC')||(currentPerProRol=='ADM')">
                         <i class="fa fa-plus" aria-hidden="true"></i> Añadir
                     </button>
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initEditAprendizajes(aprendizajesFormModal)"
-                        [disabled]="(!aprendizajesSelected)||(currentPerProRol=='LEC')">
+                        [disabled]="(!aprendizajesSelected)||(currentPerProRol=='LEC')||(currentPerProRol=='ADM')">
                         <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                     </button>
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initDeleteAprendizajes(deleteAprendizajesModal)"
-                        [disabled]="(!aprendizajesSelected)||(currentPerProRol=='LEC')">
+                        [disabled]="(!aprendizajesSelected)||(currentPerProRol=='LEC')||(currentPerProRol=='ADM')">
                         <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                     </button>
                 </div>
@@ -177,7 +177,8 @@
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="correo">Fecha de aprendizaje</label>
                                     <input class="form-control" type="date" id="fecha" name="fecha" 
-                                        [(ngModel)]="fecha" (change)="ValidateFecha()"/>
+                                        [(ngModel)]="fecha" 
+                                        (change)="ValidateFecha()"/>
                                     <span class="custom-alert-message" *ngIf="!valFecha">Debe elegir una fecha</span>
                                 </div>
 
@@ -186,7 +187,8 @@
                                     <label for="problema">Problema</label>
                                     <textarea class="form-control" id="problema" name="problema" 
                                         placeholder="¿Cual fue el problema enfrentado?" 
-                                        [(ngModel)]="problema" (change)="ValidateProblema()">
+                                        [(ngModel)]="problema" 
+                                        (change)="ValidateProblema()">
                                     </textarea>
                                     <span class="custom-alert-message" *ngIf="!valProblema">Debe ingresar un problema valido, con menos de 500 caracteres</span>
                                 </div>

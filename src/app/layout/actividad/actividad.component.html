@@ -156,12 +156,19 @@
                         </label>
                         <button type="button" class="btn btn-view-bg-1 mx-2"
                             (click)="initAddActividad(actividadModal)"
-                            [disabled]="(actividadSelected)||(gestion < initGestion)">
+                            [disabled]="(actividadSelected)
+                                ||(gestion < initGestion)
+                                ||(currentPerProRol=='LEC')
+                                ||(currentPerProRol=='ADM')">
                             <i aria-hidden="true"></i> Añadir
                         </button>
                         <button type="button" class="btn btn-view-bg-1"
                             (click)="initAvanceActividad(actividadModal)"
-                            [disabled]="(!actividadSelected)||(gestion < initGestion)||(actividadSelected.esActividadReprog)">
+                            [disabled]="(!actividadSelected)
+                                ||(gestion < initGestion)
+                                ||(actividadSelected.esActividadReprog)
+                                ||(currentPerProRol=='LEC')
+                                ||(currentPerProRol=='ADM')">
                             <i aria-hidden="true"></i> Avance
                         </button>
                     </div>

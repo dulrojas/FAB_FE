@@ -500,10 +500,14 @@ export class ActividadComponent implements OnInit {
           this.gestion = dataReq.gestion_actual;
 
           this.startYear = dataReq.fecha_inicio;
-          this.endYear = (dataReq.fecha_fin_ampliado)?(dataReq.fecha_fin_ampliado):(dataReq.fecha_fin);
+          this.endYear = (dataReq.fecha_fin_ampliada)?(dataReq.fecha_fin_ampliada):(dataReq.fecha_fin);
 
           this.startYear = (this.startYear)?(this.startYear.slice(0,4)):(new Date().getFullYear().toString());
           this.endYear = (this.endYear)?(this.endYear.slice(0,4)):(new Date().getFullYear().toString());
+
+          if( parseInt(this.endYear) < parseInt(this.gestion) ){
+            this.gestion = this.endYear;
+          }
 
           this.presupuestoGest = this.parseAmountFloatToStr(dataReq.pro_act_presupuesto_gestion);
           this.ejecutadoGest = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado_gestion + dataReq.pro_pre_ava_ejecutado_gestion);

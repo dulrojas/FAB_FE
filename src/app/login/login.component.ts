@@ -72,7 +72,12 @@ export class LoginComponent implements OnInit {
                     );
                     this.proyectos = (personaRolesResponse[0].dato)?(personaRolesResponse[0].dato):([]);
     
-                    if (!userData.admi_sistema) {
+                    if (userData.admi_sistema){
+                        this.proyectos.forEach(proyecto => {
+                            proyecto.rol = "ADM";
+                        });
+                    } 
+                    else{
                         // ======= FILTER PROYECTOS WHITOUT ROL =======
                         this.proyectos = this.proyectos.filter(
                             (proyecto) => (proyecto.id_persona_proyecto !== null)

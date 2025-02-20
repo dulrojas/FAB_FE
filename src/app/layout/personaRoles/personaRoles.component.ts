@@ -49,10 +49,12 @@ export class PersonaRolesComponent implements OnInit {
     headerDataNro03: any = 0;
     headerDataNro04: any = 0;
     // ======= ======= ======= ======= =======
-
     // ======= ======= NGMODEL VARIABLES SECTION ======= =======
     modalAction: any = "";
     modalTitle: any = "";
+
+    messageModalTitle: any = "";
+    messageModalMessage: any = "";
     
     personasRoles: any[] = [];
     mainPage = 1;
@@ -70,11 +72,14 @@ export class PersonaRolesComponent implements OnInit {
     correo: any = null;
     id_inst_unidad: any = null;
     cargo: any = null;
+    initResponsable: any = null;
     responsable: any = null;
     usuario: any = null;
     contrasenia: any = null;
     logedBy: any = null;
     admi_sistema: any = null;
+
+    nroAdmiSistema: any = 0;
 
     imageSrc: any = null;
     defaultImageSrc: any = environment.defaultImageSrc;
@@ -262,15 +267,16 @@ export class PersonaRolesComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= MODALS FUN ======= =======
-    private modalRef: NgbModalRef | null = null;
-    openModal(content: TemplateRef<any>) {
-      this.modalRef = this.modalService.open(content, { size: 'xl' });
-    }
+    private modalRefs: NgbModalRef[] = [];
 
+    openModal(content: TemplateRef<any>) {
+      const modalRef = this.modalService.open(content, { size: 'xl' });
+      this.modalRefs.push(modalRef);
+    }
     closeModal() {
-      if (this.modalRef) {
-        this.modalRef.close(); 
-        this.modalRef = null;
+      if (this.modalRefs.length > 0) {
+        const lastModal = this.modalRefs.pop();
+        lastModal?.close();
       }
     }
     // ======= ======= ======= ======= =======
@@ -499,6 +505,16 @@ export class PersonaRolesComponent implements OnInit {
       this.getPersonaRoles();
       this.countHeaderData();
     }
+    // ======= PROYECTO ESTADO FUN =======
+    getProyectoEstado( estadoProy: number ){
+      if( estadoProy == 1 ){
+        return "Activo";
+      }
+      if( estadoProy == 4 ){
+        return "Pendiente";
+      }
+    }
+    // ======= ======= =======
     // ======= IS RESPONSABLE FUN =======
     isRespOfUnit(idToAsk){
       const isResp = this.unidades.some(unidad => unidad.id_persona_resp == idToAsk);
@@ -518,8 +534,6 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= INIT EDIT PERSONA ROLES ======= =======
     initEditPersonaRoles(modalScope: TemplateRef<any>){
       this.initPersonaRolesModel();
-
-      console.log(this.personaRolesSelected.detalle_proyectos);
 
       this.personaRolesSelected.detalle_proyectos.forEach((proyecto)=>{
         proyecto.rol = (proyecto.rol)?(proyecto.rol):("");
@@ -543,6 +557,7 @@ export class PersonaRolesComponent implements OnInit {
       this.correo = this.personaRolesSelected.correo;
       this.id_inst_unidad = this.personaRolesSelected.id_inst_unidad;
       this.cargo = this.personaRolesSelected.cargo;
+      this.initResponsable = this.isRespOfUnit(this.personaRolesSelected.id_persona);
       this.responsable = this.isRespOfUnit(this.personaRolesSelected.id_persona);
       this.usuario = this.personaRolesSelected.usuario;
       this.contrasenia = this.personaRolesSelected.contrasenia;
@@ -714,6 +729,36 @@ export class PersonaRolesComponent implements OnInit {
           this.editPersona();
         }
         this.closeModal();
+      }
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= INIT RESP CHANGE MESSAGE ======= =======
+    onResponsableChanged(modalScope: TemplateRef<any>){
+      if( this.initResponsable ){
+        setTimeout(() => {
+          this.responsable = true;
+        });
+
+        this.messageModalTitle = "Revocación de Responsable de Unidad Denegada";
+        this.messageModalMessage = "No se puede quitar los privilegios de responsable de unidad a este usuario.<br>" +
+          "La unidad no puede quedar sin responsable. Para asignar un nuevo responsable, diríjase al registro del nuevo usuario y asígnele el campo correspondiente.";
+  
+        this.openModal(modalScope);
+      }
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= INIT ADM CHANGE MESSAGE ======= =======
+    onAdmiSistemaChanged(modalScope: TemplateRef<any>){
+      if( (this.personasRoles.filter(obj => obj.admi_sistema).length) == 0 ){
+        setTimeout(() => {
+          this.admi_sistema = true; 
+        });
+
+        this.messageModalTitle = "Revocación de Administrador del Sistema Denegada";
+        this.messageModalMessage = "No se puede quitar los privilegios de administrador de sistema a este usuario.<br>" +
+          "Debe haber al menos un Administrador del Sistema.";
+  
+        this.openModal(modalScope);
       }
     }
     // ======= ======= ======= ======= =======
