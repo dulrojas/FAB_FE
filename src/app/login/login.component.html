@@ -8,6 +8,7 @@
                 <div class="form-content">
                     <div class="form-group">
                         <input
+                            (keydown.enter)="passwordInput.focus()" 
                             [placeholder]="'Usuario'"
                             [(ngModel)]="user"
                             name="user"
@@ -18,6 +19,8 @@
 
                     <div class="form-group">
                         <input
+                            #passwordInput 
+                            (keydown.enter)="onLoggedin()" 
                             [placeholder]="'Contraseña'"
                             [(ngModel)]="password"
                             name="password"

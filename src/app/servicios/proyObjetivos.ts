@@ -27,9 +27,9 @@ export class servProyObjetivos{
       }
     };
 
-    const ip = sessionStorage.getItem('ip') || '';
+    const ip = localStorage.getItem('ip') || '127.0.0.1';
     const headers = new HttpHeaders({
-      'ip': "127.0.0.1"
+      'ip': ip
     });
 
     return this.http.post<any>(this.URL, params, { headers });
@@ -51,9 +51,9 @@ export class servProyObjetivos{
       }
     };
 
-    const ip = sessionStorage.getItem('ip') || '';
+    const ip = localStorage.getItem('ip') || '127.0.0.1';
     const headers = new HttpHeaders({
-      'ip': "127.0.0.1"
+      'ip': ip
     });
 
     return this.http.post<any>(this.URL, params, { headers });
@@ -75,9 +75,9 @@ export class servProyObjetivos{
       }
     };
 
-    const ip = sessionStorage.getItem('ip') || '';
+    const ip = localStorage.getItem('ip') || '127.0.0.1';
     const headers = new HttpHeaders({
-      'ip': "127.0.0.1"
+      'ip': ip
     });
 
     return this.http.post<any>(this.URL, params, { headers });

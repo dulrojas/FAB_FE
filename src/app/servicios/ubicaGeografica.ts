@@ -11,7 +11,7 @@ export class servUbicaGeografica{
 
   constructor(private http: HttpClient) {}
 
-  // ======= ======= ======= GET PERSONAS ======= ======= =======
+  // ======= ======= ======= GET UBICA GEOGRAFICA ======= ======= =======
   getUbicaGeografica(): Observable<any> {
     const params = {
         "procedure_name": "sp_ubica_geografica",
@@ -32,13 +32,14 @@ export class servUbicaGeografica{
         }
     };
 
-    const ip = sessionStorage.getItem('ip') || '';
+    const ip = sessionStorage.getItem('ip') || '127.0.0.1';
     const headers = new HttpHeaders({
-      'ip': "127.0.0.1"
+      'ip': ip
     });
 
     return this.http.post<any>(this.URL, params, { headers });
   }
+  // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= traer departamentos ======= ======= ======= =======
   getUbicaciones(nivel: number, rama: number,ubica_geo_padre: number): Observable<any> {
     const params ={
@@ -60,13 +61,14 @@ export class servUbicaGeografica{
         ]
       }
     };
-    const headers = new HttpHeaders({ 'ip': '127.0.0.1' });
+
+    const ip = sessionStorage.getItem('ip') || '127.0.0.1';
+    const headers = new HttpHeaders({
+      'ip': ip
+    });
+
     return this.http.post<any>(this.URL, params, { headers });
   }
-
-
-
-
   // ======= ======= ======= traer provincias ======= ======= ======= =======
   getUbicacionesProvincias(nivel: number, rama: number): Observable<any> {
     const params ={
@@ -88,7 +90,11 @@ export class servUbicaGeografica{
         ]
       }
     };
-    const headers = new HttpHeaders({ 'ip': '127.0.0.1' });
+
+    const ip = sessionStorage.getItem('ip') || '127.0.0.1';
+    const headers = new HttpHeaders({
+      'ip': ip
+    });
     return this.http.post<any>(this.URL, params, { headers });
   }
 }

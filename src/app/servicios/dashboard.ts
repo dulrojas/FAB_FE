@@ -30,8 +30,10 @@ export class ServDashboard {
       }
     };
 
-    const ip = sessionStorage.getItem('ip') || '127.0.0.1';
-    const headers = new HttpHeaders({ 'ip': ip });
+    const ip = localStorage.getItem('ip') || '127.0.0.1';
+    const headers = new HttpHeaders({
+      'ip': ip
+    });
 
     return this.http.post<any>(this.URL, params, { headers });
   }
@@ -49,8 +51,10 @@ export class ServDashboard {
       }
     };
 
-    const ip = sessionStorage.getItem('ip') || '127.0.0.1';
-    const headers = new HttpHeaders({ 'ip': ip });
+    const ip = localStorage.getItem('ip') || '127.0.0.1';
+    const headers = new HttpHeaders({
+      'ip': ip
+    });
 
     return this.http.post<any>(this.URL, params, { headers });
   }

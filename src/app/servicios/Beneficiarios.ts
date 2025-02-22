@@ -37,7 +37,11 @@ export class BeneficiariosService {
             ]
           }
         };
-        const headers = new HttpHeaders({ 'ip': "127.0.0.1" });
+
+        const ip = localStorage.getItem('ip') || '127.0.0.1';
+        const headers = new HttpHeaders({
+          'ip': ip
+        });
         return this.http.post<any>(this.URL, params, { headers });
       }
   // ======= ======= ======= ======= ======= ======= =======
@@ -54,7 +58,11 @@ export class BeneficiariosService {
               ]
             }
           };
-        const headers = new HttpHeaders({ 'ip': "127.0.0.1" });
+
+          const ip = localStorage.getItem('ip') || '127.0.0.1';
+          const headers = new HttpHeaders({
+            'ip': ip
+          });
         return this.http.post<any>(this.URL, params, { headers });
       }
 
@@ -84,8 +92,11 @@ export class BeneficiariosService {
             ]
           }
         };
-        console.log(' el params de beneficiarios : ',params)
-        const headers = new HttpHeaders({ 'ip': '127.0.0.1' });
+
+        const ip = localStorage.getItem('ip') || '127.0.0.1';
+        const headers = new HttpHeaders({
+          'ip': ip
+        });
         return this.http.post<any>(this.URL, params, { headers });
       }
 
@@ -116,7 +127,10 @@ export class BeneficiariosService {
           }
         };
 
-        const headers = new HttpHeaders({ 'ip': '127.0.0.1' });
+        const ip = localStorage.getItem('ip') || '127.0.0.1';
+        const headers = new HttpHeaders({
+          'ip': ip
+        });
         return this.http.post<any>(this.URL, params, { headers });
       }
   // ======= ======= ======= ======= ======= ======= =======
@@ -132,7 +146,11 @@ export class BeneficiariosService {
             ]
           }
         };
-        const headers = new HttpHeaders({ 'ip': "127.0.0.1" });
+
+        const ip = localStorage.getItem('ip') || '127.0.0.1';
+        const headers = new HttpHeaders({
+          'ip': ip
+        });
 
         return this.http.post<any>(this.URL, params, { headers });
       }

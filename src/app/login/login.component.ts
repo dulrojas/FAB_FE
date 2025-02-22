@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { routerTransition } from '../router.animations';
-
-import { lastValueFrom } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { map, catchError } from 'rxjs/operators';
+import { lastValueFrom , of} from 'rxjs';
 
 import { servicios } from "../servicios/servicios";
 import { servLogin } from "../servicios/login";
@@ -21,7 +22,8 @@ export class LoginComponent implements OnInit {
         private servicios: servicios,
         private servLogin: servLogin,
         private servProyectos: servProyectos,
-        private servPersonaRoles: servPersonaRoles
+        private servPersonaRoles: servPersonaRoles,
+        private http: HttpClient
     ) {}
     
     user: any = null;
@@ -43,6 +45,20 @@ export class LoginComponent implements OnInit {
             },
             (error) => {
                 console.error(error);
+            }
+        );
+    }
+
+    getIP(){
+    this.http.get<{ ip: string }>('https://api.ipify.org?format=json')
+        .subscribe(
+            (data) => {
+                console.log('IP:', data.ip)
+                return data.ip;
+            },
+            (error) => {
+                console.error('Error obteniendo la IP:', error)
+                return "127.0.0.1";
             }
         );
     }
@@ -112,7 +128,16 @@ export class LoginComponent implements OnInit {
                             'currentPerProRol',
                             (this.proyectos[0])?(this.proyectos[0].rol):('Sin rol')
                         );
-    
+
+                        this.http.get<{ ip: string }>('https://api.ipify.org?format=json')
+                            .pipe(
+                                map(data => data.ip),
+                                catchError(error => of("127.0.0.1"))
+                            )
+                            .subscribe(ip => {
+                                localStorage.setItem('ip', ip);
+                            });
+
                         this.router.navigate(['/dashboard']);
                     }
                     else{
