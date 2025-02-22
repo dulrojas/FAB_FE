@@ -294,7 +294,6 @@ export class InfProyectoComponent implements OnInit {
             objetivo_imagen: environment.assetsPath+insObj.objetivo_imagen
           })
         );
-        console.log(this.instObjetivos);
         this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo == 2);
         this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo == 1);
     
@@ -1293,23 +1292,14 @@ export class InfProyectoComponent implements OnInit {
         this.valIdpEstadoEntrega = false;
       }
     }
-    
-    valFechaHoraEntrega = true;
-    valFechaHoraEntrega2 = true;
-    ValidateFechaHoraEntrega() {
-      this.valFechaHoraEntrega = true;
-      this.valFechaHoraEntrega2 = true;
-      if (!this.obligacionesModel.fecha_hora_entrega) {
-          this.valFechaHoraEntrega = false;
-          return;
-      }
-      const fechaObligacion = new Date(this.obligacionesModel.fecha_obligacion);
-      const fechaHoraEntrega = new Date(this.obligacionesModel.fecha_hora_entrega);
 
-      if (fechaHoraEntrega <= fechaObligacion) {
-          this.valFechaHoraEntrega2 = false;
+    valDatosDocumentos = true;
+    ValidateDatosDocumentos(){
+      this.valDatosDocumentos = true;
+      if(this.jsonListToString(this.obligacionesModel.datos_documentos).length >= 2000){
+        this.valDatosDocumentos = false;
       }
-  }
+    }
     // ======= ======= ======= ======= =======
     // ======= ======= OBLIGACIONES FUNCTIONS ======= =======
     obligaCheckboxChanged(obligacionesSel: any){
@@ -1332,36 +1322,26 @@ export class InfProyectoComponent implements OnInit {
       const nameToReturn = objPersona.nombres+" "+objPersona.apellido_1+((objPersona.apellido_2)?(" "+objPersona.apellido_2):(""));
       return nameToReturn;
     }
-
-    async obligacionesDownload(campo_obligacion: string){
-      let obligacionDocumentoURL = await this.downloadFile(
-        'proy_obligaciones',
-        campo_obligacion,
-        'id_proy_obliga', 
-        this.obligacionesModel.id_proy_obliga
-      );
-      
-      if(obligacionDocumentoURL) {
-        const a = document.createElement('a');
-        a.href = obligacionDocumentoURL as string;
-        a.download = ((this.obligacionesModel.obligacion).replace(" ","_"))+'.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(obligacionDocumentoURL as string);
+    
+    changeObligacionesDocumentosLength(step: number) { 
+      if (step == 1) {
+        this.obligacionesModel.datos_documentos.push({titulo: '',url: ''});
       } 
-      else {
-        console.error('No se pudo obtener el archivo.');
+      else{
+        this.obligacionesModel.datos_documentos = this.obligacionesModel.datos_documentos.slice(0, -1);
       }
     }
-    onFileChange(event: any) {
-      const file = event.target.files[0];
-      if (file) {
-        this.obligacionesModel.selectedFile = file;
-        this.obligacionesModel.idp_estado_entrega = 2;
-        this.obligacionesModel.fecha_hora_entrega = new Date().toISOString().split('T')[0];
-        this.obligacionesModel.documento_entrega_flag = true;
-      }
+
+    jsonListToString(jsonList: any[]): string {
+      return JSON.stringify(jsonList);
+    }
+    
+    stringToJsonList(str: string): any[] {
+      return JSON.parse(str);
+    }
+
+    openUrl(url: string) {
+      window.open(url, '_blank');
     }
     // ======= ======= INIT PERSONA ROLES NGMODEL ======= =======
     initObligacionesModel(){
@@ -1376,19 +1356,16 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.id_institucion_exige = "";
       this.obligacionesModel.idp_estado_entrega = 1;
       this.obligacionesModel.fecha_hora_entrega = null;
-      this.obligacionesModel.ruta_plantilla = "";
-      this.obligacionesModel.ruta_documento = "";
       this.obligacionesModel.persona_entrega = this.namePersonaReg;
 
-      this.obligacionesModel.selectedFile = null;
-      this.obligacionesModel.documento_entrega_flag = false;
+      this.obligacionesModel.datos_documentos = [{titulo:"",url:""}];
 
       this.valObligacion = true;
       this.valDescripcion = true;
       this.valFechaObligacion = true;
       this.valIdInstitucionExige = true;
       this.valIdpEstadoEntrega = true;
-      this.valFechaHoraEntrega = true;
+      this.valDatosDocumentos = true;
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET OBLIGACIONES ======= =======
@@ -1427,25 +1404,16 @@ export class InfProyectoComponent implements OnInit {
         p_obligacion: this.obligacionesModel.obligacion,
         p_descripcion: this.obligacionesModel.descripcion,
         p_fecha_obligacion: this.obligacionesModel.fecha_obligacion,
-        p_ruta_plantilla: this.obligacionesModel.ruta_plantilla,
         p_id_institucion_exige: parseInt(this.obligacionesModel.id_institucion_exige),
         p_idp_estado_entrega: parseInt(this.obligacionesModel.idp_estado_entrega),
-        p_ruta_documento: this.obligacionesModel.ruta_documento,
         p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
+        p_datos_documentos: this.jsonListToString(this.obligacionesModel.datos_documentos),
         p_id_persona_entrega: parseInt(this.idPersonaReg),
         p_id_persona_reg: parseInt(this.idPersonaReg)
       };
 
       this.servObligaciones.addObligaciones(objObligacion).subscribe(
         (data) => {
-          this.uploadFile(
-            this.obligacionesModel.selectedFile,
-            'proy_obligaciones',
-            'ruta_documento',
-            'id_proy_obliga',
-            this.obligacionesModel.obligacion,
-            data[0].dato[0].id_proy_obliga
-          );
 
           this.getObligaciones();
         },
@@ -1469,16 +1437,16 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.obligacion = this.obligacionesSelected.obligacion;
       this.obligacionesModel.descripcion = this.obligacionesSelected.descripcion;
       this.obligacionesModel.fecha_obligacion = this.obligacionesSelected.fecha_obligacion;
-      this.obligacionesModel.ruta_plantilla = this.obligacionesSelected.ruta_plantilla;
       this.obligacionesModel.id_institucion_exige = this.obligacionesSelected.id_institucion_exige;
       this.obligacionesModel.idp_estado_entrega = this.obligacionesSelected.idp_estado_entrega;
-      this.obligacionesModel.ruta_documento = this.obligacionesSelected.ruta_documento;
+      this.obligacionesModel.idp_estado_entrega_init = this.obligacionesSelected.idp_estado_entrega;
       this.obligacionesModel.fecha_hora_entrega = this.obligacionesSelected.fecha_hora_entrega;
       this.obligacionesModel.persona_entrega = (
         this.obligacionesSelected.nombres+" "+
         this.obligacionesSelected.apellido_1+" "+
         ((this.obligacionesSelected.apellido_2)?(this.obligacionesSelected.apellido_2):(""))
       );
+      this.obligacionesModel.datos_documentos = (this.obligacionesSelected.datos_documentos)?(this.stringToJsonList(this.obligacionesSelected.datos_documentos)):([{titulo:"",url:""}]);
 
       this.openModal(modalScope);
     }
@@ -1492,27 +1460,16 @@ export class InfProyectoComponent implements OnInit {
         p_obligacion: this.obligacionesModel.obligacion,
         p_descripcion: this.obligacionesModel.descripcion,
         p_fecha_obligacion: this.obligacionesModel.fecha_obligacion,
-        p_ruta_plantilla: this.obligacionesModel.ruta_plantilla,
         p_id_institucion_exige: parseInt(this.obligacionesModel.id_institucion_exige),
         p_idp_estado_entrega: parseInt(this.obligacionesModel.idp_estado_entrega),
-        p_ruta_documento: this.obligacionesModel.ruta_documento,
         p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
+        p_datos_documentos: this.jsonListToString(this.obligacionesModel.datos_documentos),
         p_id_persona_entrega: parseInt(this.idPersonaReg),
         p_id_persona_reg: parseInt(this.idPersonaReg)
       };
 
       this.servObligaciones.editObligaciones(objObligacion).subscribe(
         (data) => {
-          if(this.obligacionesModel.selectedFile){
-            this.uploadFile(
-              this.obligacionesModel.selectedFile,
-              'proy_obligaciones',
-              'ruta_documento',
-              'id_proy_obliga',
-              this.obligacionesModel.obligacion,
-              this.obligacionesModel.id_proy_obliga
-            );
-          }
 
           this.getObligaciones();
           this.obligacionesSelected = null;
@@ -1524,8 +1481,13 @@ export class InfProyectoComponent implements OnInit {
 
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= EDIT OBLIGACIONES ======= =======
-    editObligacionesEntrega(){
+    // ======= ======= INIT ENTREGA OBLIGACIONES ======= =======
+    initEntregaObligaciones(modalScope: TemplateRef<any>){
+      this.openModal(modalScope);
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= ENTREGA OBLIGACIONES ======= =======
+    entregaObligaciones(){
       const objObligacion = {
         p_id_proy_obliga: this.obligacionesModel.id_proy_obliga,
         p_id_proyecto: this.idProyecto,
@@ -1533,30 +1495,21 @@ export class InfProyectoComponent implements OnInit {
         p_obligacion: this.obligacionesModel.obligacion,
         p_descripcion: this.obligacionesModel.descripcion,
         p_fecha_obligacion: this.obligacionesModel.fecha_obligacion,
-        p_ruta_plantilla: this.obligacionesModel.ruta_plantilla,
         p_id_institucion_exige: parseInt(this.obligacionesModel.id_institucion_exige),
         p_idp_estado_entrega: 2,
-        p_ruta_documento: this.obligacionesModel.ruta_documento,
-        p_fecha_hora_entrega: this.obligacionesModel.fecha_hora_entrega,
+        p_fecha_hora_entrega: (new Date().toISOString().split('T')[0]),
+        p_datos_documentos: this.jsonListToString(this.obligacionesModel.datos_documentos),
         p_id_persona_entrega: parseInt(this.idPersonaReg),
         p_id_persona_reg: parseInt(this.idPersonaReg)
       };
 
       this.servObligaciones.editObligaciones(objObligacion).subscribe(
         (data) => {
-          if(this.obligacionesModel.selectedFile){
-            this.uploadFile(
-              this.obligacionesModel.selectedFile,
-              'proy_obligaciones',
-              'ruta_documento',
-              'id_proy_obliga',
-              this.obligacionesModel.obligacion,
-              this.obligacionesModel.id_proy_obliga
-            );
-          }
 
           this.getObligaciones();
           this.obligacionesSelected = null;
+          this.closeModal();
+          this.closeModal();
         },
         (error) => {
           console.error(error);
@@ -1597,12 +1550,14 @@ export class InfProyectoComponent implements OnInit {
       this.ValidateDescripcion();
       this.ValidateFechaObligacion();
       this.ValidateIdInstitucionExige();
+      this.ValidateDatosDocumentos();
 
       valForm = 
         this.valObligacion &&
         this.valDescripcion &&
         this.valFechaObligacion &&
-        this.valIdInstitucionExige;
+        this.valIdInstitucionExige &&
+        this.valDatosDocumentos;
 
       // ======= SUBMIT SECTION =======
       if(valForm){
@@ -1610,12 +1565,7 @@ export class InfProyectoComponent implements OnInit {
           this.addObligaciones();
         }
         else{
-          if(!this.obligacionesModel.documento_entrega_flag){
-            this.editObligaciones();
-          }
-          else{
-            this.editObligacionesEntrega();
-          }
+          this.editObligaciones();
         }
         this.closeModal();
       }

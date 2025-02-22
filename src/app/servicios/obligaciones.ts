@@ -24,18 +24,17 @@ export class servObligaciones{
           {"name": "p_obligacion","value": null,"type": "string"},
           {"name": "p_descripcion","value": null,"type": "string"},
           {"name": "p_fecha_obligacion","value": null,"type": "string"},
-          {"name": "p_ruta_plantilla","value": null,"type": "string"},
           {"name": "p_id_institucion_exige","value": null,"type": "int"},
           {"name": "p_idp_estado_entrega","value": null,"type": "int"},
-          {"name": "p_ruta_documento","value": null,"type": "string"},
           {"name": "p_fecha_hora_entrega","value": null,"type": "string"},
+          {"name": "p_datos_documentos","value": null,"type": "string"},
           {"name": "p_id_persona_entrega","value": null,"type": "int"},
           {"name": "p_id_persona_reg","value": null,"type": "int"}
         ]
       }
     };
 
-    const ip = sessionStorage.getItem('ip') || '';
+    const ip = localStorage.getItem('ip') || '';
     const headers = new HttpHeaders({
       'ip': "127.0.0.1"
     });
@@ -56,18 +55,17 @@ export class servObligaciones{
           {"name": "p_obligacion","value": obj.p_obligacion,"type": "string"},
           {"name": "p_descripcion","value": obj.p_descripcion,"type": "string"},
           {"name": "p_fecha_obligacion","value": obj.p_fecha_obligacion,"type": "string"},
-          {"name": "p_ruta_plantilla","value": obj.p_ruta_plantilla,"type": "string"},
           {"name": "p_id_institucion_exige","value": obj.p_id_institucion_exige,"type": "int"},
           {"name": "p_idp_estado_entrega","value": obj.p_idp_estado_entrega,"type": "int"},
-          {"name": "p_ruta_documento","value": obj.p_ruta_documento,"type": "string"},
           {"name": "p_fecha_hora_entrega","value": obj.p_fecha_hora_entrega,"type": "string"},
+          {"name": "p_datos_documentos","value": obj.p_datos_documentos,"type": "string"},
           {"name": "p_id_persona_entrega","value": obj.p_id_persona_entrega,"type": "int"},
           {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
         ]
       }
     };
 
-    const ip = sessionStorage.getItem('ip') || '';
+    const ip = localStorage.getItem('ip') || '';
     const headers = new HttpHeaders({
       'ip': "127.0.0.1"
     });
@@ -88,18 +86,17 @@ export class servObligaciones{
           {"name": "p_obligacion","value": obj.p_obligacion,"type": "string"},
           {"name": "p_descripcion","value": obj.p_descripcion,"type": "string"},
           {"name": "p_fecha_obligacion","value": obj.p_fecha_obligacion,"type": "string"},
-          {"name": "p_ruta_plantilla","value": obj.p_ruta_plantilla,"type": "string"},
           {"name": "p_id_institucion_exige","value": obj.p_id_institucion_exige,"type": "int"},
           {"name": "p_idp_estado_entrega","value": obj.p_idp_estado_entrega,"type": "int"},
-          {"name": "p_ruta_documento","value": obj.p_ruta_documento,"type": "string"},
           {"name": "p_fecha_hora_entrega","value": obj.p_fecha_hora_entrega,"type": "string"},
+          {"name": "p_datos_documentos","value": obj.p_datos_documentos,"type": "string"},
           {"name": "p_id_persona_entrega","value": obj.p_id_persona_entrega,"type": "int"},
           {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
         ]
       }
     };
 
-    const ip = sessionStorage.getItem('ip') || '';
+    const ip = localStorage.getItem('ip') || '';
     const headers = new HttpHeaders({
       'ip': "127.0.0.1"
     });
@@ -120,18 +117,17 @@ export class servObligaciones{
           {"name": "p_obligacion","value": null,"type": "string"},
           {"name": "p_descripcion","value": null,"type": "string"},
           {"name": "p_fecha_obligacion","value": null,"type": "string"},
-          {"name": "p_ruta_plantilla","value": null,"type": "string"},
           {"name": "p_id_institucion_exige","value": null,"type": "int"},
           {"name": "p_idp_estado_entrega","value": null,"type": "int"},
-          {"name": "p_ruta_documento","value": null,"type": "string"},
           {"name": "p_fecha_hora_entrega","value": null,"type": "string"},
+          {"name": "p_datos_documentos","value": null,"type": "string"},
           {"name": "p_id_persona_entrega","value": null,"type": "int"},
           {"name": "p_id_persona_reg","value": idPer,"type": "int"}
         ]
       }
     };
 
-    const ip = sessionStorage.getItem('ip') || '';
+    const ip = localStorage.getItem('ip') || '';
     const headers = new HttpHeaders({
       'ip': "127.0.0.1"
     });
