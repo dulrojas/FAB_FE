@@ -1,5 +1,5 @@
 <div [@routerTransition]>
-    <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+    <!-- ======= ======= ======= PERSONA ROLES HEADER ======= ======= ======= -->
     <div class="row">
         <div class="col col-md-6 custom-body-header">
             <app-bodyHeader></app-bodyHeader>
@@ -22,7 +22,7 @@
         </div>
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
-    <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+    <!-- ======= ======= ======= PERSONA ROLES TABLE SECTION ======= ======= ======= -->
     <div class="card mb-3">
         <div class="card-body custom-card table-responsive">
             <div class="row">
@@ -49,6 +49,7 @@
                     </button>
                 </div>
             </div>
+            
             <div class="row">
                 <div class="container mt-4">
                     <table class="table custom-table table-striped table-bordered">
@@ -107,6 +108,15 @@
                     
                 </div>
             </div>
+
+            <div class="row" *ngIf="personasRolesTable.length == 0">
+                <div class="custom-no-data-container">
+                    <span class="custom-no-data-message">
+                        No existen registros para este modulo del proyecto.
+                    </span>
+                </div>
+            </div>
+
         </div>
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
@@ -297,8 +307,8 @@
                 <div class="col col-xl-12 col-lg-12">
                     <div class="card mb-3">
                         <div class="card-body custom-card">
-                            <div class="row">
 
+                            <div class="row">
                                 <table class="table custom-table table-striped table-bordered">
                                     <thead>
                                         <tr>
@@ -325,7 +335,6 @@
                                         </tr>
                                     </tbody>
                                 </table>
-
                             </div>
                         </div>
                     </div>

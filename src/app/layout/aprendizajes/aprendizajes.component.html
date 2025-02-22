@@ -51,6 +51,7 @@
                     </button>
                 </div>
             </div>
+
             <div class="row">
                 <div class="container mt-4">
                     <table class="table custom-table table-striped table-bordered">
@@ -91,6 +92,15 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="row" *ngIf="aprendizajesTable.length == 0">
+                <div class="custom-no-data-container">
+                    <span class="custom-no-data-message">
+                        No existen registros para este modulo del proyecto.
+                    </span>
+                </div>
+            </div>
+
         </div>
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->

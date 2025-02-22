@@ -24,7 +24,7 @@
         </div>
     </div>
     <!-- ======= ======= ======= ======= ======= ======= ======= -->
-    <!-- ======= ======= ======= LOGROS MODAL ======= ======= ======= -->
+    <!-- ======= ======= ======= LOGROS DATA SECTION ======= ======= ======= -->
     <div class="card mt-4">
         <div class="card-body custom-card table-responsive">
             <div class="row">
@@ -53,6 +53,7 @@
             </div>
             <div class="row">
                 <div class="container mt-4">
+                    
                     <div class="col col-lg-12 col-md-12">
                         <div class="row">
                             <div class="col col-lg-2 col-md-2 custom-logro-container"
@@ -71,6 +72,17 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col col-md-12 col-lg-12" *ngIf="logros.length == 0">
+                        <div class="row">
+                            <div class="custom-no-data-container">
+                                <span class="custom-no-data-message">
+                                    No existen registros para este modulo del proyecto.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -117,6 +117,20 @@ $txt-2-color: #ffffff;
     padding: 0 10px;
 }
 // ======= ======= ======= ======= =======
+// ======= ======= CUSTOM NO DATA ======= =======
+.custom-no-data-container{
+    border: 5px solid #dd5555;
+    border-radius: 20px;
+
+    padding: 1rem;
+
+    background-color: #ffaaaa;
+}
+.custom-no-data-container{
+    color: #dd5555;
+    font-weight: bold;
+}
+// ======= ======= ======= ======= =======
 // ======= ======= CUSTOM TABLE ======= =======
 .custom-table{
     font-size: 12px;
