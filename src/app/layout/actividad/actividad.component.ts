@@ -7,7 +7,6 @@ import { servicios } from "../../servicios/servicios";
 import { ElementosService } from "../../servicios/elementos";
 import { servActividad } from "../../servicios/actividad";
 import { servActAvance } from "../../servicios/actividadAvance";
-import { servPresupuesto } from "../../servicios/presupuesto";
 import { servPresuAvance } from "../../servicios/presuAvance";
 
 import { Chart } from 'chart.js/auto';
@@ -31,7 +30,6 @@ export class ActividadComponent implements OnInit {
       private ElementosService: ElementosService,
       private servActividad: servActividad,
       private servActAvance: servActAvance,
-      private servPresupuesto: servPresupuesto,
       private servPresuAvance: servPresuAvance
     ) {}
 
@@ -394,6 +392,7 @@ export class ActividadComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= ACTIVIDADES FUN ======= =======
     parseAmountStrToFloat(amount: any): number {
+      amount = amount.toString();
       amount = amount.replace('$', '');
       amount = amount.replace(/,/g, '');
       amount = parseFloat(amount);
@@ -466,7 +465,9 @@ export class ActividadComponent implements OnInit {
       this.valResultado = true;
 
       this.valActAvaAvance = true;
+      this.valActAvaAvance2 = true;
       this.valActAvaMonto = true;
+      this.valActAvaMonto2 = true;
 
     }
     // ======= ======= ======= ======= =======
@@ -644,7 +645,7 @@ export class ActividadComponent implements OnInit {
     validateActAvaMonto() {
       if(this.actAvaMonto) {
         this.valActAvaMonto = true;
-        if( (parseFloat(this.actAvaMonto) + parseFloat(this.actividadAvanceMonto)) <= ( this.parseAmountStrToFloat(this.presupuesto) ) ){
+        if( (this.parseAmountStrToFloat(this.actAvaMonto) + this.parseAmountStrToFloat(this.actividadAvanceMonto)) <= ( this.parseAmountStrToFloat(this.presupuesto) ) ){
           this.valActAvaMonto2 = true;
         }
         else{
@@ -884,11 +885,12 @@ export class ActividadComponent implements OnInit {
 
       this.actividadAvances = this.actividadSelected.avances;
 
-      console.log(this.actividadAvances);
-      this.actividadAvances.forEach((actAvance) => {
-        this.actividadAvanceAvances += actAvance.avance;
-        this.actividadAvanceMonto += this.parseAmountStrToFloat(actAvance.monto_ejecutado);
-      });
+        this.actividadAvanceAvances = 0;
+        this.actividadAvanceMonto = 0;
+        this.actividadAvances.forEach((actAvance) => {
+          this.actividadAvanceAvances += parseFloat(actAvance.avance);
+          this.actividadAvanceMonto += this.parseAmountStrToFloat(actAvance.monto_ejecutado);
+        });
 
       this.actividadAvanceMonto = (this.actividadAvanceMonto);
 
@@ -939,6 +941,7 @@ export class ActividadComponent implements OnInit {
 
         if(valForm){
           this.addActividad();
+          this.closeModal();
         }
       }
       else{
@@ -947,14 +950,16 @@ export class ActividadComponent implements OnInit {
 
         let valForm = (
           this.valActAvaAvance &&
-          this.valActAvaMonto
+          this.valActAvaAvance2 &&
+          this.valActAvaMonto &&
+          this.valActAvaMonto2
         );
 
         if(valForm){
           this.avanceActividad();
+          this.closeModal();
         }
       }
-      this.closeModal();
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT REPROGRAMAR FUNCTION ======= =======

@@ -1,6 +1,6 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, TemplateRef } from '@angular/core';
 import { routerTransition } from '../../router.animations';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
@@ -47,18 +47,32 @@ export class AuditoriaComponent implements OnInit {
     id_formulario: any = "";
 
     registrosAuditoria:any = [];
-    registrosAuditoriaForm:any = [];
     registroSelected: any = [];
     
     mainPage = 1;
     mainPageSize = 10;
     totalLength = 0;
+
+    @ViewChild('waitMessageModal', { static: true }) waitMessageModal!: TemplateRef<any>;
     // ======= ======= ======= ======= =======
     // ======= ======= FUNCIONS SECTION ======= =======
+    private modalRefs: NgbModalRef[] = [];
+    
+    openCustomModal(content: TemplateRef<any>, modalConfig: any) {
+      const modalRef = this.modalService.open(content, modalConfig);
+      this.modalRefs.push(modalRef);
+    }
+
+    closeModal() {
+      if (this.modalRefs.length > 0) {
+        const modalRef = this.modalRefs.pop();
+        modalRef?.close();
+      }
+    }
+    
     onFormularioChange(){
-      this.registrosAuditoriaForm = this.registrosAuditoria.filter((item)=>(item.id_formulario == this.id_formulario));
-      this.totalLength = this.registrosAuditoriaForm.length;
-      this.registroSelected = [];
+      this.registrosAuditoria = [];
+      this.getAuditoria();
     }
     getDescripcionAccion(id_accion){
       let accionForm = this.acciones.find((accionItem)=>(accionItem.id_subtipo == id_accion));
@@ -85,17 +99,16 @@ export class AuditoriaComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= PERSONA ROLES TABLE PAGINATION ======= =======
     get registrosAuditoriaFormTable() {
-      if (!this.registrosAuditoriaForm) {
+      if (!this.registrosAuditoria) {
           return [];
       }
       const start = (this.mainPage - 1) * this.mainPageSize;
-      return this.registrosAuditoriaForm.slice(start, start + this.mainPageSize);
+      return this.registrosAuditoria.slice(start, start + this.mainPageSize);
     }
     // ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
-      this.getAuditoria();
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET PARAMETRICAS ======= =======
@@ -103,6 +116,8 @@ export class AuditoriaComponent implements OnInit {
       this.servicios.getParametricaByIdTipo(22).subscribe(
         (data)=>{
           this.formularios = (data[0].dato)?(data[0].dato):([]);
+          this.id_formulario = this.formularios[0].id_subtipo;
+          this.getAuditoria();
         },
         (error)=>{
           console.error(error);
@@ -128,13 +143,19 @@ export class AuditoriaComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= GET AUDITORIA ======= =======
     getAuditoria(){
-      this.servAuditoria.getAuditoria().subscribe(
+      this.openCustomModal(
+        this.waitMessageModal,
+        {
+          size: 'lg',
+          centered: true
+        }
+      );
+      this.servAuditoria.getAuditoriaByIdFormulario(this.id_formulario).subscribe(
         (data)=>{
           this.registrosAuditoria = (data[0].dato)?(data[0].dato):([]);
-          if(this.registrosAuditoria){
-            this.id_formulario = this.formularios[0].id_subtipo;
-            this.onFormularioChange();
-          }
+          this.totalLength = this.registrosAuditoria.length;
+          this.registroSelected = [];
+          this.closeModal();
         },
         (error)=>{
           console.error(error);

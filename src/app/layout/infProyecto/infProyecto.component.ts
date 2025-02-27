@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, TemplateRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
@@ -98,6 +98,8 @@ export class InfProyectoComponent implements OnInit {
     objetivosODS: any[];
 
     defaultImageSrc: any = environment.defaultImageSrc;
+    
+    @ViewChild('waitMessageModal', { static: true }) waitMessageModal!: TemplateRef<any>;
 
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
@@ -148,6 +150,13 @@ export class InfProyectoComponent implements OnInit {
     }    
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
+      this.openCustomModal(
+        this.waitMessageModal,
+        {
+          size: 'lg',
+          centered: true
+        }
+      );
       // ======= GET PERSONA ROLES =======
       this.proyectoScope.id_person_resp = "";
       this.servPersona.getPersonas().subscribe(
@@ -264,9 +273,11 @@ export class InfProyectoComponent implements OnInit {
 
               // === BUILD COMPONENT UBICA GEO DATA ===
               this.ubicaciones = this.buildUbicacionesFamily(this.ubicaciones);
+              this.closeModal();
             },
             (error) => {
               console.error(error);
+              this.closeModal();
             }
           );
           // ======= ======= =======
@@ -340,6 +351,11 @@ export class InfProyectoComponent implements OnInit {
     
     openModal(content: TemplateRef<any>) {
       const modalRef = this.modalService.open(content, { size: 'xl' });
+      this.modalRefs.push(modalRef);
+    }
+    
+    openCustomModal(content: TemplateRef<any>, modalConfig: any) {
+      const modalRef = this.modalService.open(content, modalConfig);
       this.modalRefs.push(modalRef);
     }
 
