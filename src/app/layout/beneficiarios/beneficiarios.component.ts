@@ -198,7 +198,7 @@ export class BeneficiariosComponent implements OnInit {
             console.error(error);
           }
         );
-        // ======= GET UBICA GEO MUNICIPIO =======
+        /* ======= GET UBICA GEO MUNICIPIO =======
         this.servUbicaGeografica.getUbiMunicipios(2).subscribe(
           (data) => {
             this.beneficiariosUbicaMuni = data[0].dato;
@@ -206,7 +206,7 @@ export class BeneficiariosComponent implements OnInit {
           (error) => {
             console.error(error);
           }
-        );
+        );*/
         // ======= GET ACTIVIDADES =======
         this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
           (data) => {
@@ -223,6 +223,22 @@ export class BeneficiariosComponent implements OnInit {
           }
         );
       } 
+      cargarMunicipiosPorDepartamento(idDepartamento: any) {
+        if (idDepartamento) {
+          this.servUbicaGeografica.getUbiMunicipios(idDepartamento).subscribe(
+            (data) => {
+              this.beneficiariosUbicaMuni = data[0].dato;
+            },
+            (error) => {
+              console.error(error);
+              this.beneficiariosUbicaMuni = [];
+            }
+          );
+        } else {
+          this.beneficiariosUbicaMuni = [];
+        }        
+        this.id_ubica_geo_muni = null;
+      }
      
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
       valTituloEvento:any = true;
@@ -331,6 +347,7 @@ export class BeneficiariosComponent implements OnInit {
         this.isEditingBeneficiario = false;
         this.mujeres = 0;
         this.hombres = 0;
+        this.beneficiariosUbicaMuni = [];
 
         this.openModalBeneficiario(modalScope);      
       }
@@ -388,6 +405,10 @@ export class BeneficiariosComponent implements OnInit {
         this.fecha = this.beneficiariosSelected.fecha;
         this.beneficiarios_fecha_registro = this.beneficiariosSelected.fecha_hora_reg;
 
+        if (this.id_ubica_geo_depto) {
+          this.cargarMunicipiosPorDepartamento(this.id_ubica_geo_depto);
+        }
+        
         this.openModalBeneficiario(modalScope);
       }
   // ======= ======= EDIT BENEFICIARIOS ======= =======

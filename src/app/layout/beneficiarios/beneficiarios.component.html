@@ -194,13 +194,13 @@
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="id_ubica_geo_depto">Departamento</label>
                                             <select class="form-control" id="id_ubica_geo_depto" name="id_ubica_geo_depto"
-                                                [(ngModel)]="id_ubica_geo_depto" >
+                                                    [(ngModel)]="id_ubica_geo_depto" (change)="cargarMunicipiosPorDepartamento(id_ubica_geo_depto)">
                                                 <option value="" disabled selected>Seleccione un departamento</option>
                                                 <option *ngFor="let dep of beneficiariosUbicaDepto" [value]="dep.id_ubica_geo">
                                                     {{dep.nombre}}
                                                 </option>
                                             </select>
-                                        </div> 
+                                        </div>
                                         <!-- ======= ======= ======= MUNICIPIO ======= ======= ======= -->                                       
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="id_ubica_geo_muni">Municipio</label>
