@@ -143,8 +143,15 @@
                   [rotate]="true"
                   [boundaryLinks]="true">
                 </ngb-pagination>
-            </div>
-      </div>
+              </div>
+        <!-- Si la tabla esta vacia -->
+        <div class="row" *ngIf="riesgosTable.length === 0"> 
+          <div class="custom-no-data-container">
+            <span class="custom-no-data-message">
+              No hay registros para mostrar
+            </span>
+          </div>
+        </div>
     </div>
   </div>
 

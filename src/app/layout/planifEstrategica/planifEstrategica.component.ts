@@ -976,12 +976,14 @@ export class PlanifEstrategicaComponent implements OnInit {
 
       this.servIndicador.addIndicador(objIndicador).subscribe(
         (data) => {
+          
           alert('Indicador añadido correctamente.');
           this.getPlanifEstrategica();
           this.loadData()
           this.cargarIndicadoresAvance();
         },
         (error) => {
+
           alert('Error al añadir el indicador.');
           console.error('Error al guardar los datos:', error);
         }

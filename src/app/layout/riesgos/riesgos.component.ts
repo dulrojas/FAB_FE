@@ -1,10 +1,10 @@
 import { Component, OnInit, TemplateRef, EventEmitter, Output} from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-
-import { servRiesgos } from "../../servicios/riesgos";
 import { ProyectoService } from '../../services/proyectoData.service';
+
 import { servicios } from "../../servicios/servicios";
+import { servRiesgos } from "../../servicios/riesgos";
 import { servAprendizaje } from "../../servicios/aprendizajes";
 
 @Component({
@@ -25,8 +25,8 @@ export class RiesgosComponent implements OnInit {
       constructor(
         private modalService: NgbModal,
         private proyectoService: ProyectoService,
-        private servRiesgos: servRiesgos,
         private servicios: servicios,
+        private servRiesgos: servRiesgos,
         private servApredizaje: servAprendizaje
       ) {}
     
@@ -41,7 +41,8 @@ export class RiesgosComponent implements OnInit {
         localStorage.setItem('currentIdProy', (this.idProyecto).toString());
         this.proyectoService.seleccionarProyecto(this.idProyecto);
         this.currentPerProRol = selectedPro.rol;
-
+        this.ngOnInit();
+        //Riesgos
         this.getParametricas();
         this.getRiesgos();
         this.initRiesgosModel();

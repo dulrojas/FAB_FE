@@ -1,796 +1,835 @@
-<!-- ////////////////////////////////////////            HEADER           //////////////////////////////////////// -->
-<div [@routerTransition]>
-    <!-- Encabezado -->
-    <div class="row col-md-12">
-        <div class="col col-md-6 align-items-center custom-body-header">
-            <app-bodyHeader 
-                (selectionChange)="onChildSelectionChange($event)">
-            </app-bodyHeader>
-        </div>
-
-        <!-- Tarjetas de Estadísticas -->
-        <div class="col col-md-6 text-center">
-            <div class="row">
-                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                    {{ headerDataNro01 }} Comunidades / Organizaciones
-                </div>
-                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                    {{ headerDataNro02 }} Mujeres beneficiadas
-                </div>
-                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                    {{ headerDataNro03 }} Hombres beneficiados
-                </div>
-                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-                    {{ headerDataNro04 }} Aliados
-                </div>
+<!-- ////////////////////////////////////////   HEADER   //////////////////////////////////////// -->
+    <div [@routerTransition]>
+        <!-- Encabezado -->
+        <div class="row col-md-12">
+            <div class="col col-md-6 align-items-center custom-body-header">
+                <app-bodyHeader 
+                    (selectionChange)="onChildSelectionChange($event)">
+                </app-bodyHeader>
             </div>
-        </div>
-    </div>
-</div>
-<!-- ////////////////////////////////      TABLA BENEFICIARIOS PROY-BENEFICIARIOS      /////////////////////////// -->
-<div [@routerTransition]>
-    <!-- Tabla de Beneficiarios Alcanzados -->
-    <div class="card mb-3" style="margin-top: 20px">
-        <div class="card-body custom-card table-responsive">
-            <!-- Encabezado y Botones -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="title" style="color: #4e8646">Beneficiarias/os Alcanzados</h2>
-                <!-- Botones de Acción -->
+
+            <!-- Tarjetas de Estadísticas -->
+            <div class="col col-md-6 text-center">
                 <div class="row">
-                    <div class="d-flex col col-xl-12 col-lg-12 text-end">
-                        <button type="button" class="btn btn-view-bg-1"
-                        [disabled]="(selectedBeneficiarios)||(currentPerProRol=='LEC')" 
-                        (click)="openModal(beneficiariesModal)">
-                            <i class="fa fa-plus" aria-hidden="true"></i> Añadir
-                        </button>
-                        <button
-                            type="button"
-                            class="btn btn-view-bg-1"
-                            [disabled]="(!selectedBeneficiarios)||(currentPerProRol=='LEC')"                            
-                            (click)="openModal(beneficiariesModal, selectedBeneficiarios)">
-                            <i class="fa fa-pencil" aria-hidden="true"></i> Editar
-                        </button>
-                        <button
-                            type="button"
-                            class="btn btn-view-bg-1"
-                            [disabled]="(!selectedBeneficiarios)||(currentPerProRol=='LEC')"                            
-                            (click)="openDeleteBeneficiarioModal(deleteBeneficiarioModal)">
-                            <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
-                        </button>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{ headerDataNro01 }} Comunidades / Organizaciones
+                    </div>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{ headerDataNro02 }} Mujeres beneficiadas
+                    </div>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{ headerDataNro03 }} Hombres beneficiados
+                    </div>
+                    <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                        {{ headerDataNro04 }} Aliados
                     </div>
                 </div>
             </div>
-            <!-- Tabla de Beneficiarios -->
-            <table class="table custom-table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th style="text-align: center;">ID</th>
-                        <th style="text-align: center;">Fecha</th>
-                        <th>Municipio</th>
-                        <th>Comunidad</th>
-                        <th>Tipo de Organización</th>
-                        <th>Organización</th>
-                        <th>Actividad</th>
-                        <th>Evento</th>
-                        <th>Mujeres</th>
-                        <th>Hombres</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <!-- Cuerpo de la Tabla -->
-                <tbody>
-                    <tr *ngFor="let beneficiario of paginatedBeneficiarios; let i = index">
-                        <td>
-                            <input
-                                type="checkbox"
-                                [checked]="beneficiario.selected"
-                                (change)="checkboxChanged(beneficiario)"
-                                id="checkbox-{{ i }}" name="checkbox-{{ i }}">
-                        </td>
-                        <td style="text-align: center;">{{ beneficiario.id }}</td>
-                        <td style="text-align: center;">{{ beneficiario.fecha | date:'dd/MM/yyyy' }}</td>
-                        <td>{{ beneficiario.municipio }}</td>
-                        <td>{{ beneficiario.comunidad }}</td>
-                        <td>{{ getOrganizacionTipo(beneficiario.idp_organizacion_tipo,beneficiariosOrganizacionTipo) }}</td>
-                        <td>{{ getOrganizacion(beneficiario.id_organizacion,beneficiariosOrganizacion) }}</td>
-                        <td>{{ getActividad(beneficiario.id_proy_actividad,beneficiariosActividad) }}</td>
-                        <td>{{ beneficiario.evento }}</td>
-                        <td>{{ beneficiario.mujeres }}</td>
-                        <td>{{ beneficiario.hombres }}</td>
-                        <td>{{ beneficiario.total }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <!-- Botones de tabla -->
-            <div class="d-flex justify-content-center">
-                <ngb-pagination
-                    [(page)]="currentPageBeneficiarios"
-                    [pageSize]="pageSizeBeneficiarios"
-                    [collectionSize]="totalLengthBeneficiarios"
-                    [maxSize]="3"
-                    [rotate]="true"
-                    [boundaryLinks]="true">
-                </ngb-pagination>
+        </div>
+    </div>
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- ////////////////////////////////      TABLA BENEFICIARIOS PROY-BENEFICIARIOS      /////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <div [@routerTransition]>
+        <!-- Tabla de Beneficiarios Alcanzados -->
+        <div class="card mb-3" style="margin-top: 20px">
+            <div class="card-body custom-card table-responsive">
+                <!-- Encabezado y Botones -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="title" style="color: #4e8646">Beneficiarias/os Alcanzados</h2>
+                        <!-- Botones de Acción -->
+                        <div class="row">
+                            <div class="d-flex col col-xl-12 col-lg-12 text-end">
+                                <button type="button" class="btn btn-view-bg-1" 
+                                (click)="initAddBeneficiario(beneficiariosFormModal)"
+                                [disabled]="(beneficiariosSelected)||(currentPerProRol=='LEC')">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                                </button>
+                                <button type="button" class="btn btn-view-bg-1" 
+                                    (click)="initEditBeneficiario(beneficiariosFormModal)"
+                                    [disabled]="(!beneficiariosSelected)||(currentPerProRol=='LEC')" >                                    
+                                    <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                                </button>
+                                <button type="button" class="btn btn-view-bg-1" 
+                                    (click)="initDeleteBeneficiario(deleteBeneficiarioModal)"
+                                    [disabled]="(!beneficiariosSelected)||(currentPerProRol=='LEC')">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                </div>
+                <!-- Tabla de Beneficiarios -->
+                <div class="row">
+                    <div class="container">
+                        <table class="table custom-table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th style="text-align: center;">ID</th>
+                                    <th style="text-align: center;">FECHA</th>
+                                    <th>DEPARTAMENTO</th>
+                                    <!-- <th>MUNICIPIO</th> -->
+                                    <th>COMUNIDAD</th>
+                                    <th>TIPO DE EVENTO</th>
+                                    <th>EVENTO</th>
+                                    <th style="text-align: center;">MUJERES</th>
+                                    <th style="text-align: center;">HOMBRES</th>
+                                    <th style="text-align: center;">TOTAL</th>
+                                    <th>ACTIVIDAD</th>
+                                </tr>
+                            </thead>
+                            <!-- Cuerpo de la Tabla -->
+                            <tbody>
+                                <tr *ngFor="let beneficiario of beneficiariosTable; let i = index">
+                                    <td>
+                                        <input type="checkbox"
+                                            [(ngModel)]="beneficiario.selected"
+                                            (change)="checkboxChangedBeneficiario(beneficiario)"                                            
+                                            id="checkbox-{{ i }}" name="checkbox-{{ i }}">
+                                    </td>
+                                    <td style="text-align: center;">{{ beneficiario.id_proy_beneficiario }}</td>
+                                    <td style="text-align: center;">{{ beneficiario.fecha | date:'dd/MM/yyyy' }}</td>
+                                    <td>{{ getUbicacionGeografica(beneficiario.id_ubica_geo_depto, beneficiariosUbicaDepto) }}</td>
+                                    <!-- <td>{{ getUbicacionGeografica(beneficiario.id_ubica_geo_muni, beneficiariosUbicaMuni) }}</td> -->
+                                    <td>{{ beneficiario.comunidad }}</td>
+                                    <td>{{getDescripcionSubtipo(beneficiario.idp_tipo_evento, beneficiariosTipoEvento) }}</td>                                    
+                                    <td>{{ beneficiario.titulo_evento }}</td>
+                                    <td style="text-align: center;">{{ beneficiario.mujeres }}</td>
+                                    <td style="text-align: center;">{{ beneficiario.hombres }}</td>
+                                    <td style="text-align: center;">{{ beneficiario.mujeres + beneficiario.hombres }}</td>
+                                    <td>{{ getActividad(beneficiario.id_proy_actividad, beneficiariosActividades ) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- Botones de tabla -->
+                            <div class="d-flex justify-content-center">
+                                <ngb-pagination
+                                    [(page)]="mainPageBeneficiarios"
+                                    [pageSize]="mainPageSizeBeneficiarios"
+                                    [collectionSize]="totalLengthBeneficiarios"
+                                    [maxSize]="3"
+                                    [rotate]="true"
+                                    [boundaryLinks]="true">
+                                </ngb-pagination>
+                            </div>
+                        <!-- Si la tabla esta vacia -->
+                        <div class="row" *ngIf="beneficiariosTable.length === 0"> 
+                            <div class="custom-no-data-container">
+                              <span class="custom-no-data-message">
+                                No hay registros de Beneficiarios
+                              </span>
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+<!-- //////////////////////////////////////// MODAL PARA AÑADIR O EDITAR UN BENEFICIARIO  //////////////////////////////////////// -->
+    <ng-template #beneficiariosFormModal let-modal class="custom-modal">
+        <!-- Encabezado del Modal-->
+        <div class="modal-header">
+            <h4 class="modal-title">{{ modalTitleBeneficiario }} </h4>        
+        </div>
+        <!-- Cuerpo del Modal -->
+        <div class="modal-body">
+            <form #beneficiariosForm="ngForm" (ngSubmit)="onSubmitBeneficiario(beneficiariosForm)">
+                <div class="row">
+                    <div class="col col-xl-12 col-lg-12">
+                        <div class="card mb-3">
+                            <div class="card-body custom-card">
+                                <div class="row">   
+                                    <!-- Primera Fila: ID, TIPO DE EVENTO, FECHA DE EVENTO -->
+                                        <!-- ======= ======= ======= ID ======= ======= ======= -->
+                                        <div class="col col-xl-2 col-lg-2 mb-auto">
+                                            <label  for="id_proy_beneficiario">ID</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="id_proy_beneficiario" name="id_proy_beneficiario" 
+                                                    [(ngModel)]="id_proy_beneficiario" disabled/>
+                                        </div> 
+                                        <!-- ======= ======= ======= ======= ======= ======= -->
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">                                        
+                                        </div>
+                                        <!-- ======= ======= TIPO DE EVENTO ======= ======= --> 
+                                        <div class="col col-xl-3 col-lg-3 mb-auto">
+                                            <label for="idp_tipo_evento">Tipo de Evento</label>
+                                            <select class="form-control" id="idp_tipo_evento" name="idp_tipo_evento"
+                                                [(ngModel)]="idp_tipo_evento">
+                                                <option value="" disabled selected>Seleccione un Tipo de Evento</option>
+                                                <option *ngFor="let tipo of beneficiariosTipoEvento" [value]="tipo.id_subtipo">
+                                                {{ tipo.descripcion_subtipo }}
+                                                </option>
+                                            </select>
+                                        </div>  
+                                        <!-- ======= ======= ======= FECHA DE EVENTO ======= ======= ======= -->
+                                        <div class="col col-xl-3 col-lg-3 mb-auto">
+                                            <label for="fecha">Fecha de evento</label>
+                                            <input class="form-control" type="date" 
+                                                id="fecha" name="fecha" 
+                                                [(ngModel)]="fecha"/>
+                                        </div> 
+                                    <!-- Segunda Fila: ACTIVIDAD Y EVENTO -->
+                                        <!-- ======= ======= ======= ACTIVIDAD ======= ======= ======= -->
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="id_proy_actividad">Pertenece a la Actividad</label>
+                                            <select class="form-control" id="id_proy_actividad" name="id_proy_actividad"
+                                                [(ngModel)]="id_proy_actividad">
+                                                <option value="" disabled selected>Seleccione una Actividad</option>
+                                                <option *ngFor="let actividad of beneficiariosActividades" [value]="actividad.id_proy_actividad">
+                                                {{ actividad.actividad }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <!-- ======= ======= ======= EVENTO ======= ======= ======= -->
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="titulo_evento">Evento</label>
+                                            <input  class="form-control" type="text" 
+                                                id="titulo_evento" name="titulo_evento"  
+                                                placeholder="Ingresa el Evento"
+                                                [(ngModel)]="titulo_evento" (change)="ValidateTituloEvento()" maxlength="49"/> 
+                                            <span class="custom-alert-message" *ngIf="!valTituloEvento">Debe ingresar el Evento</span>       
+                                        </div> 
+                                    <!-- Tercera Fila: DEPARTAMENTO, MUNICIPIO, COMUNIDAD Y "+" -->                                                    
+                                        <!-- ======= ======= ======= DEPARTAMENTO ======= ======= ======= -->
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">
+                                            <label for="id_ubica_geo_depto">Departamento</label>
+                                            <select class="form-control" id="id_ubica_geo_depto" name="id_ubica_geo_depto"
+                                                [(ngModel)]="id_ubica_geo_depto" >
+                                                <option value="" disabled selected>Seleccione un departamento</option>
+                                                <option *ngFor="let dep of beneficiariosUbicaDepto" [value]="dep.id_ubica_geo">
+                                                    {{dep.nombre}}
+                                                </option>
+                                            </select>
+                                        </div> 
+                                        <!-- ======= ======= ======= MUNICIPIO ======= ======= ======= -->                                       
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">
+                                            <label for="id_ubica_geo_muni">Municipio</label>
+                                            <select class="form-control" id="id_ubica_geo_muni" name="id_ubica_geo_muni"
+                                                [(ngModel)]="id_ubica_geo_muni">
+                                                <option value="" disabled selected>Seleccione un municipio</option>
+                                                <option *ngFor="let mun of beneficiariosUbicaMuni" [value]="mun.id_ubica_geo">
+                                                    {{ mun.nombre }}
+                                                </option>
+                                            </select>
+                                        </div> 
+                                        <!-- ======= ======= COMUNIDAD ======= ======= -->
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">
+                                            <label for="comunidad">Comunidad o Ciudad</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="comunidad" name="comunidad"  
+                                                    placeholder="Ingresa la comunidad"
+                                                    [(ngModel)]="comunidad" maxlength="99"/>
+                                        </div>                                            
+                                    <!-- Cuarta Fila: DETALLE DE EVENTO -->
+                                        <!-- ======= ======= DETALLE DE EVENTO ======= ======= -->
+                                        <div class="col col-xl-12 col-lg-12 mb-auto">
+                                            <label for="evento_detalle">Detalle de evento</label>
+                                            <textarea class="form-control" id="evento_detalle" name="evento_detalle"
+                                                placeholder="Ingresa el detalle del evento"
+                                                [(ngModel)]="evento_detalle" (change)="ValidateEventoDetalle()" maxlength="254">
+                                                <span class="custom-alert-message" *ngIf="!valEventoDetalle">Debe ingresar el detalle del evento</span>
+                                            </textarea>                                        
+                                        </div> 
+                                    <!-- Quinta Fila: DOCUMENTO DE RESPALDO -->
+                                        <!-- ======= ======= DOCUMENTO DE RESPALDO ======= ======= 
+                                        <div class="col col-xl-12 col-lg-12 mb-auto">
+                                            <label for="ruta_documento">Documento de respaldo</label>
+                                            <input 
+                                                class="form-control" 
+                                                type="file" 
+                                                id="evidencia" 
+                                                name="evidencia" 
+                                                (change)="onFileChange($event)" 
+                                                accept=".pdf,.jpg,.jpeg,.png"
+                                                /> -->                                              
+                                                                                           
+                                                <!-- Mostrar archivo actual y opción de descarga 
+                                                <div *ngIf="editAvance.ruta_evidencia" class="mt-2">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <i class="fas fa-file-alt"></i>
+                                                        <span>{{ getFileName(editAvance.ruta_evidencia) }}</span>
+                                                        <button 
+                                                        type="button" 
+                                                        class="btn btn-bg-2 mx-auto" 
+                                                        (click)="avancesDownload('ruta_evidencia')"
+                                                        title="Descargar evidencia">
+                                                        <i class="fa fa-floppy-o"></i> Descargar
+                                                        </button>
+                                                    </div>-->
+                                                    <!-- Mostrar archivo seleccionado 
+                                                    <div *ngIf="selectedFile" class="mt-2">
+                                                        <div class="alert alert-info d-flex align-items-center gap-2">
+                                                        <i class="fas fa-info-circle"></i>
+                                                        <span>Nuevo archivo seleccionado: {{ selectedFile.name }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>                                                                                                                                                                         
+                                        </div>  -->
+                                        <!-- Sexta Fila: MUJERES, HOMBRES, TOTAL, LISTA DE PARTICIPANTES--> 
+                                            <!-- ======= ======= MUJERES ======= ======= --> 
+                                            <div class="col col-xl-3 col-lg-3 mt-auto">
+                                                <label for="mujeres">Nro de Mujeres</label>
+                                                <input class="form-control" type="number" 
+                                                        id="mujeres" name="mujeres" 
+                                                        [(ngModel)]="mujeres" readonly disabled/> 
+                                            </div>
+                                            <!-- ======= ======= HOMBRES ======= ======= -->
+                                            <div class="col col-xl-3 col-lg-3 mt-auto">
+                                                <label for="hombres">Nro de Hombres</label>
+                                                <input class="form-control" type="number" 
+                                                        id="hombres" name="hombres" 
+                                                        [(ngModel)]="hombres" readonly disabled/>                                                
+                                            </div>
+                                            <!-- ======= ======= TOTAL ======= ======= -->
+                                            <div class="col col-xl-3 col-lg-3 mt-auto">
+                                                <label for="total">Total</label>
+                                                <input  class="form-control" type="number" 
+                                                        id="total" name="total" 
+                                                        [(ngModel)]="total" disabled/>                                                
+                                            </div>
+                                            <!-- ======= ======= LISTA DE PARTICIPANTES ======= ======= -->
+                                            <div class="col col-xl-3 col-lg-3 mt-auto d-flex justify-content-center">
+                                                <button type="button" 
+                                                    (click)="openModalBeneficiarioLista(listaBeneficiariesModal)"
+                                                    [disabled]="!isEditingBeneficiario"
+                                                    style="background-color: #d67600; color: white; border: none;
+                                                        border-radius: 15px; width: 100%; max-width: 200px; height: 35px;
+                                                        padding: 10px 15px; font-size: 14px; font-weight: bold;
+                                                        display: flex; justify-content: center; align-items: center;">
+                                                    Lista de Participantes
+                                                </button>
+                                            </div> 
+                                        <!-- Septima Fila: PERSONA REGISTRO -->
+                                            <!-- ======= ======= PERSONA REGISTRO ======= ======= -->                                         
+                                            <div class="col col-xl-6 col-lg-6 mb-auto">
+                                                <label for="beneficiarios_persona_registro">Persona Registro</label>
+                                                <input  class="form-control" type="text" 
+                                                        id="beneficiarios_persona_registro" name="abeneficiarios_persona_registro" 
+                                                        [(ngModel)]="beneficiarios_persona_registro" disabled/>
+                                            </div>                                    
+                                    <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+                                    <div class="modal-footer mt-4">
+                                        <div class="d-flex justify-content-center" style="width: 100%">
+                                            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                                                <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                            </button>
+                                            <button type="button" class="btn btn-bg-1" 
+                                            [disabled]="beneficiariosForm.invalid" (click)="onSubmitBeneficiario()">
+                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>                                     
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </ng-template>
 
-<ng-template #beneficiariesModal let-modal  class="custom-modal">
-    <!-- Encabezado del Modal-->
-    <div class="modal-header">
-        <h4 class="modal-title">{{ selectedBeneficiarios ? 'Editar' : 'Añadir' }} Beneficiarios Alcanzados</h4>        
-    </div>
-    <!-- Cuerpo del Modal -->
-    <div class="modal-body">
-        <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmit()">
+<!-- ====== ======= ======= DELETE BENEFICIARIO ======= ======= ======= -->
+    <ng-template #deleteBeneficiarioModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title">Eliminar Beneficiario</h4>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-center" style="width: 100%">
+                <p>¿Está seguro de querer eliminar el registro de Beneficiario?</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="d-flex justify-content-center" style="width: 100%">
+                <!-- ======= Botones ======= -->
+                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                    <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+                </button>
+                <button type="button" class="btn btn-bg-1" (click)="deleteBeneficiario()">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- ////////////////////////////////////   MODAL PARA LISTA DE BENEFICIARIOS   ////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <ng-template #listaBeneficiariesModal let-modal class="custom-modal">
+        <!-- Encabezado del Modal-->
+        <div class="modal-header">
+            <h4 class="modal-title">Lista de Participantes</h4>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        </div>
+        <!-- Cuerpo del Modal-->
+        <div class="modal-body">
             <div class="row">
                 <div class="col col-xl-12 col-lg-12">
                     <div class="card mb-3">
                         <div class="card-body custom-card">
-                            <!-- ID y Fecha -->
                             <div class="row">
-                                <div class="col col-xl-2 col-lg-2 mb-auto">
-                                    <label for="id">ID</label>
-                                    <input
-                                        class="form-control"
-                                        type="text"
-                                        id="id"
-                                        name="id"
-                                        formControlName="id" disabled />
-                                </div>
-                                <div class="col col-xl-6 col-lg-6 mt-auto"></div>
-
-                                <div class="col col-xl-4 col-lg-4 mb-auto">
-                                    <label for="fecha">Fecha de evento</label>
-                                    <input type="date" formControlName="fecha" class="form-control" />
-                                    <small class="text-danger" *ngIf="beneficiariesForm.get('fecha')?.touched && beneficiariesForm.get('fecha')?.invalid">
-                                        El campo fecha de evento es obligatorio.
-                                    </small>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <!-- Actividad y Evento -->
-                                <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="id_proy_actividad">Pertenece a la Actividad</label>
-                                    <select class="form-control" formControlName="id_proy_actividad" required
-                                            [ngClass]="{'is-invalid': beneficiariesForm.get('id_proy_actividad')?.touched && beneficiariesForm.get('id_proy_actividad')?.invalid}">
-                                        <option [ngValue]="null">Seleccione una Actividad</option>
-                                        <option *ngFor="let actividad of beneficiariosActividad" 
-                                                [ngValue]="actividad.id_proy_actividad">
-                                            {{ actividad.actividad }}
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback" *ngIf="beneficiariesForm.get('id_proy_actividad')?.touched && beneficiariesForm.get('id_proy_actividad')?.invalid">
-                                        El campo Actividad es obligatorio.
+                                <div class="container">
+                                    <table class="table custom-table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th style="text-align: center;">#</th>
+                                                <th style="text-align: center;">Nombre y Apellido</th>
+                                                <th style="text-align: center;">Sexo</th>
+                                                <th style="text-align: center;">Tipo de actor</th>
+                                                <th style="text-align: center;">Institucion/ Comunidad</th>
+                                                <th style="text-align: center;">ID/ No.de CI</th>
+                                                <th style="text-align: center;">Rango de edad</th>
+                                            </tr>
+                                        </thead>
+                                        <!-- Cuerpo de la Tabla -->
+                                        <tbody>
+                                            <tr *ngFor="let beneficiarioLista of beneficiariosListaTable; let i = index">
+                                                <td>
+                                                    <input
+                                                        type="checkbox"
+                                                        [(ngModel)]="beneficiarioLista.selected"
+                                                        (change)="checkboxChangedBeneficiarioLista(beneficiarioLista)"                                                      
+                                                        id="checkbox-{{ i }}" name="checkbox-{{ i }}">
+                                                </td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.id_proy_bene_lista }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.nombre }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.es_hombre ? 'Hombre' : 'Mujer' }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.idp_organizacion_tipo }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.comunidad }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.num_doc_identidad }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.idp_rango_edad }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="row">
+                                        <!-- Cuarta Fila: Nro de Mujeres, Nro de hombres, Total -->
+                                            <!-- ======= ======= Nro de Mujeres ======= ======= -->
+                                            <div class="col col-xl-4 col-lg-4 mt-auto">
+                                                <label for="mujeres">Nro de Mujeres</label>
+                                                <input  class="form-control" type="number" 
+                                                        id="mujeres" name="mujeres" 
+                                                        [(ngModel)]="mujeres" min="0" max="9"/>
+                                            </div>
+                                            <!-- ======= ======= Nro de Hombres ======= ======= -->
+                                            <div class="col col-xl-4 col-lg-4 mt-auto">
+                                                <label for="hombres">Nro de Hombres</label>
+                                                <input  class="form-control" type="number" 
+                                                        id="hombres" name="hombres" 
+                                                        [(ngModel)]="hombres" min="0" max="9"/>
+                                            </div>
+                                            <!-- ======= ======= Total ======= ======= -->
+                                            <div class="col col-xl-4 col-lg-4 mt-auto">
+                                                <label for="total">Total</label>
+                                                <input  class="form-control" type="number" 
+                                                        id="total" name="total" 
+                                                        [(ngModel)]="total" disabled/>
+                                            </div>
                                     </div>
-                                </div>
-
-                                <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="evento">Evento</label>
-                                    <input
-                                        type="text" formControlName="evento" class="form-control"
-                                        placeholder="Ingresa el evento" maxlength="49"/>
-                                    <small class="text-danger" *ngIf="beneficiariesForm.get('evento')?.touched && beneficiariesForm.get('evento')?.invalid">
-                                        El campo evento es obligatorio.
-                                    </small>
-                                </div>
-                                <div class="row">
-                                    <div class="col col-xl-4 col-lg-4 mb-auto">
-                                        <label for="departamento">Departamento</label>
-                                        <select
-                                            class="form-control" formControlName="departamento"
-                                            (change)="onDepartamentoChange($event.target.value)">
-                                            <option value="" disabled selected hidden>Seleccione un departamento</option>
-                                            <option *ngFor="let depto of departamentos" [value]="depto.nombre">
-                                                {{ depto.nombre }}
-                                            </option>
-                                        </select>
+                                    <!-- Botones de tabla -->
+                                    <div class="d-flex justify-content-center mt-4">
+                                        <ngb-pagination
+                                            [(page)]="mainPageBeneficiariosLista"
+                                            [pageSize]="mainPageSizeBeneficiariosLista"
+                                            [collectionSize]="totalLengthBeneficiariosLista"
+                                            [maxSize]="3"
+                                            [rotate]="true"
+                                            [boundaryLinks]="true">
+                                        </ngb-pagination>
+                                    </div> 
+                                     <!-- Si la tabla esta vacia -->
+                                    <div *ngIf="beneficiariosListaTable.length === 0" class="alert alert-info" style="background-color: #78e36a;">
+                                        No hay participantes registrados.                                    
                                     </div>
-
-                                    <div class="col col-xl-4 col-lg-4 mb-auto">
-                                        <label for="municipio">Municipio</label>
-                                        <select
-                                            class="form-control" formControlName="municipio" [disabled]="!municipios.length"
-                                            (change)="onMunicipioChange($event.target.value)">
-                                            <option value="" disabled selected hidden>Seleccione un municipio</option>
-                                            <option *ngFor="let muni of municipios" [value]="muni.nombre">
-                                                {{ muni.nombre }}
-                                            </option>
-                                        </select>
+                                    <div class="row mt-4">
+                                        <div class="col col-xl-12 col-lg-12">
+                                            <div class="d-flex justify-content-center">
+                                                <button type="button" class="btn btn-bg-1" 
+                                                    (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
+                                                    [disabled]="(beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                                                </button>
+                                                <button type="button" class="btn btn-bg-1" 
+                                                    (click)="initEditBeneficiarioLista(listaBeneficiariosFormModal)"
+                                                    [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')" >                                    
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                                                </button>
+                                                <button type="button" class="btn btn-bg-1" 
+                                                    (click)="initDeleteBeneficiarioLista(deleteBeneficiarioModal)"
+                                                    [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                                                </button>                                                
+                                            </div>
+                                        </div>
                                     </div>
-
-                                    <div class="col col-xl-4 col-lg-4 mb-auto">
-                                        <label for="comunidad">Comunidad</label>
-                                        <select
-                                            class="form-control" formControlName="comunidad">
-                                            <option value="" disabled selected hidden>Seleccione una comunidad</option>
-                                            <option *ngFor="let comunidad of comunidades" [value]="comunidad.nombre">
-                                                {{ comunidad.nombre }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- Tipo de Organización y Organización -->
-                                <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="idp_organizacion_tipo">Tipo de Organización</label>
-                                    <select class="form-control" formControlName="idp_organizacion_tipo" required
-                                            [ngClass]="{'is-invalid': beneficiariesForm.get('idp_organizacion_tipo')?.touched && beneficiariesForm.get('idp_organizacion_tipo')?.invalid}">
-                                        <option [ngValue]="null">Seleccione un tipo de Organización</option>
-                                        <option *ngFor="let tipo of beneficiariosOrganizacionTipo" 
-                                                [ngValue]="tipo.id_subtipo">
-                                            {{ tipo.descripcion_subtipo }}
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback" *ngIf="beneficiariesForm.get('idp_organizacion_tipo')?.touched && beneficiariesForm.get('idp_organizacion_tipo')?.invalid">
-                                        El campo Tipo de Organización es obligatorio.
-                                    </div>
-                                </div>
-
-                                <!-- ======= ======= ======= NOMBRE DE LA ORGANIZACIÓN ======= ======= ======= -->                                        
-                                <div class="col col-xl-5 col-lg-5 mb-auto">
-                                    <label for="id_organizacion">Nombre de la Organización</label>
-                                    <select class="form-control" formControlName="id_organizacion" required
-                                            [ngClass]="{'is-invalid': beneficiariesForm.get('id_organizacion')?.touched && beneficiariesForm.get('id_organizacion')?.invalid}">
-                                        <option [ngValue]="null">Seleccione el Nombre de la Organización</option>
-                                        <option *ngFor="let organizacion of beneficiariosOrganizacion" 
-                                                [ngValue]="organizacion.id_organizacion">
-                                            {{ organizacion.organizacion }}
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback" *ngIf="beneficiariesForm.get('id_organizacion')?.touched && beneficiariesForm.get('id_organizacion')?.invalid">
-                                        El campo Organización es obligatorio.
-                                    </div>
-                                </div>                               
-                                <!-- ======= ======= + ======= ======= --> 
-                                <div class="col col-xl-1 col-lg-1 mt-4">
-                                    <button type="button" (click)="openModalOrg(organizacionModal)"
-                                        style=" background-color: #d67600;color: white;border: none; 
-                                        border-radius: 30%; width: 35px;height: 35px;"> +
-                                    </button>
-                                </div> 
-                                <!-- Detalle -->
-                                <div class="col col-xl-12 col-lg-12 mb-auto">
-                                    <label for="details">Detalle de evento</label>
-                                    <textarea
-                                        formControlName="details"
-                                        class="form-control"
-                                        placeholder="Ingresa el Detalle de evento"
-                                        maxlength="254"
-                                    ></textarea>
-                                    <small class="text-danger" *ngIf="beneficiariesForm.get('details')?.touched && beneficiariesForm.get('details')?.invalid">
-                                        El campo Detalle de evento es obligatorio.
-                                    </small>
-                                </div>
-                                <!-- Mujeres, Hombres y Total -->
-                                <div class="col col-xl-3 col-lg-3 mb-auto">
-                                    <label for="mujeres">Nro de Mujeres</label>
-                                    <input type="number" formControlName="mujeres"
-                                        class="form-control bg-gray-200"
-                                        placeholder="Nro de Mujeres"/>
-                                </div>
-                                <div class="col col-xl-3 col-lg-3 mb-auto">
-                                    <label for="hombres">Nro de Hombres</label>
-                                    <input type="number" formControlName="hombres"
-                                        class="form-control bg-gray-200" 
-                                        placeholder="Nro de Hombres"/>
-                                </div>
-                                <div class="col col-xl-3 col-lg-3 mb-auto">
-                                    <label for="total">Total</label>
-                                    <input
-                                        type="number" formControlName="total"
-                                        class="form-control bg-gray-200" readonly
-                                        placeholder="Total" required/>
-                                </div>                                
-                                <div class="col col-xl-3 col-lg-3 mt-auto d-flex justify-content-center">
-                                    <button type="button" (click)="openModal(listaBeneficiariesModal, null, true)"
-                                        style="background-color: #d67600; color: white; border: none;
-                                            border-radius: 15px; width: 100%; max-width: 200px; height: 35px;
-                                            padding: 10px 15px; font-size: 14px; font-weight: bold;
-                                            display: flex; justify-content: center; align-items: center;">
-                                        Lista de Participantes
-                                    </button>
-                                </div> 
-
-                                <!-- Persona Registro -->
-                                <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="registeredBy">Persona Registro</label>
-                                    <input
-                                        type="text" id="registeredBy" formControlName="registeredBy"
-                                        class="form-control" readonly/>
-                                </div>
-                            </div>
-
-                            <!-- Botones Cancelar y Guardar -->
-                            <div class="modal-footer mt-3">
-                                <div class="d-flex justify-content-center" style="width: 100%">
-                                    <button type="button" class="btn btn-bg-3" (click)="closeModal()">
-                                        <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                                    </button>
-                                    <button type="button" class="btn btn-bg-1" (click)="onSubmit(); ">
-                                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
-                                </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
-</ng-template>
-
-<!-- ====== ======= ======= DELETE BENEFICIARIOS ======= ======= ======= -->
-<ng-template #deleteBeneficiarioModal let-modal>
-<div class="modal-header">
-    <h4 class="modal-title">Eliminar Beneficiario</h4>
-</div>
-<div class="modal-body">
-    <div class="d-flex justify-content-center" style="width: 100%">
-        <p>¿Está seguro de querer eliminar el registro de Beneficiario?</p>
-    </div>
-</div>
-<div class="modal-footer">
-    <div class="d-flex justify-content-center" style="width: 100%">
-        <!-- ======= Botones ======= -->
-        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-            <i class="fa fa-times" aria-hidden="true"></i> Cerrar
-        </button>
-        <button type="button" class="btn btn-bg-1" (click)="modal.close('Eliminar')">
-            <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
-        </button>
-    </div>
-</div>
-</ng-template>
-<!-- ======= ======= ======= ======= ======= ======= ======= -->
-<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-<ng-template #listaBeneficiariesModal let-modal class="custom-modal">
-<div class="modal-header">
-    <h4 class="modal-title">Lista de Beneficiarios</h4>        
-</div>
-<div class="modal-body">
-    <form [formGroup]="beneficiariesForm" (ngSubmit)="onSubmit()">
-        <div class="row">
-            <div class="col col-xl-12 col-lg-12">
-                <div class="card mb-3">
-                    <div class="card-body custom-card table-responsive">
-                        <table class="table custom-table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Comunidad</th>
-                                    <th>Doc.Iden.</th>
-                                    <th>Nombre</th>
-                                    <th>Rango edad</th>
-                                    <th>Sexo</th>
-                                    <th>Acciones</th> 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let persona of tablaPersonas">
-                                    <td>{{ persona.id }}</td>
-                                    <td>{{ persona.comunidad }}</td>
-                                    <td>{{ persona.docIden }}</td>
-                                    <td>{{ persona.nombreCompleto }}</td>
-                                    <td>{{ persona.rangoEdad }}</td>
-                                    <td>{{ persona.sexo }}</td>
-                                    <td class="text-center">                                           
-                                        <button 
-                                            type="button" 
-                                            class="btn btn-sm btn-danger" 
-                                            (click)="deleteParticipante(persona.id)">
-                                            <i class="fa fa-trash"></i>
-                                        </button>                                                                                       
-                                    </td> 
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div *ngIf="selectedBeneficiarios && !mostrarTablaParticipantes" class="alert alert-info" style="background-color: #78e36a;">
-                            No hay participantes registrados.
-                        </div>
-                        <!-- Botón Añadir -->
-                        <div class="modal-footer mt-3">
-                            <div class="d-flex justify-content-end" style="width: 100%">
-                                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                                    <i class="fa fa-times"></i> Cancelar
-                                  </button>
-                                <button type="button" class="btn btn-bg-1"
-                                    (click)="openParticipanteModal(participanteModal)">
-                                    <i class="fa fa-plus" aria-hidden="true"></i> Añadir
-                                </button>                                                                        
+        </div>
+    </ng-template>
+<!-- //////////////////////////////////////// MODAL PARA AÑADIR O EDITAR UN PARTICIPANTE A LA LISTA DE BENEFICIARIO  //////////////////////////////////////// -->
+    <ng-template #listaBeneficiariosFormModal let-modal class="custom-modal">
+        <!-- Encabezado del Modal-->
+        <div class="modal-header">
+            <h4 class="modal-title">{{ modalTitleBeneficiarioLista }} </h4>        
+        </div>
+        <!-- Cuerpo del Modal -->
+        <div class="modal-body">
+            <form #beneficiariosListaForm="ngForm" (ngSubmit)="onSubmitBeneficiarioLista(beneficiariosListaForm)">
+                <div class="row">
+                    <div class="col col-xl-12 col-lg-12">
+                        <div class="card mb-3">
+                            <div class="card-body custom-card">
+                                <div class="row">   
+                                    <!-- Primera Fila:NOMBRE COMPLETO, DOCUMENTO DE IDENTIDAD  -->                                        
+                                        <!-- ======= ======= NOMBRE COMPLETO ======= ======= --> 
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="nombre">Nombre y Apellido</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="nombre" name="nombre"  
+                                                    placeholder="Ingresa el nombre y apellido"
+                                                    [(ngModel)]="nombre" (change)="ValidateNombre()" maxlength="99"/> 
+                                            <span class="custom-alert-message" *ngIf="!valNombre">Debe ingresar el nombre y apellido</span>       
+                                        </div>
+                                        <!-- ======= ======= DOCUMENTO DE IDENTIDAD ======= ======= -->
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="num_doc_identidad">Documento de Identidad</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="num_doc_identidad" name="num_doc_identidad"  
+                                                    placeholder="Ingresa el documento de identidad"
+                                                    [(ngModel)]="num_doc_identidad" (change)="ValidateNumDocIdentidad()" maxlength="9"/>
+                                            <span class="custom-alert-message" *ngIf="!valNumDocIdentidad">Debe ingresar el documento de identidad</span>
+                                        </div>                                       
+                                    <!-- Segunda Fila: COMUNIDAD, TIPO DE ORGANIZACION -->
+                                        <!-- ======= ======= COMUNIDAD ======= ======= -->
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="comunidad">Comunidad o Ciudad</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="comunidad" name="comunidad"  
+                                                    placeholder="Ingresa la comunidad"
+                                                    [(ngModel)]="comunidad" maxlength="99"/>
+                                        </div> 
+                                        <!-- ======= ======= TIPO DE ORGANIZACION ======= ======= -->
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="idp_organizacion_tipo">Tipo de Organización</label>
+                                            <select class="form-control" id="idp_organizacion_tipo" name="idp_organizacion_tipo"
+                                                [(ngModel)]="idp_organizacion_tipo">
+                                                <option value="" disabled selected>Seleccione un Tipo de Organización</option>
+                                                <option *ngFor="let tipo of beneficiariosListaOrganizacionTipo" [value]="tipo.id_subtipo">
+                                                {{ tipo.descripcion_subtipo }}
+                                                </option>
+                                            </select>
+                                        </div>                                         
+                                    <!-- Tercera Fila: RANGO DE EDAD, SEXO -->
+                                        <!-- ======= ======= RANGO DE EDAD ======= ======= -->
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="idp_rango_edad">Rango de Edad</label>
+                                            <select class="form-control" id="idp_rango_edad" name="idp_rango_edad"
+                                                [(ngModel)]="idp_rango_edad">
+                                                <option value="" disabled selected>Seleccione un Rango de Edad</option>
+                                                <option *ngFor="let rango of beneficiariosListaRangoEdad" [value]="rango.id_subtipo">
+                                                {{ rango.descripcion_subtipo }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <!-- ======= ======= SEXO ======= ======= -->
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="es_hombre">Sexo</label>
+                                            <select class="form-control" id="es_hombre" name="es_hombre"
+                                                [(ngModel)]="es_hombre">
+                                                <option value="" disabled selected>Seleccione el Sexo</option>
+                                                <option value="true">Hombre</option>
+                                                <option value="false">Mujer</option>
+                                            </select>
+                                        </div>                                    
+                                        <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+                                        <div class="modal-footer mt-4">
+                                            <div class="d-flex justify-content-center" style="width: 100%">
+                                                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                                                    <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                                </button>
+                                                <button type="button" class="btn btn-bg-1"
+                                                [disabled]="beneficiariosListaForm.invalid" (click)="onSubmitBeneficiarioLista();">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                                                </button>
+                                            </div>
+                                        </div>                                                                           
+                                </div>
                             </div>
-                        </div>                            
-                    </div>                        
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
-    </form>
-</div>
-</ng-template>
-<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-<ng-template #participanteModal let-modal>
-<div class="modal-header">
-<h4 class="modal-title">{{ participanteForm.get('id_proy_bene_lista')?.value ? 'Editar' : 'Nuevo' }} Participante</h4>
-
-</div>
-<div class="modal-body">
-<form [formGroup]="participanteForm" (ngSubmit)="onSubmitParticipante()">
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <label>Documento de Identidad *</label>
-        <input type="text" class="form-control" formControlName="num_doc_identidad" maxlength="9"
-               [class.is-invalid]="participanteForm.get('num_doc_identidad')?.invalid && 
-                                 participanteForm.get('num_doc_identidad')?.touched ">
-        <div class="invalid-feedback" *ngIf="participanteForm.get('num_doc_identidad')?.errors?.['required']">
-          El documento de identidad es requerido
-        </div>
-        <div class="invalid-feedback" *ngIf="participanteForm.get('num_doc_identidad')?.errors?.['minlength']">
-          El documento debe tener al menos 5 caracteres
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <label>Nombre Completo *</label>            
-        <input type="text" class="form-control" formControlName="nombre" maxlength="99"
-               [class.is-invalid]="participanteForm.get('nombre')?.invalid && 
-                                 participanteForm.get('nombre')?.touched">
-        <div class="invalid-feedback" *ngIf="participanteForm.get('nombre')?.errors?.['required']">
-          El nombre es requerido
-        </div>
-        <div class="invalid-feedback" *ngIf="participanteForm.get('nombre')?.errors?.['minlength']">
-          El nombre debe tener al menos 3 caracteres
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mt-3">
-    <div class="col-md-6">
-        <div class="form-group">
-          <label>Comunidad *</label>         
-          <input 
-            type="text" 
-            class="form-control" 
-            formControlName="comunidad" maxlength="49"
-            [class.is-invalid]="participanteForm.get('comunidad')?.invalid && 
-                               participanteForm.get('comunidad')?.touched">
-          <div class="invalid-feedback" *ngIf="participanteForm.get('comunidad')?.errors?.['required']">
-            La comunidad es requerida
-          </div>
-          <div class="invalid-feedback" *ngIf="participanteForm.get('comunidad')?.errors?.['maxlength']">
-            La comunidad no debe exceder los 50 caracteres
-          </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <label>Rango de Edad *</label>
-        <select class="form-control" formControlName="idp_rango_edad" 
-                [class.is-invalid]="participanteForm.get('idp_rango_edad')?.invalid && 
-                                  participanteForm.get('idp_rango_edad')?.touched">
-          <option value="">Seleccione...</option>
-          <option *ngFor="let rango of rangosEdad" [value]="rango.id">
-            {{rango.descripcion}}
-          </option>
-        </select>
-        <div class="invalid-feedback">
-          El rango de edad es requerido
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mt-3">
-    <div class="col-md-6">
-      <div class="form-group">
-        <label>Sexo *</label>
-        <div class="form-check mt-2">
-          <input class="form-check-input" type="radio" formControlName="es_hombre" 
-                 [value]="true" id="sexoHombre">
-          <label class="form-check-label" for="sexoHombre">Hombre</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" formControlName="es_hombre" 
-                 [value]="false" id="sexoMujer">
-          <label class="form-check-label" for="sexoMujer">Mujer</label>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-footer">
-    <button type="button" class="btn btn-bg-3" (click)="modal.dismiss()">
-      <i class="fa fa-times"></i> Cancelar
-    </button>
-    <button type="submit" class="btn btn-bg-1" [disabled]="participanteForm.invalid">
-      <i class="fa fa-save"></i> 
-      {{ participanteForm.get('id_proy_bene_lista')?.value ? 'Actualizar' : 'Guardar' }}
-    </button>
-  </div>        
-</form>
-</div>
-</ng-template>
-<!-- ====== ======= ======= DELETE PARTICIPANTE ======= ======= ======= -->
-<ng-template #deleteparticipanteModal let-modal>
-<div class="modal-header">
-    <h4 class="modal-title">Eliminar Participante</h4>
-</div>
-<div class="modal-body">
-    <div class="d-flex justify-content-center" style="width: 100%">
-        <p>¿Está seguro de querer eliminar este participante?</p>
-    </div>
-</div>
-<div class="modal-footer">
-    <div class="d-flex justify-content-center" style="width: 100%">
-        <!-- ======= Botones ======= -->
-        <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-            <i class="fa fa-times" aria-hidden="true"></i> Cerrar
-        </button>
-        <button type="button" class="btn btn-bg-1" (click)="modal.close('Eliminar')">
-            <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
-        </button>
-    </div>
-</div>
-</ng-template>
+    </ng-template>
+         
 
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- ////////////////////////////////////////  TABLA ALIADOS PROY-ALIADOS //////////////////////////////////////// -->
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-<div [@routerTransition]>
-    <div class="card mb-3" style="margin-top: 20px">
-        <div class="card-body custom-card table-responsive">
-            <!-- Encabezado y Botones -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="title" style="color: #4E8646;">Aliados</h2>
-                <!-- Botones de Acción -->
-                    <div class="row">
-                        <div class="col col-xl-12 col-lg-12 text-end">
-                            <button type="button" class="btn btn-view-bg-1" 
-                                (click)="initAddAliado(aliadosFormModal)"
-                                [disabled]="(aliadosSelected)||(currentPerProRol=='LEC')">
-                                <i class="fa fa-plus" aria-hidden="true"></i> Añadir
-                            </button>
-                            <button type="button" class="btn btn-view-bg-1" 
-                                (click)="initEditAliado(aliadosFormModal)"
-                                [disabled]="(!aliadosSelected)||(currentPerProRol=='LEC')" >                                    
-                                <i class="fa fa-pencil" aria-hidden="true"></i> Editar
-                            </button>
-                            <button type="button" class="btn btn-view-bg-1" 
-                                (click)="initDeleteAliado(deleteAliadoModal)"
-                                [disabled]="(!aliadosSelected)||(currentPerProRol=='LEC')">
-                                <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
-                            </button> 
+    <div [@routerTransition]>
+        <div class="card mb-3" style="margin-top: 20px">
+            <div class="card-body custom-card table-responsive">
+                <!-- Encabezado y Botones -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="title" style="color: #4E8646;">Aliados</h2>
+                        <!-- Botones de Acción -->
+                        <div class="row">
+                            <div class="col col-xl-12 col-lg-12 text-end">
+                                <button type="button" class="btn btn-view-bg-1" 
+                                    (click)="initAddAliado(aliadosFormModal)"
+                                    [disabled]="(aliadosSelected)||(currentPerProRol=='LEC')">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                                </button>
+                                <button type="button" class="btn btn-view-bg-1" 
+                                    (click)="initEditAliado(aliadosFormModal)"
+                                    [disabled]="(!aliadosSelected)||(currentPerProRol=='LEC')" >                                    
+                                    <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                                </button>
+                                <button type="button" class="btn btn-view-bg-1" 
+                                    (click)="initDeleteAliado(deleteAliadoModal)"
+                                    [disabled]="(!aliadosSelected)||(currentPerProRol=='LEC')">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                                </button> 
+                            </div>
                         </div>
-                    </div>
-            </div>
-
-            <!-- Tabla de Aliados -->
-            <div class="row">
-                <div class="container">
-                    <table class="table custom-table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th style="text-align: center;">ID</th>
-                                <th style="text-align: center;">Fecha</th>
-                                <th>Institución / Organización</th>
-                                <th>Nombre del Referente</th>
-                                <th>Vínculo con los Resultados</th>
-                                <th>Convenio</th>
-                            </tr>
-                        </thead>
-                        <!-- Cuerpo de la Tabla -->
-                        <tbody>
-                            <tr *ngFor="let aliado of aliadosTable; let i = index">
-                                <td>
-                                    <input type="checkbox" 
-                                        [(ngModel)]="aliado.selected" 
-                                        (change)="checkboxChangedAliado(aliado)"
-                                        id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
-                                </td>  
-                                <td style="text-align: center;">{{ aliado.id_proy_aliado }}</td>
-                                <td style="text-align: center;">{{ aliado.fecha | date:'dd/MM/yyyy' }}</td>
-                                <td>{{ getOrganizacion(aliado.id_organizacion, aliadosOrganizacion) }}</td>
-                                <td>{{ aliado.referente }}</td>
-                                <td>{{ aliado.vinculo }}</td>
-                                <td>{{ getDescripcionSubtipo(aliado.idp_convenio, aliadosConvenio) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <!-- Botones de tabla -->
-                        <div class="d-flex justify-content-center">
-                            <ngb-pagination 
-                            [(page)]="mainPageAliados" 
-                            [pageSize]="mainPageSizeAliados" 
-                            [collectionSize]="totalLengthAliados"
-                            [maxSize]="3"
-                            [rotate]="true"
-                            [boundaryLinks]="true">
-                            </ngb-pagination>
-                        </div>                        
+                </div>
+                <!-- Tabla de Aliados -->
+                <div class="row">
+                    <div class="container">
+                        <table class="table custom-table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th style="text-align: center;">ID</th>
+                                    <th style="text-align: center;">Fecha</th>
+                                    <th>Institución / Organización</th>
+                                    <th>Nombre del Referente</th>
+                                    <th>Vínculo con los Resultados</th>
+                                    <th>Convenio</th>
+                                </tr>
+                            </thead>
+                            <!-- Cuerpo de la Tabla -->
+                            <tbody>
+                                <tr *ngFor="let aliado of aliadosTable; let i = index">
+                                    <td>
+                                        <input type="checkbox" 
+                                            [(ngModel)]="aliado.selected" 
+                                            (change)="checkboxChangedAliado(aliado)"
+                                            id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
+                                    </td>  
+                                    <td style="text-align: center;">{{ aliado.id_proy_aliado }}</td>
+                                    <td style="text-align: center;">{{ aliado.fecha | date:'dd/MM/yyyy' }}</td>
+                                    <td>{{ getOrganizacion(aliado.id_organizacion, aliadosOrganizacion) }}</td>
+                                    <td>{{ aliado.referente }}</td>
+                                    <td>{{ aliado.vinculo }}</td>
+                                    <td>{{ getDescripcionSubtipo(aliado.idp_convenio, aliadosConvenio) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- Botones de tabla -->
+                            <div class="d-flex justify-content-center">
+                                <ngb-pagination 
+                                    [(page)]="mainPageAliados" 
+                                    [pageSize]="mainPageSizeAliados" 
+                                    [collectionSize]="totalLengthAliados"
+                                    [maxSize]="3"
+                                    [rotate]="true"
+                                    [boundaryLinks]="true">
+                                </ngb-pagination>
+                            </div>
+                        <!-- Si la tabla esta vacia -->
+                        <div class="row" *ngIf="aliadosTable.length === 0"> 
+                            <div class="custom-no-data-container">
+                              <span class="custom-no-data-message">
+                                No hay registros de Aliados
+                              </span>
+                            </div>
+                        </div>
+                    </div>                            
                 </div>
             </div>
         </div>
     </div>
-</div>
 <!-- //////////////////////////////////////// MODAL PARA AÑADIR O EDITAR UN ALIADO  //////////////////////////////////////// -->
-<ng-template #aliadosFormModal let-modal class="custom-modal">
-    <!-- Encabezado del Modal-->
-    <div class="modal-header">
-        <h4 class="modal-title">{{ modalTitleAliado }}</h4>        
-    </div>
-    <!-- Cuerpo del Modal-->
-    <div class="modal-body">
-        <form #aliadosForm="ngForm" (ngSubmit)="onSubmitAliados(aliadosForm)">
-            <div class="row">
-                <div class="col col-xl-12 col-lg-12">
-                    <div class="card mb-3">
-                        <div class="card-body custom-card">
-                            <div class="row">
-                                <!-- Primera Fila: ID, FECHA DE IDENTIFICACION-->
-                                    <!-- ======= ======= ======= ID ======= ======= ======= -->
-                                    <div class="col col-xl-2 col-lg-2 mb-auto">
-                                        <label  for="id_proy_aliado">ID</label>
-                                        <input  class="form-control" type="text" 
-                                                id="id_proy_aliado" name="id_proy_aliado" 
-                                                [(ngModel)]="id_proy_aliado" disabled/>
-                                    </div>
-                                    <!-- ======= ======= ======= ======= ======= ======= -->
-                                    <div class="col col-xl-7 col-lg-7 mb-auto">                                        
-                                    </div>
-                                    <!-- ======= ======= FECHA DE IDENTIFICACION ======= ======= --> 
-                                    <div class="col col-xl-3 col-lg-3 mb-auto">
-                                        <label for="fecha">Fecha de identificación</label>
-                                        <input class="form-control" type="date" 
-                                            id="fecha" name="fecha" 
-                                            [(ngModel)]="fecha"/>
-                                    </div>
-                                <!-- Segunda Fila: INSTITUCION/ORGANIZACION, +, NOMBRE DE LA ORGANIZACION -->    
-                                    <!-- ======= ======= INSTITUCION/ORGANIZACION ======= ======= -->
-                                    <div class="col col-xl-5 col-lg-5 mb-auto">
-                                        <label for="id_organizacion">Institución/Organización</label>
-                                        <select class="form-control" id="id_organizacion" name="id_organizacion"
-                                            [(ngModel)]="id_organizacion">
-                                            <option value="" disabled selected>Seleccione una Institución/Organización</option>
-                                            <option *ngFor="let organizacion of aliadosOrganizacion" [value]="organizacion.id_organizacion">
-                                            {{ organizacion.organizacion }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <!-- ======= ======= + ======= ======= --> 
-                                    <div class="col col-xl-1 col-lg-1 mt-4">
-                                        <button type="button" (click)="openModalOrg(organizacionModal)"
-                                            style=" background-color: #d67600;color: white;border: none; 
-                                            border-radius: 30%; width: 35px;height: 35px;"> +
-                                        </button>
-                                    </div>
-                                    <!-- ======= ======= NOMBRE DE LA ORGANIZACION ======= ======= -->                                   
-                                    <div class="col col-xl-6 col-lg-6 mb-auto">
-                                        <label for="referente">Nombre Referente</label>
-                                        <input  class="form-control" type="text" 
-                                            id="referente" name="referente"  
-                                            placeholder="Ingresa el nombre referente"
-                                            [(ngModel)]="referente" (change)="ValidateReferente()" maxlength="99"/> 
-                                        <span class="custom-alert-message" *ngIf="!valReferente">Debe ingresar el nombre referente</span>       
-                                    </div>
-                                <!-- Tercera Fila: VINCULO CON RESULTADO --> 
-                                    <!-- ======= ======= VINCULO CON RESULTADO ======= ======= -->
-                                    <div class="col col-xl-12 col-lg-12 mb-auto">
-                                        <label for="vinculo">Vínculo con los Resultados</label>
-                                        <textarea class="form-control" id="vinculo" name="vinculo"
-                                            placeholder="Ingresa la descripción del Vínculo con los Resultados"
-                                            [(ngModel)]="vinculo" (change)="ValidateVinculo()" maxlength="254">
-                                            <span class="custom-alert-message" *ngIf="!valVinculo">Debe ingresar la descripción del Vínculo</span>
-                                        </textarea>                                        
-                                    </div>
-                                <!-- Cuarta Fila: CONVENIO, PERSONA REGISTRO -->
-                                    <!-- ======= ======= CONVENIO ======= ======= -->                                    
-                                    <div class="col col-xl-6 col-lg-6 mb-auto">
-                                        <label for="idp_convenio">Convenio</label>
-                                        <select class="form-control" id="idp_convenio" name="idp_convenio"
-                                            [(ngModel)]="idp_convenio" maxlength="99">
-                                            <option value="" disabled selected>Seleccione un Convenio</option>
-                                            <option *ngFor="let convenio of aliadosConvenio" [value]="convenio.id_subtipo">
-                                            {{ convenio.descripcion_subtipo }}
-                                            </option>
-                                        </select>                                          
-                                    </div>
-                                    <!-- ======= ======= PERSONA REGISTRO ======= ======= -->                                    
-                                    <div class="col col-xl-6 col-lg-6 mb-auto">
-                                        <label for="aliados_persona_registro">Persona Registro</label>
-                                        <input  class="form-control" type="text" 
-                                                id="aliados_persona_registro" name="aliados_persona_registro" 
-                                                [(ngModel)]="aliados_persona_registro" disabled/>
-                                    </div>
-                                    <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-                                    <div class="modal-footer">
-                                        <div class="d-flex justify-content-center" style="width: 100%">
-                                            <button type="button" class="btn btn-bg-3" (click)="closeModalAliado()">
-                                                <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                                            </button>
-                                            <button type="button" class="btn btn-bg-1" 
-                                            [disabled]="aliadosForm.invalid" (click)="onSubmitAliados();">
-                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+    <ng-template #aliadosFormModal let-modal class="custom-modal">
+        <!-- Encabezado del Modal-->
+        <div class="modal-header">
+            <h4 class="modal-title">{{ modalTitleAliado }}</h4>        
+        </div>
+        <!-- Cuerpo del Modal-->
+        <div class="modal-body">
+            <form #aliadosForm="ngForm" (ngSubmit)="onSubmitAliados(aliadosForm)">
+                <div class="row">
+                    <div class="col col-xl-12 col-lg-12">
+                        <div class="card mb-3">
+                            <div class="card-body custom-card">
+                                <div class="row">
+                                    <!-- Primera Fila: ID, FECHA DE IDENTIFICACION-->
+                                        <!-- ======= ======= ======= ID ======= ======= ======= -->
+                                        <div class="col col-xl-2 col-lg-2 mb-auto">
+                                            <label  for="id_proy_aliado">ID</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="id_proy_aliado" name="id_proy_aliado" 
+                                                    [(ngModel)]="id_proy_aliado" disabled/>
+                                        </div>
+                                        <!-- ======= ======= ======= ======= ======= ======= -->
+                                        <div class="col col-xl-7 col-lg-7 mb-auto">                                        
+                                        </div>                                        
+                                        <!-- ======= ======= FECHA DE IDENTIFICACION ======= ======= --> 
+                                        <div class="col col-xl-3 col-lg-3 mb-auto">
+                                            <label for="fecha">Fecha de identificación</label>
+                                            <input class="form-control" type="date" 
+                                                id="fecha" name="fecha" 
+                                                [(ngModel)]="fecha"/>
+                                        </div>
+                                    <!-- Segunda Fila: INSTITUCION/ORGANIZACION, +, NOMBRE DE LA ORGANIZACION -->    
+                                        <!-- ======= ======= INSTITUCION/ORGANIZACION ======= ======= -->
+                                        <div class="col col-xl-5 col-lg-5 mb-auto">
+                                            <label for="id_organizacion">Institución/Organización</label>
+                                            <select class="form-control" id="id_organizacion" name="id_organizacion"
+                                                [(ngModel)]="id_organizacion">
+                                                <option value="" disabled selected>Seleccione una Institución/Organización</option>
+                                                <option *ngFor="let organizacion of aliadosOrganizacion" [value]="organizacion.id_organizacion">
+                                                {{ organizacion.organizacion }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <!-- ======= ======= + ======= ======= --> 
+                                        <div class="col col-xl-1 col-lg-1 mt-4">
+                                            <button type="button" (click)="openModalOrg(organizacionModal)"
+                                                style=" background-color: #d67600;color: white;border: none; 
+                                                border-radius: 30%; width: 35px;height: 35px;"> +
                                             </button>
                                         </div>
-                                    </div>             
+                                        <!-- ======= ======= NOMBRE DE LA ORGANIZACION ======= ======= -->                                   
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="referente">Nombre Referente</label>
+                                            <input  class="form-control" type="text" 
+                                                id="referente" name="referente"  
+                                                placeholder="Ingresa el nombre referente"
+                                                [(ngModel)]="referente" (change)="ValidateReferente()" maxlength="99"/> 
+                                            <span class="custom-alert-message" *ngIf="!valReferente">Debe ingresar el nombre referente</span>       
+                                        </div>
+                                    <!-- Tercera Fila: VINCULO CON RESULTADO --> 
+                                        <!-- ======= ======= VINCULO CON RESULTADO ======= ======= -->
+                                        <div class="col col-xl-12 col-lg-12 mb-auto">
+                                            <label for="vinculo">Vínculo con los Resultados</label>
+                                            <textarea class="form-control" id="vinculo" name="vinculo"
+                                                placeholder="Ingresa la descripción del Vínculo con los Resultados"
+                                                [(ngModel)]="vinculo" (change)="ValidateVinculo()" maxlength="254">
+                                                <span class="custom-alert-message" *ngIf="!valVinculo">Debe ingresar la descripción del Vínculo</span>
+                                            </textarea>                                        
+                                        </div>
+                                    <!-- Cuarta Fila: CONVENIO, PERSONA REGISTRO -->
+                                        <!-- ======= ======= CONVENIO ======= ======= -->                                    
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="idp_convenio">Convenio</label>
+                                            <select class="form-control" id="idp_convenio" name="idp_convenio"
+                                                [(ngModel)]="idp_convenio">
+                                                <option value="" disabled selected>Seleccione un Convenio</option>
+                                                <option *ngFor="let convenio of aliadosConvenio" [value]="convenio.id_subtipo">
+                                                {{ convenio.descripcion_subtipo }}
+                                                </option>
+                                            </select>                                          
+                                        </div>
+                                        <!-- ======= ======= PERSONA REGISTRO ======= ======= -->                                    
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="aliados_persona_registro">Persona Registro</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="aliados_persona_registro" name="aliados_persona_registro" 
+                                                    [(ngModel)]="aliados_persona_registro" disabled/>
+                                        </div>
+                                        <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+                                        <div class="modal-footer mt-4">
+                                            <div class="d-flex justify-content-center" style="width: 100%">
+                                                <button type="button" class="btn btn-bg-3" (click)="closeModalAliado()">
+                                                    <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                                </button>
+                                                <button type="button" class="btn btn-bg-1" 
+                                                [disabled]="aliadosForm.invalid" (click)="onSubmitAliados();">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                                                </button>
+                                            </div>
+                                        </div>             
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </form>
+        </div>
+    </ng-template>
+<!-- //////////////////////////////////////// MODAL PARA ELIMINAR UN ALIADO  //////////////////////////////////////// -->
+    <ng-template #deleteAliadoModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title">Eliminar Aliado</h4>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-center" style="width: 100%">
+                <p>¿Está seguro de querer eliminar el registro de Aliado?</p>
             </div>
-        </form>
-    </div>
-</ng-template>
-<!-- //////////////////////////////////////// MODAL PARA DELETE ALIADO  //////////////////////////////////////// -->
-<ng-template #deleteAliadoModal let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Eliminar Aliado</h4>
-    </div>
-    <div class="modal-body">
-        <div class="d-flex justify-content-center" style="width: 100%">
-            <p>¿Está seguro de querer eliminar el registro de Aliado?</p>
         </div>
-    </div>
-    <div class="modal-footer">
-        <div class="d-flex justify-content-center" style="width: 100%">
-            <button type="button" class="btn btn-bg-3" (click)="closeModalAliado('Cerrar')">
-                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
-            </button>
-            <button type="button" class="btn btn-bg-1" (click)="deleteAliado()">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
-            </button>
+        <div class="modal-footer">
+            <div class="d-flex justify-content-center" style="width: 100%">
+                <button type="button" class="btn btn-bg-3" (click)="closeModalAliado('Cerrar')">
+                    <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+                </button>
+                <button type="button" class="btn btn-bg-1" (click)="deleteAliado()">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+                </button>
+            </div>
         </div>
-    </div>
-</ng-template>
-<!-- //////////////////////////////////////// MODAL PARA AÑADIR NUEVA ORGANIZACION  //////////////////////////////////////// -->
-<ng-template #organizacionModal let-modal class="custom-modal">
-    <!-- Encabezado del Modal-->
-    <div class="modal-header">
-        <h4 class="modal-title">Añadir una nueva organización</h4>
-    </div>
-    <!-- Cuerpo del Modal-->
-    <div class="modal-body">
-        <form #organizacionForm="ngForm" (ngSubmit)="onSubmitOrganizaciones(organizacionForm)">
-            <div class="row">
-                <!-- Tipo de Organización -->
-                <div class="col col-xl-6 col-lg-6 mb-auto">
-                    <label for="idp_tipo_organizacion">Tipo de Organización</label>
-                    <select class="form-control" id="idp_tipo_organizacion" name="idp_tipo_organizacion"
-                        [(ngModel)]="idp_tipo_organizacion" (change)="ValidateTipoOrganizacion()">
-                        <option value="" disabled selected>Seleccione tipo de organización</option>
-                        <option *ngFor="let tipo of orgTipoOrganizacion" [value]="tipo.id_subtipo">
-                        {{ tipo.descripcion_subtipo }}
-                        </option>
-                    </select>
-                    <span class="custom-alert-message" *ngIf="!valTipoOrganizacion">Debe elegir tipo de organización</span>
+    </ng-template>
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////// MODAL PARA AÑADIR NUEVA ORGANIZACION  /////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <ng-template #organizacionModal let-modal class="custom-modal">
+        <!-- Encabezado del Modal-->
+        <div class="modal-header">
+            <h4 class="modal-title">Añadir una nueva organización</h4>
+        </div>
+        <!-- Cuerpo del Modal-->
+        <div class="modal-body">
+            <form #organizacionForm="ngForm" (ngSubmit)="onSubmitOrganizaciones(organizacionForm)">
+                <div class="row">
+                    <!-- Tipo de Organización -->
+                    <div class="col col-xl-6 col-lg-6 mb-auto">
+                        <label for="idp_tipo_organizacion">Tipo de Organización</label>
+                        <select class="form-control" id="idp_tipo_organizacion" name="idp_tipo_organizacion"
+                            [(ngModel)]="idp_tipo_organizacion" (change)="ValidateTipoOrganizacion()">
+                            <option value="" disabled selected>Seleccione tipo de organización</option>
+                            <option *ngFor="let tipo of orgTipoOrganizacion" [value]="tipo.id_subtipo">
+                            {{ tipo.descripcion_subtipo }}
+                            </option>
+                        </select>
+                        <span class="custom-alert-message" *ngIf="!valTipoOrganizacion">Debe elegir tipo de organización</span>
+                    </div>
+                    <!-- Nombre de la Organización -->
+                    <div class="col col-xl-6 col-lg-6 mb-auto">
+                        <label for="organizacion">Nombre de la Organización</label>
+                        <input  class="form-control" type="text" 
+                            id="organizacion" name="organizacion"  
+                            placeholder="Ingresa el Nombre de la Organización"
+                            [(ngModel)]="organizacion" (change)="ValidateOrganizacion()" maxlength="99"/> 
+                        <span class="custom-alert-message" *ngIf="!valOrganizacion">Debe ingresar el nombre de la Organización</span>       
+                    </div>                
                 </div>
-                <!-- Nombre de la Organización -->
-                <div class="col col-xl-6 col-lg-6 mb-auto">
-                    <label for="organizacion">Nombre de la Organización</label>
-                    <input  class="form-control" type="text" 
-                        id="organizacion" name="organizacion"  
-                        placeholder="Ingresa el Nombre de la Organización"
-                        [(ngModel)]="organizacion" (change)="ValidateOrganizacion()" maxlength="99"/> 
-                    <span class="custom-alert-message" *ngIf="!valOrganizacion">Debe ingresar el nombre de la Organización</span>       
-                </div>                
-            </div>
-            <div class="modal-footer mt-2 d-flex justify-content-center"> 
-                <button type="button" class="btn btn-bg-3" (click)="closeModalOrg()">
-                <i class="fa fa-times"></i> Cancelar
-                </button>
-                <button type="submit" 
-                            class="btn btn-bg-1" 
-                            [disabled]="!valTipoOrganizacion || !valOrganizacion">
-                        <i class="fa fa-check"></i> Guardar
-                </button>
-            </div>
-        </form>
-        
-    </div>
-</ng-template>
+                <div class="modal-footer mt-2 d-flex justify-content-center"> 
+                    <button type="button" class="btn btn-bg-3" (click)="closeModalOrg()">
+                    <i class="fa fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" 
+                                class="btn btn-bg-1" 
+                                [disabled]="!valTipoOrganizacion || !valOrganizacion">
+                            <i class="fa fa-check"></i> Guardar
+                    </button>
+                </div>
+            </form>
+            
+        </div>
+    </ng-template>
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->

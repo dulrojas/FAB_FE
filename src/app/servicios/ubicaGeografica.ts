@@ -97,4 +97,61 @@ export class servUbicaGeografica{
     });
     return this.http.post<any>(this.URL, params, { headers });
   }
+
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ===== GET LISTA DE DEPARTAMENTOS  ===== =======
+  // ======= ======= ======= ======= ======= ======= =======
+      getUbiDepartamentos(dep: any): Observable<any> {
+        const params = {
+            "procedure_name": "sp_ubica_geografica",
+            "body": {
+                "params": [
+                    {"name": "p_accion", "value": "C3", "type": "string"},
+                    {"name": "p_id_ubica_geo", "value": null, "type": "int"},
+                    {"name": "p_idp_tipo_ubica_geo", "value": dep, "type": "string"},
+                    {"name": "p_id_ubica_geo_padre", "value": null, "type": "int"},
+                    {"name": "p_codigo", "value": null, "type": "string"},
+                    {"name": "p_orden", "value": null, "type": "int"},
+                    {"name": "p_latitud", "value": null, "type": "string"},
+                    {"name": "p_longitud", "value": null, "type": "string"},
+                    {"name": "p_nivel", "value": null, "type": "int"},
+                    {"name": "p_idp_estado", "value": null, "type": "int"},
+                    {"name": "p_rama", "value": null, "type": "int"}
+                ]
+            }
+        };
+          const ip = sessionStorage.getItem('ip') || '127.0.0.1';
+          const headers = new HttpHeaders({
+            'ip': ip
+          });
+        return this.http.post<any>(this.URL, params, { headers });
+      }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= GET LISTA DE MUNICIPIO  ======= =======
+  // ======= ======= ======= ======= ======= ======= =======
+      getUbiMunicipios(mun: any): Observable<any> {
+        const params = {
+            "procedure_name": "sp_ubica_geografica",
+            "body": {
+                "params": [
+                    {"name": "p_accion", "value": "C4", "type": "string"},
+                    {"name": "p_id_ubica_geo", "value": null, "type": "int"},
+                    {"name": "p_idp_tipo_ubica_geo", "value": null, "type": "string"},
+                    {"name": "p_id_ubica_geo_padre", "value": mun, "type": "int"},
+                    {"name": "p_codigo", "value": null, "type": "string"},
+                    {"name": "p_orden", "value": null, "type": "int"},
+                    {"name": "p_latitud", "value": null, "type": "string"},
+                    {"name": "p_longitud", "value": null, "type": "string"},
+                    {"name": "p_nivel", "value": null, "type": "int"},
+                    {"name": "p_idp_estado", "value": null, "type": "int"},
+                    {"name": "p_rama", "value": null, "type": "int"}
+                ]
+            }
+        };
+        const ip = sessionStorage.getItem('ip') || '127.0.0.1';
+        const headers = new HttpHeaders({
+          'ip': ip
+        });
+      return this.http.post<any>(this.URL, params, { headers });
+    }
 }
