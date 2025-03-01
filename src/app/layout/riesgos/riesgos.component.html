@@ -198,11 +198,10 @@
                             id="id_proy_elemen_padre" name="id_proy_elemen_padre" 
                             [(ngModel)]="id_proy_elemen_padre" (change)="onSelectionChange()">
                             <option value="" disabled selected>Selecciona un Componente</option>
-                              <option *ngFor="let componente of componentes" [value]="componente.id_meto_elemento">
-                              {{ componente.meto_elemento }}
+                              <option *ngFor="let componente of componentes" [value]="componente.id_proy_elemento">
+                              {{ componente.elemento }}
                               </option>
-                          </select>
-                          <span class="custom-alert-message" *ngIf="!valComponente">Debe elegir un componente</span>
+                          </select>                          
                       </div>
                       <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                       <div class="col col-xl-1 col-lg-1 mt-auto">

@@ -1,11 +1,11 @@
-import { Component, OnInit, TemplateRef, EventEmitter, Output} from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef, EventEmitter, Output} from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ProyectoService } from '../../services/proyectoData.service';
 
 import { servicios } from "../../servicios/servicios";
 import { servRiesgos } from "../../servicios/riesgos";
-import { servAprendizaje } from "../../servicios/aprendizajes";
+import { ElementosService } from "../../servicios/elementos";
 
 @Component({
   selector: 'app-riesgos',
@@ -24,10 +24,11 @@ export class RiesgosComponent implements OnInit {
 
       constructor(
         private modalService: NgbModal,
+        private cdr: ChangeDetectorRef,
         private proyectoService: ProyectoService,
         private servicios: servicios,
         private servRiesgos: servRiesgos,
-        private servApredizaje: servAprendizaje
+        private servElementos: ElementosService
       ) {}
     
     // ======= ======= HEADER SECTION ======= =======
@@ -102,14 +103,14 @@ export class RiesgosComponent implements OnInit {
         //octava fila
         riesgoEfectividadMedidas: any[] = [];
     // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
-      //primera fila
+      /*primera fila
       valComponente: any = true;
       ValidateComponente(){
         this.valComponente = true;
         if(!this.id_proy_elemen_padre){
           this.valComponente = false;
         }
-      }
+      }*/
       //segunda fila
       valCategoria: any = true;
       ValidateCategoria(){
@@ -230,7 +231,7 @@ export class RiesgosComponent implements OnInit {
       getParametricas(){
         //PRIMERA FILA
           // ======= GET COMPONENTES =======
-            this.servApredizaje.getMetoElementos(this.idProyecto).subscribe(
+              this.servElementos.getElementosMetoEleByIdProy(this.idProyecto).subscribe(
                 (data) => {
                   this.componentes = data[0].dato;
                 },
@@ -328,14 +329,13 @@ export class RiesgosComponent implements OnInit {
             }
         });
       }
-  // ======= ======= ON SELECTION CHANGE Color  Componente======= =======
+  // ======= ======= ON SELECTION CHANGE Color  Componente ======= =======
       onSelectionChange(){
-        const selectedComponente = this.componentes.find(comp => comp.id_meto_elemento == this.id_proy_elemen_padre);
+        const selectedComponente = this.componentes.find(comp => comp.id_proy_elemento == this.id_proy_elemen_padre);
         if (selectedComponente) {
             this.color = selectedComponente.color;
             this.sigla = selectedComponente.sigla;
         }
-        this.ValidateComponente();
       }
  // ======= ======= INIT RIESGO MODEL ======= =======
       initRiesgosModel() {
@@ -343,7 +343,7 @@ export class RiesgosComponent implements OnInit {
 
         this.id_riesgo = 0;
         this.id_proyecto = "";
-        this.id_proy_elemen_padre = "";
+        this.id_proy_elemen_padre = null;
         this.idp_categoria = "";
         this.codigo = null;
         this.fecha = null;
@@ -362,10 +362,9 @@ export class RiesgosComponent implements OnInit {
         this.persona_registro = this.namePersonaReg;
         this.fecha_registro = "";
 
-        this.sigla = null;
-        this.color = null;
+        this.sigla = "";
+        this.color = "ffffff";
 
-        this.valComponente = true;
         this.valCategoria = true;
         this.valRiesgo = true;
         this.valFecha = true;
@@ -408,9 +407,9 @@ export class RiesgosComponent implements OnInit {
           const objRiesgo = {
             p_id_proy_aprende: 0,
             p_id_proyecto: this.idProyecto,
-            p_id_proy_elemen_padre:this.id_proy_elemen_padre,
+            p_id_proy_elemen_padre:this.id_proy_elemen_padre || null,
             p_idp_categoria: this.idp_categoria,
-            p_codigo: this.codigo,
+            p_codigo: this.codigo || null,
             p_fecha: this.fecha,
             p_riesgo: this.riesgo,
             p_descripcion: this.descripcion,
@@ -475,9 +474,9 @@ export class RiesgosComponent implements OnInit {
         const objRiesgo = {
           p_id_riesgo: this.id_riesgo,
           p_id_proyecto: this.id_proyecto,
-          p_id_proy_elemen_padre: this.id_proy_elemen_padre,
+          p_id_proy_elemen_padre: this.id_proy_elemen_padre || null,
           p_idp_categoria: this.idp_categoria,
-          p_codigo: this.codigo,
+          p_codigo: this.codigo || null,
           p_fecha: this.fecha,
           p_riesgo: this.riesgo,
           p_descripcion: this.descripcion,
@@ -604,7 +603,6 @@ export class RiesgosComponent implements OnInit {
       // ======= VALIDATION SECTION =======
       let valForm = false;
 
-      this.ValidateComponente();
       this.ValidateCategoria();
       this.ValidateFecha();
       this.ValidateRiesgo();
@@ -618,7 +616,6 @@ export class RiesgosComponent implements OnInit {
       this.ValidateMedida();
 
       valForm = 
-        this.valComponente &&
         this.valCategoria &&
         this.valFecha &&
         this.valRiesgo &&
