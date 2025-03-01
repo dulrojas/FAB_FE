@@ -218,7 +218,7 @@
                               {{ categoria.descripcion_subtipo }}
                             </option>
                           </select>
-                          <span class="custom-alert-message" *ngIf="!valCategoria">Debe elegir una Categoria</span>
+                          <span class="custom-alert-message" *ngIf="!valCategoria">Debe elegir una Categoría</span>
                       </div>
                       <!-- ======= ======= TÍTULO DE RIESGO ======= ======= -->
                       <div class="col col-xl-5 col-lg-5 mb-auto">
@@ -240,19 +240,19 @@
                       <div class="col col-xl-12 col-lg-12 mb-auto">
                         <label>Riesgo/Supuesto/Hipótesis</label>
                           <textarea class="form-control" id="descripcion" name="descripcion"
-                            placeholder="Ingresa la descripcion del riesgo"
+                            placeholder="Ingresa la descripción del riesgo"
                             [(ngModel)]="descripcion" (change)="ValidateDescripcion()" maxlength="499">
                           </textarea>
-                        <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la Descripcion</span>
+                        <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la Descripción</span>
                       </div>
                     <!-- CUARTA FILA: INDIVIDUALES/INSTITUCIONES VINCULADOS, IDENTIFICACIÓN DEL RIESGO-->
                       <!-- ======= ======= INDIVIDUALES/INSTITUCIONES VINCULADOS ======= ======= -->   
                       <div class="col col-xl-6 col-lg-6 mb-auto">
                         <label for="vinculados">Individuales/Instituciones Vinculados</label>
                           <input  class="form-control" type="text" 
-                                  id="vinculados" name="vinculados" placeholder="Ingresa un Vinculo"
+                                  id="vinculados" name="vinculados" placeholder="Ingresa un Vínculo"
                                   [(ngModel)]="vinculados" (change)="ValidateVinculados()" maxlength="99"/>
-                        <span class="custom-alert-message" *ngIf="!valVinculados">Debe ingresar la Descripcion</span>
+                        <span class="custom-alert-message" *ngIf="!valVinculados">Debe ingresar el vínculo</span>
                       </div>
                       <!-- ======= ======= IDENTIFICACIÓN DEL RIESGO ======= ======= -->
                       <div class="col col-xl-6 col-lg-6 mb-auto">
@@ -374,7 +374,7 @@
                               {{ accion.descripcion_subtipo }}
                             </option>
                           </select>
-                          <span class="custom-alert-message" *ngIf="!valMedidas">Debe elegir si existio alguna Necesidad de Tomar Acciones</span>
+                          <span class="custom-alert-message" *ngIf="!valMedidas">Debe elegir si existió alguna Necesidad de Tomar Acciones</span>
                       </div>
                     <!-- SEPTIMA FILA: MEDIDAS DE RESPUESTA AL RIESGO-->
                       <!-- ======= ======= MEDIDAS DE RESPUESTA AL RIESGO ======= ======= -->
