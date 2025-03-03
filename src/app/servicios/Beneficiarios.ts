@@ -52,7 +52,7 @@ export class servBeneficiarios {
                 "procedure_name": "sp_beneficiarios",
                 "body": {
                 "params": [
-                    { "name": "p_accion", "value": "C2", "type": "string" },
+                    { "name": "p_accion", "value": "C3", "type": "string" },
                     { "name": "p_id_proy_beneficiario", "value": null, "type": "int" },
                     { "name": "p_id_proyecto", "value": idProy, "type": "int" },
                     { "name": "p_mujeres", "value": null, "type": "int" },

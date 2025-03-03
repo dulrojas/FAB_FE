@@ -153,6 +153,8 @@ export class BeneficiariosComponent implements OnInit {
       fecha: any = '';
       fecha_hora_reg: any = '';
 
+      ubica_geo_muni: any = '';
+
       beneficiarios_persona_registro: any = "";
       beneficiarios_fecha_registro: any = "";
   // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL BENEFICIARIOS ======= =======
@@ -198,15 +200,6 @@ export class BeneficiariosComponent implements OnInit {
             console.error(error);
           }
         );
-        /* ======= GET UBICA GEO MUNICIPIO =======
-        this.servUbicaGeografica.getUbiMunicipios(2).subscribe(
-          (data) => {
-            this.beneficiariosUbicaMuni = data[0].dato;
-          },
-          (error) => {
-            console.error(error);
-          }
-        );*/
         // ======= GET ACTIVIDADES =======
         this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
           (data) => {
@@ -239,20 +232,19 @@ export class BeneficiariosComponent implements OnInit {
         }        
         this.id_ubica_geo_muni = null;
       }
-     
+      onSelectionChangeMunicipio() {
+        const selectedMunicipio = this.beneficiariosUbicaMuni.find(comp => comp.id_ubica_geo == this.id_ubica_geo_muni);
+        if (selectedMunicipio) {
+            this.ubica_geo_muni = selectedMunicipio.ubica_geo_muni;
+           
+        }
+      }
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
       valTituloEvento:any = true;
       ValidateTituloEvento(){
         this.valTituloEvento = true;
         if((!this.titulo_evento)||(this.titulo_evento.length >= 50)){
           this.valTituloEvento = false;
-        }
-      }
-      valEventoDetalle:any = true;
-      ValidateEventoDetalle(){
-        this.valEventoDetalle = true;
-        if((!this.evento_detalle)||(this.evento_detalle.length >= 255)){
-          this.valEventoDetalle = false;
         }
       }
   // ======= ======= OPEN MODALS FUN ======= =======
@@ -304,9 +296,9 @@ export class BeneficiariosComponent implements OnInit {
         this.mujeres = 0; 
         this.hombres = 0; 
         this.titulo_evento = '';
-        this.evento_detalle = '';
-        this.id_ubica_geo_depto =  null;
-        this.id_ubica_geo_muni =  null;
+        this.evento_detalle = null;
+        this.id_ubica_geo_depto =  '';
+        this.id_ubica_geo_muni =  '';
         this.comunidad = '';
         this.id_proy_actividad = null; 
         this.idp_tipo_evento = '';
@@ -314,11 +306,12 @@ export class BeneficiariosComponent implements OnInit {
         this.id_persona_reg = '';
         this.fecha = null;
 
+        this.ubica_geo_muni = '';
+
         this.beneficiarios_persona_registro = this.namePersonaReg;
         this.beneficiarios_fecha_registro = "";
 
         this.valTituloEvento = true;
-        this.valEventoDetalle = true;
       }
   // ======= ======= GET BENEFICIARIOS ======= =======
       getBeneficiarios() {
@@ -405,6 +398,8 @@ export class BeneficiariosComponent implements OnInit {
         this.fecha = this.beneficiariosSelected.fecha;
         this.beneficiarios_fecha_registro = this.beneficiariosSelected.fecha_hora_reg;
 
+        this.ubica_geo_muni = this.beneficiariosSelected.ubica_geo_muni;
+
         if (this.id_ubica_geo_depto) {
           this.cargarMunicipiosPorDepartamento(this.id_ubica_geo_depto);
         }
@@ -466,16 +461,53 @@ export class BeneficiariosComponent implements OnInit {
           }
         );
       }
+
+  // ======= ======= ======= ======= RUTA_DOCUMENTOS BENEFICIARIOS ======= =======
+      
+      // ======= ======= UPLOAD FILE FUN ======= =======
+      uploadFile(file: any, nombreTabla: any, campoTabla: any, idEnTabla: any, fileName: any, idRegistro: any){
+        this.servicios.uploadFile(file, nombreTabla, campoTabla, idEnTabla, fileName, idRegistro).subscribe(
+          (response) => {
+            //console.log(response);
+            //console.log('Archivo subido correctamente:', response);
+          },
+          (error) => {
+            console.error('Error al subir el archivo:', error);
+          }
+        );
+      } 
+      // ======= ======= DOWNLOAD IMAGE FUN ======= =======
+      downloadFile(nombreTabla: any, campoTabla: any, idEnTabla: any, idRegistro: any){
+        return new Promise((resolve, reject) => {
+          this.servicios.downloadFile(nombreTabla, campoTabla, idEnTabla, idRegistro).subscribe(
+            (response: Blob) => {
+              if (response instanceof Blob) {
+                const url = window.URL.createObjectURL(response);
+                resolve(url);
+              } 
+              else {
+                resolve(null); 
+              }
+            },
+            (error) => {
+              if (error.status === 404) {
+                resolve(null);
+              } 
+              else {
+                reject(error);
+              }
+            }
+          );
+        });
+      }      
   // ======= ======= ======= ======= VALIDATION BENEFICIARIOS ======= ======= ======= =======
       onSubmitBeneficiario(): void{
         // ======= VALIDATION SECTION =======
         let valForm = false;
         this.ValidateTituloEvento();
-        this.ValidateEventoDetalle();
 
         valForm = 
-          this.valTituloEvento &&
-          this.valEventoDetalle;
+          this.valTituloEvento ;
 
         // ======= ACTION SECTION =======
         if(valForm){
@@ -502,12 +534,15 @@ export class BeneficiariosComponent implements OnInit {
         
         id_proy_bene_lista: any = '';
         //id_proy_beneficiario: any = '';
-        //comunidad: any = '';
+        comunidad_no_registrada: any = '';
         num_doc_identidad: any = '';
         nombre: any = '';
         idp_rango_edad: any = '';
         es_hombre: any = '';
         idp_organizacion_tipo: any = '';
+        idp_organizacion_subtipo: any = '';
+        //id_ubica_geo_depto: any = '';
+        //id_ubica_geo_muni: any = '';
     // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL BENEFICIARIOS LISTA ======= =======
         beneficiariosListaRangoEdad: any[] = [];
         beneficiariosListaOrganizacionTipo: any[] = [];
@@ -540,9 +575,7 @@ export class BeneficiariosComponent implements OnInit {
         // Función para abrir la lista de beneficiarios
         openBeneficiariosLista(modalScope: TemplateRef<any>) {
           if (this.canOpenBeneficiarioListaModal()) {
-            this.getBeneficiariosLista();
-            // Aquí podrías abrir directamente otro modal para ver la lista si lo prefieres
-            // O simplemente cargar los datos en la tabla
+            this.getBeneficiariosLista();            
           } else {
             alert('Primero debe seleccionar un beneficiario');
           }
@@ -608,12 +641,15 @@ export class BeneficiariosComponent implements OnInit {
 
           this.id_proy_bene_lista = 0;
           this.id_proy_beneficiario = '';
-          this.comunidad = '';
+          this.comunidad_no_registrada = '';
           this.num_doc_identidad = '';
           this.nombre = '';
           this.idp_rango_edad = '';
           this.es_hombre = '';
           this.idp_organizacion_tipo = '';
+          this.idp_organizacion_subtipo = '';
+          this.id_ubica_geo_depto = '';
+          this.id_ubica_geo_muni = '';
 
           this.valNumDocIdentidad = true;
           this.valNombre = true;
@@ -661,12 +697,15 @@ export class BeneficiariosComponent implements OnInit {
       const objBeneficiarioLista = {
         p_id_proy_bene_lista: 0,
         p_id_proy_beneficiario: this.beneficiariosSelected.id_proy_beneficiario,
-        p_comunidad: this.comunidad,
+        p_comunidad_no_registrada: this.comunidad_no_registrada,
         p_num_doc_identidad: this.num_doc_identidad,
         p_nombre: this.nombre,
         p_idp_rango_edad: this.idp_rango_edad,
         p_es_hombre: this.es_hombre,
-        p_idp_organizacion_tipo: this.idp_organizacion_tipo
+        p_idp_organizacion_tipo: this.idp_organizacion_tipo,
+        p_idp_organizacion_subtipo: this.idp_organizacion_subtipo,
+        p_id_ubica_geo_depto: this.id_ubica_geo_depto,
+        p_id_ubica_geo_muni: this.id_ubica_geo_muni
       };
       
       this.servListBenef.addListBene(objBeneficiarioLista).subscribe(
@@ -689,12 +728,15 @@ export class BeneficiariosComponent implements OnInit {
 
           this.id_proy_bene_lista = this.beneficiariosListaSelected.id_proy_bene_lista;
           this.id_proy_beneficiario = this.beneficiariosListaSelected.id_proy_beneficiario;
-          this.comunidad = this.beneficiariosListaSelected.comunidad;
+          this.comunidad_no_registrada = this.beneficiariosListaSelected.comunidad_no_registrada;
           this.num_doc_identidad = this.beneficiariosListaSelected.num_doc_identidad;
           this.nombre = this.beneficiariosListaSelected.nombre;
           this.idp_rango_edad = this.beneficiariosListaSelected.idp_rango_edad;
           this.es_hombre = this.beneficiariosListaSelected.es_hombre;
           this.idp_organizacion_tipo = this.beneficiariosListaSelected.idp_organizacion_tipo;
+          this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo;
+          this.id_ubica_geo_depto = this.beneficiariosListaSelected.id_ubica_geo_depto;
+          this.id_ubica_geo_muni = this.beneficiariosListaSelected.id_ubica_geo_muni;
 
           this.openModalBeneficiarioLista(modalScope);
         }
@@ -703,12 +745,15 @@ export class BeneficiariosComponent implements OnInit {
           const objBeneficiarioLista = {
             p_id_proy_bene_lista: this.id_proy_bene_lista,
             p_id_proy_beneficiario: this.id_proy_beneficiario,
-            p_comunidad: this.comunidad,
+            p_comunidad_no_registrada: this.comunidad_no_registrada,
             p_num_doc_identidad: this.num_doc_identidad,
             p_nombre: this.nombre,
             p_idp_rango_edad: this.idp_rango_edad,
             p_es_hombre: this.es_hombre,
-            p_idp_organizacion_tipo: this.idp_organizacion_tipo
+            p_idp_organizacion_tipo: this.idp_organizacion_tipo,
+            p_idp_organizacion_subtipo: this.idp_organizacion_subtipo,
+            p_id_ubica_geo_depto: this.id_ubica_geo_depto,
+            p_id_ubica_geo_muni: this.id_ubica_geo_muni
           };
           this.servListBenef.editListBene(objBeneficiarioLista).subscribe(
             (data) => {
@@ -923,7 +968,7 @@ export class BeneficiariosComponent implements OnInit {
           const objAliado = {
             p_id_proy_aliado: 0,
             p_id_proyecto: this.idProyecto,
-            p_id_organizacion: this.id_organizacion,
+            p_id_organizacion: this.id_organizacion || null,
             p_referente: this.referente,
             p_vinculo: this.vinculo,
             p_idp_convenio: this.idp_convenio,
@@ -965,7 +1010,7 @@ export class BeneficiariosComponent implements OnInit {
         const objAliado = {
           p_id_proy_aliado: this.id_proy_aliado,
           p_id_proyecto: this.id_proyecto,        
-          p_id_organizacion: this.id_organizacion,
+          p_id_organizacion: this.id_organizacion || null,
           p_referente: this.referente,
           p_vinculo: this.vinculo,
           p_idp_convenio: this.idp_convenio,

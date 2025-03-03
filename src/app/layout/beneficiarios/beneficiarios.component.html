@@ -68,7 +68,7 @@
                                     <th style="text-align: center;">ID</th>
                                     <th style="text-align: center;">FECHA</th>
                                     <th>DEPARTAMENTO</th>
-                                    <!-- <th>MUNICIPIO</th> -->
+                                    <th>MUNICIPIO</th> 
                                     <th>COMUNIDAD</th>
                                     <th>TIPO DE EVENTO</th>
                                     <th>EVENTO</th>
@@ -90,7 +90,7 @@
                                     <td style="text-align: center;">{{ beneficiario.id_proy_beneficiario }}</td>
                                     <td style="text-align: center;">{{ beneficiario.fecha | date:'dd/MM/yyyy' }}</td>
                                     <td>{{ getUbicacionGeografica(beneficiario.id_ubica_geo_depto, beneficiariosUbicaDepto) }}</td>
-                                    <!-- <td>{{ getUbicacionGeografica(beneficiario.id_ubica_geo_muni, beneficiariosUbicaMuni) }}</td> -->
+                                    <td>{{ beneficiario.ubica_geo_muni }}</td>
                                     <td>{{ beneficiario.comunidad }}</td>
                                     <td>{{getDescripcionSubtipo(beneficiario.idp_tipo_evento, beneficiariosTipoEvento) }}</td>                                    
                                     <td>{{ beneficiario.titulo_evento }}</td>
@@ -113,7 +113,7 @@
                                 </ngb-pagination>
                             </div>
                         <!-- Si la tabla esta vacia -->
-                        <div class="row" *ngIf="beneficiariosTable.length === 0"> 
+                        <div class="row mt-4" *ngIf="beneficiariosTable.length === 0"> 
                             <div class="custom-no-data-container">
                               <span class="custom-no-data-message">
                                 No hay registros de Beneficiarios
@@ -226,8 +226,7 @@
                                             <label for="evento_detalle">Detalle de evento</label>
                                             <textarea class="form-control" id="evento_detalle" name="evento_detalle"
                                                 placeholder="Ingresa el detalle del evento"
-                                                [(ngModel)]="evento_detalle" (change)="ValidateEventoDetalle()" maxlength="254">
-                                                <span class="custom-alert-message" *ngIf="!valEventoDetalle">Debe ingresar el detalle del evento</span>
+                                                [(ngModel)]="evento_detalle" maxlength="254">                                                
                                             </textarea>                                        
                                         </div> 
                                     <!-- Quinta Fila: DOCUMENTO DE RESPALDO -->
@@ -308,7 +307,7 @@
                                                         [(ngModel)]="beneficiarios_persona_registro" disabled/>
                                             </div>                                    
                                     <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-                                    <div class="modal-footer mt-4">
+                                    <div class="modal-footer mt-2">
                                         <div class="d-flex justify-content-center" style="width: 100%">
                                             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                                                 <i class="fa fa-times" aria-hidden="true"></i> Cancelar
@@ -359,7 +358,6 @@
         <!-- Encabezado del Modal-->
         <div class="modal-header">
             <h4 class="modal-title">Lista de Participantes</h4>
-            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
         </div>
         <!-- Cuerpo del Modal-->
         <div class="modal-body">
@@ -368,17 +366,44 @@
                     <div class="card mb-3">
                         <div class="card-body custom-card">
                             <div class="row">
-                                <div class="container">
+                                <!-- Botones de tabla IMPORTAR, EXPORTAR -->                                    
+                                <div class="row mt-2">
+                                    <div class="col col-xl-12 col-lg-12">
+                                        
+                                            <!-- ======= ======= IMPORTAR DE LISTA ======= ======= -->
+                                            <button type="button" class="btn btn-bg-1" 
+                                                (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
+                                                [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar de Lista
+                                            </button>
+                                            <!-- ======= ======= EXPORTAR DE EXCEL ======= ======= -->
+                                            <button type="button" class="btn btn-bg-1" 
+                                                (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
+                                                [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Exportar de excel
+                                            </button>
+                                            <!-- ======= ======= FILTRO PARA TIPO DE ACTOR:COMUNIDADES: DEPARTAMENTO, MUNICIPIO ======= ======= -->
+                                            <!-- ======= ======= IMPORTAR A EXCEL ======= ======= -->
+                                            <button type="button" class="btn btn-bg-1" 
+                                                (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
+                                                [disabled]="(beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar a excel
+                                            </button>                                                                                        
+                                        
+                                    </div>
+                                </div>
+                                <div class="container mt-4">
                                     <table class="table custom-table table-striped table-bordered">
                                         <thead>
                                             <tr>
                                                 <th></th>
                                                 <th style="text-align: center;">#</th>
+                                                <th style="text-align: center;">CI o ID</th>
                                                 <th style="text-align: center;">Nombre y Apellido</th>
                                                 <th style="text-align: center;">Sexo</th>
                                                 <th style="text-align: center;">Tipo de actor</th>
                                                 <th style="text-align: center;">Institucion/ Comunidad</th>
-                                                <th style="text-align: center;">ID/ No.de CI</th>
+                                                <th style="text-align: center;">Otro</th>
                                                 <th style="text-align: center;">Rango de edad</th>
                                             </tr>
                                         </thead>
@@ -393,40 +418,17 @@
                                                         id="checkbox-{{ i }}" name="checkbox-{{ i }}">
                                                 </td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.id_proy_bene_lista }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.num_doc_identidad }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.nombre }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.es_hombre ? 'Hombre' : 'Mujer' }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.idp_organizacion_tipo }}</td>
-                                                <td style="text-align: center;">{{ beneficiarioLista.comunidad }}</td>
-                                                <td style="text-align: center;">{{ beneficiarioLista.num_doc_identidad }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.idp_organizacion_subtipo }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.comunidad_no_registrada }}</td>                                                
                                                 <td style="text-align: center;">{{ beneficiarioLista.idp_rango_edad }}</td>
                                             </tr>
                                         </tbody>
-                                    </table>
-                                    <div class="row">
-                                        <!-- Cuarta Fila: Nro de Mujeres, Nro de hombres, Total -->
-                                            <!-- ======= ======= Nro de Mujeres ======= ======= -->
-                                            <div class="col col-xl-4 col-lg-4 mt-auto">
-                                                <label for="mujeres">Nro de Mujeres</label>
-                                                <input  class="form-control" type="number" 
-                                                        id="mujeres" name="mujeres" 
-                                                        [(ngModel)]="mujeres" disabled/>
-                                            </div>
-                                            <!-- ======= ======= Nro de Hombres ======= ======= -->
-                                            <div class="col col-xl-4 col-lg-4 mt-auto">
-                                                <label for="hombres">Nro de Hombres</label>
-                                                <input  class="form-control" type="number" 
-                                                        id="hombres" name="hombres" 
-                                                        [(ngModel)]="hombres" disabled/>
-                                            </div>
-                                            <!-- ======= ======= Total ======= ======= -->
-                                            <div class="col col-xl-4 col-lg-4 mt-auto">
-                                                <label for="total">Total</label>
-                                                <input  class="form-control" type="number" 
-                                                        id="total" name="total" 
-                                                        [(ngModel)]="total" disabled/>
-                                            </div>
-                                    </div>
-                                    <!-- Botones de tabla 
+                                    </table>                                    
+                                    <!-- Botones de tabla -->
                                     <div class="d-flex justify-content-center mt-4">
                                         <ngb-pagination
                                             [(page)]="mainPageBeneficiariosLista"
@@ -436,39 +438,64 @@
                                             [rotate]="true"
                                             [boundaryLinks]="true">
                                         </ngb-pagination>
-                                    </div> -->
-                                     <!-- Si la tabla esta vacia -->
-                                    <div *ngIf="beneficiariosListaTable.length === 0" class="alert alert-info" style="background-color: #78e36a;">
+                                    </div>
+                                    <!-- Si la tabla esta vacia -->
+                                    <div *ngIf="beneficiariosListaTable.length === 0" class="custom-no-data-container mt-2">
                                         No hay participantes registrados.                                    
                                     </div>
-                                    <div class="row mt-4">
+                                    <!--Contador de participantes --> 
+                                    <div class="row mt-2">
+                                        <div class="col col-xl-6 col-lg-6 mt-auto">                                            
+                                        </div>
+                                        <!-- Nro de Mujeres, Nro de hombres, Total -->
+                                            <!-- ======= ======= Nro de Mujeres ======= ======= -->
+                                            <div class="col col-xl-2 col-lg-2 mt-auto">
+                                                <label for="mujeres">Nro de Mujeres</label>
+                                                <input  class="form-control" type="number" 
+                                                        id="mujeres" name="mujeres" 
+                                                        [(ngModel)]="mujeres" disabled/>
+                                            </div>
+                                            <!-- ======= ======= Nro de Hombres ======= ======= -->
+                                            <div class="col col-xl-2 col-lg-2 mt-auto">
+                                                <label for="hombres">Nro de Hombres</label>
+                                                <input  class="form-control" type="number" 
+                                                        id="hombres" name="hombres" 
+                                                        [(ngModel)]="hombres" disabled/>
+                                            </div>
+                                            <!-- ======= ======= Total ======= ======= -->
+                                            <div class="col col-xl-2 col-lg-2 mt-auto">
+                                                <label for="total">Total</label>
+                                                <input  class="form-control" type="number" 
+                                                        id="total" name="total" 
+                                                        [(ngModel)]="total" disabled/>
+                                            </div>
+                                    </div>
+                                    <!-- Botones de tabla AÑADIR, EDITAR , ELIMINAR, CANCELAR -->                                    
+                                    <div class="row mt-3">
                                         <div class="col col-xl-12 col-lg-12">
-                                            <div class="d-flex justify-content-center">
-                                                <button type="button" class="btn btn-bg-1" 
-                                                    (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
-                                                    [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
-                                                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar Excel
-                                                </button>
-                                                <button type="button" class="btn btn-bg-1" 
-                                                    (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
-                                                    [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
-                                                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Exportar Excel
-                                                </button>
-                                                <button type="button" class="btn btn-bg-1" 
-                                                    (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
-                                                    [disabled]="(beneficiariosListaSelected)||(currentPerProRol=='LEC')">
-                                                    <i class="fa fa-plus" aria-hidden="true"></i> Añadir
-                                                </button>
-                                                <button type="button" class="btn btn-bg-1" 
-                                                    (click)="initEditBeneficiarioLista(listaBeneficiariosFormModal)"
-                                                    [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')" >                                    
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i> Editar
-                                                </button>
-                                                <button type="button" class="btn btn-bg-1" 
-                                                    (click)="initDeleteBeneficiarioLista(deleteBeneficiarioModal)"
-                                                    [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
-                                                    <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
-                                                </button>                                                
+                                            <div class="d-flex justify-content-end">
+                                                <!-- ======= ======= CANCELAR ======= ======= -->
+                                                    <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                                                        <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                                    </button>                                                     
+                                                <!-- ======= ======= AÑADIR ======= ======= -->
+                                                    <button type="button" class="btn btn-bg-1" 
+                                                        (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
+                                                        [disabled]="(beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                                                    </button>
+                                                <!-- ======= ======= EDITAR ======= ======= -->
+                                                    <button type="button" class="btn btn-bg-1" 
+                                                        (click)="initEditBeneficiarioLista(listaBeneficiariosFormModal)"
+                                                        [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')" >                                    
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                                                    </button>
+                                                <!-- ======= ======= ELIMINAR ======= ======= -->
+                                                    <button type="button" class="btn btn-bg-1" 
+                                                        (click)="initDeleteBeneficiarioLista(deleteBeneficiarioModal)"
+                                                        [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                        <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                                                    </button>                                                                                          
                                             </div>
                                         </div>
                                     </div>
@@ -494,9 +521,18 @@
                         <div class="card mb-3">
                             <div class="card-body custom-card">
                                 <div class="row">   
-                                    <!-- Primera Fila:NOMBRE COMPLETO, DOCUMENTO DE IDENTIDAD  -->                                        
+                                    <!-- Primera Fila:CI O ID, NOMBRE COMPLETO, SEXO  -->
+                                        <!-- ======= ======= CI O ID ======= ======= -->
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">
+                                            <label for="num_doc_identidad">CI O ID</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="num_doc_identidad" name="num_doc_identidad"  
+                                                    placeholder="Ingresa el CI O ID"
+                                                    [(ngModel)]="num_doc_identidad" (change)="ValidateNumDocIdentidad()" maxlength="9"/>
+                                            <span class="custom-alert-message" *ngIf="!valNumDocIdentidad">Debe ingresar el CI O ID</span>
+                                        </div>                                        
                                         <!-- ======= ======= NOMBRE COMPLETO ======= ======= --> 
-                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="nombre">Nombre y Apellido</label>
                                             <input  class="form-control" type="text" 
                                                     id="nombre" name="nombre"  
@@ -504,36 +540,48 @@
                                                     [(ngModel)]="nombre" (change)="ValidateNombre()" maxlength="99"/> 
                                             <span class="custom-alert-message" *ngIf="!valNombre">Debe ingresar el nombre y apellido</span>       
                                         </div>
-                                        <!-- ======= ======= DOCUMENTO DE IDENTIDAD ======= ======= -->
-                                        <div class="col col-xl-6 col-lg-6 mb-auto">
-                                            <label for="num_doc_identidad">Documento de Identidad</label>
-                                            <input  class="form-control" type="text" 
-                                                    id="num_doc_identidad" name="num_doc_identidad"  
-                                                    placeholder="Ingresa el documento de identidad"
-                                                    [(ngModel)]="num_doc_identidad" (change)="ValidateNumDocIdentidad()" maxlength="9"/>
-                                            <span class="custom-alert-message" *ngIf="!valNumDocIdentidad">Debe ingresar el documento de identidad</span>
-                                        </div>                                       
-                                    <!-- Segunda Fila: COMUNIDAD, TIPO DE ORGANIZACION -->
-                                        <!-- ======= ======= COMUNIDAD ======= ======= -->
-                                        <div class="col col-xl-6 col-lg-6 mb-auto">
-                                            <label for="comunidad">Comunidad o Ciudad</label>
-                                            <input  class="form-control" type="text" 
-                                                    id="comunidad" name="comunidad"  
-                                                    placeholder="Ingresa la comunidad"
-                                                    [(ngModel)]="comunidad" maxlength="99"/>
-                                        </div> 
+                                        <!-- ======= ======= SEXO ======= ======= -->
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">
+                                            <label for="es_hombre">Sexo</label>
+                                            <select class="form-control" id="es_hombre" name="es_hombre"
+                                                [(ngModel)]="es_hombre">
+                                                <option value="" disabled selected>Seleccione el Sexo</option>
+                                                <option value="true">Masculino</option>
+                                                <option value="false">Femenino</option>
+                                            </select>
+                                        </div>                                                                                 
+                                    <!-- Segunda Fila: TIPO DE ORGANIZACION, COMUNIDAD, OTRO  -->
                                         <!-- ======= ======= TIPO DE ORGANIZACION ======= ======= -->
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
-                                            <label for="idp_organizacion_tipo">Tipo de Organización</label>
+                                            <label for="idp_organizacion_tipo">Tipo de Actor</label>
                                             <select class="form-control" id="idp_organizacion_tipo" name="idp_organizacion_tipo"
                                                 [(ngModel)]="idp_organizacion_tipo">
-                                                <option value="" disabled selected>Seleccione un Tipo de Organización</option>
+                                                <option value="" disabled selected>Seleccione un Tipo de Actor</option>
                                                 <option *ngFor="let tipo of beneficiariosListaOrganizacionTipo" [value]="tipo.id_subtipo">
                                                 {{ tipo.descripcion_subtipo }}
                                                 </option>
                                             </select>
-                                        </div>                                         
-                                    <!-- Tercera Fila: RANGO DE EDAD, SEXO -->
+                                        </div>
+                                        <!-- ======= ======= COMUNIDAD ======= ======= -->
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="idp_organizacion_subtipo">Institución/ Comunidad</label>
+                                            <select class="form-control" id="idp_organizacion_subtipo" name="idp_organizacion_subtipo"
+                                                [(ngModel)]="idp_organizacion_subtipo">
+                                                <option value="" disabled selected>Seleccione un Tipo de Institución/ Comunidad</option>
+                                                <option *ngFor="let tipo of beneficiariosListaOrganizacionTipo" [value]="tipo.id_subtipo">
+                                                {{ tipo.descripcion_subtipo }}
+                                                </option>
+                                            </select>
+                                        </div>   
+                                        <!-- ======= ======= OTRO ======= ======= -->
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
+                                            <label for="comunidad_no_registrada">Otro</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="comunidad_no_registrada" name="comunidad_no_registrada"  
+                                                    placeholder="Ingresa la Institución/ Comunidad"
+                                                    [(ngModel)]="comunidad_no_registrada" maxlength="99"/>
+                                        </div>                                                                               
+                                    <!-- Tercera Fila: RANGO DE EDAD -->
                                         <!-- ======= ======= RANGO DE EDAD ======= ======= -->
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
                                             <label for="idp_rango_edad">Rango de Edad</label>
@@ -544,19 +592,9 @@
                                                 {{ rango.descripcion_subtipo }}
                                                 </option>
                                             </select>
-                                        </div>
-                                        <!-- ======= ======= SEXO ======= ======= -->
-                                        <div class="col col-xl-6 col-lg-6 mb-auto">
-                                            <label for="es_hombre">Sexo</label>
-                                            <select class="form-control" id="es_hombre" name="es_hombre"
-                                                [(ngModel)]="es_hombre">
-                                                <option value="" disabled selected>Seleccione el Sexo</option>
-                                                <option value="true">Hombre</option>
-                                                <option value="false">Mujer</option>
-                                            </select>
-                                        </div>                                    
+                                        </div>                                                                          
                                         <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-                                        <div class="modal-footer mt-4">
+                                        <div class="modal-footer mt-2">
                                             <div class="d-flex justify-content-center" style="width: 100%">
                                                 <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                                                     <i class="fa fa-times" aria-hidden="true"></i> Cancelar
@@ -754,9 +792,9 @@
                                                     [(ngModel)]="aliados_persona_registro" disabled/>
                                         </div>
                                         <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-                                        <div class="modal-footer mt-4">
+                                        <div class="modal-footer mt-2">
                                             <div class="d-flex justify-content-center" style="width: 100%">
-                                                <button type="button" class="btn btn-bg-3" (click)="closeModalAliado()">
+                                                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                                                     <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                                 </button>
                                                 <button type="button" class="btn btn-bg-1" 
@@ -785,8 +823,8 @@
         </div>
         <div class="modal-footer">
             <div class="d-flex justify-content-center" style="width: 100%">
-                <button type="button" class="btn btn-bg-3" (click)="closeModalAliado('Cerrar')">
-                    <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                    <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                 </button>
                 <button type="button" class="btn btn-bg-1" (click)="deleteAliado()">
                     <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
