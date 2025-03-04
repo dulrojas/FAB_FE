@@ -18,6 +18,7 @@ const routes: Routes = [
             { path: 'logros', loadChildren: () => import('./logros/logros.module').then((m) => m.LogrosModule) },
             { path: 'aprendizajes', loadChildren: () => import('./aprendizajes/aprendizajes.module').then((m) => m.AprendizajesModule) },
             { path: 'personaRoles', loadChildren: () => import('./personaRoles/personaRoles.module').then((m) => m.PersonaRolesModule) },
+            { path: 'gestion', loadChildren: () => import('./gestion/gestion.module').then((m) => m.GestionModule) },
             { path: 'auditoria', loadChildren: () => import('./auditoria/auditoria.module').then((m) => m.AuditoriaModule) }
         ]
     }

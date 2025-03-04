@@ -326,7 +326,7 @@
                                             <td>
                                                 <select class="form-control" id="rol-{{ i }}" name="rol-{{ i }}" [(ngModel)]="proyecto.rol" 
                                                     (change)="personaProyectoRolChange($event, proyecto)">
-                                                    <option value="" disabled selected>...</option>
+                                                    <option value="" selected>...</option>
                                                     <option *ngFor="let rol of roles" [value]="rol.descripcion_subtipo">
                                                         {{ rol.descripcion_subtipo }}
                                                     </option>

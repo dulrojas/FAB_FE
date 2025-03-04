@@ -164,8 +164,10 @@
                                 <!-- ======= ======= IMAGE SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="accion">Imagen logro</label>
-                                    <img class="custom-img-selector" [src]="(ruta_imagen)||(defaultImageSrc)" alt="Imagen de logro" id="imagen" 
-                                        (click)="initSelectImage(selectImageModal)" (error)="onError($event)">
+                                    <img class="custom-img-selector" 
+                                        [src]="(ruta_imagen)||(defaultImageSrc)" alt="Imagen de logro" id="imagen" 
+                                        (click)="initSelectImage(selectImageModal)" 
+                                        (error)="onError($event)">
                                     <span class="custom-alert-message" *ngIf="!valImagen">Debe seleccionar una imagen.</span>
                                 </div>
                                 
@@ -173,7 +175,8 @@
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="id_persona_reg">Persona registro</label>
                                     <input class="form-control" type="text" 
-                                        id="id_persona_reg" name="id_persona_reg" [(ngModel)]="id_persona_reg" disabled/>
+                                        id="id_persona_reg" name="id_persona_reg" 
+                                        [(ngModel)]="id_persona_reg" disabled/>
                                 </div>
 
                                 <div class="col col-xl-8 col-lg-8 mt-auto"></div>

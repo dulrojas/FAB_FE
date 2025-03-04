@@ -49,7 +49,10 @@
         </a>
         <!-- ======= ======= ======= ======= ======= ======= ======= -->
         <!-- ======= ======= ======= BIG ICONS ======= ======= ======= -->
-        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/personaRoles']" class="list-group-item d-flex flex-column align-items-center justify-content-center text-center">
+        <a class="list-group-item d-flex flex-column align-items-center justify-content-center text-center"
+            *ngIf="getRolMenu()"
+            [routerLinkActive]="['router-link-active']" 
+            [routerLink]="['/personaRoles']">
             <i class="fa fa-users" aria-hidden="true" [ngStyle]="{'font-size': collapsed ? '1rem' : '50px'}"></i>
             <span>{{ "Persona y roles" }}</span>
         </a>
@@ -57,7 +60,17 @@
             <i class="fa fa-tasks" aria-hidden="true" [ngStyle]="{'font-size': collapsed ? '1rem' : '50px'}"></i>
             <span>{{ "Clasificadores" }}</span>
         </a-->
-        <a [routerLinkActive]="['router-link-active']" [routerLink]="['/auditoria']" class="list-group-item d-flex flex-column align-items-center justify-content-center text-center">
+        <a class="list-group-item d-flex flex-column align-items-center justify-content-center text-center" 
+            *ngIf="getRolMenu()"
+            [routerLinkActive]="['router-link-active']" 
+            [routerLink]="['/gestion']">
+            <i class="fa fa-calendar" aria-hidden="true" [ngStyle]="{'font-size': collapsed ? '1rem' : '50px'}"></i>
+            <span>{{ "Gestion" }}</span>
+        </a>
+        <a class="list-group-item d-flex flex-column align-items-center justify-content-center text-center" 
+            *ngIf="getRolMenu()"
+            [routerLinkActive]="['router-link-active']" 
+            [routerLink]="['/auditoria']">
             <i class="fa fa-eye" aria-hidden="true" [ngStyle]="{'font-size': collapsed ? '1rem' : '50px'}"></i>
             <span>{{ "Auditoria" }}</span>
         </a>

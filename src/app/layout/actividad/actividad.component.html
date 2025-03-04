@@ -37,8 +37,8 @@
                             <div class="col col-md-3 col-lg-3">
                                 <label class="custom-actividad-sub-title">Presupuesto del proyecto</label>
                                 <input class="form-control" type="text" 
-                                    id="presupuestoProy" name="presupuestoProy" 
-                                    [(ngModel)]="presupuestoProy" disabled/>
+                                    id="presupuestoActProy" name="presupuestoActProy" 
+                                    [(ngModel)]="presupuestoActProy" disabled/>
                                 <label class="custom-actividad-sub-title">Ejecutado</label>
                                 <input class="form-control custom-actividad-input-bg-3" type="text" 
                                     id="ejecutadoProy" name="ejecutadoProy" 
@@ -50,7 +50,7 @@
                             <!-- ======= ======= ======= ======= ======= -->
                             <!-- ======= ======= GESTION SECTION ======= ======= -->
                             <div class="col col-md-3 col-lg-3">
-                                <label class="custom-actividad-sub-title">Presupuesto de la Gestión {{ initGestion }}</label>
+                                <label class="custom-actividad-sub-title">Presupuesto de la Gestión {{ gestion }}</label>
                                 <input class="form-control" type="text" 
                                     id="presupuestoGest" name="presupuestoGest" 
                                     [(ngModel)]="presupuestoGest" disabled/>
@@ -103,7 +103,8 @@
                                 <input class="form-control" type="text" 
                                     id="montoNuevoEjecutado" name="montoNuevoEjecutado" 
                                     placeholder="Ingrese el monto ejecutado" 
-                                    [disabled]="(idPresupuestoGest == 0)"
+                                    [disabled]="(idPresupuestoGest == 0)
+                                        ||(currentPerProRol.includes('LEC'))"
                                     (change)="onChangedMontoNuevoEjecutado()"
                                     [(ngModel)]="montoNuevoEjecutado"/>
                                 <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">
@@ -114,14 +115,16 @@
                                 <textarea class="form-control" type="text" 
                                     id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
                                     placeholder="Ingrese el motivo de ejecución" 
-                                    [disabled]="(this.idPresupuestoGest == 0)"
+                                    [disabled]="(this.idPresupuestoGest == 0)
+                                        ||(currentPerProRol.includes('LEC'))"
                                     [(ngModel)]="motivoNuevoEjecutado">
                                 </textarea>
                                 <span class="custom-alert-message" *ngIf="!valMotivoNuevoEjecutado">
                                     Debe ingresar un motivo válido, con menos de 100 caracteres.
                                 </span>
                                 <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
-                                    [disabled]="(this.idPresupuestoGest == 0)"
+                                    [disabled]="(this.idPresupuestoGest == 0)
+                                        ||(currentPerProRol.includes('LEC'))"
                                     (click)="addPresuAvance()">
                                     <i aria-hidden="true"></i> Añadir
                                 </button>
@@ -133,6 +136,18 @@
                             <!-- ======= ======= ======= ======= ======= -->
                         </div>
                     </div>
+
+                    <div class="col col-md-12 col-lg-12 mt-2" 
+                            *ngIf="parseAmountStrToFloat(presupuestoActProy) > parseAmountStrToFloat(presupuestoProy)">
+                        <div class="row">
+                            <div class="custom-no-data-container">
+                                <span class="custom-no-data-message">
+                                    El presupuesto definido en actividades supera el definido en el proyecto.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -158,17 +173,14 @@
                             (click)="initAddActividad(actividadModal)"
                             [disabled]="(actividadSelected)
                                 ||(gestion < initGestion)
-                                ||(currentPerProRol=='LEC')
-                                ||(currentPerProRol=='ADM')">
+                                ||(currentPerProRol.includes('LEC'))">
                             <i aria-hidden="true"></i> Añadir
                         </button>
                         <button type="button" class="btn btn-view-bg-1"
                             (click)="initAvanceActividad(actividadModal)"
                             [disabled]="(!actividadSelected)
-                                ||(gestion < initGestion)
                                 ||(actividadSelected.esActividadReprog)
-                                ||(currentPerProRol=='LEC')
-                                ||(currentPerProRol=='ADM')">
+                                ||(currentPerProRol.includes('LEC'))">
                             <i aria-hidden="true"></i> Avance
                         </button>
                     </div>
@@ -429,8 +441,10 @@
                                 <div class="col col-md-3">
                                     <label for="id_proy_elemento_padre">Padre</label>
                                     <select class="form-control" id="id_proy_elemento_padre" 
-                                        name="id_proy_elemento_padre" (change)="onPadreChanged()"
-                                        [(ngModel)]="id_proy_elemento_padre" [disabled]="modalAction == 'edit'">
+                                        name="id_proy_elemento_padre" 
+                                        (change)="onPadreChanged()"
+                                        [(ngModel)]="id_proy_elemento_padre" 
+                                        [disabled]="modalAction == 'edit'">
                                         <option value="" disabled>Seleccionar padre</option>
                                         <option *ngFor="let elemento of elementos" 
                                                 [value]="elemento.id_proy_elemento">
@@ -525,7 +539,8 @@
                                             <input class="form-control" type="text" 
                                                 id="actAvaAvance" name="actAvaAvance" 
                                                 placeholder="Ingresa el porcentaje"
-                                                [(ngModel)]="actAvaAvance" [disabled]="modalAction == 'add'"
+                                                [(ngModel)]="actAvaAvance" 
+                                                [disabled]="(modalAction == 'add')||(gestion < initGestion)"
                                                 (change)="validateActAvaAvance()">
                                             <span class="custom-alert-message" *ngIf="!valActAvaAvance">
                                                 Debe ingresar un monto valido.
@@ -540,7 +555,8 @@
                                             <input class="form-control" type="text" 
                                                 id="actAvaMonto" name="actAvaMonto" 
                                                 placeholder="Ingresa el nuevo monto"
-                                                [(ngModel)]="actAvaMonto" [disabled]="modalAction == 'add'"
+                                                [(ngModel)]="actAvaMonto" 
+                                                [disabled]="(modalAction == 'add')||(gestion < initGestion)"
                                                 (change)="onChangedAvanceNuevoEjecutado()">
                                             <span class="custom-alert-message" *ngIf="!valActAvaMonto">
                                                 Debe ingresar un monto valido.
@@ -552,7 +568,7 @@
                                         <!-- ======= ADD AVANCE SECTION ======= -->
                                         <div class="col col-md-1 col-lg-1 mt-auto">
                                             <button type="submit" class="btn btn-bg-1" 
-                                                [disabled]="modalAction == 'add'">
+                                                [disabled]="(modalAction == 'add')||(gestion < initGestion)">
                                                 <i aria-hidden="true"></i> +
                                             </button>
                                         </div>
@@ -621,6 +637,7 @@
                 <i aria-hidden="true"></i> Reprogramar
             </button>
             <button type="button" class="btn btn-bg-1" 
+                [disabled]="(gestion < initGestion)"
                 (click)="onSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
             </button>

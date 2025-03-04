@@ -88,7 +88,7 @@ export class PersonaRolesComponent implements OnInit {
     valNombres: any = true;
     ValidateNombres() {
       this.valNombres = true;
-      const regex = /^[A-Za-zÁÉÍÓÚáéíóú\s]+$/;
+      const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
       if (!(this.nombres) || this.nombres.length >= 50 || !regex.test(this.nombres)) {
         this.valNombres = false;
       }
@@ -97,7 +97,7 @@ export class PersonaRolesComponent implements OnInit {
     valApellido1: any = true;
     ValidateApellido1() {
       this.valApellido1 = true;
-      const regex = /^[A-Za-zÁÉÍÓÚáéíóú\s]+$/;
+      const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
       if ((!this.apellido_1) || this.apellido_1.length >= 50 || !regex.test(this.apellido_1)) {
         this.valApellido1 = false;
       }
@@ -106,7 +106,7 @@ export class PersonaRolesComponent implements OnInit {
     valApellido2: any = true;
     ValidateApellido2() {
       this.valApellido2 = true;
-      const regex = /^[A-Za-zÁÉÍÓÚáéíóú\s]+$/;
+      const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
       if ((!this.apellido_2) || this.apellido_2.length >= 50 || !regex.test(this.apellido_2)) {
         this.valApellido2 = false;
       }
@@ -140,7 +140,7 @@ export class PersonaRolesComponent implements OnInit {
     valCorreo: any = true;
     ValidateCorreo() {
       this.valCorreo = true;
-      const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const regex = /^[a-zA-Z0-9._-ñÑ]+@[a-zA-Z0-9ñÑ]+(?:[.-][a-zA-Z0-9ñÑ]+)*\.[a-zA-Z]{2,}$/;
       if ((!this.correo) || this.correo.length >= 100 || !regex.test(this.correo)) {
         this.valCorreo = false;
       }
@@ -322,8 +322,9 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= PERSONA ROL FORM CHAGNED ======= =======
     personaProyectoRolChange(event: Event, proyecto: any) {
       const selectedValue = (event.target as HTMLSelectElement).value;
-      const proyectoToAdd = !(this.proyectosInitAux.some(obj => ((obj.id_proyecto == proyecto.id_proyecto)&&(obj.rol))));
+      const proyectoToAdd = !(this.proyectosInitAux.some(obj => (obj.id_proyecto == proyecto.id_proyecto)));
       const proyectoInAdd = this.persona_proyecto_mod_to_add.some(obj => (obj.id_proyecto == proyecto.id_proyecto));
+      
       if((this.modalAction == "add")||(proyectoToAdd)||(proyectoInAdd)){
         if(proyectoToAdd){
           this.persona_proyecto_mod_to_add = this.persona_proyecto_mod_to_add.filter(obj => (obj.id_proyecto != proyecto.id_proyecto));
@@ -400,7 +401,7 @@ export class PersonaRolesComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= GET PERSONAS ======= =======
     getPersonaRoles(){
-      this.servPersonaRoles.getPersonaRolesActPen().subscribe(
+      this.servPersonaRoles.getPersonaRolesActPenEva().subscribe(
         (data) => {
           this.personasRoles = (data[0].dato)?(data[0].dato):([]);
           this.totalLength = this.personasRoles.length;
@@ -513,6 +514,9 @@ export class PersonaRolesComponent implements OnInit {
       if( estadoProy == 4 ){
         return "Pendiente";
       }
+      if( estadoProy == 5 ){
+        return "Evaluacion";
+      }
     }
     // ======= ======= =======
     // ======= IS RESPONSABLE FUN =======
@@ -605,7 +609,8 @@ export class PersonaRolesComponent implements OnInit {
           // ======= ======= =======
           // ======= BUILD PERSONA PROYECTO =======
           let addRequestsPersona: any[] = [];
-          this.persona_proyecto_mod_to_add.forEach((personaProyecto) => {
+          let persona_proyecto_add = this.persona_proyecto_mod_to_add.filter((perPro)=>(perPro.rol!=""));
+          persona_proyecto_add.forEach((personaProyecto) => {
             let objPersonaRol = {
               p_id_persona_proyecto: null,
               p_id_persona: this.id_persona,
@@ -619,7 +624,9 @@ export class PersonaRolesComponent implements OnInit {
           // ======= ======= =======
           // ======= EDIT PERSONA PROYECTO =======
           let editRequestsPersona: any[] = [];
-          this.persona_proyecto_mod_to_edit.forEach((personaProyecto) => {
+          let persona_proyecto_edit = this.persona_proyecto_mod_to_edit.filter((perPro)=>(perPro.rol != ""));
+
+          persona_proyecto_edit.forEach((personaProyecto) => {
             let objPersonaRol = {
               p_id_persona_proyecto: personaProyecto.id_persona_proyecto,
               p_id_persona: this.id_persona,
@@ -629,6 +636,14 @@ export class PersonaRolesComponent implements OnInit {
               p_id_persona_reg: this.idPersonaReg
             };
             editRequestsPersona.push(this.servPersonaRoles.editPersonaRol(objPersonaRol));
+          });
+          // ======= ======= =======
+          // ======= DELETE PERSONA PROYECTO =======
+          let persona_proyecto_delete = this.persona_proyecto_mod_to_edit.filter((perPro)=>(perPro.rol == ""));
+          persona_proyecto_delete.forEach((personaProyecto) => {
+            editRequestsPersona.push(
+              this.servPersonaRoles.deletePersonaRol(personaProyecto.id_persona_proyecto, this.idPersonaReg)
+            );
           });
           // ======= ======= =======
           // ======= ON ALL REQUEST END =======
@@ -641,7 +656,6 @@ export class PersonaRolesComponent implements OnInit {
             else {
             forkJoin(allRequests).subscribe(
               (responses) => {
-                console.log(responses);
                 this.onAllServicesComplete();
               },
               (error) => {

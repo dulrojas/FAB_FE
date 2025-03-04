@@ -81,6 +81,7 @@ export class ActividadComponent implements OnInit {
     idPresupuestoGest: any = 0;
     periodo: any = "";
     presupuestoProy: any = 0;
+    presupuestoActProy: any = 0;
     ejecutadoProy: any = 0;
     initGestion: any = "";
     gestion: any = "";
@@ -126,12 +127,12 @@ export class ActividadComponent implements OnInit {
         this.doughnutChartProy = null;
       }
 
-      let presupuestoProy = this.parseAmountStrToFloat(this.presupuestoProy);
+      let presupuestoActProy = this.parseAmountStrToFloat(this.presupuestoActProy);
       let ejecutadoProy = this.parseAmountStrToFloat(this.ejecutadoProy);
 
-      let presupuestoFormated = (presupuestoProy)?(presupuestoProy):(1);
+      let presupuestoFormated = (presupuestoActProy)?(presupuestoActProy):(1);
       let porcentajeGrafico = 0;
-      if(this.presupuestoProy){
+      if(this.presupuestoActProy){
         porcentajeGrafico = parseFloat((100*(ejecutadoProy / presupuestoFormated)).toFixed(2));
       }
       porcentajeGrafico = (porcentajeGrafico>100)?(100):(porcentajeGrafico);
@@ -269,64 +270,6 @@ export class ActividadComponent implements OnInit {
       });
     }
     // ====== ======= ====== ======= ====== ======= ======
-    // ====== ======= ====== HALF CIRCLE SECTION ====== ======= ====== 
-    /*
-    @ViewChildren('canvas') canvases!: QueryList<ElementRef>;
-
-    ngAfterViewInit() {
-      console.log('Elementos Gant:', this.elementosGant);
-      console.log('Canvas encontrados:', this.canvases.length);
-
-      setTimeout(() => {
-        console.log('Canvas después del setTimeout:', this.canvases.length);
-        this.initializeCharts();
-      }, 0);
-    }
-    
-    initializeCharts() {
-      this.canvases.forEach((canvasRef, index) => {
-        const ctx = canvasRef.nativeElement.getContext('2d');
-        const actividad = this.elementosGant[0].childrens[index];
-        this.createHalfCircleChart(ctx, actividad.ejecutado, actividad.presupuesto);
-      });
-    }
-  
-    createHalfCircleChart(ctx: CanvasRenderingContext2D, ejecutado: number, presupuesto: number) {
-      const porcentajeAvance = 25;
-      const porcentajeRestante = 100 - porcentajeAvance;
-  
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Avance', 'Restante'],
-          datasets: [
-            {
-              data: [porcentajeAvance, porcentajeRestante],
-              backgroundColor: ['#4caf50', '#e0e0e0'],
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          rotation: -90,
-          circumference: 180,
-          cutout: '75%',
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: (tooltipItem) =>
-                  `${tooltipItem.label}: ${tooltipItem.raw}%`,
-              },
-            },
-            legend: {
-              display: false,
-            },
-          },
-        },
-      });
-    }
-    */
-    // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= INIT VIEW FUN ======= =======
     ngOnInit(): void{
       this.getParametricas();
@@ -358,7 +301,7 @@ export class ActividadComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= GET PARAMETRICAS ======= =======
     getParametricas(){
-      this.ElementosService.getElementosByProyecto(this.idProyecto).subscribe(
+      this.ElementosService.getElementosMetoEleNivel3ByIdProy(this.idProyecto).subscribe(
         (data) => {
           this.elementos = (data[0].dato)?(data[0].dato):([]);
           this.getActividades();
@@ -486,15 +429,17 @@ export class ActividadComponent implements OnInit {
           this.idPresupuestoGest = (dataReq.id_proy_presupuesto)?(dataReq.id_proy_presupuesto):(0);
 
           dataReq.presupuesto_mn = this.parseAmountStrToFloat(dataReq.presupuesto_mn.slice(1));
+          dataReq.pro_act_presupuesto = this.parseAmountStrToFloat(dataReq.pro_act_presupuesto.slice(1));
 
           dataReq.pro_act_ava_ejecutado = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado.slice(1));
           dataReq.pro_pre_ava_ejecutado = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado.slice(1));
 
-          dataReq.pro_act_presupuesto_gestion = this.parseAmountStrToFloat(dataReq.pro_act_presupuesto_gestion.slice(1))
-          dataReq.pro_act_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado_gestion.slice(1))
-          dataReq.pro_pre_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado_gestion.slice(1))
+          dataReq.pro_act_presupuesto_gestion = this.parseAmountStrToFloat(dataReq.pro_act_presupuesto_gestion.slice(1));
+          dataReq.pro_act_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado_gestion.slice(1));
+          dataReq.pro_pre_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado_gestion.slice(1));
 
           this.presupuestoProy = this.parseAmountFloatToStr(dataReq.presupuesto_mn);
+          this.presupuestoActProy = this.parseAmountFloatToStr(dataReq.pro_act_presupuesto);
           this.ejecutadoProy = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado + dataReq.pro_pre_ava_ejecutado);
     
           this.initGestion = dataReq.gestion_actual;
@@ -714,6 +659,26 @@ export class ActividadComponent implements OnInit {
     onGestionChanged(gestionChange: number){
       this.gestion = parseInt(this.gestion) + gestionChange;
       this.groupActividadesGant();
+
+      this.servicios.getPresupuestoEjecutadoByIdProyAndYear(this.idProyecto, (this.gestion).toString()).subscribe(
+        (data)=>{
+          if(data[0].dato){
+            let dataReq = data[0].dato[0];
+
+            dataReq.pro_act_presupuesto_gestion = this.parseAmountStrToFloat(dataReq.pro_act_presupuesto_gestion.slice(1));
+            dataReq.pro_act_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado_gestion.slice(1));
+            dataReq.pro_pre_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado_gestion.slice(1));
+
+            this.presupuestoGest = this.parseAmountFloatToStr(dataReq.pro_act_presupuesto_gestion);
+            this.ejecutadoGest = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado_gestion + dataReq.pro_pre_ava_ejecutado_gestion);
+            
+            this.createDoughnutChartGestion();
+          }
+        },
+        (error)=>{
+
+        }
+      );
     }
     gestionIsStartYear(){
       let boolToReturn = false;
@@ -760,12 +725,7 @@ export class ActividadComponent implements OnInit {
 
           actividadGant.date_gap = this.getDateDaysGap(actividadGant.fecha_fin, actividadGant.fecha_inicio);
           actividadGant.date_gap_por = 100*(actividadGant.date_gap / 365);
-          
-          const totalEjecutado = actividadGant.avances.reduce((sum, item) => {
-            const monto = parseFloat(item.monto_ejecutado.replace("$", "").replace(",", ""));
-            return sum + monto;
-          }, 0);
-          //actividadGant.porcentajeAvance = (100*(totalEjecutado / actividadGant.presupuesto)).toFixed(2);
+
           actividadGant.porcentajeAvance = 0;
           actividadGant.avances.forEach(actAva => {
             actividadGant.porcentajeAvance += parseInt(actAva.avance);

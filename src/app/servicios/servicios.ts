@@ -48,7 +48,28 @@ export class servicios{
         "params": [
           {"name": "p_accion","value": "C1","type": "string"},
           {"name": "p_id_proyecto","value": idProy,"type": "int"},
-          {"name": "p_fecha_gestion","value": "2024-11-29","type": "string"}
+          {"name": "p_fecha_gestion","value": null,"type": "string"}
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= GET PRESUPUESTO EJECUTADO BY IDPROY AND YEAR ======= ======= =======
+  getPresupuestoEjecutadoByIdProyAndYear(idProy: number, gesYear: string): Observable<any> {
+    const params = {
+      "procedure_name": "sp_proy_presupuesto_ejecutado",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "C2","type": "string"},
+          {"name": "p_id_proyecto","value": idProy,"type": "int"},
+          {"name": "p_fecha_gestion","value": gesYear,"type": "string"}
         ]
       }
     };
@@ -100,6 +121,46 @@ export class servicios{
           {"name": "p_id_persona_resp","value": obj.id_persona_resp,"type": "int"},
           {"name": "p_idp_estado","value": obj.idp_estado,"type": "int"},
           {"name": "p_orden","value": obj.orden,"type": "int"}
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= GET GESTION ======= ======= =======
+  getGestion(): Observable<any> {
+    const params = {
+      "procedure_name": "sp_gestion",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "C1","type": "string"},
+          {"name": "p_gestion_actual","value": null,"type": "int"},
+          {"name": "p_id_persona_reg","value": null,"type": "int"}
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= EDIT GESTION ======= ======= =======
+  editGestion(gesAct: string, idPerReg: number): Observable<any> {
+    const params = {
+      "procedure_name": "sp_gestion",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "M1","type": "string"},
+          {"name": "p_gestion_actual","value": gesAct,"type": "string"},
+          {"name": "p_id_persona_reg","value": idPerReg,"type": "int"}
         ]
       }
     };

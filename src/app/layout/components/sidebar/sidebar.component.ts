@@ -16,6 +16,7 @@ export class SidebarComponent implements OnInit {
     logoImg: any;
 
     @Input() currentProyName!: any;
+    @Input() currentPerProRol!: any;
 
     @Output() collapsedEvent = new EventEmitter<boolean>();
 
@@ -70,5 +71,14 @@ export class SidebarComponent implements OnInit {
 
     onLoggedout() {
         localStorage.clear();
+    }
+
+    getRolMenu(){
+        if( (this.currentPerProRol.includes("ADM"))||(this.currentPerProRol.includes("CON")) ){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

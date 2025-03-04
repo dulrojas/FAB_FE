@@ -606,28 +606,29 @@ export class InfProyectoComponent implements OnInit {
       };
       // ======= PENDIENTE =======
       if(this.proyectoScope.idp_estado_proy == 4){
-        if(this.currentPerProRol=='CON'){
+        if(this.currentPerProRol.includes('CON')){
           this.buttonValidations.editar = true;
           this.buttonValidations.activar = true;
-          this.buttonValidations.concluirCancelar = true;
+          this.buttonValidations.evaluacion = true;
           this.buttonValidations.aniadir = true;
           this.buttonValidations.eliminar = true;
         }
-        else if(this.currentPerProRol=='RES'){
+        else if(this.currentPerProRol.includes('RES')){
           this.buttonValidations.editar = true;
           this.buttonValidations.activar = true;
+          this.buttonValidations.evaluacion = true;
         }
       }
       // ======= ACTIVO =======
       else if(this.proyectoScope.idp_estado_proy == 1){
-        if(this.currentPerProRol=='ESC'){
+        if(this.currentPerProRol.includes('ESC')){
           this.buttonValidations.editar = true;
         }
-        else if(this.currentPerProRol=='RES'){
+        else if(this.currentPerProRol.includes('RES')){
           this.buttonValidations.editar = true;
           this.buttonValidations.evaluacion = true;
         }
-        else if(this.currentPerProRol=='CON'){
+        else if(this.currentPerProRol.includes('CON')){
           this.buttonValidations.editar = true;
           this.buttonValidations.evaluacion = true;
           this.buttonValidations.concluirCancelar = true;
@@ -637,19 +638,17 @@ export class InfProyectoComponent implements OnInit {
       }
       // ======= CONCLUIDO CANCELADO =======
       else if((this.proyectoScope.idp_estado_proy == 2)||(this.proyectoScope.idp_estado_proy == 3)){
-        if(this.currentPerProRol=='CON'){
+        if(this.currentPerProRol.includes('CON')){
           this.buttonValidations.aniadir = true;
           this.buttonValidations.eliminar = true;
         }
       }
       // ======= EVALUACION =======
       else if(this.proyectoScope.idp_estado_proy == 5){
-        if(this.currentPerProRol=='CON'){
+        if(this.currentPerProRol.includes('CON')){
           this.buttonValidations.editar = true;
           this.buttonValidations.activar = true;
-          this.buttonValidations.concluirCancelar = true;
           this.buttonValidations.aniadir = true;
-          this.buttonValidations.eliminar = true;
         }
       }
     }
@@ -752,8 +751,21 @@ export class InfProyectoComponent implements OnInit {
       return amount;
     }
     onPocentajeChange(){
-      if((this.financiadoresPorcentaje+this.financiadores.porcentaje) > 100){
-        this.financiadores.porcentaje = 0;
+      if( this.modalAction == 'add' ){
+        if((this.financiadoresPorcentaje+this.financiadores.porcentaje) > 100){
+          this.financiadores.porcentaje = 0;
+        }
+      }
+      if( this.modalAction == 'edit' ){
+        let sumPorcentaje = 0;
+        this.financiadores.forEach(elem => {
+          if(this.financiadores.id_proy_finan != elem.id_proy_finan){
+            sumPorcentaje += elem.porcentaje; 
+          }
+        });
+        if((sumPorcentaje+this.financiadores.porcentaje) > 100){
+          this.financiadores.porcentaje = 0;
+        }
       }
       this.financiadores.monto = (this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn))*(parseFloat(this.financiadores.porcentaje)/100);
       this.financiadores.monto = this.parseAmountFloatToStr(this.financiadores.monto);
@@ -1138,7 +1150,7 @@ export class InfProyectoComponent implements OnInit {
 
     }
     // ======= ======= ======= ======= =======
-    // ======= ======= INIT ADD FINANCIADORES ======= =======
+    // ======= ======= SUBMIT FINANCIADORES ======= =======
     presuAdicionalOnSubmit(){
       if( this.presupuestoActual.id_presupeusto == 0 ){
         this.addPresupuesto();

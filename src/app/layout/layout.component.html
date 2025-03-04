@@ -4,6 +4,7 @@
 -->
 <app-sidebar 
     [currentProyName]="currentProyName"
+    [currentPerProRol]="currentPerProRol"
     (collapsedEvent)="receiveCollapsed($event)">
 </app-sidebar>
 <section [ngClass]="{ collapsed: collapedSideBar }" class="main-container">
