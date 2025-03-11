@@ -36,18 +36,22 @@
                 <div class="col col-xl-12 col-lg-12 text-end">
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initAddLogros(logrosFormModal)"
-                        [disabled]="(logrosSelected)||(currentPerProRol=='LEC')||(currentPerProRol=='ADM')">
+                        [disabled]="(logrosSelected)||(currentPerProRol.includes('LEC'))">
                         <i class="fa fa-plus" aria-hidden="true"></i> Añadir
                     </button>
                     <button type="button" class="btn btn-view-bg-1" 
                         (click)="initEditLogros(logrosFormModal)"
-                        [disabled]="(!logrosSelected)||(currentPerProRol=='LEC')||(currentPerProRol=='ADM')">
+                        [disabled]="(!logrosSelected)||(currentPerProRol.includes('LEC'))">
                         <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                     </button>
                     <button type="button" class="btn btn-view-bg-1"
                         (click)="initDeleteLogros(deleteLogroModal)"
-                        [disabled]="(!logrosSelected)||(currentPerProRol=='LEC')||(currentPerProRol=='ADM')">
+                        [disabled]="(!logrosSelected)||(currentPerProRol.includes('LEC'))">
                         <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1"
+                        (click)="downloadExcel()">
+                        <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
                     </button>
                 </div>
             </div>
@@ -164,8 +168,10 @@
                                 <!-- ======= ======= IMAGE SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="accion">Imagen logro</label>
-                                    <img class="custom-img-selector" [src]="(ruta_imagen)||(defaultImageSrc)" alt="Imagen de logro" id="imagen" 
-                                        (click)="initSelectImage(selectImageModal)" (error)="onError($event)">
+                                    <img class="custom-img-selector" 
+                                        [src]="(ruta_imagen)||(defaultImageSrc)" alt="Imagen de logro" id="imagen" 
+                                        (click)="initSelectImage(selectImageModal)" 
+                                        (error)="onError($event)">
                                     <span class="custom-alert-message" *ngIf="!valImagen">Debe seleccionar una imagen.</span>
                                 </div>
                                 
@@ -173,7 +179,8 @@
                                 <div class="col col-xl-4 col-lg-4 mt-auto">
                                     <label for="id_persona_reg">Persona registro</label>
                                     <input class="form-control" type="text" 
-                                        id="id_persona_reg" name="id_persona_reg" [(ngModel)]="id_persona_reg" disabled/>
+                                        id="id_persona_reg" name="id_persona_reg" 
+                                        [(ngModel)]="id_persona_reg" disabled/>
                                 </div>
 
                                 <div class="col col-xl-8 col-lg-8 mt-auto"></div>

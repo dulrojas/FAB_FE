@@ -180,6 +180,37 @@ addElemento(elemento: any): Observable<any> {
   }
 
  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= GET ELEMENTS WITH METOELE BY PROY ======= ======= =======
+  getElementosMetoEleNivel3ByIdProy(idProy: number): Observable<any> {
+    const params = {
+      "procedure_name": "sp_proy_elementos",
+      "body": {
+        "params": [
+          { "name": "p_accion", "value": "C6", "type": "string" },
+          { "name": "p_id_proy_elemento", "value": null, "type": "int" },
+          { "name": "p_id_proyecto", "value": idProy, "type": "int" },
+          { "name": "p_id_meto_elemento", "value": null, "type": "int" },
+          { "name": "p_id_proy_elem_padre", "value": null, "type": "int" },
+          { "name": "p_codigo", "value": null, "type": "string" },
+          { "name": "p_elemento", "value": null, "type": "string" },
+          { "name": "p_descripcion", "value": null, "type": "string" },
+          { "name": "p_comentario", "value": null, "type": "string" },
+          { "name": "p_nivel", "value": null, "type": "int" },
+          { "name": "p_orden", "value": null, "type": "int" },
+          { "name": "p_idp_estado", "value": null, "type": "int" },
+          { "name": "p_peso", "value": null, "type": "int" }
+        ]
+      }
+    };
+
+    const ip = localStorage.getItem('ip') || '127.0.0.1';
+    const headers = new HttpHeaders({
+      'ip': ip
+    });
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+
+ // ======= ======= ======= ======= ======= ======= =======
   // ======= =======  DELETE ELEMENTO  ======= =======
   deleteElemento(id: any): Observable<any> {
     const params = {

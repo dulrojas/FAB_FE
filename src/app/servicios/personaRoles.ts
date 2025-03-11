@@ -87,7 +87,7 @@ export class servPersonaRoles {
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET PERSONA PROYECTOS ======= ======= =======
-  getPersonaRolesActPen(): Observable<any> {
+  getPersonaRolesActPenEva(): Observable<any> {
     const params = {
       "procedure_name": "sp_persona_proyecto",
       "body": {
@@ -111,7 +111,7 @@ export class servPersonaRoles {
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
-  // ======= ======= ======= ADD PERSONAS ======= ======= =======
+  // ======= ======= ======= ADD PERSONA ROL ======= ======= =======
   addPersonaRol(obj: any): Observable<any> {
     const params = {
       "procedure_name": "sp_persona_proyecto",
@@ -136,7 +136,7 @@ export class servPersonaRoles {
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
-  // ======= ======= ======= ADD PERSONAS ======= ======= =======
+  // ======= ======= ======= EDIT PERSONA ROL ======= ======= =======
   editPersonaRol(obj: any): Observable<any> {
     const params = {
       "procedure_name": "sp_persona_proyecto",
@@ -149,6 +149,31 @@ export class servPersonaRoles {
           {"name": "p_id_proyecto","value": obj.p_id_proyecto,"type": "int"},
           {"name": "p_rol","value": obj.p_rol,"type": "string"},
           {"name": "p_id_persona_reg","value": obj.p_id_persona_reg,"type": "int"}
+        ]
+      }
+    };
+
+    const ip = localStorage.getItem('ip') || '127.0.0.1';
+    const headers = new HttpHeaders({
+      'ip': ip
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= DELETE PERSONA ROL ======= ======= =======
+  deletePersonaRol(idPerPro: number, idPerReg: number): Observable<any> {
+    const params = {
+      "procedure_name": "sp_persona_proyecto",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "D1","type": "string"},
+          {"name": "p_id_persona_proyecto","value": idPerPro,"type": "int"},
+          {"name": "p_id_persona","value": null,"type": "int"},
+          {"name": "p_id_institucion","value": null,"type": "int"},
+          {"name": "p_id_proyecto","value": null,"type": "int"},
+          {"name": "p_rol","value": null,"type": "string"},
+          {"name": "p_id_persona_reg","value": idPerReg,"type": "int"}
         ]
       }
     };

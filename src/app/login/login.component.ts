@@ -90,7 +90,7 @@ export class LoginComponent implements OnInit {
     
                     if (userData.admi_sistema){
                         this.proyectos.forEach(proyecto => {
-                            proyecto.rol = "ADM";
+                            proyecto.rol = "ADM"+((proyecto.rol)?("-"+proyecto.rol):(""));
                         });
                     } 
                     else{

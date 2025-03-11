@@ -3,6 +3,7 @@ import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProyectoService } from '../../services/proyectoData.service';
+import { ExcelExportService } from '../../services/excelExport.service';
 import { servicios } from "../../servicios/servicios";
 import { servLogros } from "../../servicios/logros";
 import { ElementosService } from "../../servicios/elementos";
@@ -495,6 +496,18 @@ export class LogrosComponent implements OnInit {
           }
         );
       });
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= DOWNLOAD EXCEL ======= =======
+    downloadExcel() {
+      const columnas = ['logro', 'sigla'];
+      const today = new Date();
+      const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+      ExcelExportService.exportToExcel(
+        this.logros, 
+        'Reporte_Logros_'+formattedDate, 
+        columnas
+      );
     }
     // ======= ======= ======= ======= =======
 }
