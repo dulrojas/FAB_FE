@@ -210,7 +210,7 @@
                                                 <option *ngFor="let mun of beneficiariosUbicaMuni" [value]="mun.id_ubica_geo">
                                                     {{ mun.nombre }}
                                                 </option>
-                                            </select>
+                                            </select>                                            
                                         </div> 
                                         <!-- ======= ======= COMUNIDAD ======= ======= -->
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
@@ -230,40 +230,51 @@
                                             </textarea>                                        
                                         </div> 
                                     <!-- Quinta Fila: DOCUMENTO DE RESPALDO -->
-                                        <!-- ======= ======= DOCUMENTO DE RESPALDO ======= ======= 
+                                        <!-- ======= ======= DOCUMENTO DE RESPALDO ======= ======= -->  
                                         <div class="col col-xl-12 col-lg-12 mb-auto">
                                             <label for="ruta_documento">Documento de respaldo</label>
+                                            
+                                            <!-- Muestra el input de archivo solo en modo edición -->
                                             <input 
-                                                class="form-control" 
-                                                type="file" 
-                                                id="evidencia" 
-                                                name="evidencia" 
-                                                (change)="onFileChange($event)" 
-                                                accept=".pdf,.jpg,.jpeg,.png"
-                                                /> -->                                              
-                                                                                           
-                                                <!-- Mostrar archivo actual y opción de descarga 
-                                                <div *ngIf="editAvance.ruta_evidencia" class="mt-2">
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <i class="fas fa-file-alt"></i>
-                                                        <span>{{ getFileName(editAvance.ruta_evidencia) }}</span>
-                                                        <button 
-                                                        type="button" 
-                                                        class="btn btn-bg-2 mx-auto" 
-                                                        (click)="avancesDownload('ruta_evidencia')"
-                                                        title="Descargar evidencia">
-                                                        <i class="fa fa-floppy-o"></i> Descargar
-                                                        </button>
-                                                    </div>-->
-                                                    <!-- Mostrar archivo seleccionado 
-                                                    <div *ngIf="selectedFile" class="mt-2">
-                                                        <div class="alert alert-info d-flex align-items-center gap-2">
-                                                        <i class="fas fa-info-circle"></i>
-                                                        <span>Nuevo archivo seleccionado: {{ selectedFile.name }}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>                                                                                                                                                                         
-                                        </div>  -->
+                                              *ngIf="isEditingBeneficiario"
+                                              class="form-control" 
+                                              type="file" 
+                                              id="documentoBeneficiario" 
+                                              name="documentoBeneficiario" 
+                                              (change)="onFileChangeBeneficiario($event)" 
+                                              accept=".pdf,.jpg,.jpeg,.png" 
+                                            />
+                                            
+                                            <!-- Mensaje informativo cuando está en modo añadir -->
+                                            <div *ngIf="!isEditingBeneficiario" class="custom-no-data-container mt-2" style="background-color:#d67600; color: white; border-color:#ffffff; border-width: 1px;">
+                                              <i class="custom-no-data-message"></i>
+                                              <span> Para añadir un documento de respaldo o añadir lista de participantes, primero debe guardar el beneficiario.</span>
+                                            </div>
+                                            
+                                            <!-- Mostrar archivo actual y opción de descarga -->
+                                            <div *ngIf="ruta_documento && isEditingBeneficiario" class="mt-2">
+                                              <div class="d-flex align-items-center gap-2">
+                                                <i class="fas fa-file-alt"></i>
+                                                <span>{{ getFileNameBeneficiario(ruta_documento) }}</span>
+                                                <button 
+                                                  type="button" 
+                                                  class="btn btn-bg-2 mx-auto" 
+                                                  (click)="downloadDocumentoBeneficiario()" 
+                                                  title="Descargar documento"
+                                                >
+                                                  <i class="fa fa-floppy-o"></i> Descargar
+                                                </button>
+                                              </div>
+                                            </div>
+                                            
+                                            <!-- Mostrar archivo seleccionado -->
+                                            <div *ngIf="selectedFileBeneficiario" class="mt-2">
+                                              <div class="custom-no-data-container d-flex align-items-center gap-2" style="background-color: #d67600; color: white; border-color:#ffffff; border-width: 1px;">
+                                                <i class="fa fa-floppy-o"></i>
+                                                <span>Nuevo archivo seleccionado: {{ selectedFileBeneficiario.name }}</span>
+                                              </div>
+                                            </div>
+                                          </div>  
                                         <!-- Sexta Fila: MUJERES, HOMBRES, TOTAL, LISTA DE PARTICIPANTES--> 
                                             <!-- ======= ======= MUJERES ======= ======= --> 
                                             <div class="col col-xl-3 col-lg-3 mt-auto">
@@ -289,8 +300,8 @@
                                             <!-- ======= ======= LISTA DE PARTICIPANTES ======= ======= -->
                                             <div class="col col-xl-3 col-lg-3 mt-auto d-flex justify-content-center">
                                                 <button type="button" 
-                                                    (click)="openModalBeneficiarioLista(listaBeneficiariesModal)"
-                                                    [disabled]="!isEditingBeneficiario"
+                                                    (click)="openBeneficiariosLista(listaBeneficiariesModal)"
+                                                    [disabled]="!beneficiariosSelected"
                                                     style="background-color: #d67600; color: white; border: none;
                                                         border-radius: 15px; width: 100%; max-width: 200px; height: 35px;
                                                         padding: 10px 15px; font-size: 14px; font-weight: bold;
@@ -386,7 +397,7 @@
                                             <!-- ======= ======= IMPORTAR A EXCEL ======= ======= -->
                                             <button type="button" class="btn btn-bg-1" 
                                                 (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
-                                                [disabled]="(beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
                                                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar a excel
                                             </button>                                                                                        
                                         
@@ -408,7 +419,7 @@
                                             </tr>
                                         </thead>
                                         <!-- Cuerpo de la Tabla -->
-                                        <tbody>
+                                        <tbody>                                            
                                             <tr *ngFor="let beneficiarioLista of beneficiariosListaTable; let i = index">
                                                 <td>
                                                     <input
@@ -420,11 +431,11 @@
                                                 <td style="text-align: center;">{{ beneficiarioLista.id_proy_bene_lista }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.num_doc_identidad }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.nombre }}</td>
-                                                <td style="text-align: center;">{{ beneficiarioLista.es_hombre ? 'Hombre' : 'Mujer' }}</td>
-                                                <td style="text-align: center;">{{ beneficiarioLista.idp_organizacion_tipo }}</td>
-                                                <td style="text-align: center;">{{ beneficiarioLista.idp_organizacion_subtipo }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.genero }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.tipo_actor }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.institucion_comunidad }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.comunidad_no_registrada }}</td>                                                
-                                                <td style="text-align: center;">{{ beneficiarioLista.idp_rango_edad }}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.rango_edad }}</td>
                                             </tr>
                                         </tbody>
                                     </table>                                    
@@ -492,7 +503,7 @@
                                                     </button>
                                                 <!-- ======= ======= ELIMINAR ======= ======= -->
                                                     <button type="button" class="btn btn-bg-1" 
-                                                        (click)="initDeleteBeneficiarioLista(deleteBeneficiarioModal)"
+                                                        (click)="initDeleteBeneficiarioLista(deleteBeneficiarioListaModal)"
                                                         [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
                                                         <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                                                     </button>                                                                                          
@@ -515,7 +526,7 @@
         </div>
         <!-- Cuerpo del Modal -->
         <div class="modal-body">
-            <form #beneficiariosListaForm="ngForm" (ngSubmit)="onSubmitBeneficiarioLista(beneficiariosListaForm)">
+            <form #beneficiariosListaForm="ngForm" (ngSubmit)="onSubmitBeneficiariosLista(beneficiariosListaForm)">
                 <div class="row">
                     <div class="col col-xl-12 col-lg-12">
                         <div class="card mb-3">
@@ -546,8 +557,8 @@
                                             <select class="form-control" id="es_hombre" name="es_hombre"
                                                 [(ngModel)]="es_hombre">
                                                 <option value="" disabled selected>Seleccione el Sexo</option>
-                                                <option value="true">Masculino</option>
-                                                <option value="false">Femenino</option>
+                                                <option value="true">M</option>
+                                                <option value="false">F</option>
                                             </select>
                                         </div>                                                                                 
                                     <!-- Segunda Fila: TIPO DE ORGANIZACION, COMUNIDAD, OTRO  -->
@@ -600,7 +611,7 @@
                                                     <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                                 </button>
                                                 <button type="button" class="btn btn-bg-1"
-                                                [disabled]="beneficiariosListaForm.invalid" (click)="onSubmitBeneficiarioLista();">
+                                                [disabled]="beneficiariosListaForm.invalid" (click)="onSubmitBeneficiariosLista();">
                                                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
                                                 </button>
                                             </div>
@@ -613,6 +624,29 @@
             </form>
         </div>
     </ng-template>
+<!-- //////////////////////////////////////// MODAL PARA ELIMINAR UN PARTICIPANTE DE LA LISTA DE BENEFICIARIO  //////////////////////////////////////// -->
+    <ng-template #deleteBeneficiarioListaModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title">Eliminar Participante</h4>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-center" style="width: 100%">
+                <p>¿Está seguro de querer eliminar el Participante?</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="d-flex justify-content-center" style="width: 100%">
+                <!-- ======= Botones ======= -->
+                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                    <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+                </button>
+                <button type="button" class="btn btn-bg-1" (click)="deleteBeneficiarioLista()">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
          
 
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->

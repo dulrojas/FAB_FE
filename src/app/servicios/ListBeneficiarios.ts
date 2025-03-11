@@ -29,7 +29,7 @@ export class servListBenef{
                     {"name": "p_idp_organizacion_tipo","value": null,"type": "int"},
                     {"name": "p_idp_organizacion_subtipo","value": null,"type": "int"},
                     {"name": "p_id_ubica_geo_depto","value": null,"type": "int"},
-                    {"name": "p_id_ubica_geo_muni","value": null,"type": "int"}
+                    {"name": "p_id_ubica_geo_comu","value": null,"type": "int"}
                 ]
             }
         };
@@ -47,7 +47,7 @@ export class servListBenef{
             "procedure_name": "sp_proy_bene_lista",
             "body": {
                 "params": [
-                    {"name": "p_accion","value": "C2","type": "string"},
+                    {"name": "p_accion","value": "C3","type": "string"},
                     {"name": "p_id_proy_bene_lista","value": null,"type": "int"},
                     {"name": "p_id_proy_beneficiario","value":idProyBene,"type": "int"},
                     {"name": "p_comunidad_no_registrada","value": null,"type": "string"},
@@ -58,7 +58,7 @@ export class servListBenef{
                     {"name": "p_idp_organizacion_tipo","value": null,"type": "int"},
                     {"name": "p_idp_organizacion_subtipo","value": null,"type": "int"},
                     {"name": "p_id_ubica_geo_depto","value": null,"type": "int"},
-                    {"name": "p_id_ubica_geo_muni","value": null,"type": "int"}
+                    {"name": "p_id_ubica_geo_comu","value": null,"type": "int"}
                 ]
             }
         };
@@ -79,7 +79,7 @@ export class servListBenef{
               { "name": "p_accion", "value": "A1", "type": "string" },
               { "name": "p_id_proy_bene_lista", "value": null, "type": "int" },
               { "name": "p_id_proy_beneficiario", "value": obj.p_id_proy_beneficiario, "type": "int" },
-              { "name": "p_comunidad_no_registrada", "value": obj.p_comunidad, "type": "string" },
+              { "name": "p_comunidad_no_registrada", "value": obj.p_comunidad_no_registrada, "type": "string" },
               { "name": "p_num_doc_identidad", "value": obj.p_num_doc_identidad, "type": "string" },
               { "name": "p_nombre", "value": obj.p_nombre, "type": "string" },
               { "name": "p_idp_rango_edad", "value": obj.p_idp_rango_edad, "type": "int" },
@@ -87,7 +87,7 @@ export class servListBenef{
               { "name": "p_idp_organizacion_tipo", "value": obj.p_idp_organizacion_tipo, "type": "int" },
               { "name": "p_idp_organizacion_subtipo", "value": obj.p_idp_organizacion_subtipo, "type": "int" },
               { "name": "p_id_ubica_geo_depto", "value": obj.p_id_ubica_geo_depto, "type": "int" },
-              { "name": "p_id_ubica_geo_muni", "value": obj.p_id_ubica_geo_muni, "type": "int" }
+              { "name": "p_id_ubica_geo_comu", "value": obj.p_id_ubica_geo_comu, "type": "int" }
             ]
           }
         };
@@ -108,7 +108,7 @@ export class servListBenef{
                 { "name": "p_accion", "value": "M1", "type": "string" },
                 { "name": "p_id_proy_bene_lista", "value": obj.p_id_proy_bene_lista, "type": "int" },
                 { "name": "p_id_proy_beneficiario", "value": obj.p_id_proy_beneficiario, "type": "int" },
-                { "name": "p_comunidad_no_registrada", "value": obj.p_comunidad, "type": "string" },
+                { "name": "p_comunidad_no_registrada", "value": obj.p_comunidad_no_registrada, "type": "string" },
                 { "name": "p_num_doc_identidad", "value": obj.p_num_doc_identidad, "type": "string" },
                 { "name": "p_nombre", "value": obj.p_nombre, "type": "string" },
                 { "name": "p_idp_rango_edad", "value": obj.p_idp_rango_edad, "type": "int" },
@@ -116,7 +116,7 @@ export class servListBenef{
                 { "name": "p_idp_organizacion_tipo", "value": obj.p_idp_organizacion_tipo, "type": "int" },
                 { "name": "p_idp_organizacion_subtipo", "value": obj.p_idp_organizacion_subtipo, "type": "int" },
                 { "name": "p_id_ubica_geo_depto", "value": obj.p_id_ubica_geo_depto, "type": "int" },
-                { "name": "p_id_ubica_geo_muni", "value": obj.p_id_ubica_geo_muni, "type": "int" }
+                { "name": "p_id_ubica_geo_comu", "value": obj.p_id_ubica_geo_comu, "type": "int" }
               ]
             }
           };
@@ -145,7 +145,7 @@ export class servListBenef{
               { "name": "p_idp_organizacion_tipo", "value": null, "type": "int" },
               { "name": "p_idp_organizacion_subtipo", "value": null, "type": "int" },
               { "name": "p_id_ubica_geo_depto", "value": null, "type": "int" },
-              { "name": "p_id_ubica_geo_muni", "value": null, "type": "int" }
+              { "name": "p_id_ubica_geo_comu", "value": null, "type": "int" }
             ]
           }
         };
