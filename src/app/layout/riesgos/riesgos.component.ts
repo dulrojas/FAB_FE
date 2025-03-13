@@ -427,9 +427,11 @@ export class RiesgosComponent implements OnInit {
             p_id_persona_reg: parseInt(this.idPersonaReg,10)       
           };
           this.servRiesgos.addRiesgo(objRiesgo).subscribe(
-            (data) => {              
-              this.getRiesgos();
+            (data) => {            
               alert('Riesgo agregado exitosamente');
+              this.riesgosSelected = null;
+              this.closeModal();
+              this.getRiesgos();
             },
             (error) => {              
               console.error(error);
@@ -494,10 +496,11 @@ export class RiesgosComponent implements OnInit {
           p_id_persona_reg: this.id_persona_reg         
         }
         this.servRiesgos.editRiesgo(objRiesgo).subscribe(
-          (data) => {            
-            this.getRiesgos();
+          (data) => {  
+            alert('Riesgo editado exitosamente');   
             this.riesgosSelected = null;
-            alert('Riesgo editado exitosamente');
+            this.closeModal();       
+            this.getRiesgos();           
           },
           (error) => {            
             console.error(error);
@@ -516,11 +519,11 @@ export class RiesgosComponent implements OnInit {
   // ======= ======= DELETE RIESGO ======= =======
       deleteRiesgos(){
         this.servRiesgos.deleteRiesgo(this.riesgosSelected.id_riesgo).subscribe(
-          (data) => {            
-            this.closeModal();
-            this.getRiesgos();
+          (data) => {           
             alert('Riesgo eliminado exitosamente');
             this.riesgosSelected = null;
+            this.closeModal();
+            this.getRiesgos();
           },
           (error) => {            
             console.error(error);

@@ -259,7 +259,7 @@
                         <label for="idp_identificacion">Identificación del Riesgo</label>
                           <select class="form-control" id="idp_identificacion" name="idp_identificacion" 
                             [(ngModel)]="idp_identificacion" (change)="ValidateIdentificacion()" >
-                            <option value="" disabled selected>Seleccione una Identificacion del Riesgo</option>
+                            <option value="" disabled selected>Seleccione una Identificación del Riesgo</option>
                             <option *ngFor="let identificacion of riegosIdentificacion" [value]="identificacion.id_subtipo">
                               {{ identificacion.descripcion_subtipo }}
                             </option>

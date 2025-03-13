@@ -29,7 +29,7 @@ export class PlanifEstrategicaComponent implements OnInit {
 
   // ======= ======= VARIABLES PAGINACION ======= =======
   mainPage = 1;
-  mainPageSize = 10;
+  mainPageSize = 50;
   totalLength = 0;
   elementosTabla: any;
   combinedData: any[] = [];
