@@ -145,7 +145,7 @@ export class BeneficiariosComponent implements OnInit {
       evento_detalle: any = '';
       id_ubica_geo_depto: any = '';
       id_ubica_geo_muni: any = '';
-      comunidad: any = '';
+      id_ubica_geo_comu: any = '';
       id_proy_actividad: any = '';
       idp_tipo_evento: any = '';
       ruta_documento: any = '';
@@ -369,7 +369,7 @@ export class BeneficiariosComponent implements OnInit {
         this.evento_detalle = null;
         this.id_ubica_geo_depto = '';
         this.id_ubica_geo_muni = '';
-        this.comunidad = '';
+        this.id_ubica_geo_comu = '';
         this.id_proy_actividad = null; 
         this.idp_tipo_evento = '';
         this.ruta_documento = null;
@@ -429,7 +429,7 @@ export class BeneficiariosComponent implements OnInit {
           p_evento_detalle: this.evento_detalle,
           p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
           p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
-          p_comunidad: this.comunidad,
+          p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
           p_id_proy_actividad: this.id_proy_actividad || null,
           p_idp_tipo_evento: this.idp_tipo_evento,
           p_ruta_documento: null,
@@ -466,7 +466,7 @@ export class BeneficiariosComponent implements OnInit {
         this.evento_detalle = this.beneficiariosSelected.evento_detalle;
         this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
         this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;
-        this.comunidad = this.beneficiariosSelected.comunidad;
+        this.id_ubica_geo_comu = this.beneficiariosSelected.id_ubica_geo_comu;
         this.id_proy_actividad = this.beneficiariosSelected.id_proy_actividad;
         this.idp_tipo_evento = this.beneficiariosSelected.idp_tipo_evento;
         this.ruta_documento = this.beneficiariosSelected.ruta_documento;
@@ -496,7 +496,7 @@ export class BeneficiariosComponent implements OnInit {
           p_evento_detalle: this.evento_detalle,
           p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
           p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
-          p_comunidad: this.comunidad,
+          p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
           p_id_proy_actividad: this.id_proy_actividad || null,
           p_idp_tipo_evento: this.idp_tipo_evento,
           p_ruta_documento: this.ruta_documento || null, 
@@ -591,35 +591,47 @@ export class BeneficiariosComponent implements OnInit {
         //id_proy_beneficiario: any = '';
         comunidad_no_registrada: any = '';
         num_doc_identidad: any = '';
-        nombre: any = '';
-        idp_rango_edad: any = '';
+        nombre: any = '';        
         es_hombre: any = '';
         idp_organizacion_tipo: any = '';
         idp_organizacion_subtipo: any = '';
         //id_ubica_geo_depto: any = '';
-        id_ubica_geo_comu: any = '';
+        //id_ubica_geo_muni: any = '';
+        //id_ubica_geo_comu: any = '';
+        idp_rango_edad: any = '';
 
         tipo_actor: any = '';
         institucion_comunidad: any = '';
         rango_edad: any = '';
     // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL BENEFICIARIOS LISTA ======= =======
-        beneficiariosListaRangoEdad: any[] = [];
+        
         beneficiariosListaOrganizacionTipo: any[] = [];
+        beneficiariosListaOrganizacionSubTipo: any[] = [];
+        beneficiariosListaRangoEdad: any[] = [];
     // ======= ======= GET PARAMETRICAS BENEFICIARIOS LISTA ======= =======
-        getParametricasBeneficiariosLista():void{
-          // ======= GET RANGO EDAD =======
-          this.servicios.getParametricaByIdTipo(20).subscribe(
+        getParametricasBeneficiariosLista():void{          
+          // ======= GET ORGANIZACION TIPO =======
+          this.servicios.getParametricaByIdTipo(18).subscribe(
             (data) => {
-              this.beneficiariosListaRangoEdad = data[0].dato;
+              this.beneficiariosListaOrganizacionTipo = data[0].dato;
             },
             (error) => {
               console.error(error);
             }
           );
-          // ======= GET ORGANIZACION TIPO =======
-          this.servicios.getParametricaByIdTipo(18).subscribe(
+          // ======= GET ORGANIZACION SUBTIPO =======
+          this.servicios.getParametricaByIdTipo(26).subscribe(
             (data) => {
-              this.beneficiariosListaOrganizacionTipo = data[0].dato;
+              this.beneficiariosListaOrganizacionSubTipo = data[0].dato;
+            },
+            (error) => {
+              console.error(error);
+            }
+          );
+          // ======= GET RANGO EDAD =======
+          this.servicios.getParametricaByIdTipo(20).subscribe(
+            (data) => {
+              this.beneficiariosListaRangoEdad = data[0].dato;
             },
             (error) => {
               console.error(error);
@@ -717,6 +729,7 @@ export class BeneficiariosComponent implements OnInit {
           this.idp_organizacion_tipo = '';
           this.idp_organizacion_subtipo = '';
           this.id_ubica_geo_depto = null;
+          this.id_ubica_geo_muni  = null;
           this.id_ubica_geo_comu = null;
 
           this.tipo_actor = '';
@@ -780,6 +793,7 @@ export class BeneficiariosComponent implements OnInit {
             p_idp_organizacion_tipo: this.idp_organizacion_tipo || null,
             p_idp_organizacion_subtipo: this.idp_organizacion_subtipo || null,
             p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
+            p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
             p_id_ubica_geo_comu: this.id_ubica_geo_comu || null
           };
           this.servListBenef.addListBene(objBeneficiarioLista).subscribe(
@@ -815,6 +829,7 @@ export class BeneficiariosComponent implements OnInit {
           this.idp_organizacion_tipo = this.beneficiariosListaSelected.idp_organizacion_tipo ;
           this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo ;
           this.id_ubica_geo_depto = this.beneficiariosListaSelected.id_ubica_geo_depto;
+          this.id_ubica_geo_muni = this.beneficiariosListaSelected.id_ubica_geo_muni;
           this.id_ubica_geo_comu = this.beneficiariosListaSelected.id_ubica_geo_comu ;
 
           this.openModalBeneficiarioLista(modalScope);
@@ -832,6 +847,7 @@ export class BeneficiariosComponent implements OnInit {
             p_idp_organizacion_tipo: this.idp_organizacion_tipo || null,
             p_idp_organizacion_subtipo: this.idp_organizacion_subtipo || null,
             p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
+            p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
             p_id_ubica_geo_comu: this.id_ubica_geo_comu || null
           };          
           this.servListBenef.editListBene(objBeneficiarioLista).subscribe(
@@ -1060,6 +1076,8 @@ export class BeneficiariosComponent implements OnInit {
           this.servAliados.addAliado(objAliado).subscribe(
             (data) => {
               alert('Aliado agregado exitosamente');
+              this.aliadosSelected = null;
+              this.closeModalAliado(); 
               this.getAliados();              
             },
             (error) => {
@@ -1102,6 +1120,8 @@ export class BeneficiariosComponent implements OnInit {
         this.servAliados.editAliado(objAliado).subscribe(
           (data) => {
             alert('Aliado editado exitosamente');
+            this.aliadosSelected = null;
+            this.closeModalAliado(); 
             this.getAliados();
           },
           (error) => {
@@ -1123,8 +1143,8 @@ export class BeneficiariosComponent implements OnInit {
         this.servAliados.deleteAliado(this.aliadosSelected.id_proy_aliado).subscribe(
           (data) => {
             alert('Aliado eliminado exitosamente');
-            this.closeModalAliado();
             this.aliadosSelected = null;
+            this.closeModalAliado();            
             this.getAliados();
           },
           (error) => {
