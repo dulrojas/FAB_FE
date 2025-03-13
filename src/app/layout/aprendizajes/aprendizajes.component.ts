@@ -444,7 +444,7 @@ export class AprendizajesComponent implements OnInit {
   // ======= ======= INIT DELETE PERSONA ROLES ======= =======
   deleteAprendizajes(){
 
-    this.servApredizaje.deleteAprendizaje(this.id_proy_aprende).subscribe(
+    this.servApredizaje.deleteAprendizaje(this.id_proy_aprende, this.idPersonaReg).subscribe(
       (data) => {
         this.aprendizajesSelected = null;
         this.closeModal();

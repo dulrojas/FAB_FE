@@ -183,7 +183,7 @@ export class servAprendizaje{
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= DELETE APRENDIZAJE ======= ======= =======
-  deleteAprendizaje(idAprende: any): Observable<any> {
+  deleteAprendizaje(idAprende: any, idPersonaReg: number): Observable<any> {
     const params = {
       "procedure_name": "sp_aprendizaje",
       "body": {
@@ -198,7 +198,7 @@ export class servAprendizaje{
           {"name": "p_respuestas_1", "value": null, "type": "string"},
           {"name": "p_id_preguntas_2", "value": null, "type": "int"},
           {"name": "p_respuestas_2", "value": null, "type": "string"},
-          {"name": "p_id_persona_reg", "value": null, "type": "int"},
+          {"name": "p_id_persona_reg", "value": idPersonaReg, "type": "int"},
           {"name": "p_id_proy_elemento", "value": null, "type": "int"},
           {"name": "p_idp_aprendizaje_area", "value": null, "type": "int"},
           {"name": "p_idp_aprendizaje_tipo", "value": null, "type": "int"},

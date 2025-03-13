@@ -3,6 +3,7 @@ import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProyectoService } from '../../services/proyectoData.service';
+import { PdfExportService } from '../../services/pdfExport.service';
 import { servicios } from "../../servicios/servicios";
 import { servProyectos } from "../../servicios/proyectos";
 import { servInstituciones } from "../../servicios/instituciones";
@@ -602,7 +603,8 @@ export class InfProyectoComponent implements OnInit {
         "evaluacion": false,
         "concluirCancelar": false,
         "aniadir": false,
-        "eliminar": false
+        "eliminar": false,
+        "reporte": true
       };
       // ======= PENDIENTE =======
       if(this.proyectoScope.idp_estado_proy == 4){
@@ -651,6 +653,11 @@ export class InfProyectoComponent implements OnInit {
           this.buttonValidations.aniadir = true;
         }
       }
+    }
+    // ======= ======= ======= ======= =======
+    // ======= ======= REPORTE FUNCTION ======= =======
+    generatePdf(){
+      PdfExportService.generateCustomPdf(this.proyectoScope);
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OBJETIVOS FUNCTIONS ======= =======
@@ -1252,7 +1259,7 @@ export class InfProyectoComponent implements OnInit {
     initUbicaGeo(modalScope: TemplateRef<any>){
 
       this.modalAction = "add";
-      this.modalTitle = "Ubicaciones geograficas";
+      this.modalTitle = "Ubicaciones geográficas";
 
       this.openModal(modalScope);
     }

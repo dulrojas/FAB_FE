@@ -15,7 +15,7 @@
                     {{headerDataNro02}} Comunidades
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro03}} Dias para conclucir
+                    {{headerDataNro03}} Dias para concluir
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
                     {{headerDataNro04}}% Porcentaje ejecutado
@@ -163,45 +163,59 @@
                         <h2 class="custom-info-proy-title">Estado de proyecto:</h2>
                         <h2 class="custom-estado-proy">{{ proyectoScope.estado_proy }}</h2>
 
-                        <!-- ======= ======= ======= GRABAR DATE ======= ======= ======= -->
+                        <!-- ======= ======= ======= GRABAR ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-1" 
-                            [disabled]="!buttonValidations.grabarCancelar" (click)="editInfProyecto()">
+                            [disabled]="!buttonValidations.grabarCancelar" 
+                            (click)="editInfProyecto()">
                             <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
                         </button>
-                        <!-- ======= ======= ======= CANCELAR DATE ======= ======= ======= -->
+                        <!-- ======= ======= ======= CANCELAR ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-3" 
-                            [disabled]="!buttonValidations.grabarCancelar" (click)="disableEditMode()">
+                            [disabled]="!buttonValidations.grabarCancelar" 
+                            (click)="disableEditMode()">
                             <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                         </button>
-                        <!-- ======= ======= ======= EDITAR DATE ======= ======= ======= -->
+                        <!-- ======= ======= ======= EDITAR ======= ======= ======= -->
                         <button type="button" class="btn btn-bg-1" 
-                            [disabled]="!buttonValidations.editar" (click)="enableEditMode()">
+                            [disabled]="!buttonValidations.editar" 
+                            (click)="enableEditMode()">
                             Editar
                         </button>
-                        <!-- ======= ======= ======= REPORTE DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="openModal(activarProyectoModal)"
+                        <!-- ======= ======= ======= REPORTE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="openModal(activarProyectoModal)"
                             [disabled]="(!buttonValidations.activar)||(buttonValidations.editMode)">
                             Activar
                         </button>
-                        <!-- ======= ======= ======= EVALUACION DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="openModal(evaluarProyectoModal)"
+                        <!-- ======= ======= ======= EVALUACION ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="openModal(evaluarProyectoModal)"
                             [disabled]="(!buttonValidations.evaluacion)||(buttonValidations.editMode)">
                             Evaluación
                         </button>
-                        <!-- ======= ======= ======= CONCLUIR CANCELAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="openModal(concluirCancelarProyectoModal)"
+                        <!-- ======= ======= ======= CONCLUIR CANCELAR ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="openModal(concluirCancelarProyectoModal)"
                             [disabled]="(!buttonValidations.concluirCancelar)||(buttonValidations.editMode)">
                             Concluir/Cancelar
                         </button>
-                        <!-- ======= ======= ======= ANADIR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="initAddProyecto(addProyectoModal)"
+                        <!-- ======= ======= ======= ANADIR ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="initAddProyecto(addProyectoModal)"
                             [disabled]="(!buttonValidations.aniadir)||(buttonValidations.editMode)">
                             Añadir
                         </button>
-                        <!-- ======= ======= ======= ELIMINAR DATE ======= ======= ======= -->
-                        <button type="button" class="btn btn-bg-2" (click)="initDeleteProyecto(deleteProyectoModal)"
+                        <!-- ======= ======= ======= ELIMINAR ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="initDeleteProyecto(deleteProyectoModal)"
                             [disabled]="(!buttonValidations.eliminar)||(buttonValidations.editMode)">
                             Eliminar
+                        </button>
+                        <!-- ======= ======= ======= REPORTE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="generatePdf()"
+                            [disabled]="(!buttonValidations.reporte)||(buttonValidations.editMode)">
+                            Descargar Reporte
                         </button>
                     </div>
                 </div>
