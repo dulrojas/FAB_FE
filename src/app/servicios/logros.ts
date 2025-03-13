@@ -96,7 +96,7 @@ export class servLogros{
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= DELTE LOGRO ======= ======= =======
-  deleteLogro(idLogro: any): Observable<any> {
+  deleteLogro(idLogro: any, idPersonaReg: number): Observable<any> {
     const params = {
       "procedure_name": "sp_logro",
       "body": {
@@ -108,7 +108,7 @@ export class servLogros{
           { "name": "p_descripcion", "value": null, "type": "string" },
           { "name": "p_rut_imagen", "value": null, "type": "string" },
           { "name": "p_fecha_hora", "value": null, "type": "string" },
-          { "name": "p_id_persona_reg", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": idPersonaReg, "type": "int" },
           { "name": "p_id_proy_elemento", "value": null, "type": "int" },
           { "name": "p_fecha_logro", "value": null, "type": "string" }
         ]

@@ -844,16 +844,14 @@ export class ActividadComponent implements OnInit {
 
     this.resultado = this.actividadSelected.resultado;
 
-    this.actividadAvances = this.actividadSelected.avances;
+    this.actividadAvances = (this.actividadSelected.avances)?(this.actividadSelected.avances):([]);
 
-      this.actividadAvanceAvances = 0;
-      this.actividadAvanceMonto = 0;
-      this.actividadAvances.forEach((actAvance) => {
-        this.actividadAvanceAvances += parseFloat(actAvance.avance);
-        this.actividadAvanceMonto += this.parseAmountStrToFloat(actAvance.monto_ejecutado);
-      });
-
-    this.actividadAvanceMonto = (this.actividadAvanceMonto);
+    this.actividadAvanceAvances = 0;
+    this.actividadAvanceMonto = 0;
+    this.actividadAvances.forEach((actAvance) => {
+      this.actividadAvanceAvances += parseFloat(actAvance.avance);
+      this.actividadAvanceMonto += this.parseAmountStrToFloat(actAvance.monto_ejecutado);
+    });
 
     this.openModal(modalScope);
   }

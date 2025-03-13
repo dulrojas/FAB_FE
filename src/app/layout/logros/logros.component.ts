@@ -277,17 +277,18 @@ export class LogrosComponent implements OnInit {
     // ======= ======= COUNT HEADER DATA FUCTION ======= =======
     countHeaderData(){
       this.headerDataNro01 = this.logros.length;
-      this.logros.forEach(logro =>{
-        if(logro.admi_sistema){
-          this.headerDataNro02 += 1
-        }
-        if(logro.proyectoRol == "CON"){
-          this.headerDataNro03 += 1
-        }
-        if(logro.proyectoRol == "RES"){
-          this.headerDataNro04 += 1
-        }
-      });
+
+      const currentYear = new Date().getFullYear();
+      const currentMonth = new Date().getMonth() + 1;
+
+      this.headerDataNro02 = (
+        this.logros.filter(item => new Date(item.fecha_logro).getFullYear() == currentYear)
+      ).length;
+
+      this.headerDataNro03 = (this.logros.filter(item => {
+        const fecha = new Date(item.fecha_logro);
+        return ((fecha.getFullYear() == currentYear)&&((fecha.getMonth() + 1) == currentMonth));
+      })).length;
     }
     // ======= ======= ======= ======= =======
     // ======= ======= GET LOGROS ======= =======
@@ -420,7 +421,7 @@ export class LogrosComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= DELETE LOGRO ======= =======
     deleteLogros(){
-      this.servLogros.deleteLogro(this.id_proy_logro).subscribe(
+      this.servLogros.deleteLogro(this.id_proy_logro, this.idPersonaReg).subscribe(
         (data) => {
           this.logrosSelected = null;
           this.getLogros();
@@ -500,7 +501,7 @@ export class LogrosComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= DOWNLOAD EXCEL ======= =======
     downloadExcel() {
-      const columnas = ['logro', 'sigla'];
+      const columnas = ['id_proy_logro', 'logro', 'descripcion', 'sigla', 'fecha_logro'];
       const today = new Date();
       const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
       ExcelExportService.exportToExcel(

@@ -426,7 +426,8 @@
                                     <label for="actividadText">Actividad</label>
                                     <input class="form-control" type="text" 
                                         id="actividadText" name="actividadText" 
-                                        [(ngModel)]="actividadText" [disabled]="modalAction == 'edit'"
+                                        [(ngModel)]="actividadText" 
+                                        [disabled]="actividadAvances.length > 0"
                                         (change)="validateActividadText()"
                                         placeholder="Ingrese un titulo para la actividad">
                                 <span class="custom-alert-message" *ngIf="!valActividadText">
@@ -448,7 +449,7 @@
                                         name="id_proy_elemento_padre" 
                                         (change)="onPadreChanged()"
                                         [(ngModel)]="id_proy_elemento_padre" 
-                                        [disabled]="modalAction == 'edit'">
+                                        [disabled]="actividadAvances.length > 0">
                                         <option value="" disabled>Seleccionar padre</option>
                                         <option *ngFor="let elemento of elementos" 
                                                 [value]="elemento.id_proy_elemento">
@@ -472,7 +473,8 @@
                                     <label for="descripcion">Descripción</label>
                                     <textarea class="form-control" 
                                         id="descripcion" name="descripcion" 
-                                        [(ngModel)]="descripcion" [disabled]="modalAction == 'edit'"
+                                        [(ngModel)]="descripcion" 
+                                        [disabled]="actividadAvances.length > 0"
                                         (change)="validateDescripcion()"
                                         placeholder="Ingrese una descipción de la actividad">
                                     </textarea>
@@ -491,7 +493,8 @@
                                     <label for="fecha_inicio">Inicio</label>
                                     <input class="form-control" type="date" 
                                         id="fecha_inicio" name="fecha_inicio" 
-                                        [(ngModel)]="fecha_inicio" [disabled]="modalAction == 'edit'"
+                                        [(ngModel)]="fecha_inicio" 
+                                        [disabled]="actividadAvances.length > 0"
                                         (change)="validateFechaInicio()">
                                     <span class="custom-alert-message" *ngIf="!valFechaInicio">
                                         Debe ingresar una fecha valida dentro de la gestion actual.
@@ -502,7 +505,8 @@
                                     <label for="fecha_fin">Fin</label>
                                     <input class="form-control" type="date" 
                                         id="fecha_fin" name="fecha_fin" 
-                                        [(ngModel)]="fecha_fin" [disabled]="modalAction == 'edit'"
+                                        [(ngModel)]="fecha_fin" 
+                                        [disabled]="actividadAvances.length > 0"
                                         (change)="validateFechaFin()">
                                     <span class="custom-alert-message" *ngIf="!valFechaFin">
                                         Debe ingresar una fecha valida dentro de la gestion actual.
@@ -516,7 +520,8 @@
                                     <label for="presupuesto">Presupuesto</label>
                                     <input class="form-control" type="text" 
                                         id="presupuesto" name="presupuesto" 
-                                        [(ngModel)]="presupuesto" [disabled]="modalAction == 'edit'"
+                                        [(ngModel)]="presupuesto" 
+                                        [disabled]="actividadAvances.length > 0"
                                         (change)="onChangedPresupuesto()"
                                         placeholder="Ingrese el presupuesto de la actividad">
                                     <span class="custom-alert-message" *ngIf="!valPresupuesto">
@@ -547,7 +552,7 @@
                                                 [disabled]="(modalAction == 'add')||(gestion < initGestion)"
                                                 (change)="validateActAvaAvance()">
                                             <span class="custom-alert-message" *ngIf="!valActAvaAvance">
-                                                Debe ingresar un monto valido.
+                                                Debe ingresar un monto válido.
                                             </span>
                                             <span class="custom-alert-message" *ngIf="!valActAvaAvance2">
                                                 El valor ingresado sobrepasa el porcentaje.
@@ -563,7 +568,7 @@
                                                 [disabled]="(modalAction == 'add')||(gestion < initGestion)"
                                                 (change)="onChangedAvanceNuevoEjecutado()">
                                             <span class="custom-alert-message" *ngIf="!valActAvaMonto">
-                                                Debe ingresar un monto valido.
+                                                Debe ingresar un monto válido.
                                             </span>
                                             <span class="custom-alert-message" *ngIf="!valActAvaMonto2">
                                                 El valor ingresado sobrepasa el presupuesto.
@@ -581,7 +586,7 @@
                                     <div class="row">
                                         <div class="col col-md-12 col-lg-12">
                                             <span class="text-green-700 relative z-10 pl-2 mt-4">
-                                                Ejecucion Presupuestaria
+                                                Ejecución Presupuestaria
                                             </span>
                                         </div>
                                         <!-- ======= ADD AVANCE SECTION ======= -->
@@ -618,7 +623,7 @@
                                         [disabled]="modalAction == 'add'">
                                     </textarea>
                                     <span class="custom-alert-message" *ngIf="!valResultado">
-                                        Debe ingresar un factor valido.
+                                        Debe ingresar un factor válido.
                                     </span>
                                 </div>
                             </div>

@@ -15,7 +15,7 @@
         <div class="card-body custom-card table-responsive">
             <div class="row">
                 <div class="col col-md-12">
-                    <h2 class="custom-view-title">Gestion del Sistema</h2>
+                    <h2 class="custom-view-title">Gestión del Sistema</h2>
                 </div>
             </div>
             <div class="row">
@@ -24,7 +24,7 @@
                 </div>
                 <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
                 <div class="col col-xl-4 col-lg-4 mt-auto">
-                    <label for="gestionActual">Gestion Actual</label>
+                    <span class="custom-gestion-title">Gestión Actual</span>
                     <select class="form-control" id="gestionActual" name="gestionActual" 
                         [(ngModel)]="gestionActual">
                         <option value="" disabled selected>Selecciona una gestion</option>
@@ -65,13 +65,13 @@
 <!-- ======= ======= ======= CHANGE GESTION MODAL ======= ======= ======= -->
 <ng-template #changeGestionModal let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Cambio de Gestion</h4>
+        <h4 class="modal-title">Cambio de Gestión</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
-        <div class="d-flex justify-content-center" style="width: 100%;">
-            <p>Esta seguro de querer cambiar la gestion vigente del sistema?</p>
-            <p>Esta accion afectara a todos los proyectos.</p>
+        <div class="d-flex flex-column align-items-center" style="width: 100%;">
+            <p>¿Está seguro de querer cambiar la gestión vigente del sistema?</p>
+            <p>Esta acción afectará a todos los proyectos.</p>
         </div>
     </div>
     <div class="modal-footer">
