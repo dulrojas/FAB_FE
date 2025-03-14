@@ -638,6 +638,7 @@ export class BeneficiariosComponent implements OnInit {
             }
           );
         }
+
         canOpenBeneficiarioListaModal(): boolean {
           // Permitir abrir cuando hay un beneficiario seleccionado, sin importar si está en modo edición
           return this.beneficiariosSelected !== null;
