@@ -47,7 +47,7 @@
                             class="btn-añadirElemento"
                             style="background-color: #d45b49"
                             (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 1)"                           
-                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol=='LEC')"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
                         >
                             Objetivo General / Impact
                         </button>
@@ -56,7 +56,7 @@
                             class="btn-añadirElemento"
                             style="background-color: #f58634"
                             (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 2)"
-                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol=='LEC')"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
                         >
                             Objetivo Específico / Outcome
                         </button>
@@ -65,7 +65,7 @@
                             class="btn-añadirElemento"
                             style="background-color: #f7b529"
                             (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 3)"
-                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol=='LEC')"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
                         >
                             Resultado / Output
                         </button>
@@ -74,7 +74,7 @@
                             class="btn-añadirElemento"
                             style="background-color: #fbd468"
                             (click)="initAddPlanifEstrategica(planifEstrategicaIN, 4)"
-                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol=='LEC')"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
                         >
                             Indicador
                         </button>
@@ -87,7 +87,7 @@
                         <!-- Botón: Editar elemento seleccionado -->
                         <button
                             class="btn-Editdelete"
-                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol=='LEC')"                            
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"                            
                             (click)="editPlanifEstrategica(planifEstrategicaOGOERE, planifEstrategicaIN)"                            
                         >
                             Editar
@@ -95,7 +95,7 @@
                         <!-- Botón: Eliminar elemento seleccionado -->
                         <button
                             class="btn-Editdelete"
-                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol=='LEC')"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
                             (click)="initDeletePlanifEstrategica(deleteIndicadorModal)"
                         >
                             Eliminar
@@ -103,7 +103,7 @@
                         <!-- Botón: Mover elemento hacia arriba -->
                         <button
                             class="btn-SubirBajar"
-                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol=='LEC')"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
                             (click)="moverElemento(planifEstrategicaSelected, 'arriba')"
                         >
                             ↑
@@ -111,7 +111,7 @@
                         <!-- Botón: Mover elemento hacia abajo -->
                         <button
                             class="btn-SubirBajar"
-                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol=='LEC')"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
                             (click)="moverElemento(planifEstrategicaSelected, 'abajo')"
                         >
                             ↓
@@ -176,7 +176,7 @@
                     </tr>
                 </tbody>
             </table>            
-            <div class="d-flex justify-content-center">
+            <!--<div class="d-flex justify-content-center">
                 <ngb-pagination
                     [(page)]="mainPage"
                     [pageSize]="mainPageSize"
@@ -186,7 +186,7 @@
                     [boundaryLinks]="true"
                 >
                 </ngb-pagination>
-            </div>
+            </div>-->
         </div>
     </div>
 </div>
@@ -290,24 +290,24 @@
                                         name="comentario"
                                         placeholder="Ingresa un comentario"
                                         [(ngModel)]="comentario"
-                                        required
+                                        
                                     />
                                  
+                                </div>
+                                <!-- Botones -->
+                                <div class="modal-footer mt-2">
+                                    <button type="button" class="btn btn-bg-3" (click)="modal.close('Cancelar')">
+                                        <i class="fa fa-times"></i> Cancelar
+                                    </button>
+                                    <button type="submit" class="btn btn-bg-1" [disabled]="planifEstrategicaForm.invalid">
+                                        <i class="fa fa-floppy-o"></i> Grabar
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Botones -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-bg-3" (click)="modal.close('Cancelar')">
-                    <i class="fa fa-times"></i> Cancelar
-                </button>
-                <button type="submit" class="btn btn-bg-1" [disabled]="planifEstrategicaForm.invalid">
-                    <i class="fa fa-floppy-o"></i> Grabar
-                </button>
-            </div>
+            </div> 
         </form>
     </div>
 </ng-template>
@@ -423,7 +423,6 @@
                                         [(ngModel)]="indicador"
                                         (change)="ValidateIndicador()"
                                     />
-                                
                                 </div>
 
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -638,8 +637,6 @@
                     maxlength="255"
                 ></textarea>
             </div>
-         
-           
                 <div
                     class="d-flex justify-content-center"
                     style="width: 100%; flex-direction: row; align-items: center; margin-top:20px"

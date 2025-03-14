@@ -528,21 +528,36 @@ export class PlanifEstrategicaComponent implements OnInit {
     // ======= ======= GENERAR CÓDIGO ======= ======= 
     // Método para obtener el último código de "OG" y generar el siguiente código.
     generateCodigoOG(): string {
-      // Obtener los elementos con id_proy_elem_padre === 1 (OG).
-      const ogElements = this.combinedData.filter(el => el.id_proy_elem_padre === 1);
-  
+      // Verificar si hay elementos en combinedData
+      if (this.combinedData.length === 0) {
+        return "1.0.0.0"; // Si no hay elementos, empezar desde 1.0.0.0
+      }
+    
+      // Obtener los elementos de tipo OG (Objetivo General)
+      const ogElements = this.combinedData.filter(el => 
+        el.id_meto_elemento === 1 || 
+        (el.sigla && el.sigla === 'OG')
+      );
+    
+      // Si no hay elementos OG, devolver 1.0.0.0
+      if (ogElements.length === 0) {
+        return "1.0.0.0";
+      }
+    
       // Buscar el código más alto de los OG.
       const lastOG = ogElements.reduce((max, el) => {
+        if (!el.codigo) return max;
+        
         const currentCode = el.codigo.split('.').map(Number);
         if (currentCode[0] > max[0]) {
           return currentCode;
         }
         return max;
-      }, [1, 0, 0, 0]); // Asegurarse de que tenga al menos 4 niveles
-  
+      }, [0, 0, 0, 0]); 
+    
       // Incrementar el primer dígito del código.
       lastOG[0]++;
-  
+    
       // Formatear el nuevo código en el formato "X.0.0.0".
       return `${lastOG[0]}.0.0.0`;
     }
@@ -1092,12 +1107,12 @@ export class PlanifEstrategicaComponent implements OnInit {
       const elemento = {
         id_proyecto: parseInt(this.idProyecto, 10),
         id_meto_elemento: metoElementoId, // Usar el ID mapeado
-        id_proy_elem_padre: this.getIdPadreByCodig(this.selectedParentCodigo),
+        id_proy_elem_padre: this.getIdPadreByCodig(this.selectedParentCodigo) || null,
         codigo: this.codigo,
         elemento: this.indicador,
         indicador: this.indicador,
         descripcion: this.descripcion,
-        comentario: this.comentario,
+        comentario: this.comentario || null,
         nivel: this.tipo === 'OG' ? 1 : this.tipo === 'OE' ? 2 : this.tipo === 'RE' ? 3 : 4,
         orden: this.orden || 1,
         idp_estado: 1, // Estado activo por defecto
@@ -1479,7 +1494,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
     getIdPadreByCodig(codigo: any): any {
       const elemento = this.elementosTabla.find((item: any) => item.codigo === codigo);
-      return elemento ? elemento.id_proy_elemento : 1;
+      return elemento ? elemento.id_proy_elemento : null;
     }
   
     
