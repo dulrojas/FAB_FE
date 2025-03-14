@@ -29,23 +29,23 @@ export class PdfExportService {
     const wrappedText = doc.splitTextToSize(projectObj.proyecto, availableSpace);
     doc.setFont('helvetica', 'normal');
     doc.text(wrappedText, horizontalPadding + titleWidth + 2, verticalPadding);
+    verticalPadding += commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= NOMBRE COMPLETO SECTION ======= ======= =======
-    verticalPadding += commondVerticalGap;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
     doc.text("Datos del proyecto", horizontalPadding, verticalPadding);
-
     verticalPadding += commondVerticalGap;
+
     doc.setFontSize(12);
     doc.text("Nombre completo del proyecto", horizontalPadding, verticalPadding);
-
     verticalPadding += commondVerticalGap;
+
     doc.setFont('helvetica', 'normal');
     doc.text(projectObj.descrpcion, horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= RESPONSABLES SECTION ======= ======= =======
-    verticalPadding += commondVerticalGap;
     let tableHeader = [["Responsable de registro", "Unidad ejecutora"]];
     let personRespName = projectObj.nombres+" "+projectObj.apellido_1+((projectObj.apellido_2)?(" "+projectObj.apellido_2):(""));
     autoTable(doc, {
@@ -56,20 +56,19 @@ export class PdfExportService {
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= NOTAS ADICIONALES SECTION ======= ======= =======
-    verticalPadding += commondVerticalGap;
     doc.setFont('helvetica', 'bold');
     doc.text("Notas adicionales", horizontalPadding, verticalPadding);
-
     verticalPadding += commondVerticalGap;
+
     doc.setFont('helvetica', 'normal');
     doc.text(projectObj.notas, horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= OBJETIVOS TDC SECTION ======= ======= =======
-    verticalPadding += commondVerticalGap;
     doc.setFont('helvetica', 'bold');
     doc.text("Objetivos de la TDC que contribuyen al proyecto", horizontalPadding, verticalPadding);
-
     verticalPadding += commondVerticalGap;
+
     autoTable(doc, {
       startY: verticalPadding,
       body: projectObj.objetivos_tdc
@@ -77,11 +76,10 @@ export class PdfExportService {
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= OBJETIVOS ODS SECTION ======= ======= =======
-    verticalPadding += commondVerticalGap;
     doc.setFont('helvetica', 'bold');
     doc.text("Objetivos ODS que contribuyen al proyecto", horizontalPadding, verticalPadding);
-
     verticalPadding += commondVerticalGap;
+
     autoTable(doc, {
       startY: verticalPadding,
       body: projectObj.objetivos_ods
@@ -89,7 +87,10 @@ export class PdfExportService {
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= FECHAS SECTION ======= ======= =======
+    doc.setFont('helvetica', 'bold');
+    doc.text("Fechas", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
+
     const data = [
       [
         { content: "Firma Convenio", styles: { fontStyle: "bold" } },
@@ -102,7 +103,7 @@ export class PdfExportService {
         { content: "Reporte indicadores", styles: { fontStyle: "bold" } },
         { content: "Tiempo avanzado", styles: { fontStyle: "bold" } }
       ],
-      [projectObj.fecha_desembolso_1, projectObj.reporte, "0"],
+      [projectObj.fecha_desembolso_1, projectObj.reporte, projectObj.elapsedTimeStr],
       [
         { content: "Inicio real de proyecto", styles: { fontStyle: "bold" } },
         { content: "Primer reporte", styles: { fontStyle: "bold" } },
@@ -118,13 +119,39 @@ export class PdfExportService {
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= PRESUPUESTO SECTION ======= ======= =======
-    verticalPadding += commondVerticalGap;
     doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
     doc.text("Presupuesto", horizontalPadding, verticalPadding);
-
     verticalPadding += commondVerticalGap;
+
     doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
     doc.text(projectObj.presupuesto_mn, horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text("Composición del Presupuesto", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["ID", "FINANCIADOR", "TIPO", "%", "MONTO BS"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      head: tableHeader,
+      body: projectObj.financiadores
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text("Planificacion Operativa Anual", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["AÑO", "PRESUPUESTO ANUAL PLANIFICADO EN ACTIVIDADES", "PRESUPUESTO FUERA DE ACTIVIDADES", "TOTAL"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      head: tableHeader,
+      body: projectObj.presupuestos
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= COMP PRESUPUESTO SECTION ======= ======= =======
     // ======= ======= ======= ======= ======= ======= =======

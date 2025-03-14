@@ -14,17 +14,15 @@ export class NavigationDropdown {
   }
 
   ubiCheckboxChanged(item: any): void {
-    if (item.selected) {
-      this.uncheckChildren(item);
-    }
+    this.uncheckChildren(item, item.selected);
   }
   
-  uncheckChildren(parent: any): void {
+  uncheckChildren(parent: any, value: any): void {
     if (parent.childrens?.length) {
       for (const child of parent.childrens) {
-        child.selected = false;
+        child.selected = value;
   
-        this.uncheckChildren(child);
+        this.uncheckChildren(child, value);
       }
     }
   }

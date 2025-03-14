@@ -371,12 +371,6 @@
                                         [(ngModel)]="proyectoScope.moneda_presupuesto" 
                                         disabled/>
                                 </div>
-                                <!--div class="col col-md-4">
-                                    <label class="custom-info-proy-sub-title" for="">Total</label>
-                                    <input class="form-control custom-info-proy-input" type="text" 
-                                        id="presupuesto_me" name="presupuesto_me" 
-                                        [(ngModel)]="proyectoScope.presupuesto_me" [disabled]="!buttonValidations.editMode"/>
-                                </div-->
                                 <div class="col col-md-8 ps-0">
                                     <label class="custom-info-proy-sub-title" for="">Total (Bs)</label>
                                     <input class="form-control custom-info-proy-input" type="text" 
@@ -958,10 +952,12 @@
     <div class="modal-footer">
         <div class="d-flex justify-content-center" style="width: 100%;">
             <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+            <button type="button" class="btn btn-bg-3" 
+                (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="presuAdicionalForm.invalid" 
+            <button type="button" class="btn btn-bg-1" 
+                [disabled]="presuAdicionalForm.invalid" 
                 (click)="presuAdicionalOnSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
             </button>

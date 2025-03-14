@@ -308,17 +308,6 @@ export class InfProyectoComponent implements OnInit {
         );
         this.objetivosFAN = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo == 2);
         this.objetivosODS = this.instObjetivos.filter(objetivo => objetivo.idp_tipo_objetivo == 1);
-    
-        /*
-        for (const objetivo of this.instObjetivos) {
-          objetivo.imagen_src = await this.downloadFile(
-            "inst_objetivos", 
-            "objetivo_imagen", 
-            "id_inst_objetivos", 
-            objetivo.id_inst_objetivos
-          );
-        }
-        */
 
         // ======= GET OBJETIVOS =======
         this.servProyObjetivos.getProyObjetivosByIdProy(this.idProyecto).subscribe(
@@ -657,7 +646,42 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= REPORTE FUNCTION ======= =======
     generatePdf(){
-      PdfExportService.generateCustomPdf(this.proyectoScope);
+      let projectObj = this.proyectoScope;
+      // ======= OBJETIVOS SECTION =======
+      let objetivosFAN = this.objetivosFAN.filter((objetivo)=>(objetivo.selected));
+      projectObj.objetivos_tdc = objetivosFAN.map(({ objetivo, selected }) => ({ 
+        objetivo: objetivo, 
+        tipo: (selected == 1)?("Principal"):("Secundario") 
+      }));
+
+      let objetivosODS = this.objetivosODS.filter((objetivo)=>(objetivo.selected));
+      projectObj.objetivos_ods = objetivosODS.map(({ objetivo, selected }) => ({ 
+        objetivo: objetivo, 
+        tipo: (selected == 1)?("Principal"):("Secundario") 
+      }));
+      // ======= ======= =======
+      // ======= FECHAS SECTION =======
+      projectObj.reporte = (this.periodos.find((periodo)=>(periodo.id_subtipo == projectObj.idp_periodo_evaluacion))).descripcion_subtipo;
+      projectObj.elapsedTimeStr = (this.currentDateGap).toString()+ " de "+(this.finalDateGap).toString()+" días.";
+      // ======= ======= =======
+      // ======= PRESUPUESTO SECTION =======
+      projectObj.financiadores = this.financiadores.map(({ id_proy_finan, id_institucion_fin, idp_tipo_finan, porcentaje, monto }) => ([  
+        id_proy_finan,  
+        this.getInstitucionName(id_institucion_fin),  
+        this.getTipoFinanParam(idp_tipo_finan),  
+        porcentaje,  
+        monto  
+      ]));
+
+      projectObj.presupuestos = this.presupuestos.map(({ anio, total_actividades_presupuesto, presup_adicional, total_presup }) => ([  
+        anio,  
+        total_actividades_presupuesto,  
+        presup_adicional,  
+        total_presup  
+      ]));
+      // ======= ======= =======
+
+      PdfExportService.generateCustomPdf(projectObj);
     }
     // ======= ======= ======= ======= =======
     // ======= ======= OBJETIVOS FUNCTIONS ======= =======
@@ -740,8 +764,8 @@ export class InfProyectoComponent implements OnInit {
     }
     
     getTipoFinanParam(idScope: any) {
-        const tipoFinan = this.tipoFinanciadores.find(item => item.id_subtipo === idScope);
-        return ((tipoFinan)?(tipoFinan.descripcion_subtipo):(""));
+      const tipoFinan = this.tipoFinanciadores.find(item => item.id_subtipo === idScope);
+      return ((tipoFinan)?(tipoFinan.descripcion_subtipo):(""));
     }
 
     parseAmountStrToFloat(amount: any): number {
