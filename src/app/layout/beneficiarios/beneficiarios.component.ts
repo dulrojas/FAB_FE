@@ -662,8 +662,7 @@ export class BeneficiariosComponent implements OnInit {
         modalActionBeneficiarioLista: any = '';
         
         id_proy_bene_lista: any = '';
-        //id_proy_beneficiario: any = '';
-        comunidad_no_registrada: any = '';
+        //id_proy_beneficiario: any = '';       
         num_doc_identidad: any = '';
         nombre: any = '';        
         es_hombre: any = '';
@@ -672,6 +671,7 @@ export class BeneficiariosComponent implements OnInit {
         //id_ubica_geo_depto: any = '';
         //id_ubica_geo_muni: any = '';
         //id_ubica_geo_comu: any = '';
+        comunidad_no_registrada: any = '';
         idp_rango_edad: any = '';
 
         tipo_actor: any = '';
@@ -808,17 +808,17 @@ export class BeneficiariosComponent implements OnInit {
           this.modalTitleBeneficiarioLista = "";
 
           this.id_proy_bene_lista = 0;
-          this.id_proy_beneficiario = '';
-          this.comunidad_no_registrada = '';
+          this.id_proy_beneficiario = '';         
           this.num_doc_identidad = '';
-          this.nombre = '';
-          this.idp_rango_edad = '';
+          this.nombre = '';          
           this.es_hombre = null;
           this.idp_organizacion_tipo = '';
           this.idp_organizacion_subtipo = '';
           this.id_ubica_geo_depto = null;
           this.id_ubica_geo_muni  = null;
           this.id_ubica_geo_comu = null;
+          this.comunidad_no_registrada = '';
+          this.idp_rango_edad = '';
 
           this.tipo_actor = '';
           this.institucion_comunidad = '';
@@ -873,17 +873,17 @@ export class BeneficiariosComponent implements OnInit {
         
           const objBeneficiarioLista = {
             p_id_proy_bene_lista: 0,
-            p_id_proy_beneficiario: this.beneficiariosSelected.id_proy_beneficiario,
-            p_comunidad_no_registrada: this.comunidad_no_registrada || null,
+            p_id_proy_beneficiario: this.beneficiariosSelected.id_proy_beneficiario,            
             p_num_doc_identidad: this.num_doc_identidad,
-            p_nombre: this.nombre,
-            p_idp_rango_edad: this.idp_rango_edad || null,
+            p_nombre: this.nombre,            
             p_es_hombre: this.es_hombre === "true" ? true : (this.es_hombre === "false" ? false : null),
             p_idp_organizacion_tipo: this.idp_organizacion_tipo || null,
             p_idp_organizacion_subtipo: this.idp_organizacion_subtipo || null,
             p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
             p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
-            p_id_ubica_geo_comu: this.id_ubica_geo_comu || null
+            p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
+            p_comunidad_no_registrada: this.comunidad_no_registrada || null,
+            p_idp_rango_edad: this.idp_rango_edad || null
           };
           this.servListBenef.addListBene(objBeneficiarioLista).subscribe(
             (data) => {
@@ -908,19 +908,19 @@ export class BeneficiariosComponent implements OnInit {
           this.getParametricasBeneficiariosLista();
 
           this.id_proy_bene_lista = this.beneficiariosListaSelected.id_proy_bene_lista;
-          this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;
-          this.comunidad_no_registrada = this.beneficiariosListaSelected.comunidad_no_registrada;
+          this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;         
           this.num_doc_identidad = this.beneficiariosListaSelected.num_doc_identidad;
-          this.nombre = this.beneficiariosListaSelected.nombre;
-          this.idp_rango_edad = this.beneficiariosListaSelected.idp_rango_edad ;
+          this.nombre = this.beneficiariosListaSelected.nombre;          
           this.es_hombre = this.beneficiariosListaSelected.es_hombre !== null ? 
                   (this.beneficiariosListaSelected.es_hombre === true ? "true" : "false") : 
                   null;
           this.idp_organizacion_tipo = this.beneficiariosListaSelected.idp_organizacion_tipo ;
           this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo ;
-          this.id_ubica_geo_depto = this.beneficiariosListaSelected.id_ubica_geo_depto;
-          this.id_ubica_geo_muni = this.beneficiariosListaSelected.id_ubica_geo_muni;
-          this.id_ubica_geo_comu = this.beneficiariosListaSelected.id_ubica_geo_comu ;
+          this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
+          this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;
+          this.id_ubica_geo_comu = this.beneficiariosListaSelected.id_ubica_geo_comu;
+          this.comunidad_no_registrada = this.beneficiariosListaSelected.comunidad_no_registrada;
+          this.idp_rango_edad = this.beneficiariosListaSelected.idp_rango_edad ;
 
           this.openModalBeneficiarioLista(modalScope);
         }
@@ -928,17 +928,17 @@ export class BeneficiariosComponent implements OnInit {
         editBeneficiarioLista(){
           const objBeneficiarioLista = {
             p_id_proy_bene_lista: this.id_proy_bene_lista,
-            p_id_proy_beneficiario: this.id_proy_beneficiario,
-            p_comunidad_no_registrada: this.comunidad_no_registrada || null,
+            p_id_proy_beneficiario: this.id_proy_beneficiario,           
             p_num_doc_identidad: this.num_doc_identidad,
-            p_nombre: this.nombre,
-            p_idp_rango_edad: this.idp_rango_edad || null,
+            p_nombre: this.nombre,            
             p_es_hombre: this.es_hombre === "true" ? true : (this.es_hombre === "false" ? false : null),
             p_idp_organizacion_tipo: this.idp_organizacion_tipo || null,
             p_idp_organizacion_subtipo: this.idp_organizacion_subtipo || null,
             p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
             p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
-            p_id_ubica_geo_comu: this.id_ubica_geo_comu || null
+            p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
+            p_comunidad_no_registrada: this.comunidad_no_registrada || null,
+            p_idp_rango_edad: this.idp_rango_edad || null
           };          
           this.servListBenef.editListBene(objBeneficiarioLista).subscribe(
             (data) => {
