@@ -644,9 +644,9 @@
                                                 <option value="false">F</option>
                                             </select>
                                         </div>                                                                                 
-                                    <!-- Segunda Fila: TIPO DE ORGANIZACION, +, COMUNIDAD  -->
+                                    <!-- Segunda Fila: TIPO DE ORGANIZACION, INSTITUCION/COMUNIDAD  -->
                                         <!-- ======= ======= TIPO DE ORGANIZACION ======= ======= -->
-                                        <div class="col col-xl-5 col-lg-5 mb-auto">
+                                        <div class="col col-xl-6 col-lg-6 mb-auto">
                                             <label for="idp_organizacion_tipo">Tipo de Actor</label>
                                             <select class="form-control" id="idp_organizacion_tipo" name="idp_organizacion_tipo"
                                                 [(ngModel)]="idp_organizacion_tipo">
@@ -655,15 +655,8 @@
                                                 {{ tipo.descripcion_subtipo }}
                                                 </option>
                                             </select>
-                                        </div>
-                                        <!-- ======= ======= + ======= ======= --> 
-                                        <div class="col col-xl-1 col-lg-1 mt-4">
-                                            <button type="button" (click)=" openBeneficiariosLista(UbicacionBeneficiarioListaModal)"
-                                                style=" background-color: #d67600;color: white;border: none; 
-                                                border-radius: 30%; width: 35px;height: 35px;"> +
-                                            </button>
-                                        </div>
-                                        <!-- ======= ======= COMUNIDAD ======= ======= -->
+                                        </div>                                        
+                                        <!-- ======= ======= INSTITUCION/COMUNIDAD ======= ======= -->
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
                                             <label for="idp_organizacion_subtipo">Institución/ Comunidad</label>
                                             <select class="form-control" id="idp_organizacion_subtipo" name="idp_organizacion_subtipo"
@@ -673,8 +666,39 @@
                                                 {{ tipo.descripcion_subtipo }}
                                                 </option>
                                             </select>
-                                        </div>                                                                              
-                                    <!-- Tercera Fila: OTRO, RANGO DE EDAD -->
+                                        </div>
+                                    <!-- Tercera Fila: DEPARTAMENTO, MUNICIPIO, COMUNIDAD  -->    
+                                        <!-- ======= ======= ======= DEPARTAMENTO ======= ======= ======= -->
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">
+                                            <label for="id_ubica_geo_depto">Departamento</label>
+                                            <select class="form-control" id="id_ubica_geo_depto" name="id_ubica_geo_depto"
+                                                    [(ngModel)]="id_ubica_geo_depto" (change)="cargarMunicipiosPorDepartamentoLista(id_ubica_geo_depto)">
+                                                <option value="" disabled selected>Seleccione un departamento</option>
+                                                <option *ngFor="let dep of beneficiariosListaUbicaDepto" [value]="dep.id_ubica_geo">
+                                                    {{dep.nombre}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <!-- ======= ======= ======= MUNICIPIO ======= ======= ======= -->                                       
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">
+                                            <label for="id_ubica_geo_muni">Municipio</label>
+                                            <select class="form-control" id="id_ubica_geo_muni" name="id_ubica_geo_muni"
+                                                [(ngModel)]="id_ubica_geo_muni">
+                                                <option value="" disabled selected>Seleccione un municipio</option>
+                                                <option *ngFor="let mun of beneficiariosListaUbicaMuni" [value]="mun.id_ubica_geo">
+                                                    {{ mun.nombre }}
+                                                </option>
+                                            </select>                                            
+                                        </div> 
+                                        <!-- ======= ======= COMUNIDAD ======= ======= -->
+                                        <div class="col col-xl-4 col-lg-4 mb-auto">
+                                            <label for="comunidad">Comunidad o Ciudad</label>
+                                            <input  class="form-control" type="text" 
+                                                    id="comunidad" name="comunidad"  
+                                                    placeholder="Ingresa la comunidad"
+                                                    [(ngModel)]="comunidad" maxlength="99"/>
+                                        </div>                                                                                                                   
+                                    <!-- Cuarta Fila: OTRO"COMUNIDAD NO REGISTRADA", RANGO DE EDAD -->
                                         <!-- ======= ======= OTRO ======= ======= -->
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
                                             <label for="comunidad_no_registrada">Otro</label>
@@ -735,72 +759,7 @@
                 </button>
             </div>
         </div>
-    </ng-template>
-<!-- //////////////////////////////////////// MODAL PARA SELECCIONAR UBICACION GEOGRAFICA EN LISTA DE BENEFICIARIO  //////////////////////////////////////// -->
-    <ng-template #UbicacionBeneficiarioListaModal let-modal>
-        <div class="modal-header">
-            <h4 class="modal-title">Seleccione Ubicación Geográfica</h4>
-        </div>
-        <!-- ======= ======= ======= DEPARTAMENTO, MUNICIPIO, COMUNIDAD ======= ======= ======= -->
-        <!-- Cuerpo del Modal -->
-        <div class="modal-body">
-            <form #beneficiariosForm="ngForm" (ngSubmit)="onSubmitBeneficiario(beneficiariosForm)">
-                <div class="row">
-                    <div class="col col-xl-12 col-lg-12">
-                        <div class="card mb-3">
-                            <div class="card-body custom-card">
-                                <div class="row">
-                                     <!-- ======= ======= ======= DEPARTAMENTO ======= ======= ======= -->
-                                     <div class="col col-xl-4 col-lg-4 mb-auto">
-                                        <label for="id_ubica_geo_depto">Departamento</label>
-                                        <select class="form-control" id="id_ubica_geo_depto" name="id_ubica_geo_depto"
-                                                [(ngModel)]="id_ubica_geo_depto" (change)="cargarMunicipiosPorDepartamento(id_ubica_geo_depto)">
-                                            <option value="" disabled selected>Seleccione un departamento</option>
-                                            <option *ngFor="let dep of beneficiariosUbicaDepto" [value]="dep.id_ubica_geo">
-                                                {{dep.nombre}}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <!-- ======= ======= ======= MUNICIPIO ======= ======= ======= -->                                       
-                                    <div class="col col-xl-4 col-lg-4 mb-auto">
-                                        <label for="id_ubica_geo_muni">Municipio</label>
-                                        <select class="form-control" id="id_ubica_geo_muni" name="id_ubica_geo_muni"
-                                            [(ngModel)]="id_ubica_geo_muni">
-                                            <option value="" disabled selected>Seleccione un municipio</option>
-                                            <option *ngFor="let mun of beneficiariosUbicaMuni" [value]="mun.id_ubica_geo">
-                                                {{ mun.nombre }}
-                                            </option>
-                                        </select>                                            
-                                    </div> 
-                                    <!-- ======= ======= COMUNIDAD ======= ======= -->
-                                    <div class="col col-xl-4 col-lg-4 mb-auto">
-                                        <label for="comunidad">Comunidad o Ciudad</label>
-                                        <input  class="form-control" type="text" 
-                                                id="comunidad" name="comunidad"  
-                                                placeholder="Ingresa la comunidad"
-                                                [(ngModel)]="comunidad" maxlength="99"/>
-                                    </div> 
-                                     <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-                                     <div class="modal-footer mt-2">
-                                        <div class="d-flex justify-content-center" style="width: 100%">
-                                            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                                                <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                                            </button>
-                                            <button type="button" class="btn btn-bg-1" (click)="modal.close('Cerrar')">                                            
-                                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Aceptar
-                                            </button>
-                                        </div>
-                                    </div>  
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>        
-    </ng-template>
-<!-- ======= ======= ======= ======= ======= ======= ======= -->
-         
+    </ng-template>         
 
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- ////////////////////////////////////////  TABLA ALIADOS PROY-ALIADOS //////////////////////////////////////// -->

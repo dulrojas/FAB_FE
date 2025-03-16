@@ -683,9 +683,11 @@ export class BeneficiariosComponent implements OnInit {
         totalCount: number = 0;
 
     // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL BENEFICIARIOS LISTA ======= =======
-        
         beneficiariosListaOrganizacionTipo: any[] = [];
         beneficiariosListaOrganizacionSubTipo: any[] = [];
+        beneficiariosListaUbicaDepto: any[] = [];
+        beneficiariosListaUbicaMuni: any[] = [];
+
         beneficiariosListaRangoEdad: any[] = [];
     // ======= ======= GET PARAMETRICAS BENEFICIARIOS LISTA ======= =======
         getParametricasBeneficiariosLista():void{          
@@ -707,6 +709,15 @@ export class BeneficiariosComponent implements OnInit {
               console.error(error);
             }
           );
+          // ======= GET UBICA GEO DEPARTAMENTO =======
+          this.servUbicaGeografica.getUbiDepartamentos("Departamento").subscribe(
+            (data) => {
+              this.beneficiariosListaUbicaDepto = data[0].dato;
+            },
+            (error) => {
+              console.error(error);
+            }
+          );
           // ======= GET RANGO EDAD =======
           this.servicios.getParametricaByIdTipo(20).subscribe(
             (data) => {
@@ -717,6 +728,26 @@ export class BeneficiariosComponent implements OnInit {
             }
           );
         }
+        
+        // ======= ======= GET MUNICIPIO ======= =======
+        cargarMunicipiosPorDepartamentoLista(idDepartamentoLista: any) {
+          if (idDepartamentoLista) {
+            this.servUbicaGeografica.getUbiMunicipios(idDepartamentoLista).subscribe(
+              (data) => {
+                this.beneficiariosListaUbicaMuni = data[0].dato;
+              },
+              (error) => {
+                console.error(error);
+                this.beneficiariosListaUbicaMuni = [];
+              }
+            );
+          } else {
+            this.beneficiariosListaUbicaMuni = [];
+          }        
+          this.id_ubica_geo_muni = null;
+        }
+
+
 
         canOpenBeneficiarioListaModal(): boolean {
           // Permitir abrir cuando hay un beneficiario seleccionado, sin importar si está en modo edición
@@ -735,15 +766,13 @@ export class BeneficiariosComponent implements OnInit {
             alert('Primero debe seleccionar un beneficiario');
           }
         }
-
         // Función para contar hombres, mujeres y el total
         countBeneficiarios(): void {
           // Cambiar la lógica de comparación con "M" para hombre y "F" para mujer
           this.mujeresCount = this.beneficiariosLista.filter(bene => bene.genero === 'F').length;
           this.hombresCount = this.beneficiariosLista.filter(bene => bene.genero === 'M').length;
           this.totalCount = this.mujeresCount + this.hombresCount;  
-        }
-        
+        }        
     // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
         valNumDocIdentidad: any = true;
         ValidateNumDocIdentidad(){
@@ -860,7 +889,17 @@ export class BeneficiariosComponent implements OnInit {
         
           this.modalActionBeneficiarioLista = "add";
           this.modalTitleBeneficiarioLista = this.getModalTitleBeneficiarioLista("add");
-        
+
+          this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
+          this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;
+
+          if (this.id_ubica_geo_depto) {
+            this.cargarMunicipiosPorDepartamentoLista(this.id_ubica_geo_depto);
+            setTimeout(() => {     
+              this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;       
+            }, 500);
+          }
+          
           this.openModalBeneficiarioLista(modalScope);
         }
     // ======= ======= ADD BENEFICIARIOS LISTA ======= =======
@@ -916,11 +955,18 @@ export class BeneficiariosComponent implements OnInit {
                   null;
           this.idp_organizacion_tipo = this.beneficiariosListaSelected.idp_organizacion_tipo ;
           this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo ;
-          this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
-          this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;
+          this.id_ubica_geo_depto = this.beneficiariosListaSelected.id_ubica_geo_depto;
+          this.id_ubica_geo_muni = this.beneficiariosListaSelected.id_ubica_geo_muni;
           this.id_ubica_geo_comu = this.beneficiariosListaSelected.id_ubica_geo_comu;
           this.comunidad_no_registrada = this.beneficiariosListaSelected.comunidad_no_registrada;
           this.idp_rango_edad = this.beneficiariosListaSelected.idp_rango_edad ;
+
+          if (this.id_ubica_geo_depto) {
+            this.cargarMunicipiosPorDepartamentoLista(this.id_ubica_geo_depto);
+            setTimeout(() => {     
+              this.id_ubica_geo_muni = this.beneficiariosListaSelected.id_ubica_geo_muni;       
+            }, 500);
+          }
 
           this.openModalBeneficiarioLista(modalScope);
         }
