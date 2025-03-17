@@ -91,7 +91,7 @@
                                     <td style="text-align: center;">{{ beneficiario.fecha | date:'dd/MM/yyyy' }}</td>
                                     <td>{{ getUbicacionGeografica(beneficiario.id_ubica_geo_depto, beneficiariosUbicaDepto) }}</td>
                                     <td>{{ beneficiario.ubica_geo_muni }}</td>
-                                    <td>{{ beneficiario.comunidad }}</td>
+                                    <td>{{ beneficiario.ubica_geo_comu }}</td>
                                     <td>{{getDescripcionSubtipo(beneficiario.idp_tipo_evento, beneficiariosTipoEvento) }}</td>                                    
                                     <td>{{ beneficiario.titulo_evento }}</td>
                                     <td style="text-align: center;">{{ beneficiario.mujeres }}</td>
@@ -205,7 +205,7 @@
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="id_ubica_geo_muni">Municipio</label>
                                             <select class="form-control" id="id_ubica_geo_muni" name="id_ubica_geo_muni"
-                                                [(ngModel)]="id_ubica_geo_muni">
+                                                [(ngModel)]="id_ubica_geo_muni" (change)="cargarComunidadPorMunicipio(id_ubica_geo_muni)"> 
                                                 <option value="" disabled selected>Seleccione un municipio</option>
                                                 <option *ngFor="let mun of beneficiariosUbicaMuni" [value]="mun.id_ubica_geo">
                                                     {{ mun.nombre }}
@@ -214,11 +214,14 @@
                                         </div> 
                                         <!-- ======= ======= COMUNIDAD ======= ======= -->
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
-                                            <label for="comunidad">Comunidad o Ciudad</label>
-                                            <input  class="form-control" type="text" 
-                                                    id="comunidad" name="comunidad"  
-                                                    placeholder="Ingresa la comunidad"
-                                                    [(ngModel)]="comunidad" maxlength="99"/>
+                                            <label for="id_ubica_geo_comu">Comunidad</label>
+                                            <select class="form-control" id="id_ubica_geo_comu" name="id_ubica_geo_comu"
+                                                [(ngModel)]="id_ubica_geo_comu">
+                                                <option value="" disabled selected>Seleccione una comunidad</option>
+                                                <option *ngFor="let mun of beneficiariosUbicaComu" [value]="mun.id_ubica_geo">
+                                                    {{ mun.nombre }}
+                                                </option>
+                                            </select> 
                                         </div>                                            
                                     <!-- Cuarta Fila: DETALLE DE EVENTO -->
                                         <!-- ======= ======= DETALLE DE EVENTO ======= ======= -->
@@ -382,9 +385,7 @@
                                                 <th style="text-align: center;">CI o ID</th>
                                                 <th style="text-align: center;">Nombre y Apellido</th>
                                                 <th style="text-align: center;">Sexo</th>
-                                                <th style="text-align: center;">Tipo de actor</th>
-                                                <th style="text-align: center;">Institucion/ Comunidad</th>
-                                                <th style="text-align: center;">Otro</th>
+                                                <th style="text-align: center;">Tipo de actor</th>                                                
                                                 <th style="text-align: center;">Rango de edad</th>
                                             </tr>
                                         </thead>
@@ -401,9 +402,7 @@
                                                 <td style="text-align: center;">{{ beneficiario.num_doc_identidad }}</td>
                                                 <td style="text-align: center;">{{ beneficiario.nombre }}</td>
                                                 <td style="text-align: center;">{{ beneficiario.genero }}</td>
-                                                <td style="text-align: center;">{{ beneficiario.tipo_actor }}</td>
-                                                <td style="text-align: center;">{{ beneficiario.institucion_comunidad }}</td>
-                                                <td style="text-align: center;">{{ beneficiario.comunidad_no_registrada }}</td>                                                
+                                                <td style="text-align: center;">{{ beneficiario.tipo_actor }}</td>                                                                                                
                                                 <td style="text-align: center;">{{ beneficiario.rango_edad }}</td>
                                             </tr>
                                         </tbody>
@@ -639,7 +638,7 @@
                                             <label for="es_hombre">Sexo</label>
                                             <select class="form-control" id="es_hombre" name="es_hombre"
                                                 [(ngModel)]="es_hombre">
-                                                <option value="" disabled selected>Seleccione el Sexo</option>
+                                                <option value="null" disabled selected>Seleccione el Sexo</option>
                                                 <option value="true">M</option>
                                                 <option value="false">F</option>
                                             </select>
@@ -683,7 +682,7 @@
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="id_ubica_geo_muni">Municipio</label>
                                             <select class="form-control" id="id_ubica_geo_muni" name="id_ubica_geo_muni"
-                                                [(ngModel)]="id_ubica_geo_muni">
+                                                [(ngModel)]="id_ubica_geo_muni" (change)="cargarComunidadPorMunicipioLista(id_ubica_geo_muni)">
                                                 <option value="" disabled selected>Seleccione un municipio</option>
                                                 <option *ngFor="let mun of beneficiariosListaUbicaMuni" [value]="mun.id_ubica_geo">
                                                     {{ mun.nombre }}
@@ -692,11 +691,14 @@
                                         </div> 
                                         <!-- ======= ======= COMUNIDAD ======= ======= -->
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
-                                            <label for="comunidad">Comunidad o Ciudad</label>
-                                            <input  class="form-control" type="text" 
-                                                    id="comunidad" name="comunidad"  
-                                                    placeholder="Ingresa la comunidad"
-                                                    [(ngModel)]="comunidad" maxlength="99"/>
+                                            <label for="id_ubica_geo_comu">Comunidad</label>
+                                            <select class="form-control" id="id_ubica_geo_comu" name="id_ubica_geo_comu"
+                                                [(ngModel)]="id_ubica_geo_comu">
+                                                <option value="" disabled selected>Seleccione una comunidad</option>
+                                                <option *ngFor="let mun of  beneficiariosListaUbicaComu" [value]="mun.id_ubica_geo">
+                                                    {{ mun.nombre }}
+                                                </option>
+                                            </select> 
                                         </div>                                                                                                                   
                                     <!-- Cuarta Fila: OTRO"COMUNIDAD NO REGISTRADA", RANGO DE EDAD -->
                                         <!-- ======= ======= OTRO ======= ======= -->
