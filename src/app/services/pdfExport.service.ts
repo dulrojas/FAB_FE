@@ -7,7 +7,6 @@ export class PdfExportService {
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 10;
-    const maxTextWidth = pageWidth - (2 * margin);
 
     let verticalPadding = 10;
     let commondVerticalGap = 10;
@@ -50,8 +49,17 @@ export class PdfExportService {
     let personRespName = projectObj.nombres+" "+projectObj.apellido_1+((projectObj.apellido_2)?(" "+projectObj.apellido_2):(""));
     autoTable(doc, {
       startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
       head: tableHeader,
-      body: [[personRespName, projectObj.inst_unidad]],
+      body: [[personRespName, projectObj.inst_unidad]]
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
@@ -61,7 +69,7 @@ export class PdfExportService {
     verticalPadding += commondVerticalGap;
 
     doc.setFont('helvetica', 'normal');
-    doc.text(projectObj.notas, horizontalPadding, verticalPadding);
+    doc.text((projectObj.notas)?(projectObj.notas):(""), horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= OBJETIVOS TDC SECTION ======= ======= =======
@@ -71,6 +79,10 @@ export class PdfExportService {
 
     autoTable(doc, {
       startY: verticalPadding,
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
       body: projectObj.objetivos_tdc
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
@@ -82,6 +94,10 @@ export class PdfExportService {
 
     autoTable(doc, {
       startY: verticalPadding,
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
       body: projectObj.objetivos_ods
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
@@ -114,11 +130,15 @@ export class PdfExportService {
     
     autoTable(doc, {
       startY: verticalPadding,
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
       body: data
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
-    // ======= ======= ======= PRESUPUESTO SECTION ======= ======= =======
+    // ======= ======= ======= COMP PRESUPUESTO SECTION ======= ======= =======
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
     doc.text("Presupuesto", horizontalPadding, verticalPadding);
@@ -136,11 +156,21 @@ export class PdfExportService {
     tableHeader = [["ID", "FINANCIADOR", "TIPO", "%", "MONTO BS"]];
     autoTable(doc, {
       startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
       head: tableHeader,
       body: projectObj.financiadores
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
-    
+    // ======= ======= ======= ======= ======= ======= =======
+    // ======= ======= ======= PLANIF OPERATIVA SECTION ======= ======= =======
     doc.setFont('helvetica', 'bold');
     doc.text("Planificacion Operativa Anual", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
@@ -148,50 +178,341 @@ export class PdfExportService {
     tableHeader = [["AÑO", "PRESUPUESTO ANUAL PLANIFICADO EN ACTIVIDADES", "PRESUPUESTO FUERA DE ACTIVIDADES", "TOTAL"]];
     autoTable(doc, {
       startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
       head: tableHeader,
       body: projectObj.presupuestos
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
-    // ======= ======= ======= COMP PRESUPUESTO SECTION ======= ======= =======
-    // ======= ======= ======= ======= ======= ======= =======
-    // ======= ======= ======= PLANIF OPERATIVA SECTION ======= ======= =======
-    // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= ALCANCE GEO SECTION ======= ======= =======
+    doc.setFont('helvetica', 'bold');
+    doc.text("Alcance Geografico", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["TIPO", "LUGAR"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: projectObj.ubicaciones
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
+    
+    tableHeader = [["TIPO", "LUGAR"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: projectObj.ubicacionesBranch
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= OBLIGACIONES SECTION ======= ======= =======
+    doc.setFont('helvetica', 'bold');
+    doc.text("Obligaciones", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["ID", "COMPROMISO", "REQUISITOS Y/O DOCUMENTOS", "FECHA OBLIGACION", "ESTADO ENTREGA"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: projectObj.obligaciones
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= PLANIF ESTRATEGICA SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text("Planificación Estratégica", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["TIPO", "CÓDIGO", "NOMBRE", "LÍNEA BASE", "MEDIDA", "META", "MEDIO DE VERIFICACIÓN"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: []
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= EJEC ESTRATEGICA SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+     
+    doc.setFont('helvetica', 'bold');
+    doc.text("Ejecución Estratégica", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: [
+        [
+          { content: '', colSpan: 1, styles: { halign: 'center', fillColor: [200, 200, 200] } },
+          { content: '', colSpan: 1, styles: { halign: 'center', fillColor: [200, 200, 200] } },
+          { content: 'PERIODO ACTUAL', colSpan: 4, styles: { halign: 'center', fillColor: [200, 200, 200] } },
+          { content: '', colSpan: 1, styles: { halign: 'center', fillColor: [200, 200, 200] } },
+          { content: 'META', colSpan: 2, styles: { halign: 'center', fillColor: [200, 200, 200] } }
+        ],
+        ['COD', 'NOMBRE', 'REPORTE A', 'PROGRESO', 'MEDIDA', 'METAPER', 'AVANCE PER.', 'META FINAL', 'AVANCE']
+      ],
+      body: []
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= EJEC FINANCIERA SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+     
+    doc.setFont('helvetica', 'bold');
+    doc.text("Ejecución Financiera", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["PRESUPUESTO DEL PROYECTO", "EJECUTADO", "PRESUPUESTO DE LA GESTIÓN 2024", "EJECUTADO"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: []
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= ADICIONALES SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+     
+    doc.setFont('helvetica', 'bold');
+    doc.text("Adicionales", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["FECHA", "MONTO", "MOTIVO"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: []
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= ACTIVIDADES PROY SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+     
+    doc.setFont('helvetica', 'bold');
+    doc.text("Actividades del Proyecto", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["RES", "ACTIVIDADES", "PRESUPUESTO", "AVANCE", "FECHA INICIO", "FECHA FIN"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: projectObj.actividades
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= LOGROS SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text("Logros", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap; 
+    
+    tableHeader = [["FECHA", "TIPO", "LOGRO"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: projectObj.logros
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= EVENTOS BENEF SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+     
+    doc.setFont('helvetica', 'bold');
+    doc.text("Eventos para Beneficiarios", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["ID", "FECHA", "TIPO ACTOR", "INSTITUCIÓN /COMUNIDAD", "EVENTO", "MUJERES", "HOMBRES", "TOTAL"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: []
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= ALIANZAS SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+     
+    doc.setFont('helvetica', 'bold');
+    doc.text("Alianzas conseguidas", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap;
+    
+    tableHeader = [["ID", "FECHA", "TIPO ACTOR", "NOMBRE DEL REFERENTE", "VÍNCULO CON LOS RESULTADOS", "CONVENIO"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: []
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= RIESGOS SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+     
+    doc.setFont('helvetica', 'bold');
+    doc.text("Gestión de Riesgos", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap; 
+    
+    tableHeader = [["ID", "CATEGORÍA", "IDENTIFICACIÓN", "RIESGO/SUPUESTO/HIPÓTESIS", "IMPACTO", "PROBABILIDAD", "NIVEL DE RIESGO", "TOMAR MEDIDAS"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: []
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= APRENDIZAJES SECTION ======= ======= =======
     doc.addPage('a4', 'landscape'); 
+    verticalPadding = commondVerticalGap;
+     
+    doc.setFont('helvetica', 'bold');
+    doc.text("Aprendizajes", horizontalPadding, verticalPadding);
+    verticalPadding += commondVerticalGap; 
+    
+    tableHeader = [["ID", "FECHA APRENDIZAJE", "AREA DE APRENDIZAJE", "TIPO", "APRENDIZAJE"]];
+    autoTable(doc, {
+      startY: verticalPadding,
+      headStyles: {
+        fillColor: [78, 134, 70],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2
+      },
+      head: tableHeader,
+      body: projectObj.aprendizajes
+    });
+    verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
 
-    doc.save(`${"test"}.pdf`);
+    const currentDate = new Date().toISOString().slice(0, 10);
+    doc.save(projectObj.proyecto+"_"+currentDate+'.pdf');
   }
 }

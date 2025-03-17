@@ -535,7 +535,7 @@ export class ActividadComponent implements OnInit {
 
   valFechaInicio: any = true;
   validateFechaInicio() {
-    if ((this.fecha_inicio)&&( new Date(this.fecha_inicio).getFullYear().toString() >= this.initGestion )) {
+    if (this.fecha_inicio && new Date(this.fecha_inicio + 'T00:00:00Z').getUTCFullYear().toString() >= this.initGestion) {
       this.valFechaInicio = true;
     } else {
       this.valFechaInicio = false;
@@ -545,7 +545,7 @@ export class ActividadComponent implements OnInit {
   valFechaFin: any = true;
   valFechaFin2: any = true;
   validateFechaFin() {
-    if ((this.fecha_fin)&&( new Date(this.fecha_fin).getFullYear().toString() >= this.initGestion )) {
+    if ((this.fecha_fin)&&( new Date(this.fecha_fin + 'T00:00:00Z').getFullYear().toString() >= this.initGestion )) {
       this.valFechaFin = true;
       if( (new Date(this.fecha_inicio)) < (new Date(this.fecha_fin)) ){
         this.valFechaFin2 = true;

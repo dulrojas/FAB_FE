@@ -17,8 +17,7 @@ import { servProyAlcanceGeo } from "../../servicios/proyAlcanceGeo";
 import { servPersona } from "../../servicios/persona";
 import { environment } from '../../../environments/environment';
 
-import { forkJoin, concatMap, of } from 'rxjs';
-
+import { forkJoin, lastValueFrom, concatMap, of } from 'rxjs';
 @Component({
     selector: 'app-infProyecto',
     templateUrl: './infProyecto.component.html',
@@ -242,13 +241,11 @@ export class InfProyectoComponent implements OnInit {
                   match.selected = true;
                   ubicacionesSelAux.push(match);
                   // === COUNT UBI HEADER DATA ===
-                  this.contarMunicipiosYComunidades(match.id_ubica_geo);
-
                   if (match.idp_tipo_ubica_geo === "Municipios") {
                     this.headerDataNro01 += 1;
                   }
                   if (match.idp_tipo_ubica_geo === "Comunidades") {
-                    this.headerDataNro01 += 2;
+                    this.headerDataNro02 += 1;
                   }
                   // === === ===
                 }
@@ -645,7 +642,18 @@ export class InfProyectoComponent implements OnInit {
     }
     // ======= ======= ======= ======= =======
     // ======= ======= REPORTE FUNCTION ======= =======
-    generatePdf(){
+    async getAllProjectData(idProyecto: number) {
+      try {
+        const data = await lastValueFrom(this.servProyectos.getAllProjectData(idProyecto));
+        return data[0]?.dato[0] || {};  
+      } 
+      catch (error) {
+        console.error('Error al obtener datos del proyecto:', error);
+        return {};  
+      }
+    }
+
+    async generatePdf(){
       let projectObj = this.proyectoScope;
       // ======= OBJETIVOS SECTION =======
       let objetivosFAN = this.objetivosFAN.filter((objetivo)=>(objetivo.selected));
@@ -679,6 +687,83 @@ export class InfProyectoComponent implements OnInit {
         presup_adicional,  
         total_presup  
       ]));
+      // ======= ======= =======
+      // ======= ALCANCE GEO SECTION =======
+      projectObj.ubicaciones = this.ubicacionesSel.map(({idp_tipo_ubica_geo, nombre})=>([
+        idp_tipo_ubica_geo, 
+        nombre
+      ]));
+
+      let proObjUbicacionesBranchs: any = [];
+
+      this.ubicacionesBranch.forEach(grupo => {
+        let filaTipo = [grupo.tipo, ""];
+        let agregadoTipo = false;
+
+        grupo.items.forEach(item => {
+          if (item.selected == true) {
+            if (!agregadoTipo) {
+              proObjUbicacionesBranchs.push(filaTipo);
+              agregadoTipo = true;
+            }
+            proObjUbicacionesBranchs.push(["", item.nombre]);
+          }
+        });
+      });
+
+      projectObj.ubicacionesBranch = proObjUbicacionesBranchs;
+      // ======= ======= =======
+      // ======= OBLIGACIONES SECTION =======
+      projectObj.obligaciones = this.obligaciones.map(({ id_proy_obliga, obligacion, descripcion, fecha_obligacion, idp_estado_entrega }) => ([  
+        id_proy_obliga,  
+        obligacion,  
+        descripcion,  
+        fecha_obligacion,
+        (idp_estado_entrega == 1)?("Pendiente"):("Entregdo")
+      ]));
+      // ======= ======= =======
+      // ======= GET PROJECT DATA =======
+      let projectData: any = await this.getAllProjectData(this.idProyecto);
+      // ======= ======= =======
+      // ======= PLAN EST =======
+      // ======= ======= =======
+      // ======= EJEC EST =======
+      // ======= ======= =======
+      // ======= EJEC FIN =======
+      // ======= ======= =======
+      // ======= ADICIONALES =======
+      // ======= ======= =======
+      // ======= ACTIVIDADES =======
+      projectObj.actividades = projectData.pro_act.map(({ codigo, actividad, presupuesto, avance_total, fecha_inicio, fecha_fin }) => [
+        codigo, 
+        actividad, 
+        presupuesto, 
+        avance_total, 
+        fecha_inicio, 
+        fecha_fin
+      ]);
+      // ======= ======= =======
+      // ======= LOGROS =======
+      projectObj.logros = projectData.pro_log.map(({ id_proy_logro, sigla, logro }) => [
+        id_proy_logro, 
+        sigla, 
+        logro
+      ]);
+      // ======= ======= =======
+      // ======= BENEFICIARIOS =======
+      // ======= ======= =======
+      // ======= ALIANZAS =======
+      // ======= ======= =======
+      // ======= RIESGOS =======
+      // ======= ======= =======
+      // ======= APRENDIZAJES =======
+      projectObj.aprendizajes = projectData.pro_apr.map(({ id_proy_aprende, fecha, idp_aprendizaje_area, idp_aprendizaje_tipo, aprendizaje }) => [
+        id_proy_aprende, 
+        fecha, 
+        idp_aprendizaje_area, 
+        idp_aprendizaje_tipo, 
+        aprendizaje
+      ]);
       // ======= ======= =======
 
       PdfExportService.generateCustomPdf(projectObj);
@@ -1263,21 +1348,6 @@ export class InfProyectoComponent implements OnInit {
         );
       }
     }
-    contarMunicipiosYComunidades = (ubicacionPadreId: number): void => {
-      const hijosDirectos = this.ubicaciones.filter(
-        (ubicacion) => ubicacion.id_ubica_geo_padre === ubicacionPadreId
-      );
-
-      hijosDirectos.forEach((hijo) => {
-        if (hijo.idp_tipo_ubica_geo === "Municipios") {
-          this.headerDataNro01 += 1;
-        } 
-        else if (hijo.idp_tipo_ubica_geo === "Comunidades") {
-          this.headerDataNro02 += 1;
-        }
-        this.contarMunicipiosYComunidades(hijo.id_ubica_geo);
-      });
-    };
     // ======= ======= ======= ======= =======
     // ======= ======= INIT ADD UBICA GEO ======= =======
     initUbicaGeo(modalScope: TemplateRef<any>){
