@@ -183,6 +183,49 @@ export class servProyectos{
     return this.http.post<any>(this.URL, params, { headers });
   }
   // ======= ======= ======= ======= ======= ======= =======
+  // ======= ======= ======= GET ALL PROJECT DATA ======= ======= =======
+  getAllProjectData(idProy: any): Observable<any> {
+    const params = {
+        "procedure_name": "sp_proyecto",
+        "body": {
+            "params": [
+                {"name": "p_accion", "value": "R3", "type": "string"},
+                {"name": "p_id_proyecto", "value": idProy, "type": "int"},
+                {"name": "p_proyecto", "value": null, "type": "string"},
+                {"name": "p_descripcion", "value": null, "type": "string"},
+                {"name": "p_person_resp", "value": null, "type": "int"},
+                {"name": "p_fecha_convenio", "value": null, "type": "string"},
+                {"name": "p_fecha_desembolso_1", "value": null, "type": "string"},
+                {"name": "p_fecha_inicio", "value": null, "type": "string"},
+                {"name": "p_fecha_fin", "value": null, "type": "string"},
+                {"name": "p_fecha_fin_ampliada", "value": null, "type": "string"},
+                {"name": "p_fecha_fin_real", "value": null, "type": "string"},
+                {"name": "p_moneda_presupuesto", "value": null, "type": "string"},
+                {"name": "p_presupuesto_me", "value": null, "type": "float"},
+                {"name": "p_presupuesto_mn", "value": null, "type": "float"},
+                {"name": "p_id_institucion_ejecutora", "value": null, "type": "int"},
+                {"name": "p_idp_estado_proy", "value": null, "type": "int"},
+                {"name": "p_notas", "value": null, "type": "string"},
+                {"name": "p_ubica_geo_otros", "value": null, "type": "string"},
+                {"name": "p_id_inst_unidad", "value": null, "type": "int"},
+                {"name": "p_id_metodologia", "value": null, "type": "int"},
+                {"name": "p_id_preguntas_1", "value": null, "type": "int"},
+                {"name": "p_id_preguntas_2", "value": null, "type": "int"},
+                {"name": "p_idp_periodo_evaluacion", "value": null, "type": "int"},
+                {"name": "p_fecha_evaluacion_1", "value": null, "type": "string"},
+                {"name": "p_id_persona_reg", "value": null, "type": "int"}
+            ]
+        }
+    };
+
+    const ip = localStorage.getItem('ip') || '127.0.0.1';
+    const headers = new HttpHeaders({
+      'ip': ip
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
+  // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= ADD PROYECTO ======= ======= =======
   addProyecto(obj: any): Observable<any> {
     const params = {

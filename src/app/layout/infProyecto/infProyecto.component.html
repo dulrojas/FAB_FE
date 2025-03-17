@@ -609,15 +609,6 @@
                                         <td>{{ obligacion.obligacion }}</td>
                                         <td>{{ obligacion.descripcion }}</td>
                                         <td>{{ obligacion.fecha_obligacion }}</td>
-                                        <!--td>
-                                            <div class="custom-obligacion-progress-bar">
-                                                <div 
-                                                    class="custom-obligacion-progress-fill" 
-                                                    [style.width.%]="obligacion.progreso">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{{ obligacion.fecha_hora_entrega }}</td-->
                                         <td>
                                             <ng-container *ngIf="obligacion.idp_estado_entrega == 1">
                                                 <span class="btn-bg-2">
