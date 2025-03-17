@@ -28,7 +28,7 @@ export class servBeneficiarios {
                     { "name": "p_evento_detalle", "value": null, "type": "string" },
                     { "name": "p_id_ubica_geo_depto", "value": null, "type": "int" },
                     { "name": "p_id_ubica_geo_muni", "value": null, "type": "int" },
-                    { "name": "p_id_ubica_geo_comu", "value": null, "type": "string" },
+                    { "name": "p_id_ubica_geo_comu", "value": null, "type": "int" },
                     { "name": "p_id_proy_actividad", "value": null, "type": "int" },
                     { "name": "p_idp_tipo_evento", "value": null, "type": "int" },
                     { "name": "p_ruta_documento", "value": null, "type": "string" },
@@ -61,7 +61,7 @@ export class servBeneficiarios {
                     { "name": "p_evento_detalle", "value": null, "type": "string" },
                     { "name": "p_id_ubica_geo_depto", "value": null, "type": "int" },
                     { "name": "p_id_ubica_geo_muni", "value": null, "type": "int" },
-                    { "name": "p_id_ubica_geo_comu", "value": null, "type": "string" },
+                    { "name": "p_id_ubica_geo_comu", "value": null, "type": "int" },
                     { "name": "p_id_proy_actividad", "value": null, "type": "int" },
                     { "name": "p_idp_tipo_evento", "value": null, "type": "int" },
                     { "name": "p_ruta_documento", "value": null, "type": "string" },
@@ -77,6 +77,39 @@ export class servBeneficiarios {
                 });
             return this.http.post<any>(this.URL, params, { headers });
         }
+    // ======= ======= ======= ======= ======= ======= =======
+    // ======= == GET BENEFICIARIOS POR ID PROYECTO == =======
+    // ======= ======= ======= ======= ======= ======= =======
+    getBeneficiariosListaPorIdProy(idProy: any): Observable<any>{
+        const params = {
+            "procedure_name": "sp_beneficiarios",
+            "body": {
+            "params": [
+                { "name": "p_accion", "value": "C4", "type": "string" },
+                { "name": "p_id_proy_beneficiario", "value": null, "type": "int" },
+                { "name": "p_id_proyecto", "value": idProy, "type": "int" },
+                { "name": "p_mujeres", "value": null, "type": "int" },
+                { "name": "p_hombres", "value": null, "type": "int" },
+                { "name": "p_titulo_evento", "value": null, "type": "string" },
+                { "name": "p_evento_detalle", "value": null, "type": "string" },
+                { "name": "p_id_ubica_geo_depto", "value": null, "type": "int" },
+                { "name": "p_id_ubica_geo_muni", "value": null, "type": "int" },
+                { "name": "p_id_ubica_geo_comu", "value": null, "type": "int" },
+                { "name": "p_id_proy_actividad", "value": null, "type": "int" },
+                { "name": "p_idp_tipo_evento", "value": null, "type": "int" },
+                { "name": "p_ruta_documento", "value": null, "type": "string" },
+                { "name": "p_id_persona_reg", "value": null, "type": "int" },
+                { "name": "p_fecha", "value": null, "type": "string" },
+                { "name": "p_fecha_hora_reg", "value": null, "type": "string" }
+            ]
+            }
+        };
+            const ip = localStorage.getItem('ip') || '127.0.0.1';
+            const headers = new HttpHeaders({
+                'ip': ip
+            });
+        return this.http.post<any>(this.URL, params, { headers });
+    }
     // ======= ======= ======= ======= ======= ======= =======
     // ======= =======     ADD BENEFICIARIO    ======= =======
     // ======= ======= ======= ======= ======= ======= ======= 
@@ -94,7 +127,7 @@ export class servBeneficiarios {
                     { "name": "p_evento_detalle", "value": obj.p_evento_detalle, "type": "string" },
                     { "name": "p_id_ubica_geo_depto", "value": obj.p_id_ubica_geo_depto, "type": "int" },
                     { "name": "p_id_ubica_geo_muni", "value": obj.p_id_ubica_geo_muni, "type": "int" },
-                    { "name": "p_id_ubica_geo_comu", "value": obj.p_id_ubica_geo_comu, "type": "string" },
+                    { "name": "p_id_ubica_geo_comu", "value": obj.p_id_ubica_geo_comu, "type": "int" },
                     { "name": "p_id_proy_actividad", "value": obj.p_id_proy_actividad, "type": "int" },
                     { "name": "p_idp_tipo_evento", "value": obj.p_idp_tipo_evento, "type": "int" },
                     { "name": "p_ruta_documento", "value": obj.p_ruta_documento, "type": "string" },
@@ -127,7 +160,7 @@ export class servBeneficiarios {
                     { "name": "p_evento_detalle", "value": obj.p_evento_detalle, "type": "string" },
                     { "name": "p_id_ubica_geo_depto", "value": obj.p_id_ubica_geo_depto, "type": "int" },
                     { "name": "p_id_ubica_geo_muni", "value": obj.p_id_ubica_geo_muni, "type": "int" },
-                    { "name": "p_id_ubica_geo_comu", "value": obj.p_id_ubica_geo_comu, "type": "string" },
+                    { "name": "p_id_ubica_geo_comu", "value": obj.p_id_ubica_geo_comu, "type": "int" },
                     { "name": "p_id_proy_actividad", "value": obj.p_id_proy_actividad, "type": "int" },
                     { "name": "p_idp_tipo_evento", "value": obj.p_idp_tipo_evento, "type": "int" },
                     { "name": "p_ruta_documento", "value": obj.p_ruta_documento, "type": "string" },
@@ -160,7 +193,7 @@ export class servBeneficiarios {
                     { "name": "p_evento_detalle", "value": null, "type": "string" },
                     { "name": "p_id_ubica_geo_depto", "value": null, "type": "int" },                    
                     { "name": "p_id_ubica_geo_muni", "value": null, "type": "int" },
-                    { "name": "p_id_ubica_geo_comu", "value": null, "type": "string" },
+                    { "name": "p_id_ubica_geo_comu", "value": null, "type": "int" },
                     { "name": "p_id_proy_actividad", "value": null, "type": "int" },
                     { "name": "p_idp_tipo_evento", "value": null, "type": "int" },
                     { "name": "p_ruta_documento", "value": null, "type": "string" },

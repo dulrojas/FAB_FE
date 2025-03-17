@@ -183,8 +183,7 @@
                     [collectionSize]="totalLength"
                     [maxSize]="3"
                     [rotate]="true"
-                    [boundaryLinks]="true"
-                >
+                    [boundaryLinks]="true">
                 </ngb-pagination>
             </div>-->
         </div>
@@ -211,8 +210,7 @@
                                         class="form-control"
                                         id="id_proy_elem_padre"
                                         [value]="getElementoNombre(sigla)"
-                                        disabled                                        
-                                    />
+                                        disabled/>
                                 </div>                                
                                 <div class="col col-xl-1 col-lg-1 mt-auto">
                                     <label class="btn-view-bg-3" [style.backgroundColor]="color">{{
@@ -228,15 +226,13 @@
                                         name="padre"
                                         [(ngModel)]="selectedParentCodigo"
                                         [disabled]="tipo === 'OG'"
-                                        (change)="onParentChange()"
-                                    >
+                                        (change)="onParentChange()">
                                         <option value="">Seleccionar padre</option>
                                         <option *ngFor="let parent of validParents" [value]="parent.codigo">
                                             ({{ parent.codigo }})
                                         </option>
                                     </select>
                                 </div>
-
                                 <!-- Código -->
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
                                     <label for="codigo">Código</label>
@@ -248,10 +244,8 @@
                                         [(ngModel)]="codigo"
                                         [readonly]="true"
                                         placeholder="Ingresa el Código"
-                                        disabled
-                                    />
+                                        disabled />
                                 </div>
-
                                 <!-- Nombre -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
                                     <label for="indicador">Nombre de elemento</label>
@@ -261,10 +255,8 @@
                                         id="indicador"
                                         name="indicador"
                                         placeholder="Ingresa el nombre"
-                                        [(ngModel)]="indicador"
-                                        required
-                                    />
-                             
+                                        [(ngModel)]="indicador" maxlength="99"
+                                        required/>                             
                                 </div>
                                 <!-- Descripción -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -275,10 +267,8 @@
                                         id="descripcion"
                                         name="descripcion"
                                         placeholder="Ingresa una descripción"
-                                        [(ngModel)]="descripcion"
-                                        required
-                                    />
-                             
+                                        [(ngModel)]="descripcion" maxlength="499"
+                                        required/>                             
                                 </div>
                                 <!-- Comentario -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -289,10 +279,7 @@
                                         id="comentario"
                                         name="comentario"
                                         placeholder="Ingresa un comentario"
-                                        [(ngModel)]="comentario"
-                                        
-                                    />
-                                 
+                                        [(ngModel)]="comentario" maxlength="254"/>                                 
                                 </div>
                                 <!-- Botones -->
                                 <div class="modal-footer mt-2">
@@ -313,12 +300,10 @@
 </ng-template>
 
 <!-- Modal Indicadores para Añadir Elementos de IN -->
-
 <ng-template #planifEstrategicaIN let-modal class="custom-modal">
     <div class="modal-header">
         <h4 class="modal-title">{{ modalTitle }}</h4>
     </div>
-
     <div class="modal-body">
         <form #planifEstrategicaForm="ngForm" (ngSubmit)="onSubmit()">
             <div class="row">
@@ -334,15 +319,13 @@
                                         class="form-control"
                                         id="id_proy_elem_padre"
                                         [value]="getElementoNombre(id_proy_elem_padre)"
-                                        disabled
-                                    />
+                                        disabled/>
                                 </div>
                                   <div class="col col-xl-1 col-lg-1 mt-auto">
                                   <label class="btn-view-bg-3" [style.backgroundColor]="'#FDC82F'"> IN </label>
                                 </div>
 
                                 <div class="col col-xl-2 col-lg-2 mt-auto"></div>
-
                                 <!-- Padre y Código -->
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
                                     <label for="padre">Padre</label>
@@ -352,15 +335,13 @@
                                         name="padre"
                                         [(ngModel)]="selectedParentCodigo"
                                         [disabled]="tipo === 'OG'"
-                                        (change)="onParentChange()"
-                                    >
+                                        (change)="onParentChange()">
                                         <option value="">Seleccionar padre</option>
                                         <option *ngFor="let parent of validParents" [value]="parent.codigo">
                                             ({{ parent.codigo }})
                                         </option>
                                     </select>
                                 </div>
-
                                 <!-- Código -->
                                 <div class="col col-xl-3 col-lg-3 mt-auto">
                                     <label for="codigo">Código</label>
@@ -372,10 +353,8 @@
                                         [(ngModel)]="codigo"
                                         [readonly]="true"
                                         placeholder="Ingresa el Código"
-                                        disabled
-                                    />
+                                        disabled/>
                                 </div>
-
                                 <!-- Categoría -->
                                     <div class="col col-xl-4 col-lg-4 mt-auto">
                                         <label for="inst_categoria_1">Categoría</label>
@@ -387,7 +366,6 @@
                                             </option>
                                         </select>
                                     </div>
-
                                     <!-- SubCategoría -->
                                     <div class="col col-xl-4 col-lg-4 mt-auto">
                                         <label for="inst_categoria_2">SubCategoría</label>
@@ -399,7 +377,6 @@
                                             </option>
                                         </select>
                                     </div>
-
                                     <!-- Tipo -->
                                     <div class="col col-xl-4 col-lg-4 mt-auto">
                                         <label for="tipoIndicador">Tipo</label>
@@ -410,8 +387,7 @@
                                             </option>
                                         </select>
                                     </div>
-
-
+                                <!-- Nombre -->
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
                                     <label for="indicador">Nombre de elemento</label>
                                     <input
@@ -420,11 +396,9 @@
                                         id="indicador"
                                         name="indicador"
                                         placeholder="Ingresa el Nombre de elemento"
-                                        [(ngModel)]="indicador"
-                                        (change)="ValidateIndicador()"
-                                    />
+                                        [(ngModel)]="indicador" maxlength="99"
+                                        (change)="ValidateIndicador()"/>
                                 </div>
-
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
                                     <label for="descripcion">Descripción</label>
                                     <input
@@ -433,10 +407,8 @@
                                         id="descripcion"
                                         name="descripcion"
                                         placeholder="Ingresa una Descripción"
-                                        [(ngModel)]="descripcion"                                     
-                                    />                                 
+                                        [(ngModel)]="descripcion" maxlength="299"/>                                 
                                 </div>
-
                                 <!-- Línea base, Medida y Meta Final -->
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
                                     <label for="linea_base">Línea base</label>
@@ -447,10 +419,8 @@
                                         name="linea_base"
                                         placeholder="Ingresa una Línea base"
                                         [(ngModel)]="linea_base"
-                                        (ngModelChange)="linea_base = convertToNumber($event)"
-                                    />                                  
+                                        (ngModelChange)="linea_base = convertToNumber($event)"/>                                  
                                 </div>
-
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
                                     <label for="medida">Medida</label>
                                     <input
@@ -459,12 +429,9 @@
                                         id="medida"
                                         name="medida"
                                         placeholder="Ingresa un Medida"
-                                        [(ngModel)]="medida"
-                                      
-                                    />
-                                 
+                                        [(ngModel)]="medida" maxlength="19"/>                                 
                                 </div>
-
+                                 <!-- Meta Final -->
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
                                     <label for="meta_final">Meta Final</label>
                                     <input
@@ -474,11 +441,8 @@
                                         name="meta_final"
                                         placeholder="Ingresa una Meta Final"
                                         [(ngModel)]="meta_final"
-                                        (ngModelChange)="meta_final = convertToNumber($event)"
-                                    />
-                              
+                                        (ngModelChange)="meta_final = convertToNumber($event)"/>                              
                                 </div>
-
                                 <!-- Medio de verificación -->
                                 <div class="col col-xl-6 col-lg-6 mt-auto">
                                     <label for="medio_verifica">Medio de verificación</label>
@@ -488,12 +452,9 @@
                                         id="medio_verifica"
                                         name="medio_verifica"
                                         placeholder="Ingresa un Medio de verificación"
-                                        [(ngModel)]="medio_verifica"
-                                       
-                                    />
-                               
+                                        [(ngModel)]="medio_verifica" maxlength="299"/>                               
                                 </div>
-
+                                <!-- Supuestos/Comentario -->
                                 <div class="row">
                                     <div class="row">
                                         <!-- Supuestos/Comentario -->
@@ -505,10 +466,7 @@
                                                 id="comentario"
                                                 name="comentario"
                                                 placeholder="Ingresa un comentario"
-                                                [(ngModel)]="comentario"
-                                               
-                                            />
-                                       
+                                                [(ngModel)]="comentario" maxlength="254"/>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -634,7 +592,7 @@
                     class="form-control"
                     [(ngModel)]="editAvance.comentarios"
                     name="comentarios"
-                    maxlength="255"
+                    maxlength="254"
                 ></textarea>
             </div>
                 <div
@@ -738,7 +696,7 @@
                                     <input  class="form-control" type="text" 
                                         id="comentarios" name="comentarios"  
                                         placeholder="Ingresa un comentario"
-                                        [(ngModel)]="comentarios" (change)="ValidateComentarios()"/> 
+                                        [(ngModel)]="comentarios" maxlength="254" (change)="ValidateComentarios()"/> 
                                     <span class="custom-alert-message" *ngIf="!valComentarios">Debe ingresar un comentario</span>       
                                 </div>
                                 <!-- ======= ======= BUTTONS SECTION ======= ======= -->
