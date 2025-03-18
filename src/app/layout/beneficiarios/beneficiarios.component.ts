@@ -14,6 +14,7 @@ import { servAliados } from "../../servicios/aliados";
 import { servInstituciones } from "../../servicios/instituciones";
 //Organizaciones
 import { ServOrganizacion } from "../../servicios/organizaciones";
+import { log } from 'console';
 
 @Component({
   selector: 'app-beneficiarios',
@@ -487,8 +488,10 @@ export class BeneficiariosComponent implements OnInit {
 
         this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;
         this.id_proyecto = this.beneficiariosSelected.id_proyecto;
+
         this.mujeres = this.beneficiariosSelected.mujeres;
         this.hombres = this.beneficiariosSelected.hombres;
+
         this.titulo_evento = this.beneficiariosSelected.titulo_evento;
         this.evento_detalle = this.beneficiariosSelected.evento_detalle;
         this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
@@ -725,6 +728,9 @@ export class BeneficiariosComponent implements OnInit {
         hombresCount: number = 0;
         totalCount: number = 0;
 
+        /*mujeresTotal: any = '';
+        hombresTotal: any = '';*/
+
     // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL BENEFICIARIOS LISTA ======= =======
         beneficiariosListaOrganizacionTipo: any[] = [];
         beneficiariosListaOrganizacionSubTipo: any[] = [];
@@ -933,10 +939,11 @@ export class BeneficiariosComponent implements OnInit {
             (data) => {
               if (data && data[0] && data[0].dato) {
                 this.beneficiariosLista = data[0].dato;                
+                /*this.mujeresTotal(this.beneficiariosLista.filter(bene=> (bene.genero === 'F') ));
+                this.hombresTotal(this.beneficiariosLista.filter(bene=> (bene.genero === 'M') ));*/                                               
               } else {
                 this.beneficiariosLista = [];
-              }
-        
+              }        
               this.totalLengthBeneficiariosLista = this.beneficiariosLista.length;
               this.countBeneficiarios();
             },
