@@ -648,7 +648,7 @@
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
                                             <label for="idp_organizacion_tipo">Tipo de Actor</label>
                                             <select class="form-control" id="idp_organizacion_tipo" name="idp_organizacion_tipo"
-                                                [(ngModel)]="idp_organizacion_tipo">
+                                                [(ngModel)]="idp_organizacion_tipo" (change)="cargarOrganizacionSubTipoPorTipo(idp_organizacion_tipo)">
                                                 <option value="" disabled selected>Seleccione un Tipo de Actor</option>
                                                 <option *ngFor="let tipo of beneficiariosListaOrganizacionTipo" [value]="tipo.id_subtipo">
                                                 {{ tipo.descripcion_subtipo }}

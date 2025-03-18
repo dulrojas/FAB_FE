@@ -743,15 +743,6 @@ export class BeneficiariosComponent implements OnInit {
               console.error(error);
             }
           );
-          // ======= GET ORGANIZACION SUBTIPO =======
-          this.servicios.getParametricaByIdTipo(26).subscribe(
-            (data) => {
-              this.beneficiariosListaOrganizacionSubTipo = data[0].dato;
-            },
-            (error) => {
-              console.error(error);
-            }
-          );
           // ======= GET UBICA GEO DEPARTAMENTO =======
           this.servUbicaGeografica.getUbiDepartamentos("Departamento").subscribe(
             (data) => {
@@ -771,6 +762,24 @@ export class BeneficiariosComponent implements OnInit {
             }
           );
         }
+        // ======= GET ORGANIZACION SUBTIPO =======
+        cargarOrganizacionSubTipoPorTipo(idTipo: any) {
+          if (idTipo) {
+            this.servicios.getParametricaByIdPadre(idTipo).subscribe(
+              (data) => {
+                this.beneficiariosListaOrganizacionSubTipo = data[0].dato;
+              },
+              (error) => {
+                console.error(error);
+                this.beneficiariosListaOrganizacionSubTipo = [];
+              }
+            );
+          } else {
+            this.beneficiariosListaOrganizacionSubTipo = [];
+          }
+          this.idp_organizacion_subtipo = null;
+        }
+
         // ======= ======= GET MUNICIPIO ======= =======
         cargarMunicipiosPorDepartamentoLista(idDepartamentoLista: any) {
           if (idDepartamentoLista) {
@@ -1043,6 +1052,13 @@ export class BeneficiariosComponent implements OnInit {
           this.id_ubica_geo_comu = this.beneficiariosListaSelected.id_ubica_geo_comu;
           this.comunidad_no_registrada = this.beneficiariosListaSelected.comunidad_no_registrada;
           this.idp_rango_edad = this.beneficiariosListaSelected.idp_rango_edad ;
+
+          if (this.idp_organizacion_tipo) {
+            this.cargarOrganizacionSubTipoPorTipo(this.idp_organizacion_tipo);
+            setTimeout(() => {     
+                this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo;       
+            }, 500);
+        }
 
           const idMunicipio = this.beneficiariosListaSelected.id_ubica_geo_muni;
           const idComunidad = this.beneficiariosListaSelected.id_ubica_geo_comu;
