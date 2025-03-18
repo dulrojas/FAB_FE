@@ -515,7 +515,7 @@
                                                 <td style="text-align: center;">{{ beneficiarioLista.nombre }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.genero }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.tipo_actor }}</td>
-                                                <td style="text-align: center;">{{ beneficiarioLista.institucion_comunidad }}</td>
+                                                <td style="text-align: center;">{{ getDescripcionSubtipo(beneficiarioLista.idp_organizacion_subtipo,beneficiariosListaOrganizacionSubTipo )}}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.comunidad_no_registrada }}</td>                                                
                                                 <td style="text-align: center;">{{ beneficiarioLista.rango_edad }}</td>
                                             </tr>
@@ -661,7 +661,7 @@
                                             <select class="form-control" id="idp_organizacion_subtipo" name="idp_organizacion_subtipo"
                                                 [(ngModel)]="idp_organizacion_subtipo">
                                                 <option value="" disabled selected>Seleccione un Tipo de Institución/ Comunidad</option>
-                                                <option *ngFor="let tipo of beneficiariosListaOrganizacionSubTipo" [value]="tipo.id_subtipo">
+                                                <option *ngFor="let tipo of  beneficiariosListaOrganizacionSubTipoFilter" [value]="tipo.id_subtipo">
                                                 {{ tipo.descripcion_subtipo }}
                                                 </option>
                                             </select>

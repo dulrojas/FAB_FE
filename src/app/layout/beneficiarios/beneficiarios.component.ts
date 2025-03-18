@@ -728,6 +728,7 @@ export class BeneficiariosComponent implements OnInit {
     // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL BENEFICIARIOS LISTA ======= =======
         beneficiariosListaOrganizacionTipo: any[] = [];
         beneficiariosListaOrganizacionSubTipo: any[] = [];
+        beneficiariosListaOrganizacionSubTipoFilter: any[] = [];
         beneficiariosListaUbicaDepto: any[] = [];
         beneficiariosListaUbicaMuni: any[] = [];
         beneficiariosListaUbicaComu: any[] = [];
@@ -738,6 +739,16 @@ export class BeneficiariosComponent implements OnInit {
           this.servicios.getParametricaByIdTipo(18).subscribe(
             (data) => {
               this.beneficiariosListaOrganizacionTipo = data[0].dato;
+            },
+            (error) => {
+              console.error(error);
+            }
+          );
+          // ======= GET ORGANIZACION TIPO =======
+          this.servicios.getParametricaByIdTipo(26).subscribe(
+            (data) => {
+              this.beneficiariosListaOrganizacionSubTipo = data[0].dato;
+
             },
             (error) => {
               console.error(error);
@@ -764,20 +775,7 @@ export class BeneficiariosComponent implements OnInit {
         }
         // ======= GET ORGANIZACION SUBTIPO =======
         cargarOrganizacionSubTipoPorTipo(idTipo: any) {
-          if (idTipo) {
-            this.servicios.getParametricaByIdPadre(idTipo).subscribe(
-              (data) => {
-                this.beneficiariosListaOrganizacionSubTipo = data[0].dato;
-              },
-              (error) => {
-                console.error(error);
-                this.beneficiariosListaOrganizacionSubTipo = [];
-              }
-            );
-          } else {
-            this.beneficiariosListaOrganizacionSubTipo = [];
-          }
-          this.idp_organizacion_subtipo = null;
+          this.beneficiariosListaOrganizacionSubTipoFilter = this.beneficiariosListaOrganizacionSubTipo.filter(subtipo => subtipo.id_padre == idTipo);
         }
 
         // ======= ======= GET MUNICIPIO ======= =======
@@ -1044,21 +1042,16 @@ export class BeneficiariosComponent implements OnInit {
           this.nombre = this.beneficiariosListaSelected.nombre;          
           this.es_hombre = this.beneficiariosListaSelected.es_hombre !== null ? 
                   (this.beneficiariosListaSelected.es_hombre === true ? "true" : "false") : 
-                  null;
-          this.idp_organizacion_tipo = this.beneficiariosListaSelected.idp_organizacion_tipo ;
-          this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo ;
+                  null;          
           this.id_ubica_geo_depto = this.beneficiariosListaSelected.id_ubica_geo_depto;
           this.id_ubica_geo_muni = this.beneficiariosListaSelected.id_ubica_geo_muni;
           this.id_ubica_geo_comu = this.beneficiariosListaSelected.id_ubica_geo_comu;
           this.comunidad_no_registrada = this.beneficiariosListaSelected.comunidad_no_registrada;
           this.idp_rango_edad = this.beneficiariosListaSelected.idp_rango_edad ;
 
-          if (this.idp_organizacion_tipo) {
-            this.cargarOrganizacionSubTipoPorTipo(this.idp_organizacion_tipo);
-            setTimeout(() => {     
-                this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo;       
-            }, 500);
-        }
+          this.idp_organizacion_tipo = this.beneficiariosListaSelected.idp_organizacion_tipo;
+          this.cargarOrganizacionSubTipoPorTipo(this.idp_organizacion_tipo);
+          this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo;
 
           const idMunicipio = this.beneficiariosListaSelected.id_ubica_geo_muni;
           const idComunidad = this.beneficiariosListaSelected.id_ubica_geo_comu;
