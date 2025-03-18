@@ -726,12 +726,37 @@ export class InfProyectoComponent implements OnInit {
       let projectData: any = await this.getAllProjectData(this.idProyecto);
       // ======= ======= =======
       // ======= PLAN EST =======
+      projectObj.planEstrategica = projectData.pro_pla_est.map(({ sigla, codigo, indicador, linea_base, medida, meta_final, medio_verifica }) => [
+        sigla, 
+        codigo, 
+        indicador, 
+        linea_base, 
+        medida,
+        meta_final, 
+        medio_verifica
+      ]);
       // ======= ======= =======
       // ======= EJEC EST =======
+      projectObj.ejecEstrategica = projectData.pro_eje_est.map(({ codigo, indicador, fecha_reportar, valor_reportado, descripcion, valor_esperado, porcentaje_avance, meta_final, porcentaje_meta_final }) => [
+        codigo, 
+        indicador, 
+        fecha_reportar, 
+        valor_reportado, 
+        descripcion, 
+        valor_esperado, 
+        porcentaje_avance, 
+        meta_final, 
+        porcentaje_meta_final
+      ]);
       // ======= ======= =======
       // ======= EJEC FIN =======
       // ======= ======= =======
       // ======= ADICIONALES =======
+      projectObj.preAvance = projectData.pro_pre_ava.map(({ fecha_hora, monto_avance, motivo }) => [
+        fecha_hora, 
+        monto_avance, 
+        motivo
+      ]);
       // ======= ======= =======
       // ======= ACTIVIDADES =======
       projectObj.actividades = projectData.pro_act.map(({ codigo, actividad, presupuesto, avance_total, fecha_inicio, fecha_fin }) => [

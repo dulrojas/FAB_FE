@@ -274,7 +274,7 @@ export class PdfExportService {
         lineWidth: 0.2
       },
       head: tableHeader,
-      body: []
+      body: projectObj.planEstrategica
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
@@ -307,7 +307,7 @@ export class PdfExportService {
         ],
         ['COD', 'NOMBRE', 'REPORTE A', 'PROGRESO', 'MEDIDA', 'METAPER', 'AVANCE PER.', 'META FINAL', 'AVANCE']
       ],
-      body: []
+      body: projectObj.ejecEstrategica
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
@@ -357,7 +357,7 @@ export class PdfExportService {
         lineWidth: 0.2
       },
       head: tableHeader,
-      body: []
+      body: projectObj.preAvance
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
