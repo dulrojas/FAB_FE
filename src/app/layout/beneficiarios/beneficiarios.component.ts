@@ -1569,7 +1569,7 @@ countHeaderData() {
   // Iterar sobre la tabla de beneficiarios
   this.beneficiariosTable.forEach((beneficiario) => {
     // Contar comunidades presentes en la lista de comunidades
-    if (beneficiario.comunidad && typeof beneficiario.comunidad === 'string') {
+    if (beneficiario.id_ubica_geo_comu && typeof beneficiario.id_ubica_geo_comu === 'number') {
       this.headerDataNro01 += 1;
     }
 
