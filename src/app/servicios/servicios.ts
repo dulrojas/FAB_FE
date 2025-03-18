@@ -39,6 +39,32 @@ export class servicios{
 
     return this.http.post<any>(this.URL, params, { headers });
   }
+  // ======= ======= ======= GET PADRE======= ======= =======
+  getParametricaByIdPadre(idPadre: any): Observable<any> {
+    const params = {
+      "procedure_name": "sp_parametrica",
+      "body": {
+        "params": [
+          {"name": "p_accion","value": "C3","type": "string"},
+          {"name": "p_idp","value": null,"type": "int"},
+          {"name": "p_id_tipo","value": null,"type": "int"},
+          {"name": "p_descripcion_tipo","value": null,"type": "string"},
+          {"name": "p_id_subtipo","value": null,"type": "int"},
+          {"name": "p_descripcion_subtipo","value": null,"type": "string"},
+          {"name": "p_id_estado","value": null,"type": "int"},
+          {"name": "p_id_padre","value": idPadre,"type": "int"},
+          {"name": "p_valor_subtipo","value": null,"type": "int"}
+        ]
+      }
+    };
+
+    const ip = sessionStorage.getItem('ip') || '';
+    const headers = new HttpHeaders({
+      'ip': "127.0.0.1"
+    });
+
+    return this.http.post<any>(this.URL, params, { headers });
+  }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET PRESUPUESTO EJECUTADO ======= ======= =======
   getPresupuestoEjecutadoByIdProy(idProy: any): Observable<any> {

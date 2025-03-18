@@ -14,6 +14,7 @@ import { servAliados } from "../../servicios/aliados";
 import { servInstituciones } from "../../servicios/instituciones";
 //Organizaciones
 import { ServOrganizacion } from "../../servicios/organizaciones";
+import { log } from 'console';
 
 @Component({
   selector: 'app-beneficiarios',
@@ -159,6 +160,7 @@ export class BeneficiariosComponent implements OnInit {
       fecha_hora_reg: any = '';
 
       ubica_geo_muni: any = '';
+      ubica_geo_comu: any = '';
 
       beneficiarios_persona_registro: any = "";
       beneficiarios_fecha_registro: any = "";
@@ -166,6 +168,7 @@ export class BeneficiariosComponent implements OnInit {
       beneficiariosTipoEvento: any[] = [];
       beneficiariosUbicaDepto: any[] = [];
       beneficiariosUbicaMuni: any[] = [];
+      beneficiariosUbicaComu: any[] = [];
       beneficiariosActividades: any[] = [];
       
       // GET UBICACION GEOGRAFICA
@@ -221,6 +224,7 @@ export class BeneficiariosComponent implements OnInit {
           }
         );
       } 
+      // ======= ======= GET MUNICIPIO ======= =======
       cargarMunicipiosPorDepartamento(idDepartamento: any) {
         if (idDepartamento) {
           this.servUbicaGeografica.getUbiMunicipios(idDepartamento).subscribe(
@@ -236,6 +240,23 @@ export class BeneficiariosComponent implements OnInit {
           this.beneficiariosUbicaMuni = [];
         }        
         this.id_ubica_geo_muni = null;
+      }
+      // ======= ======= GET COMUNIDAD ======= =======
+      cargarComunidadPorMunicipio(idMunicipio: any) {
+        if (idMunicipio) {
+          this.servUbicaGeografica.getUbiComunidad(idMunicipio).subscribe(
+            (data) => {
+              this.beneficiariosUbicaComu = data[0].dato;
+            },
+            (error) => {
+              console.error(error);
+              this.beneficiariosUbicaComu = [];
+            }
+          );
+        } else {
+          this.beneficiariosUbicaComu = [];
+        }        
+        this.id_ubica_geo_comu = null;
       }
 
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
@@ -382,6 +403,7 @@ export class BeneficiariosComponent implements OnInit {
         this.fecha = null;
       
         this.ubica_geo_muni = '';
+        this.ubica_geo_comu = '';
       
         this.beneficiarios_persona_registro = this.namePersonaReg;
         this.beneficiarios_fecha_registro = "";
@@ -397,8 +419,8 @@ export class BeneficiariosComponent implements OnInit {
           (data) => {
             this.beneficiarios = (data[0].dato) ? (data[0].dato) : ([]);
             this.totalLengthBeneficiarios = this.beneficiarios.length;
-            
             this.countHeaderData();
+
           },
           (error) => {
             console.error(error);
@@ -420,6 +442,7 @@ export class BeneficiariosComponent implements OnInit {
         this.mujeres = 0;
         this.hombres = 0;
         this.beneficiariosUbicaMuni = [];
+        this.beneficiariosUbicaComu = [];
 
         this.openModalBeneficiario(modalScope);      
       }
@@ -465,8 +488,10 @@ export class BeneficiariosComponent implements OnInit {
 
         this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;
         this.id_proyecto = this.beneficiariosSelected.id_proyecto;
+
         this.mujeres = this.beneficiariosSelected.mujeres;
         this.hombres = this.beneficiariosSelected.hombres;
+
         this.titulo_evento = this.beneficiariosSelected.titulo_evento;
         this.evento_detalle = this.beneficiariosSelected.evento_detalle;
         this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
@@ -480,12 +505,34 @@ export class BeneficiariosComponent implements OnInit {
         this.beneficiarios_fecha_registro = this.beneficiariosSelected.fecha_hora_reg;
 
         this.ubica_geo_muni = this.beneficiariosSelected.ubica_geo_muni;
+        this.ubica_geo_comu = this.beneficiariosSelected.ubica_geo_comu;
+
+        const idMunicipio = this.beneficiariosSelected.id_ubica_geo_muni;
+        const idComunidad = this.beneficiariosSelected.id_ubica_geo_comu;
 
         if (this.id_ubica_geo_depto) {
-          this.cargarMunicipiosPorDepartamento(this.id_ubica_geo_depto);
-          setTimeout(() => {     
-            this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;       
-          }, 500);
+          this.servUbicaGeografica.getUbiMunicipios(this.id_ubica_geo_depto).subscribe(
+            (data) => {
+              this.beneficiariosUbicaMuni = data[0].dato;            
+              this.id_ubica_geo_muni = idMunicipio;
+              if (idMunicipio) {
+                this.servUbicaGeografica.getUbiComunidad(idMunicipio).subscribe(
+                  (data) => {
+                    this.beneficiariosUbicaComu = data[0].dato;                    
+                    this.id_ubica_geo_comu = idComunidad;
+                  },
+                  (error) => {
+                    console.error(error);
+                    this.beneficiariosUbicaComu = [];
+                  }
+                );
+              }
+            },
+            (error) => {
+              console.error(error);
+              this.beneficiariosUbicaMuni = [];
+            }
+          );
         }
         
         this.openModalBeneficiario(modalScope);
@@ -627,8 +674,7 @@ export class BeneficiariosComponent implements OnInit {
         return;
       }
       
-      // Aquí iría la lógica para importar el beneficiario seleccionado
-      // Por ejemplo, agregar el beneficiario a otra lista o realizar alguna acción
+      // Lógica para importar el participante de lista beneficiario seleccionado
       
       alert('Beneficiario importado exitosamente');
       this.closeModalBeneficiarioListaProyecto();
@@ -682,12 +728,16 @@ export class BeneficiariosComponent implements OnInit {
         hombresCount: number = 0;
         totalCount: number = 0;
 
+        /*mujeresTotal: any = '';
+        hombresTotal: any = '';*/
+
     // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL BENEFICIARIOS LISTA ======= =======
         beneficiariosListaOrganizacionTipo: any[] = [];
         beneficiariosListaOrganizacionSubTipo: any[] = [];
+        beneficiariosListaOrganizacionSubTipoFilter: any[] = [];
         beneficiariosListaUbicaDepto: any[] = [];
         beneficiariosListaUbicaMuni: any[] = [];
-
+        beneficiariosListaUbicaComu: any[] = [];
         beneficiariosListaRangoEdad: any[] = [];
     // ======= ======= GET PARAMETRICAS BENEFICIARIOS LISTA ======= =======
         getParametricasBeneficiariosLista():void{          
@@ -700,10 +750,11 @@ export class BeneficiariosComponent implements OnInit {
               console.error(error);
             }
           );
-          // ======= GET ORGANIZACION SUBTIPO =======
+          // ======= GET ORGANIZACION TIPO =======
           this.servicios.getParametricaByIdTipo(26).subscribe(
             (data) => {
               this.beneficiariosListaOrganizacionSubTipo = data[0].dato;
+
             },
             (error) => {
               console.error(error);
@@ -728,7 +779,11 @@ export class BeneficiariosComponent implements OnInit {
             }
           );
         }
-        
+        // ======= GET ORGANIZACION SUBTIPO =======
+        cargarOrganizacionSubTipoPorTipo(idTipo: any) {
+          this.beneficiariosListaOrganizacionSubTipoFilter = this.beneficiariosListaOrganizacionSubTipo.filter(subtipo => subtipo.id_padre == idTipo);
+        }
+
         // ======= ======= GET MUNICIPIO ======= =======
         cargarMunicipiosPorDepartamentoLista(idDepartamentoLista: any) {
           if (idDepartamentoLista) {
@@ -746,9 +801,23 @@ export class BeneficiariosComponent implements OnInit {
           }        
           this.id_ubica_geo_muni = null;
         }
-
-
-
+        // ======= ======= GET COMUNIDAD ======= =======
+        cargarComunidadPorMunicipioLista(idMunicipioLista: any) {
+          if (idMunicipioLista) {
+            this.servUbicaGeografica.getUbiComunidad(idMunicipioLista).subscribe(
+              (data) => {
+                this.beneficiariosListaUbicaComu = data[0].dato;
+              },
+              (error) => {
+                console.error(error);
+                this.beneficiariosListaUbicaComu = [];
+              }
+            );
+          } else {
+            this.beneficiariosListaUbicaComu = [];
+          }        
+          this.id_ubica_geo_comu = null;
+        }
         canOpenBeneficiarioListaModal(): boolean {
           // Permitir abrir cuando hay un beneficiario seleccionado, sin importar si está en modo edición
           return this.beneficiariosSelected !== null;
@@ -762,6 +831,7 @@ export class BeneficiariosComponent implements OnInit {
             this.getParametricasBeneficiariosLista();
             // Abrir el modal
             this.openModalBeneficiarioLista(modalScope);
+            this.beneficiariosListaSelected = null;
           } else {
             alert('Primero debe seleccionar un beneficiario');
           }
@@ -869,10 +939,11 @@ export class BeneficiariosComponent implements OnInit {
             (data) => {
               if (data && data[0] && data[0].dato) {
                 this.beneficiariosLista = data[0].dato;                
+                /*this.mujeresTotal(this.beneficiariosLista.filter(bene=> (bene.genero === 'F') ));
+                this.hombresTotal(this.beneficiariosLista.filter(bene=> (bene.genero === 'M') ));*/                                               
               } else {
                 this.beneficiariosLista = [];
-              }
-        
+              }        
               this.totalLengthBeneficiariosLista = this.beneficiariosLista.length;
               this.countBeneficiarios();
             },
@@ -892,13 +963,39 @@ export class BeneficiariosComponent implements OnInit {
 
           this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
           this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;
+          this.id_ubica_geo_comu = this.beneficiariosSelected.id_ubica_geo_comu;
+
+          const idMunicipio = this.beneficiariosSelected.id_ubica_geo_muni;
+          const idComunidad = this.beneficiariosSelected.id_ubica_geo_comu;
 
           if (this.id_ubica_geo_depto) {
-            this.cargarMunicipiosPorDepartamentoLista(this.id_ubica_geo_depto);
-            setTimeout(() => {     
-              this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;       
-            }, 500);
-          }
+            this.servUbicaGeografica.getUbiMunicipios(this.id_ubica_geo_depto).subscribe(
+              (data) => {
+                this.beneficiariosListaUbicaMuni = data[0].dato;
+                // Después de cargar los municipios, establecemos el valor del municipio
+                this.id_ubica_geo_muni = idMunicipio;
+                
+                // Luego cargamos las comunidades si hay un municipio seleccionado
+                if (idMunicipio) {
+                  this.servUbicaGeografica.getUbiComunidad(idMunicipio).subscribe(
+                    (data) => {
+                      this.beneficiariosListaUbicaComu = data[0].dato;
+                      // Después de cargar las comunidades, establecemos el valor de la comunidad
+                      this.id_ubica_geo_comu = idComunidad;
+                    },
+                    (error) => {
+                      console.error(error);
+                      this.beneficiariosListaUbicaComu = [];
+                    }
+                  );
+                }
+              },
+              (error) => {
+                console.error(error);
+                this.beneficiariosListaUbicaMuni = [];
+              }
+            );
+          }          
           
           this.openModalBeneficiarioLista(modalScope);
         }
@@ -952,20 +1049,47 @@ export class BeneficiariosComponent implements OnInit {
           this.nombre = this.beneficiariosListaSelected.nombre;          
           this.es_hombre = this.beneficiariosListaSelected.es_hombre !== null ? 
                   (this.beneficiariosListaSelected.es_hombre === true ? "true" : "false") : 
-                  null;
-          this.idp_organizacion_tipo = this.beneficiariosListaSelected.idp_organizacion_tipo ;
-          this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo ;
+                  null;          
           this.id_ubica_geo_depto = this.beneficiariosListaSelected.id_ubica_geo_depto;
           this.id_ubica_geo_muni = this.beneficiariosListaSelected.id_ubica_geo_muni;
           this.id_ubica_geo_comu = this.beneficiariosListaSelected.id_ubica_geo_comu;
           this.comunidad_no_registrada = this.beneficiariosListaSelected.comunidad_no_registrada;
           this.idp_rango_edad = this.beneficiariosListaSelected.idp_rango_edad ;
 
+          this.idp_organizacion_tipo = this.beneficiariosListaSelected.idp_organizacion_tipo;
+          this.cargarOrganizacionSubTipoPorTipo(this.idp_organizacion_tipo);
+          this.idp_organizacion_subtipo = this.beneficiariosListaSelected.idp_organizacion_subtipo;
+
+          const idMunicipio = this.beneficiariosListaSelected.id_ubica_geo_muni;
+          const idComunidad = this.beneficiariosListaSelected.id_ubica_geo_comu;
+
           if (this.id_ubica_geo_depto) {
-            this.cargarMunicipiosPorDepartamentoLista(this.id_ubica_geo_depto);
-            setTimeout(() => {     
-              this.id_ubica_geo_muni = this.beneficiariosListaSelected.id_ubica_geo_muni;       
-            }, 500);
+            this.servUbicaGeografica.getUbiMunicipios(this.id_ubica_geo_depto).subscribe(
+              (data) => {
+                this.beneficiariosListaUbicaMuni = data[0].dato;
+                // Después de cargar los municipios, establecemos el valor del municipio
+                this.id_ubica_geo_muni = idMunicipio;
+                
+                // Luego cargamos las comunidades si hay un municipio seleccionado
+                if (idMunicipio) {
+                  this.servUbicaGeografica.getUbiComunidad(idMunicipio).subscribe(
+                    (data) => {
+                      this.beneficiariosListaUbicaComu = data[0].dato;
+                      // Después de cargar las comunidades, establecemos el valor de la comunidad
+                      this.id_ubica_geo_comu = idComunidad;
+                    },
+                    (error) => {
+                      console.error(error);
+                      this.beneficiariosListaUbicaComu = [];
+                    }
+                  );
+                }
+              },
+              (error) => {
+                console.error(error);
+                this.beneficiariosListaUbicaMuni = [];
+              }
+            );
           }
 
           this.openModalBeneficiarioLista(modalScope);
@@ -1445,7 +1569,7 @@ countHeaderData() {
   // Iterar sobre la tabla de beneficiarios
   this.beneficiariosTable.forEach((beneficiario) => {
     // Contar comunidades presentes en la lista de comunidades
-    if (beneficiario.comunidad && typeof beneficiario.comunidad === 'string') {
+    if (beneficiario.id_ubica_geo_comu && typeof beneficiario.id_ubica_geo_comu === 'number') {
       this.headerDataNro01 += 1;
     }
 
