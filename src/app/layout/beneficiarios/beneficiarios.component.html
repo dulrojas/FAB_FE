@@ -657,10 +657,10 @@
                                         </div>                                        
                                         <!-- ======= ======= INSTITUCION/COMUNIDAD ======= ======= -->
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
-                                            <label for="idp_organizacion_subtipo">Institución/ Comunidad</label>
+                                            <label for="idp_organizacion_subtipo">Institución</label>
                                             <select class="form-control" id="idp_organizacion_subtipo" name="idp_organizacion_subtipo"
                                                 [(ngModel)]="idp_organizacion_subtipo">
-                                                <option value="" disabled selected>Seleccione un Tipo de Institución/ Comunidad</option>
+                                                <option value="" disabled selected>Seleccione un Tipo de Institución</option>
                                                 <option *ngFor="let tipo of  beneficiariosListaOrganizacionSubTipoFilter" [value]="tipo.id_subtipo">
                                                 {{ tipo.descripcion_subtipo }}
                                                 </option>
@@ -706,7 +706,7 @@
                                             <label for="comunidad_no_registrada">Otro</label>
                                             <input  class="form-control" type="text" 
                                                     id="comunidad_no_registrada" name="comunidad_no_registrada"  
-                                                    placeholder="Ingresa dato si no se encuentra en las listas"
+                                                    placeholder="Ingresa dato si no se encuentra en las listas de Institución / Comunidad "
                                                     [(ngModel)]="comunidad_no_registrada" maxlength="99"/>
                                         </div>
                                         <!-- ======= ======= RANGO DE EDAD ======= ======= -->
