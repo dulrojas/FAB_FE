@@ -1238,7 +1238,6 @@ export class BeneficiariosComponent implements OnInit {
             this.valVinculo = false;
           }
         }
-
     // ======= ======= OPEN MODALS FUN ======= =======
         //private modalRef: NgbModalRef | null = null;
         openModalAliado(content: TemplateRef<any>) {
