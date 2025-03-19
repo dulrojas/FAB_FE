@@ -427,7 +427,7 @@
                                     <input class="form-control" type="text" 
                                         id="actividadText" name="actividadText" 
                                         [(ngModel)]="actividadText" 
-                                        [disabled]="actividadAvances.length > 0"
+                                        [disabled]="(actividadAvances.length > 0)&&(false)"
                                         (change)="validateActividadText()"
                                         placeholder="Ingrese un titulo para la actividad">
                                 <span class="custom-alert-message" *ngIf="!valActividadText">
@@ -449,7 +449,7 @@
                                         name="id_proy_elemento_padre" 
                                         (change)="onPadreChanged()"
                                         [(ngModel)]="id_proy_elemento_padre" 
-                                        [disabled]="actividadAvances.length > 0">
+                                        [disabled]="(actividadAvances.length > 0)&&(false)">
                                         <option value="" disabled>Seleccionar padre</option>
                                         <option *ngFor="let elemento of elementos" 
                                                 [value]="elemento.id_proy_elemento">
@@ -474,7 +474,7 @@
                                     <textarea class="form-control" 
                                         id="descripcion" name="descripcion" 
                                         [(ngModel)]="descripcion" 
-                                        [disabled]="actividadAvances.length > 0"
+                                        [disabled]="(actividadAvances.length > 0)&&(false)"
                                         (change)="validateDescripcion()"
                                         placeholder="Ingrese una descipción de la actividad">
                                     </textarea>
@@ -494,7 +494,7 @@
                                     <input class="form-control" type="date" 
                                         id="fecha_inicio" name="fecha_inicio" 
                                         [(ngModel)]="fecha_inicio" 
-                                        [disabled]="actividadAvances.length > 0"
+                                        [disabled]="(actividadAvances.length > 0)&&(false)"
                                         (change)="validateFechaInicio()">
                                     <span class="custom-alert-message" *ngIf="!valFechaInicio">
                                         Debe ingresar una fecha valida dentro de la gestion actual.
@@ -506,7 +506,7 @@
                                     <input class="form-control" type="date" 
                                         id="fecha_fin" name="fecha_fin" 
                                         [(ngModel)]="fecha_fin" 
-                                        [disabled]="actividadAvances.length > 0"
+                                        [disabled]="(actividadAvances.length > 0)&&(false)"
                                         (change)="validateFechaFin()">
                                     <span class="custom-alert-message" *ngIf="!valFechaFin">
                                         Debe ingresar una fecha valida dentro de la gestion actual.
@@ -521,7 +521,7 @@
                                     <input class="form-control" type="text" 
                                         id="presupuesto" name="presupuesto" 
                                         [(ngModel)]="presupuesto" 
-                                        [disabled]="actividadAvances.length > 0"
+                                        [disabled]="(actividadAvances.length > 0)&&(false)"
                                         (change)="onChangedPresupuesto()"
                                         placeholder="Ingrese el presupuesto de la actividad">
                                     <span class="custom-alert-message" *ngIf="!valPresupuesto">
@@ -576,8 +576,9 @@
                                         </div>
                                         <!-- ======= ADD AVANCE SECTION ======= -->
                                         <div class="col col-md-1 col-lg-1 mt-auto">
-                                            <button type="submit" class="btn btn-bg-1" 
-                                                [disabled]="(modalAction == 'add')||(gestion < initGestion)">
+                                            <button class="btn btn-bg-1" 
+                                                [disabled]="(modalAction == 'add')||(gestion < initGestion)"
+                                                (click)="onSubmitAvance()">
                                                 <i aria-hidden="true"></i> +
                                             </button>
                                         </div>
@@ -646,7 +647,7 @@
                 <i aria-hidden="true"></i> Reprogramar
             </button>
             <button type="button" class="btn btn-bg-1" 
-                [disabled]="(gestion < initGestion)"
+                [disabled]="((gestion < initGestion)||(actividadAvances.length > 0))&&(false)"
                 (click)="onSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
             </button>

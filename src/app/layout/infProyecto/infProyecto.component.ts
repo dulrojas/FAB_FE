@@ -655,6 +655,7 @@ export class InfProyectoComponent implements OnInit {
 
     async generatePdf(){
       let projectObj = this.proyectoScope;
+      projectObj.inst_unidad = (this.unidades.find((unidad)=>(unidad.id_inst_unidad == projectObj.id_inst_unidad))).unidad;
       // ======= OBJETIVOS SECTION =======
       let objetivosFAN = this.objetivosFAN.filter((objetivo)=>(objetivo.selected));
       projectObj.objetivos_tdc = objetivosFAN.map(({ objetivo, selected }) => ({ 
@@ -689,7 +690,7 @@ export class InfProyectoComponent implements OnInit {
       ]));
       // ======= ======= =======
       // ======= ALCANCE GEO SECTION =======
-      projectObj.ubicaciones = this.ubicacionesSel.map(({idp_tipo_ubica_geo, nombre})=>([
+      projectObj.ubicaciones = (this.ubicacionesSel.sort((a, b) => a.nivel - b.nivel)).map(({idp_tipo_ubica_geo, nombre})=>([
         idp_tipo_ubica_geo, 
         nombre
       ]));
@@ -750,6 +751,25 @@ export class InfProyectoComponent implements OnInit {
       ]);
       // ======= ======= =======
       // ======= EJEC FIN =======
+      let presupuestoEjecutado = projectData.pro_pre_eje[0];
+
+      projectObj.gestion = presupuestoEjecutado.gestion_actual;
+
+      projectObj.pro_act_presupuesto = presupuestoEjecutado.pro_act_presupuesto;
+      projectObj.pro_act_ejecutado = 
+        "$"+this.parseAmountFloatToStr(
+          this.parseAmountStrToFloat(presupuestoEjecutado.pro_act_ava_ejecutado) + 
+          this.parseAmountStrToFloat(presupuestoEjecutado.pro_pre_ava_ejecutado)
+        )
+      ;
+      
+      projectObj.pro_act_presupuesto_gestion = presupuestoEjecutado.pro_act_presupuesto_gestion;
+      projectObj.pro_act_ejecutado = 
+        "$"+this.parseAmountFloatToStr(
+          this.parseAmountStrToFloat(presupuestoEjecutado.pro_act_ava_ejecutado_gestion) + 
+          this.parseAmountStrToFloat(presupuestoEjecutado.pro_pre_ava_ejecutado_gestion)
+        )
+      ;
       // ======= ======= =======
       // ======= ADICIONALES =======
       projectObj.preAvance = projectData.pro_pre_ava.map(({ fecha_hora, monto_avance, motivo }) => [
@@ -759,11 +779,12 @@ export class InfProyectoComponent implements OnInit {
       ]);
       // ======= ======= =======
       // ======= ACTIVIDADES =======
-      projectObj.actividades = projectData.pro_act.map(({ codigo, actividad, presupuesto, avance_total, fecha_inicio, fecha_fin }) => [
+      projectObj.actividades = projectData.pro_act.map(({ codigo, actividad, presupuesto, avance_total, monto_ejecutado_total, fecha_inicio, fecha_fin }) => [
         codigo, 
         actividad, 
         presupuesto, 
         avance_total, 
+        monto_ejecutado_total, 
         fecha_inicio, 
         fecha_fin
       ]);
@@ -776,17 +797,45 @@ export class InfProyectoComponent implements OnInit {
       ]);
       // ======= ======= =======
       // ======= BENEFICIARIOS =======
+      projectObj.beneficiarios = projectData.pro_ben.map(({ id_proy_beneficiario, fecha, idp_tipo_ubica_geo, nombre, titulo_evento, mujeres, hombres, total }) => [
+        id_proy_beneficiario, 
+        fecha, 
+        idp_tipo_ubica_geo, 
+        nombre, 
+        titulo_evento, 
+        mujeres, 
+        hombres, 
+        total
+      ]);
       // ======= ======= =======
       // ======= ALIANZAS =======
+      projectObj.aliados = projectData.pro_ali.map(({ id_proy_aliado, fecha, organizacion, referente, vinculo, convenio }) => [
+        id_proy_aliado, 
+        fecha, 
+        organizacion, 
+        referente, 
+        vinculo, 
+        convenio
+      ]);
       // ======= ======= =======
       // ======= RIESGOS =======
+      projectObj.riesgos = projectData.pro_rie.map(({ id_riesgo, categoria, fecha, riesgo, impacto, probabilidad, nivel, comentarios }) => [
+        id_riesgo, 
+        categoria, 
+        fecha, 
+        riesgo, 
+        impacto, 
+        probabilidad, 
+        nivel, 
+        comentarios
+      ]);
       // ======= ======= =======
       // ======= APRENDIZAJES =======
-      projectObj.aprendizajes = projectData.pro_apr.map(({ id_proy_aprende, fecha, idp_aprendizaje_area, idp_aprendizaje_tipo, aprendizaje }) => [
+      projectObj.aprendizajes = projectData.pro_apr.map(({ id_proy_aprende, fecha, aprendizaje_area, aprendizaje_tipo, aprendizaje }) => [
         id_proy_aprende, 
         fecha, 
-        idp_aprendizaje_area, 
-        idp_aprendizaje_tipo, 
+        aprendizaje_area, 
+        aprendizaje_tipo, 
         aprendizaje
       ]);
       // ======= ======= =======

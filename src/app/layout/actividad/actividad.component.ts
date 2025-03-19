@@ -770,7 +770,7 @@ export class ActividadComponent implements OnInit {
     this.openModal(modalScope);
   }
   // ======= ======= ======= ======= =======
-  // ======= ======= EDIT APRENDIZAJE ======= =======
+  // ======= ======= ADD ACTIVIDAD ======= =======
   addActividad(){
     let actividadCodigo = ((this.elementos.find(
       (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
@@ -822,7 +822,59 @@ export class ActividadComponent implements OnInit {
     );
   }
   // ======= ======= ======= ======= =======
-  // ======= ======= INIT EDIT PERSONA ROLES ======= =======
+  // ======= ======= EDIT ACTIVIDAD ======= =======
+  editActividad(){
+    let actividadCodigo = ((this.elementos.find(
+      (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
+    )).codigo);
+    actividadCodigo = actividadCodigo.slice(0,(actividadCodigo.length - 1));
+
+    let elementoPadre = (this.elementosGant.find(
+      (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
+    ));
+
+    if( elementoPadre ){
+      let childrensCodigos = elementoPadre.childrens
+        .map(item => item.codigo)
+        .filter(codigo => codigo.startsWith(actividadCodigo))
+        .map(codigo => parseInt(codigo.split(actividadCodigo)[1], 10)) 
+        .filter(x => !isNaN(x));
+      let maxChildrenCodigo = (childrensCodigos.length > 0)?(Math.max(...childrensCodigos)):(null);
+
+      actividadCodigo = actividadCodigo+ (maxChildrenCodigo+1).toString();
+    }
+    else{
+      actividadCodigo = actividadCodigo+"1";
+    }
+
+    const objActividad = {
+      p_id_proy_actividad: this.actividadSelected.id_proy_actividad,
+      p_id_proyecto: parseInt(this.idProyecto,10),
+      p_id_proy_elemento_padre: parseInt(this.id_proy_elemento_padre, 10),
+      p_codigo: actividadCodigo,
+      p_actividad: this.actividadText,
+      p_descripcion: this.descripcion,
+      p_orden: parseInt(this.orden,10),
+      p_id_proy_acti_repro: null,
+      p_presupuesto: this.parseAmountStrToFloat(this.presupuesto),
+      p_fecha_inicio: this.fecha_inicio,
+      p_fecha_fin: this.fecha_fin,
+      p_resultado: this.resultado,
+      p_idp_actividad_estado: parseInt(this.idp_actividad_estado, 10),
+      p_id_persona_reg: parseInt( this.idPersonaReg, 10)
+    };
+
+    this.servActividad.editActividad(objActividad).subscribe(
+      (data) => {
+        this.getActividades();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= INIT ADD AVANCE ACTIVIDAD ======= =======
   initAvanceActividad(modalScope: TemplateRef<any>){
     this.initActividadModel();
 
@@ -904,20 +956,43 @@ export class ActividadComponent implements OnInit {
       }
     }
     else{
-      this.validateActAvaAvance();
-      this.validateActAvaMonto();
+      this.validateIdProyElementoPadre();
+      this.validateActividadText();
+      this.validateDescripcion();
+      this.validatePresupuesto();
+      this.validateFechaInicio();
+      this.validateFechaFin();
 
-      let valForm = (
-        this.valActAvaAvance &&
-        this.valActAvaAvance2 &&
-        this.valActAvaMonto &&
-        this.valActAvaMonto2
+      let valForm1 = (
+        this.valIdProyElementoPadre &&
+        this.valActividadText &&
+        this.valDescripcion &&
+        this.valPresupuesto &&
+        this.valFechaInicio &&
+        this.valFechaFin &&
+        this.valFechaFin2
       );
 
-      if(valForm){
-        this.avanceActividad();
+      if(valForm1){
+        this.editActividad();
         this.closeModal();
       }
+    }
+  }
+  onSubmitAvance(): void {
+    this.validateActAvaAvance();
+    this.validateActAvaMonto();
+
+    let valForm = (
+      this.valActAvaAvance &&
+      this.valActAvaAvance2 &&
+      this.valActAvaMonto &&
+      this.valActAvaMonto2
+    );
+
+    if(valForm){
+      this.avanceActividad();
+      this.closeModal();
     }
   }
   // ======= ======= ======= ======= =======
