@@ -185,6 +185,14 @@
                             <i aria-hidden="true"></i> Editar
                         </button>
                         <button type="button" class="btn btn-view-bg-1"
+                            (click)="initDeleteActividad(deleteActividadModal)"
+                            [disabled]="(!actividadSelected)
+                                ||(actividadSelected.esActividadReprog)
+                                ||(currentPerProRol.includes('LEC'))
+                                ||(currentPerProRol.includes('ESC'))">
+                            <i aria-hidden="true"></i> Eliminar
+                        </button>
+                        <button type="button" class="btn btn-view-bg-1"
                             (click)="initAvanceActividad(actividadModal)"
                             [disabled]="(!actividadSelected)
                                 ||(actividadSelected.esActividadReprog)
@@ -710,6 +718,31 @@
             </button>
             <button type="button" class="btn btn-bg-1" (click)="reprogramarActividad()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Reprogramar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE ACTIV MODAL ======= ======= ======= -->
+<ng-template #deleteActividadModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Actividad</h4>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar esta actividad?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="deleteActividad()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
             </button>
         </div>
     </div>
