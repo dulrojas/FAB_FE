@@ -177,6 +177,14 @@
                             <i aria-hidden="true"></i> Añadir
                         </button>
                         <button type="button" class="btn btn-view-bg-1"
+                            (click)="initEditActividad(actividadModal)"
+                            [disabled]="(!actividadSelected)
+                                ||(actividadSelected.esActividadReprog)
+                                ||(currentPerProRol.includes('LEC'))
+                                ||(currentPerProRol.includes('ESC'))">
+                            <i aria-hidden="true"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-view-bg-1"
                             (click)="initAvanceActividad(actividadModal)"
                             [disabled]="(!actividadSelected)
                                 ||(actividadSelected.esActividadReprog)
@@ -427,7 +435,7 @@
                                     <input class="form-control" type="text" 
                                         id="actividadText" name="actividadText" 
                                         [(ngModel)]="actividadText" 
-                                        [disabled]="(actividadAvances.length > 0)&&(false)"
+                                        [disabled]="(modalAction == 'avance')"
                                         (change)="validateActividadText()"
                                         placeholder="Ingrese un titulo para la actividad">
                                 <span class="custom-alert-message" *ngIf="!valActividadText">
@@ -449,7 +457,7 @@
                                         name="id_proy_elemento_padre" 
                                         (change)="onPadreChanged()"
                                         [(ngModel)]="id_proy_elemento_padre" 
-                                        [disabled]="(actividadAvances.length > 0)&&(false)">
+                                        [disabled]="(modalAction == 'avance')">
                                         <option value="" disabled>Seleccionar padre</option>
                                         <option *ngFor="let elemento of elementos" 
                                                 [value]="elemento.id_proy_elemento">
@@ -474,7 +482,7 @@
                                     <textarea class="form-control" 
                                         id="descripcion" name="descripcion" 
                                         [(ngModel)]="descripcion" 
-                                        [disabled]="(actividadAvances.length > 0)&&(false)"
+                                        [disabled]="(modalAction == 'avance')"
                                         (change)="validateDescripcion()"
                                         placeholder="Ingrese una descipción de la actividad">
                                     </textarea>
@@ -494,7 +502,7 @@
                                     <input class="form-control" type="date" 
                                         id="fecha_inicio" name="fecha_inicio" 
                                         [(ngModel)]="fecha_inicio" 
-                                        [disabled]="(actividadAvances.length > 0)&&(false)"
+                                        [disabled]="(modalAction == 'avance')"
                                         (change)="validateFechaInicio()">
                                     <span class="custom-alert-message" *ngIf="!valFechaInicio">
                                         Debe ingresar una fecha valida dentro de la gestion actual.
@@ -506,7 +514,7 @@
                                     <input class="form-control" type="date" 
                                         id="fecha_fin" name="fecha_fin" 
                                         [(ngModel)]="fecha_fin" 
-                                        [disabled]="(actividadAvances.length > 0)&&(false)"
+                                        [disabled]="(modalAction == 'avance')"
                                         (change)="validateFechaFin()">
                                     <span class="custom-alert-message" *ngIf="!valFechaFin">
                                         Debe ingresar una fecha valida dentro de la gestion actual.
@@ -521,7 +529,7 @@
                                     <input class="form-control" type="text" 
                                         id="presupuesto" name="presupuesto" 
                                         [(ngModel)]="presupuesto" 
-                                        [disabled]="(actividadAvances.length > 0)&&(false)"
+                                        [disabled]="(modalAction == 'avance')"
                                         (change)="onChangedPresupuesto()"
                                         placeholder="Ingrese el presupuesto de la actividad">
                                     <span class="custom-alert-message" *ngIf="!valPresupuesto">
@@ -647,7 +655,7 @@
                 <i aria-hidden="true"></i> Reprogramar
             </button>
             <button type="button" class="btn btn-bg-1" 
-                [disabled]="((gestion < initGestion)||(actividadAvances.length > 0))&&(false)"
+                [disabled]="((gestion < initGestion)||(modalAction == 'avance'))"
                 (click)="onSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
             </button>

@@ -517,7 +517,7 @@ export class ActividadComponent implements OnInit {
 
   valActividadText: any = true;
   validateActividadText() {
-    if ((this.actividadText) && (this.actividadText.length < 100)) {
+    if ((this.actividadText) && (this.actividadText.length <= 100)) {
       this.valActividadText = true;
     } else {
       this.valActividadText = false;
@@ -526,7 +526,7 @@ export class ActividadComponent implements OnInit {
 
   valDescripcion: any = true;
   validateDescripcion() {
-    if ((this.descripcion) && (this.descripcion.length < 255)) {
+    if ((this.descripcion) && (this.descripcion.length <= 255)) {
       this.valDescripcion = true;
     } else {
       this.valDescripcion = false;
@@ -875,7 +875,7 @@ export class ActividadComponent implements OnInit {
   }
   // ======= ======= ======= ======= =======
   // ======= ======= INIT ADD AVANCE ACTIVIDAD ======= =======
-  initAvanceActividad(modalScope: TemplateRef<any>){
+  initEditActividad(modalScope: TemplateRef<any>){
     this.initActividadModel();
 
     this.modalAction = "edit";
@@ -928,6 +928,40 @@ export class ActividadComponent implements OnInit {
       }
     );
 
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= INIT ADD AVANCE ACTIVIDAD ======= =======
+  initAvanceActividad(modalScope: TemplateRef<any>){
+    this.initActividadModel();
+
+    this.modalAction = "avance";
+    this.modalTitle = this.getModalTitle("edit");
+
+    this.id_proy_actividad = this.actividadSelected.id_proy_actividad;
+    this.codigo = this.actividadSelected.codigo;
+    this.actividadText = this.actividadSelected.actividad;
+    this.proy_acti_repro = (this.actividadSelected.id_proy_acti_repro)?
+      (this.actividadSelected.pro_act_rep_codigo+" - REP: "+this.actividadSelected.pro_act_rep_actividad):
+      (null);
+    this.id_proy_elemento_padre = this.actividadSelected.id_proy_elem_padre;
+    this.onPadreChanged();
+    this.descripcion = this.actividadSelected.descripcion;
+    this.fecha_inicio = this.actividadSelected.fecha_inicio;
+    this.fecha_fin = this.actividadSelected.fecha_fin;
+    this.presupuesto = this.parseAmountFloatToStr(this.actividadSelected.presupuesto);
+
+    this.resultado = this.actividadSelected.resultado;
+
+    this.actividadAvances = (this.actividadSelected.avances)?(this.actividadSelected.avances):([]);
+
+    this.actividadAvanceAvances = 0;
+    this.actividadAvanceMonto = 0;
+    this.actividadAvances.forEach((actAvance) => {
+      this.actividadAvanceAvances += parseFloat(actAvance.avance);
+      this.actividadAvanceMonto += this.parseAmountStrToFloat(actAvance.monto_ejecutado);
+    });
+
+    this.openModal(modalScope);
   }
   // ======= ======= ======= ======= =======
   // ======= ======= SUBMIT FORM ======= =======
