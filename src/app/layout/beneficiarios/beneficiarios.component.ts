@@ -5,7 +5,8 @@ import { ProyectoService } from '../../services/proyectoData.service';
 
 import { servicios } from "../../servicios/servicios";
 //Beneficiarios
-import { servBeneficiarios } from '../../servicios/beneficiarios';
+//import { servbeneficiarios } from '../../servicios/beneficiarios';
+import { servBeneficiarios } from "../../servicios/Beneficiarios";
 import {servUbicaGeografica} from "../../servicios/ubicaGeografica";
 import {servListBenef} from "../../servicios/ListBeneficiarios";
 import { servActividad } from "../../servicios/actividad";
@@ -39,6 +40,7 @@ export class BeneficiariosComponent implements OnInit {
     private servInstituciones:servInstituciones,
     //Organizaciones
     private ServOrganizacion: ServOrganizacion,
+    
   ) {}
   
   // ======= ======= HEADER SECTION ======= =======
@@ -46,6 +48,8 @@ export class BeneficiariosComponent implements OnInit {
       idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
       namePersonaReg: any = localStorage.getItem('userFullName');
       currentPerProRol: any = localStorage.getItem('currentPerProRol');
+      archivo: File | null = null;
+
       @Output() selectionChange = new EventEmitter<any>();
       onChildSelectionChange(selectedPro: any) {
         this.idProyecto = selectedPro.id_proyecto;
@@ -667,17 +671,61 @@ export class BeneficiariosComponent implements OnInit {
       }
     
     // ======= ======= IMPORT BENEFICIARIOS LISTA PROYECTO ======= =======
-    importBeneficiariosListaProyecto() {
-      if (!this.beneficiariosListaProyectoSelected) {
-        alert('Por favor seleccione un beneficiario para importar');
-        return;
+    onFileSelected(event: Event) {
+      console.log("onFileSelected");
+      
+      const input = event.target as HTMLInputElement;
+      const file = input.files?.[0];
+      
+      if (file) {
+        this.archivo = file; // Asignar el archivo solo si es válido
+        console.log(this.archivo.name);
+        this.importExcelBeneficiario(this.id_proy_beneficiario);
+        // this.descripcion = this.archivo.name;
+        // console.log(this.descripcion);
+        
+      } else {
+        this.archivo = null; // Asegurarse de que sea null si no es válido
+        // Notify.failure('Solo se permiten archivos Excel (.xlsx, .xls)');
+        input.value = ''; // Restablecer el input
       }
-      
-      // Lógica para importar el participante de lista beneficiario seleccionado
-      
-      alert('Beneficiario importado exitosamente');
-      this.closeModalBeneficiarioListaProyecto();
     }
+
+    importExcelBeneficiario( id_proy_beneficiario){
+      console.log("id_proy_beneficiario:",id_proy_beneficiario);
+      console.log(this.archivo);
+      
+      this.servBeneficiarios.importarData(this.archivo,id_proy_beneficiario).subscribe(
+        (data) => {
+          console.log(data);
+          this.getBeneficiariosLista();
+          alert('Beneficiario importado exitosamente');
+        },
+        (error) => {
+          console.error("mensaje:",error);
+          alert(error.message);
+        }
+      );
+    }
+
+    exportarExcelBeneficiario(){
+      this.servBeneficiarios.exportarData(this.id_proy_beneficiario).subscribe({
+        next: (response: Blob) => {
+          // Crear un enlace temporal para la descarga
+          const link = document.createElement('a');
+          const objectUrl = URL.createObjectURL(response);
+          link.href = objectUrl;
+          link.download ="exportarBeneficiario.xlsx";
+          link.click();
+          // Liberar memoria
+          URL.revokeObjectURL(objectUrl);
+        },
+        error: (error) => {
+          console.error('Error al descargar el PDF:', error);
+        }
+      });
+    }
+
 
     // ======= ======= OPEN/CLOSE MODAL BENEFICIARIO LISTA PROYECTO ======= =======
     private modalRefListaProyecto: NgbModalRef | null = null;

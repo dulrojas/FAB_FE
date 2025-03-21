@@ -7,6 +7,8 @@ export const environment = {
     URL: "https://foro-condominios.com/apiFanDev/sp",
     URLUploadFile: "https://foro-condominios.com/apiFanDev/uploadFile",
     URLDownloadFile: "https://foro-condominios.com/apiFanDev/downloadFile",
+    URLimportar: "https://foro-condominios.com/apiFanDev/uploadFile",
+    URLexportar: "https://foro-condominios.com/apiFanDev/uploadFile",
     assetsPath: '../../../assets/',
     defaultImageSrc: '../../../assets/images/empty.jpg'
 };

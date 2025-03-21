@@ -472,17 +472,18 @@
                                             </button>
                                             <!-- ======= ======= EXPORTAR DE EXCEL ======= ======= -->
                                             <button type="button" class="btn btn-bg-1" 
-                                                (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
-                                                [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
-                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Exportar de excel
+                                                (click)="exportarExcelBeneficiario()"
+                                                [disabled]="(beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Exportar de excel 2
                                             </button>
                                             <!-- ======= ======= FILTRO PARA TIPO DE ACTOR:COMUNIDADES: DEPARTAMENTO, MUNICIPIO ======= ======= -->
                                             <!-- ======= ======= IMPORTAR A EXCEL ======= ======= -->
                                             <button type="button" class="btn btn-bg-1" 
-                                                (click)="initAddBeneficiarioLista(listaBeneficiariosFormModal)"
-                                                [disabled]="(!beneficiariosListaSelected)||(currentPerProRol=='LEC')">
-                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar a excel
-                                            </button>                                                                                       
+                                                (click)="onFileSelected($event)"
+                                                [disabled]="(beneficiariosListaSelected)||(currentPerProRol=='LEC')">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar a excel 2
+                                            </button>     
+                                            <input type="file" class="btn btn-bg-1"  id="fileInput" (change)="onFileSelected($event)">                                                                                  
                                     </div>
                                 </div>
                                 <div class="container mt-4">
