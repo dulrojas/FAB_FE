@@ -517,7 +517,7 @@ export class ActividadComponent implements OnInit {
 
   valActividadText: any = true;
   validateActividadText() {
-    if ((this.actividadText) && (this.actividadText.length < 100)) {
+    if ((this.actividadText) && (this.actividadText.length <= 100)) {
       this.valActividadText = true;
     } else {
       this.valActividadText = false;
@@ -526,7 +526,7 @@ export class ActividadComponent implements OnInit {
 
   valDescripcion: any = true;
   validateDescripcion() {
-    if ((this.descripcion) && (this.descripcion.length < 255)) {
+    if ((this.descripcion) && (this.descripcion.length <= 255)) {
       this.valDescripcion = true;
     } else {
       this.valDescripcion = false;
@@ -770,7 +770,7 @@ export class ActividadComponent implements OnInit {
     this.openModal(modalScope);
   }
   // ======= ======= ======= ======= =======
-  // ======= ======= EDIT APRENDIZAJE ======= =======
+  // ======= ======= ADD ACTIVIDAD ======= =======
   addActividad(){
     let actividadCodigo = ((this.elementos.find(
       (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
@@ -822,8 +822,8 @@ export class ActividadComponent implements OnInit {
     );
   }
   // ======= ======= ======= ======= =======
-  // ======= ======= INIT EDIT PERSONA ROLES ======= =======
-  initAvanceActividad(modalScope: TemplateRef<any>){
+  // ======= ======= INIT EDIT AVANCE ACTIVIDAD ======= =======
+  initEditActividad(modalScope: TemplateRef<any>){
     this.initActividadModel();
 
     this.modalAction = "edit";
@@ -856,7 +856,93 @@ export class ActividadComponent implements OnInit {
     this.openModal(modalScope);
   }
   // ======= ======= ======= ======= =======
-  // ======= ======= EDIT APRENDIZAJE ======= =======
+  // ======= ======= EDIT ACTIVIDAD ======= =======
+  editActividad(){
+    let actividadCodigo = ((this.elementos.find(
+      (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
+    )).codigo);
+    actividadCodigo = actividadCodigo.slice(0,(actividadCodigo.length - 1));
+
+    let elementoPadre = (this.elementosGant.find(
+      (elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)
+    ));
+
+    if( elementoPadre ){
+      let childrensCodigos = elementoPadre.childrens
+        .map(item => item.codigo)
+        .filter(codigo => codigo.startsWith(actividadCodigo))
+        .map(codigo => parseInt(codigo.split(actividadCodigo)[1], 10)) 
+        .filter(x => !isNaN(x));
+      let maxChildrenCodigo = (childrensCodigos.length > 0)?(Math.max(...childrensCodigos)):(null);
+
+      actividadCodigo = actividadCodigo+ (maxChildrenCodigo+1).toString();
+    }
+    else{
+      actividadCodigo = actividadCodigo+"1";
+    }
+
+    const objActividad = {
+      p_id_proy_actividad: this.actividadSelected.id_proy_actividad,
+      p_id_proyecto: parseInt(this.idProyecto,10),
+      p_id_proy_elemento_padre: parseInt(this.id_proy_elemento_padre, 10),
+      p_codigo: actividadCodigo,
+      p_actividad: this.actividadText,
+      p_descripcion: this.descripcion,
+      p_orden: parseInt(this.orden,10),
+      p_id_proy_acti_repro: null,
+      p_presupuesto: this.parseAmountStrToFloat(this.presupuesto),
+      p_fecha_inicio: this.fecha_inicio,
+      p_fecha_fin: this.fecha_fin,
+      p_resultado: this.resultado,
+      p_idp_actividad_estado: parseInt(this.idp_actividad_estado, 10),
+      p_id_persona_reg: parseInt( this.idPersonaReg, 10)
+    };
+
+    this.servActividad.editActividad(objActividad).subscribe(
+      (data) => {
+        this.getActividades();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= INIT ADD AVANCE ACTIVIDAD ======= =======
+  initAvanceActividad(modalScope: TemplateRef<any>){
+    this.initActividadModel();
+
+    this.modalAction = "avance";
+    this.modalTitle = this.getModalTitle("edit");
+
+    this.id_proy_actividad = this.actividadSelected.id_proy_actividad;
+    this.codigo = this.actividadSelected.codigo;
+    this.actividadText = this.actividadSelected.actividad;
+    this.proy_acti_repro = (this.actividadSelected.id_proy_acti_repro)?
+      (this.actividadSelected.pro_act_rep_codigo+" - REP: "+this.actividadSelected.pro_act_rep_actividad):
+      (null);
+    this.id_proy_elemento_padre = this.actividadSelected.id_proy_elem_padre;
+    this.onPadreChanged();
+    this.descripcion = this.actividadSelected.descripcion;
+    this.fecha_inicio = this.actividadSelected.fecha_inicio;
+    this.fecha_fin = this.actividadSelected.fecha_fin;
+    this.presupuesto = this.parseAmountFloatToStr(this.actividadSelected.presupuesto);
+
+    this.resultado = this.actividadSelected.resultado;
+
+    this.actividadAvances = (this.actividadSelected.avances)?(this.actividadSelected.avances):([]);
+
+    this.actividadAvanceAvances = 0;
+    this.actividadAvanceMonto = 0;
+    this.actividadAvances.forEach((actAvance) => {
+      this.actividadAvanceAvances += parseFloat(actAvance.avance);
+      this.actividadAvanceMonto += this.parseAmountStrToFloat(actAvance.monto_ejecutado);
+    });
+
+    this.openModal(modalScope);
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= ADD ACTIVIDAD AVANCE ======= =======
   avanceActividad(){
     const objActAvance = {
       p_id_proy_actividad_avance: null,
@@ -876,6 +962,28 @@ export class ActividadComponent implements OnInit {
       }
     );
 
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= INIT EDIT AVANCE ACTIVIDAD ======= =======
+  initDeleteActividad(modalScope: TemplateRef<any>){
+    this.initActividadModel();
+
+    this.id_proy_actividad = this.actividadSelected.id_proy_actividad;
+
+    this.openModal(modalScope);
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= DELETE ACTIVIDAD ======= =======
+  deleteActividad(){
+    this.servActividad.deleteActividad(this.id_proy_actividad, this.idPersonaReg).subscribe(
+      (data) => {
+        this.getActividades();
+        this.closeModal();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
   // ======= ======= ======= ======= =======
   // ======= ======= SUBMIT FORM ======= =======
@@ -904,20 +1012,43 @@ export class ActividadComponent implements OnInit {
       }
     }
     else{
-      this.validateActAvaAvance();
-      this.validateActAvaMonto();
+      this.validateIdProyElementoPadre();
+      this.validateActividadText();
+      this.validateDescripcion();
+      this.validatePresupuesto();
+      this.validateFechaInicio();
+      this.validateFechaFin();
 
-      let valForm = (
-        this.valActAvaAvance &&
-        this.valActAvaAvance2 &&
-        this.valActAvaMonto &&
-        this.valActAvaMonto2
+      let valForm1 = (
+        this.valIdProyElementoPadre &&
+        this.valActividadText &&
+        this.valDescripcion &&
+        this.valPresupuesto &&
+        this.valFechaInicio &&
+        this.valFechaFin &&
+        this.valFechaFin2
       );
 
-      if(valForm){
-        this.avanceActividad();
+      if(valForm1){
+        this.editActividad();
         this.closeModal();
       }
+    }
+  }
+  onSubmitAvance(): void {
+    this.validateActAvaAvance();
+    this.validateActAvaMonto();
+
+    let valForm = (
+      this.valActAvaAvance &&
+      this.valActAvaAvance2 &&
+      this.valActAvaMonto &&
+      this.valActAvaMonto2
+    );
+
+    if(valForm){
+      this.avanceActividad();
+      this.closeModal();
     }
   }
   // ======= ======= ======= ======= =======

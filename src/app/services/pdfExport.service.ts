@@ -279,9 +279,6 @@ export class PdfExportService {
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= EJEC ESTRATEGICA SECTION ======= ======= =======
-    doc.addPage('a4', 'landscape'); 
-    verticalPadding = commondVerticalGap;
-     
     doc.setFont('helvetica', 'bold');
     doc.text("Ejecución Estratégica", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
@@ -312,14 +309,11 @@ export class PdfExportService {
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= EJEC FINANCIERA SECTION ======= ======= =======
-    doc.addPage('a4', 'landscape'); 
-    verticalPadding = commondVerticalGap;
-     
     doc.setFont('helvetica', 'bold');
     doc.text("Ejecución Financiera", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
     
-    tableHeader = [["PRESUPUESTO DEL PROYECTO", "EJECUTADO", "PRESUPUESTO DE LA GESTIÓN 2024", "EJECUTADO"]];
+    tableHeader = [["PRESUPUESTO DEL PROYECTO", "EJECUTADO", "PRESUPUESTO DE LA GESTIÓN "+projectObj.gestion, "EJECUTADO "+projectObj.gestion]];
     autoTable(doc, {
       startY: verticalPadding,
       headStyles: {
@@ -332,14 +326,11 @@ export class PdfExportService {
         lineWidth: 0.2
       },
       head: tableHeader,
-      body: []
+      body: [[ projectObj.pro_act_presupuesto, projectObj.pro_act_ejecutado, projectObj.pro_act_presupuesto_gestion, projectObj.pro_act_ejecutado ]]
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= ADICIONALES SECTION ======= ======= =======
-    doc.addPage('a4', 'landscape'); 
-    verticalPadding = commondVerticalGap;
-     
     doc.setFont('helvetica', 'bold');
     doc.text("Adicionales", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
@@ -362,14 +353,11 @@ export class PdfExportService {
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= ACTIVIDADES PROY SECTION ======= ======= =======
-    doc.addPage('a4', 'landscape'); 
-    verticalPadding = commondVerticalGap;
-     
     doc.setFont('helvetica', 'bold');
     doc.text("Actividades del Proyecto", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
     
-    tableHeader = [["RES", "ACTIVIDADES", "PRESUPUESTO", "AVANCE", "FECHA INICIO", "FECHA FIN"]];
+    tableHeader = [["RES", "ACTIVIDADES", "PRESUPUESTO", "AVANCE", "EJECUTADO", "FECHA INICIO", "FECHA FIN"]];
     autoTable(doc, {
       startY: verticalPadding,
       headStyles: {
@@ -387,9 +375,6 @@ export class PdfExportService {
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= LOGROS SECTION ======= ======= =======
-    doc.addPage('a4', 'landscape'); 
-    verticalPadding = commondVerticalGap;
-    
     doc.setFont('helvetica', 'bold');
     doc.text("Logros", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap; 
@@ -412,9 +397,6 @@ export class PdfExportService {
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= EVENTOS BENEF SECTION ======= ======= =======
-    doc.addPage('a4', 'landscape'); 
-    verticalPadding = commondVerticalGap;
-     
     doc.setFont('helvetica', 'bold');
     doc.text("Eventos para Beneficiarios", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
@@ -432,19 +414,16 @@ export class PdfExportService {
         lineWidth: 0.2
       },
       head: tableHeader,
-      body: []
+      body: projectObj.beneficiarios
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= ALIANZAS SECTION ======= ======= =======
-    doc.addPage('a4', 'landscape'); 
-    verticalPadding = commondVerticalGap;
-     
     doc.setFont('helvetica', 'bold');
     doc.text("Alianzas conseguidas", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
     
-    tableHeader = [["ID", "FECHA", "TIPO ACTOR", "NOMBRE DEL REFERENTE", "VÍNCULO CON LOS RESULTADOS", "CONVENIO"]];
+    tableHeader = [["ID", "FECHA", "ORGANIZACION", "NOMBRE DEL REFERENTE", "VÍNCULO CON LOS RESULTADOS", "CONVENIO"]];
     autoTable(doc, {
       startY: verticalPadding,
       headStyles: {
@@ -457,14 +436,11 @@ export class PdfExportService {
         lineWidth: 0.2
       },
       head: tableHeader,
-      body: []
+      body: projectObj.aliados
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= RIESGOS SECTION ======= ======= =======
-    doc.addPage('a4', 'landscape'); 
-    verticalPadding = commondVerticalGap;
-     
     doc.setFont('helvetica', 'bold');
     doc.text("Gestión de Riesgos", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap; 
@@ -482,14 +458,11 @@ export class PdfExportService {
         lineWidth: 0.2
       },
       head: tableHeader,
-      body: []
+      body: projectObj.riesgos
     });
     verticalPadding = (doc as any).lastAutoTable.finalY + commondVerticalGap;
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= APRENDIZAJES SECTION ======= ======= =======
-    doc.addPage('a4', 'landscape'); 
-    verticalPadding = commondVerticalGap;
-     
     doc.setFont('helvetica', 'bold');
     doc.text("Aprendizajes", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap; 
