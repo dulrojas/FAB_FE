@@ -420,7 +420,6 @@ export class BeneficiariosComponent implements OnInit {
             this.beneficiarios = (data[0].dato) ? (data[0].dato) : ([]);
             this.totalLengthBeneficiarios = this.beneficiarios.length;
             this.countHeaderData();
-
           },
           (error) => {
             console.error(error);
