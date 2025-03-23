@@ -381,7 +381,8 @@
                                     <table class="table custom-table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th></th>                                            
+                                                <th></th> 
+                                                <th style="text-align: center;">Beneficiario</th>                                           
                                                 <th style="text-align: center;">CI o ID</th>
                                                 <th style="text-align: center;">Nombre y Apellido</th>
                                                 <th style="text-align: center;">Sexo</th>
@@ -398,7 +399,8 @@
                                                         [(ngModel)]="beneficiario.selected"
                                                         (change)="checkboxChangedBeneficiarioListaProyecto(beneficiario)"                                                      
                                                         id="checkbox-{{ i }}" name="checkbox-{{ i }}">
-                                                </td>                                            
+                                                </td>
+                                                <td style="text-align: center;">{{ beneficiario.titulo_evento }}</td>                                            
                                                 <td style="text-align: center;">{{ beneficiario.num_doc_identidad }}</td>
                                                 <td style="text-align: center;">{{ beneficiario.nombre }}</td>
                                                 <td style="text-align: center;">{{ beneficiario.genero }}</td>
@@ -430,10 +432,15 @@
                                                     <button type="button" class="btn btn-bg-3" (click)="closeModalBeneficiarioListaProyecto()">
                                                         <i class="fa fa-times" aria-hidden="true"></i> Cancelar
                                                     </button>
-                                                <!-- ======= ======= IMPORTAR ======= ======= -->
+                                                <!-- ======= ======= IMPORTAR ======= =======  
                                                     <button type="button" class="btn btn-bg-1" (click)="importBeneficiariosListaProyecto()" [disabled]="!beneficiariosListaProyectoSelected">
                                                         <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar
-                                                    </button>                                                                                                                                 
+                                                    </button>  -->
+                                                    <button type="button" class="btn btn-bg-1"
+                                                    (click)="importarBeneficiariosDesdeProyecto(idProyectoOrigen)"
+                                                    [disabled]="beneficiariosListaProyectoSelected.length === 0">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar
+                                            </button>                                                                                                                                                                              
                                             </div>
                                         </div>
                                     </div>
@@ -474,18 +481,22 @@
                                             <button type="button" class="btn btn-bg-1" 
                                                 (click)="exportarExcelBeneficiario()"
                                                 [disabled]="(beneficiariosListaSelected)||(currentPerProRol=='LEC')">
-                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Exportar de excel 2
-                                            </button>
-                                            <!-- ======= ======= FILTRO PARA TIPO DE ACTOR:COMUNIDADES: DEPARTAMENTO, MUNICIPIO ======= ======= -->
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Exportar a excel
+                                            </button>                                            
                                             <!-- ======= ======= IMPORTAR A EXCEL ======= ======= -->
-                                            <button type="button" class="btn btn-bg-1" 
-                                                (click)="onFileSelected($event)"
-                                                [disabled]="(beneficiariosListaSelected)||(currentPerProRol=='LEC')">
-                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar a excel 2
-                                            </button>     
-                                            <input type="file" class="btn btn-bg-1"  id="fileInput" (change)="onFileSelected($event)">                                                                                  
+                                            <label class="btn btn-bg-1 mb-0">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar a Excel
+                                                <input 
+                                                    type="file"    
+                                                    class="d-none" 
+                                                    id="fileInput"                                                     
+                                                    (change)="onFileSelected($event)" 
+                                                    accept=".xlsx" 
+                                                />                                                                                            
+                                            </label>
+                                            <!--<input type="file" class="btn btn-bg-1"  id="fileInput" (change)="onFileSelected($event)"> -->                
                                     </div>
-                                </div>
+                                </div>                                 
                                 <div class="container mt-4">
                                     <table class="table custom-table table-striped table-bordered">
                                         <thead>
@@ -639,7 +650,7 @@
                                             <label for="es_hombre">Sexo</label>
                                             <select class="form-control" id="es_hombre" name="es_hombre"
                                                 [(ngModel)]="es_hombre">
-                                                <option value="null" disabled selected>Seleccione el Sexo</option>
+                                                <option value="" disabled selected>Seleccione el Sexo</option>
                                                 <option value="true">M</option>
                                                 <option value="false">F</option>
                                             </select>
@@ -762,8 +773,7 @@
                 </button>
             </div>
         </div>
-    </ng-template>         
-
+    </ng-template>       
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- ////////////////////////////////////////  TABLA ALIADOS PROY-ALIADOS //////////////////////////////////////// -->
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->

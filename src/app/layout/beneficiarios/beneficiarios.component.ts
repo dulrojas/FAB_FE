@@ -422,8 +422,7 @@ export class BeneficiariosComponent implements OnInit {
         this.servBeneficiarios.getBeneficiariosByIdProy(this.idProyecto).subscribe(
           (data) => {
             this.beneficiarios = (data[0].dato) ? (data[0].dato) : ([]);
-            this.totalLengthBeneficiarios = this.beneficiarios.length;
-            this.countHeaderData();
+            this.totalLengthBeneficiarios = this.beneficiarios.length;                       
           },
           (error) => {
             console.error(error);
@@ -450,7 +449,7 @@ export class BeneficiariosComponent implements OnInit {
         this.openModalBeneficiario(modalScope);      
       }
   // ======= ======= ADD BENEFICIARIOS ======= =======
-      addBeneficiario() {
+      addBeneficiario() {        
         const objBeneficiario = {
           p_id_proy_beneficiario: 0,
           p_id_proyecto: this.idProyecto,
@@ -492,9 +491,33 @@ export class BeneficiariosComponent implements OnInit {
         this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;
         this.id_proyecto = this.beneficiariosSelected.id_proyecto;
 
-        this.mujeres = this.beneficiariosSelected.mujeres;
-        this.hombres = this.beneficiariosSelected.hombres;
-
+          if (this.id_proy_beneficiario) {
+            this.servListBenef.getListBeneByIdProyBene(this.id_proy_beneficiario).subscribe(
+                (data) => {
+                    if (data && data[0] && data[0].dato) {
+                        this.beneficiariosLista = data[0].dato;
+                    } else {
+                        this.beneficiariosLista = [];
+                    }
+                    this.totalLengthBeneficiariosLista = this.beneficiariosLista.length;
+    
+                    // Contar beneficiarios después de obtener la lista
+                    this.countBeneficiarios();
+    
+                    // Asignar valores después de contar
+                    this.mujeres = this.mujeresCount;
+                    this.hombres = this.hombresCount;
+                },
+                (error) => {
+                    console.error('Error al cargar lista de beneficiarios:', error);
+                    this.beneficiariosLista = [];
+                    this.totalLengthBeneficiariosLista = 0;
+                    this.countBeneficiarios();
+                    this.mujeres = 0;
+                    this.hombres = 0;
+                }
+            );
+          }
         this.titulo_evento = this.beneficiariosSelected.titulo_evento;
         this.evento_detalle = this.beneficiariosSelected.evento_detalle;
         this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
@@ -541,10 +564,11 @@ export class BeneficiariosComponent implements OnInit {
         this.openModalBeneficiario(modalScope);
       }
   // ======= ======= EDIT BENEFICIARIOS ======= =======
-  calculateTotal() {
-    const total = (this.mujeres || 0) + (this.hombres || 0);
-    return total;
-  }
+      calculateTotal() {
+        const total = (this.mujeres || 0) + (this.hombres || 0);
+        return total;
+      }
+
       editBeneficiario() {
         const objBeneficiario = {
           p_id_proy_beneficiario: this.id_proy_beneficiario,
@@ -584,11 +608,13 @@ export class BeneficiariosComponent implements OnInit {
             this.getBeneficiarios();
             this.closeModalBeneficiario();
           },
-          (error) => {
+          (error) => {            
             alert('Error al editar beneficiario');
             console.error(error);
-          }
+            this.closeModalBeneficiario();
+          }                
         );
+        this.closeModalBeneficiario();
       }     
   // ======= ======= INIT DELETE BENEFICIARIOS ======= =======
       initDeleteBeneficiario(modalScope: TemplateRef<any>){
@@ -651,6 +677,51 @@ export class BeneficiariosComponent implements OnInit {
             console.error(error);         
           }
         );
+      }      
+
+      importarBeneficiariosDesdeProyecto(idProyectoOrigen: number) {
+        if (this.beneficiariosListaProyectoSelected.length === 0) {
+          alert('Debe seleccionar al menos un beneficiario para importar.');
+          return;
+        }
+
+        const beneficiariosAImportar = this.beneficiariosListaProyectoSelected.map((beneficiario) => ({
+          p_id_proy_bene_lista: 0,
+          p_id_proy_beneficiario: this.id_proy_beneficiario,            
+          p_num_doc_identidad: beneficiario.num_doc_identidad,
+          p_nombre: beneficiario.nombre,            
+          p_es_hombre: beneficiario.genero === "M",
+          p_idp_organizacion_tipo: beneficiario.idp_organizacion_tipo || null,
+          p_idp_organizacion_subtipo: beneficiario.idp_organizacion_subtipo || null,
+          p_id_ubica_geo_depto: beneficiario.id_ubica_geo_depto || null,
+          p_id_ubica_geo_muni: beneficiario.id_ubica_geo_muni || null,
+          p_id_ubica_geo_comu: beneficiario.id_ubica_geo_comu || null,
+          p_comunidad_no_registrada: beneficiario.comunidad_no_registrada || null,
+          p_idp_rango_edad: beneficiario.idp_rango_edad || null
+        }));
+
+        let errores = 0;
+
+        beneficiariosAImportar.forEach((nuevoBeneficiario) => {
+          this.servListBenef.addListBene(nuevoBeneficiario).subscribe(
+            () => console.log(`Beneficiario importado: ${nuevoBeneficiario.p_nombre}`),
+            (error) => {
+              console.error(`Error al importar ${nuevoBeneficiario.p_nombre}`, error);
+              errores++;
+            }
+          );
+        });
+
+        setTimeout(() => {
+          if (errores > 0) {
+            alert(`Importación finalizada con ${errores} errores.`);
+          } else {
+            alert('Importación completada exitosamente.');
+          }
+          this.getBeneficiariosLista(); // Refresca la lista
+          this.beneficiariosListaProyectoSelected = []; // Limpia la selección después de importar
+          this.closeModalBeneficiarioListaProyecto(); // Cierra el modal
+        }, 500); // Se da un pequeño margen para que terminen las solicitudes asíncronas
       }
 
       get beneficiariosListaProyectoTable() {
@@ -669,7 +740,20 @@ export class BeneficiariosComponent implements OnInit {
           this.beneficiariosListaProyectoSelected = this.beneficiariosListaProyectoSelected.filter(b => b.num_doc_identidad !== beneficiarioSel.num_doc_identidad);
         }
       }
-    
+      // ======= ======= OPEN/CLOSE MODAL BENEFICIARIO LISTA PROYECTO ======= =======
+        private modalRefListaProyecto: NgbModalRef | null = null;
+
+        openModalBeneficiarioListaProyecto(content: TemplateRef<any>) {
+          this.getBeneficiariosListaPorProyecto();  // Asegura que los beneficiarios se carguen
+          this.modalRefListaProyecto = this.modalService.open(content, { size: 'xl' });
+        }
+
+        closeModalBeneficiarioListaProyecto() {
+          if (this.modalRefListaProyecto) {
+            this.modalRefListaProyecto.close(); 
+            this.modalRefListaProyecto = null;
+          }
+        } 
     // ======= ======= IMPORT BENEFICIARIOS LISTA PROYECTO ======= =======
     onFileSelected(event: Event) {
       console.log("onFileSelected");
@@ -690,7 +774,7 @@ export class BeneficiariosComponent implements OnInit {
         input.value = ''; // Restablecer el input
       }
     }
-
+    // ======= ======= IMPORT BENEFICIARIOS LISTA EXCEL ======= =======
     importExcelBeneficiario( id_proy_beneficiario){
       console.log("id_proy_beneficiario:",id_proy_beneficiario);
       console.log(this.archivo);
@@ -707,7 +791,7 @@ export class BeneficiariosComponent implements OnInit {
         }
       );
     }
-
+    // ======= ======= EXPORT BENEFICIARIOS LISTA EXCEL ======= =======
     exportarExcelBeneficiario(){
       this.servBeneficiarios.exportarData(this.id_proy_beneficiario).subscribe({
         next: (response: Blob) => {
@@ -721,26 +805,10 @@ export class BeneficiariosComponent implements OnInit {
           URL.revokeObjectURL(objectUrl);
         },
         error: (error) => {
-          console.error('Error al descargar el PDF:', error);
+          console.error('Error al descargar el Excel:', error);
         }
       });
-    }
-
-
-    // ======= ======= OPEN/CLOSE MODAL BENEFICIARIO LISTA PROYECTO ======= =======
-    private modalRefListaProyecto: NgbModalRef | null = null;
-
-    openModalBeneficiarioListaProyecto(content: TemplateRef<any>) {
-      this.getBeneficiariosListaPorProyecto();  // Asegura que los beneficiarios se carguen
-      this.modalRefListaProyecto = this.modalService.open(content, { size: 'xl' });
-    }
-
-    closeModalBeneficiarioListaProyecto() {
-      if (this.modalRefListaProyecto) {
-        this.modalRefListaProyecto.close(); 
-        this.modalRefListaProyecto = null;
-      }
-    }  
+    } 
       
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
 // ======= ======= LISTA DE BENEFICIARIOS - PROY_BENE_LISTA ======= =======
@@ -771,12 +839,9 @@ export class BeneficiariosComponent implements OnInit {
         institucion_comunidad: any = '';
         rango_edad: any = '';
 
-        mujeresCount: number = 0;
-        hombresCount: number = 0;
-        totalCount: number = 0;
-
-        /*mujeresTotal: any = '';
-        hombresTotal: any = '';*/
+        mujeresCount: any = '';
+        hombresCount: any = '';
+        totalCount: any = '';
 
     // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL BENEFICIARIOS LISTA ======= =======
         beneficiariosListaOrganizacionTipo: any[] = [];
@@ -918,6 +983,8 @@ export class BeneficiariosComponent implements OnInit {
           if (this.modalRef) {
             this.modalRef.close(); 
             this.modalRef = null;
+            // Volver a contar beneficiarios después de cerrar el modal
+            //this.getBeneficiariosLista();     
           }
         }
     // ======= ======= GET BENEFICIARIOS LISTA ======= =======
@@ -957,7 +1024,7 @@ export class BeneficiariosComponent implements OnInit {
           this.id_proy_beneficiario = '';         
           this.num_doc_identidad = '';
           this.nombre = '';          
-          this.es_hombre = null;
+          this.es_hombre = '';
           this.idp_organizacion_tipo = '';
           this.idp_organizacion_subtipo = '';
           this.id_ubica_geo_depto = null;
@@ -978,6 +1045,7 @@ export class BeneficiariosComponent implements OnInit {
           if (!this.beneficiariosSelected || !this.beneficiariosSelected.id_proy_beneficiario) {
             this.beneficiariosLista = [];
             this.totalLengthBeneficiariosLista = 0;
+            this.countBeneficiarios();
             return;
           }
           const idBeneficiario = this.beneficiariosSelected.id_proy_beneficiario;
@@ -985,19 +1053,20 @@ export class BeneficiariosComponent implements OnInit {
           this.servListBenef.getListBeneByIdProyBene(idBeneficiario).subscribe(
             (data) => {
               if (data && data[0] && data[0].dato) {
-                this.beneficiariosLista = data[0].dato;                
-                /*this.mujeresTotal(this.beneficiariosLista.filter(bene=> (bene.genero === 'F') ));
-                this.hombresTotal(this.beneficiariosLista.filter(bene=> (bene.genero === 'M') ));*/                                               
+                this.beneficiariosLista = data[0].dato;                                                              
               } else {
                 this.beneficiariosLista = [];
               }        
               this.totalLengthBeneficiariosLista = this.beneficiariosLista.length;
               this.countBeneficiarios();
+              this.mujeres = this.mujeresCount;
+              this.hombres = this.hombresCount;
             },
             (error) => {
               console.error('Error al cargar lista de beneficiarios:', error);
               this.beneficiariosLista = [];
               this.totalLengthBeneficiariosLista = 0;
+              this.countBeneficiarios();
             }
           );
         }
@@ -1072,8 +1141,9 @@ export class BeneficiariosComponent implements OnInit {
             (data) => {
               alert('Participante agregado exitosamente');
               this.beneficiariosListaSelected = null;
-              this.getBeneficiariosLista();
-              this.countBeneficiarios();
+              this.getBeneficiariosLista();              
+              this.getBeneficiarios();
+              this.initEditBeneficiario(this.id_proy_beneficiario);
               this.closeModalBeneficiarioLista();
             },
             (error) => {
@@ -1094,9 +1164,11 @@ export class BeneficiariosComponent implements OnInit {
           this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;         
           this.num_doc_identidad = this.beneficiariosListaSelected.num_doc_identidad;
           this.nombre = this.beneficiariosListaSelected.nombre;          
-          this.es_hombre = this.beneficiariosListaSelected.es_hombre !== null ? 
-                  (this.beneficiariosListaSelected.es_hombre === true ? "true" : "false") : 
-                  null;          
+          if (this.beneficiariosListaSelected.es_hombre === true) {
+            this.es_hombre = "true";
+          } else if (this.beneficiariosListaSelected.es_hombre === false) {
+            this.es_hombre = "false";
+          }
           this.id_ubica_geo_depto = this.beneficiariosListaSelected.id_ubica_geo_depto;
           this.id_ubica_geo_muni = this.beneficiariosListaSelected.id_ubica_geo_muni;
           this.id_ubica_geo_comu = this.beneficiariosListaSelected.id_ubica_geo_comu;
@@ -1161,9 +1233,8 @@ export class BeneficiariosComponent implements OnInit {
             (data) => {
               alert('Participante editado exitosamente');
               this.beneficiariosListaSelected = null;
-              this.getBeneficiariosLista();
-              this.countBeneficiarios();
-              this.closeModalBeneficiarioLista();
+              this.getBeneficiariosLista();              
+              this.closeModalBeneficiarioLista();              
             },
             (error) => {
               alert('Error al editar beneficiario');
@@ -1185,12 +1256,13 @@ export class BeneficiariosComponent implements OnInit {
             (data) => {
               alert('Participante eliminado exitosamente');              
               this.beneficiariosListaSelected = null;
-              this.getBeneficiariosLista();
-              this.countBeneficiarios();
-              this.closeModalBeneficiarioLista();
+              this.getBeneficiariosLista();  
+              this.closeModalBeneficiarioLista();        
+              this.initEditBeneficiario(this.id_proy_beneficiario);              
             },
             (error) => {
               alert('Error al eliminar beneficiario');
+              this.closeModalBeneficiarioLista();
               console.error(error);
             }
           );
