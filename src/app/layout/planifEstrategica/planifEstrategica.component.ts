@@ -282,7 +282,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     
       if (avanceData) {
         // Obtener la fecha límite (23:59:59 del día en Bolivia)
-        const fechaAvance = new Date(avanceData.fecha_reportar + 'T23:59:59-04:00'); // Aseguramos la zona horaria UTC-4
+        /*const fechaAvance = new Date(avanceData.fecha_reportar + 'T23:59:59-04:00'); // Aseguramos la zona horaria UTC-4
     
         // Obtener la hora actual en UTC y convertirla manualmente a Bolivia (UTC-4)
         const nowUTC = new Date();
@@ -292,7 +292,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         if (nowBolivia > fechaAvance) {
           alert('No puedes editar este avance porque la fecha ya ha vencido.');
           return; // Bloqueamos la edición
-        }
+        }*/
 
          // Convertir valores a números para comparación
           const lineaBase = parseFloat(this.linea_base);

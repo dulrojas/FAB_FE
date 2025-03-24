@@ -284,8 +284,8 @@ export class BeneficiariosComponent implements OnInit {
       }
   // ======= ======= GET BENEFICIARIOS ======= =======
       getModalTitleBeneficiario(modalActionBeneficiario: any) {
-        this.modalTitleBeneficiario = (modalActionBeneficiario == "add") ? ("Añadir Beneficiario") : this.modalTitleBeneficiario;
-        this.modalTitleBeneficiario = (modalActionBeneficiario == "edit") ? ("Editar Beneficiario") : this.modalTitleBeneficiario;
+        this.modalTitleBeneficiario = (modalActionBeneficiario == "add") ? ("Añadir Evento Para Beneficiario") : this.modalTitleBeneficiario;
+        this.modalTitleBeneficiario = (modalActionBeneficiario == "edit") ? ("Editar Evento Para Beneficiario") : this.modalTitleBeneficiario;
         return this.modalTitleBeneficiario;
       }
   // ======= ======= BENEFICIARIOS TABLE PAGINATION ======= =======
