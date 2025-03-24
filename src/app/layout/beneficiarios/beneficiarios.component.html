@@ -523,7 +523,9 @@
                                                         id="checkbox-{{ i }}" name="checkbox-{{ i }}">
                                                 </td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.id_proy_bene_lista }}</td>
-                                                <td style="text-align: center;">{{ beneficiarioLista.num_doc_identidad }}</td>
+                                                <td style="text-align: center;" [ngStyle]="{'color': beneficiarioLista.documentoDuplicado ? 'red' : 'inherit'}">
+                                                    {{ beneficiarioLista.num_doc_identidad }}
+                                                  </td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.nombre }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.genero }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.tipo_actor }}</td>

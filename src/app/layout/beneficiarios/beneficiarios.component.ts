@@ -975,6 +975,40 @@ export class BeneficiariosComponent implements OnInit {
             this.valNombre = false;
           }
         }
+    // Función para verificar si un número de documento ya existe
+        verificarDocumentoExistente(numDoc: any, idActual: any = null): boolean {
+          if (!numDoc) return false;
+          
+          // Filtramos la lista para encontrar coincidencias, excluyendo el ID actual en caso de edición
+          const documentoExistente = this.beneficiariosLista.find(bene => 
+            bene.num_doc_identidad === numDoc && 
+            bene.id_proy_bene_lista !== idActual
+          );
+          
+          return !!documentoExistente;
+        }
+    // Función para marcar documentos duplicados en la lista
+        marcarDocumentosDuplicados() {
+          // Crear un mapa para contar las ocurrencias de cada número de documento
+          const conteoDocumentos = new Map();
+          
+          // Primero contar las ocurrencias
+          this.beneficiariosLista.forEach(bene => {
+            if (bene.num_doc_identidad) {
+              const count = conteoDocumentos.get(bene.num_doc_identidad) || 0;
+              conteoDocumentos.set(bene.num_doc_identidad, count + 1);
+            }
+          });
+          
+          // Luego marcar los duplicados
+          this.beneficiariosLista.forEach(bene => {
+            if (bene.num_doc_identidad && conteoDocumentos.get(bene.num_doc_identidad) > 1) {
+              bene.documentoDuplicado = true;
+            } else {
+              bene.documentoDuplicado = false;
+            }
+          });
+        }  
     // ======= ======= OPEN MODALS FUN ======= =======
         openModalBeneficiarioLista(content: TemplateRef<any>) {
           this.modalRef = this.modalService.open(content, { size: 'xl' });
@@ -1053,7 +1087,8 @@ export class BeneficiariosComponent implements OnInit {
           this.servListBenef.getListBeneByIdProyBene(idBeneficiario).subscribe(
             (data) => {
               if (data && data[0] && data[0].dato) {
-                this.beneficiariosLista = data[0].dato;                                                              
+                this.beneficiariosLista = data[0].dato;
+                this.marcarDocumentosDuplicados();                                                                
               } else {
                 this.beneficiariosLista = [];
               }        
@@ -1120,6 +1155,11 @@ export class BeneficiariosComponent implements OnInit {
           // Verificamos que haya un beneficiario seleccionado
           if (!this.beneficiariosSelected) {
             alert('Error: No hay un beneficiario seleccionado');
+            return;
+          }
+          // Verificar si el documento ya existe
+          if (this.verificarDocumentoExistente(this.num_doc_identidad)) {
+            alert('Error: Ya existe un participante con este número de documento de identidad');
             return;
           }
         
@@ -1215,6 +1255,11 @@ export class BeneficiariosComponent implements OnInit {
         }
     // ======= ======= EDIT BENEFICIARIOS LISTA ======= =======
         editBeneficiarioLista(){
+          // Verificar si el documento ya existe (excluyendo el registro actual)
+            if (this.verificarDocumentoExistente(this.num_doc_identidad, this.id_proy_bene_lista)) {
+              alert('Error: Ya existe un participante con este número de documento de identidad');
+              return;
+            }
           const objBeneficiarioLista = {
             p_id_proy_bene_lista: this.id_proy_bene_lista,
             p_id_proy_beneficiario: this.id_proy_beneficiario,           
