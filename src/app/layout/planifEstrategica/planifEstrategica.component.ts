@@ -366,7 +366,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       
       if (avanceData) {
         // Obtener la fecha límite (23:59:59 del día en Bolivia)
-        const fechaAvance = new Date(avanceData.fecha_reportar + 'T23:59:59-04:00');
+        /*const fechaAvance = new Date(avanceData.fecha_reportar + 'T23:59:59-04:00');
         
         // Obtener la hora actual en UTC y convertirla manualmente a Bolivia (UTC-4)
         const nowUTC = new Date();
@@ -376,7 +376,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         if (nowBolivia > fechaAvance) {
           alert('No puedes eliminar este avance porque la fecha ya ha vencido.');
           return;
-        }
+        }*/
         
         // Si la fecha es válida, guardar el ID y abrir el modal
         this.idAvanceToDelete = id;
