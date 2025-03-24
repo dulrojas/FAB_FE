@@ -481,7 +481,7 @@
                                                         <th style="text-align: center">#</th>
                                                         <th>Periodo</th>
                                                         <th style="text-align: end">Valor Esperado</th>
-                                                        <th>Acción</th>
+                                                        <th>Acción</th>                                                        
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -492,14 +492,23 @@
                                                         <td>{{ planifPeriodofecha[i] || 'N/A' | date:'dd/MM/yyyy' }}</td>
                                                         <!-- Meta esperada-->
                                                         <td style="text-align: end">{{ convertToNumber(planifMetaEsperada[i]) || 'N/A' }}</td>
-                                                        <!-- Botón Editar -->
+                                                        
                                                         <td>
+                                                            <!-- Botón Editar -->
                                                             <button
                                                                 type="button"
                                                                 class="btn btn-link"
                                                                 (click)="openEditPeriodoModal(editAvanceModal, id)"
                                                             >
                                                                 Editar
+                                                            </button>
+                                                            <!-- Botón Eliminar -->
+                                                            <button
+                                                            type="button"
+                                                            class="btn btn-link text-danger"
+                                                            (click)="openDeletePeriodoModal(deleteAvance, id)"
+                                                            >
+                                                                Eliminar
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -622,7 +631,28 @@
         </form>
     </div>
 </ng-template>
-
+<!-- //////////////////////////////////////// MODAL PARA ELIMINAR UN AVANCE  //////////////////////////////////////// -->
+<ng-template #deleteAvance let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Periodo de Evaluación</h4>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <p>¿Está seguro de querer eliminar este avance?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <!-- ======= Botones ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="onDeleteAvanceSubmit(); modal.close()">
+                <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template> 
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
 <!-- ======= ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
 <ng-template #deleteIndicadorModal let-modal>

@@ -243,7 +243,8 @@ export class PlanifEstrategicaComponent implements OnInit {
       }
     // ======= ======= GET PARAMETRICAS ======= =======
     
-    isEditing: boolean = false; 
+    isEditing: boolean = false;
+    idAvanceToDelete: number | null = null; 
     selectedIdProyIndicador: number | null = null; 
   
     cargarIndicadoresAvance() {
@@ -356,6 +357,50 @@ export class PlanifEstrategicaComponent implements OnInit {
         }
       );
       
+    }
+
+    // Método para abrir el modal de eliminación
+    openDeletePeriodoModal(content: any, id: number) {
+      // Verificar si el avance existe
+      const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
+      
+      if (avanceData) {
+        // Obtener la fecha límite (23:59:59 del día en Bolivia)
+        const fechaAvance = new Date(avanceData.fecha_reportar + 'T23:59:59-04:00');
+        
+        // Obtener la hora actual en UTC y convertirla manualmente a Bolivia (UTC-4)
+        const nowUTC = new Date();
+        const nowBolivia = new Date(nowUTC.getTime() - (4 * 60 * 60 * 1000));
+        
+        // Verificar si la fecha ya venció
+        if (nowBolivia > fechaAvance) {
+          alert('No puedes eliminar este avance porque la fecha ya ha vencido.');
+          return;
+        }
+        
+        // Si la fecha es válida, guardar el ID y abrir el modal
+        this.idAvanceToDelete = id;
+        this.modalService.open(content, { backdrop: 'static' });
+      } else {
+        console.warn('No se encontraron datos para el ID especificado:', id);
+      }
+    }
+
+    // Método para eliminar el avance
+    onDeleteAvanceSubmit() {
+      if (this.idAvanceToDelete) {
+        this.servIndicadorAvance.deleteIndicadorAvance(this.idAvanceToDelete).subscribe(
+          (response) => {
+            // Recargar los datos después de eliminar
+            this.cargarIndicadoresAvance();
+            alert('Avance eliminado correctamente');           
+          },
+          (error) => {
+            console.error('Error al eliminar:', error);
+            alert('Error al eliminar el avance');
+          }
+        );
+      }
     }
   
     cerrarFormulario() {
