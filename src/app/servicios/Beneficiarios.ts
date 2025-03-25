@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import config from './config';
+import { log } from 'console';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +10,8 @@ import config from './config';
 
 export class servBeneficiarios {
     private URL = config.URL;
+    private URLimportar = config.URLimportar;
+    private URLexportar = config.URLexportar;
     constructor(private http: HttpClient) {}
 
     // ======= ======= ======= ======= ======= ======= =======
@@ -209,4 +212,40 @@ export class servBeneficiarios {
                 });
             return this.http.post<any>(this.URL, params, { headers });
         }
+
+    // ======= ======= ======= ======= ======= ======= =======
+    // ======= =======   IMPORTAR BENEFICIARIO   ======= =======
+    // ======= ======= ======= ======= ======= ======= =======
+        importarData(file:File,id_proy_beneficiario: string): Observable<any> {           
+            const formData: FormData = new FormData();
+            formData.append('file', file); 
+            formData.append('id_proy_beneficiario', id_proy_beneficiario); 
+            console.log(formData);
+            return this.http.post(`${this.URLimportar}`, formData).pipe(
+                catchError((error) => {
+                // Aquí manejas el error
+                console.error('Error al importar datos:', error);
+        
+                // Puedes personalizar el mensaje de error según el tipo de error
+                let errorMessage = 'Ocurrió un error al importar los datos.';
+                if (error.status === 400) {
+                    errorMessage = 'Error en los datos enviados. Verifica el archivo e intenta nuevamente.';
+                } else if (error.status === 500) {
+                    console.log(error);
+                    errorMessage = error.error;
+                }
+        
+                // Relanza el error para que el componente que llama a este servicio pueda manejarlo si es necesario
+                return throwError(() => new Error(errorMessage));
+                })
+            );
+        }
+    // ======= ======= ======= ======= ======= ======= =======
+    // ======= =======   EXPORTAR BENEFICIARIO   ======= =======
+    // ======= ======= ======= ======= ======= ======= =======
+    exportarData(id_proy_beneficiario: string): Observable<Blob> {
+        //const headers = new HttpHeaders().set('ip', '127.0.0.1');
+        var jsonData = {"id_proy_beneficiario": id_proy_beneficiario};
+        return this.http.post(`${this.URLexportar}`, jsonData,{ responseType: 'blob' });
+    }
 }  
