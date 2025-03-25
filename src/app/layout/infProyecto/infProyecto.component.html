@@ -451,17 +451,15 @@
                                     <thead>
                                         <tr>
                                             <th>Año</th>
-                                            <th>Presupuesto anual planificado en actividades</th>
-                                            <th>“Presupuesto fuera de actividades</th>
-                                            <th>Total</th>
+                                            <th>Presupuesto Bs</th>
+                                            <th>% sobre el presupuesto total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let presupuesto of presupuestos; let i = index">
                                             <td>{{ presupuesto.anio }}</td>
-                                            <td>{{ presupuesto.total_actividades_presupuesto }}</td>
                                             <td>{{ presupuesto.presup_adicional }}</td>
-                                            <td>{{ presupuesto.total_presup }}</td>
+                                            <td>{{ (presupuesto.porcentaje+"%") }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

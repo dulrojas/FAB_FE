@@ -222,6 +222,8 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= GET UBICACIONES =======
     getUbicaGeografica(){
+      this.headerDataNro01 = 0;
+      this.headerDataNro02 = 0;
       this.servUbicaGeografica.getUbicaGeografica().subscribe(
         (data) => {
           this.ubicaciones = data[0].dato;
@@ -1207,9 +1209,11 @@ export class InfProyectoComponent implements OnInit {
           this.presupuestos = (data[0].dato)?(data[0].dato):([]);
 
           this.presupuestos.forEach((presupuesto)=>{
-            let presup_sum = this.parseAmountStrToFloat(presupuesto.total_actividades_presupuesto) +
-              this.parseAmountStrToFloat(presupuesto.presup_adicional);
-            presupuesto.total_presup = this.parseAmountFloatToStr(presup_sum);
+            presupuesto.porcentaje = ((this.proyectoScope.presupuesto_mn)?(
+              (this.parseAmountStrToFloat(presupuesto.presup_adicional))/this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn)):
+              ("0.00")
+            );
+            presupuesto.porcentaje = this.parseAmountFloatToStr(presupuesto.porcentaje);
           });
 
           if(Boolean(this.proyectoScope.fecha_inicio) && (Boolean(this.proyectoScope.fecha_fin) || Boolean(this.proyectoScope.fecha_fin_ampliada))) {
@@ -1274,6 +1278,11 @@ export class InfProyectoComponent implements OnInit {
             this.presupuestoActual = this.presupuestos.find((presupuesto)=> (presupuesto.anio == this.proyectoScope.gestion_actual));
             this.presupuestoActual.presup_adicional = this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional);
             this.presupuestoActual.presup_adicional = this.parseAmountFloatToStr(this.presupuestoActual.presup_adicional);
+            this.presupuestoActual.porcentaje = ((this.proyectoScope.presupuesto_mn)?(
+              (this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional))/this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn)):
+              ("0.00")
+            );
+            this.presupuestoActual.porcentaje = this.parseAmountFloatToStr(this.presupuestoActual.porcentaje * 100);
             // ======= ======= =======
           }
 

@@ -77,7 +77,6 @@ export class ActividadComponent implements OnInit {
   actividadAvanceAvances: any = [];
 
   actAvaAvance: any = "";
-  actAvaMonto: any = "";
 
   idPresupuestoGest: any = 0;
   periodo: any = "";
@@ -360,14 +359,6 @@ export class ActividadComponent implements OnInit {
   onChangedMontoNuevoEjecutado(){
     this.montoNuevoEjecutado = this.getFormatedMonto(this.montoNuevoEjecutado);
   }
-  onChangedPresupuesto(){
-    this.presupuesto = this.getFormatedMonto(this.presupuesto);
-    this.validatePresupuesto();
-  }
-  onChangedAvanceNuevoEjecutado(){
-    this.actAvaMonto = this.getFormatedMonto(this.actAvaMonto);
-    this.validateActAvaMonto();
-  }
 
   onPadreChanged(){
     let elementoScope = (this.elementos.find((elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)));
@@ -394,7 +385,6 @@ export class ActividadComponent implements OnInit {
     this.idp_actividad_estado = "";
 
     this.actAvaAvance = "";
-    this.actAvaMonto = "";
 
     this.valMontoNuevoEjecutado = true;
     this.valMotivoNuevoEjecutado = true;
@@ -402,7 +392,6 @@ export class ActividadComponent implements OnInit {
     this.valIdProyElementoPadre = true;
     this.valActividadText = true;
     this.valDescripcion = true;
-    this.valPresupuesto = true;
     this.valFechaInicio = true;
     this.valFechaFin = true;
     this.valFechaFin2 = true;
@@ -410,8 +399,6 @@ export class ActividadComponent implements OnInit {
 
     this.valActAvaAvance = true;
     this.valActAvaAvance2 = true;
-    this.valActAvaMonto = true;
-    this.valActAvaMonto2 = true;
 
   }
   // ======= ======= ======= ======= =======
@@ -558,15 +545,6 @@ export class ActividadComponent implements OnInit {
       this.valFechaFin = false;
     }
   }
-
-  valPresupuesto: any = true;
-  validatePresupuesto() {
-    if (this.presupuesto) {
-      this.valPresupuesto = true;
-    } else {
-      this.valPresupuesto = false;
-    }
-  }
   // ======= ======= =======
   // ======= ACTIVIDAD AVANCE VALIDATIONS =======
   valActAvaAvance: any = true;
@@ -583,23 +561,6 @@ export class ActividadComponent implements OnInit {
     } 
     else {
       this.valActAvaAvance = false;
-    }
-  }
-
-  valActAvaMonto: any = true;
-  valActAvaMonto2: any = true;
-  validateActAvaMonto() {
-    if(this.actAvaMonto) {
-      this.valActAvaMonto = true;
-      if( (this.parseAmountStrToFloat(this.actAvaMonto) + this.parseAmountStrToFloat(this.actividadAvanceMonto)) <= ( this.parseAmountStrToFloat(this.presupuesto) ) ){
-        this.valActAvaMonto2 = true;
-      }
-      else{
-        this.valActAvaMonto2 = false;
-      }
-    } 
-    else {
-      this.valActAvaMonto = false;
     }
   }
 
@@ -949,13 +910,14 @@ export class ActividadComponent implements OnInit {
       p_id_proy_actividad: this.actividadSelected.id_proy_actividad,
       p_fecha_hora: null,
       p_avance: this.actAvaAvance,
-      p_monto_ejecutado: this.parseAmountStrToFloat(this.actAvaMonto),
+      p_monto_ejecutado: 0,
       p_id_persona_reg: this.idPersonaReg
     };
 
     this.servActAvance.addActAvance(objActAvance).subscribe(
       (data) => {
         this.getActividades();
+        this.closeModal();
       },
       (error) => {
         console.error(error);
@@ -992,7 +954,6 @@ export class ActividadComponent implements OnInit {
       this.validateIdProyElementoPadre();
       this.validateActividadText();
       this.validateDescripcion();
-      this.validatePresupuesto();
       this.validateFechaInicio();
       this.validateFechaFin();
 
@@ -1000,7 +961,6 @@ export class ActividadComponent implements OnInit {
         this.valIdProyElementoPadre &&
         this.valActividadText &&
         this.valDescripcion &&
-        this.valPresupuesto &&
         this.valFechaInicio &&
         this.valFechaFin &&
         this.valFechaFin2
@@ -1015,7 +975,6 @@ export class ActividadComponent implements OnInit {
       this.validateIdProyElementoPadre();
       this.validateActividadText();
       this.validateDescripcion();
-      this.validatePresupuesto();
       this.validateFechaInicio();
       this.validateFechaFin();
 
@@ -1023,7 +982,6 @@ export class ActividadComponent implements OnInit {
         this.valIdProyElementoPadre &&
         this.valActividadText &&
         this.valDescripcion &&
-        this.valPresupuesto &&
         this.valFechaInicio &&
         this.valFechaFin &&
         this.valFechaFin2
@@ -1035,20 +993,17 @@ export class ActividadComponent implements OnInit {
       }
     }
   }
+
   onSubmitAvance(): void {
     this.validateActAvaAvance();
-    this.validateActAvaMonto();
 
     let valForm = (
       this.valActAvaAvance &&
-      this.valActAvaAvance2 &&
-      this.valActAvaMonto &&
-      this.valActAvaMonto2
+      this.valActAvaAvance2
     );
 
     if(valForm){
       this.avanceActividad();
-      this.closeModal();
     }
   }
   // ======= ======= ======= ======= =======
