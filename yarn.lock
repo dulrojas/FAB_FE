@@ -5179,6 +5179,11 @@ normalize-range@^0.1.2:
   resolved "https://registry.npmjs.org/normalize-range/-/normalize-range-0.1.2.tgz"
   integrity sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==
 
+notiflix@^3.2.8:
+  version "3.2.8"
+  resolved "https://registry.npmjs.org/notiflix/-/notiflix-3.2.8.tgz"
+  integrity sha512-BNBGr3qNIBNt6NZYvch0OLF9DEEgWKcjYzISMH9eECKwfsUaINb5K/RA21hy5kmfOtdbdAdODrqxts+0xp+xwA==
+
 npm-bundled@^3.0.0:
   version "3.0.1"
   resolved "https://registry.npmjs.org/npm-bundled/-/npm-bundled-3.0.1.tgz"
