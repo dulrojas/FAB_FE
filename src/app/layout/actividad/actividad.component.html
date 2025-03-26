@@ -77,6 +77,7 @@
                                         <thead>
                                             <tr>
                                                 <th style="text-align: center;">ID</th>
+                                                <th style="text-align: center;">Periodo informado</th>
                                                 <th style="text-align: center;">Declaración</th>
                                                 <th style="text-align: center;">Ejecución</th>                                            
                                             </tr>
@@ -85,6 +86,9 @@
                                             <tr *ngFor="let presuAvance of presuAvances; let i = index">
                                                 <td>
                                                     {{ presuAvance.id_proy_presu_avance }}
+                                                </td>
+                                                <td>
+                                                    {{ presuAvance.motivo }}
                                                 </td>
                                                 <td>
                                                     {{ ((presuAvance.fecha_hora).slice(0,10)) }}
@@ -102,7 +106,7 @@
                                 <label class="custom-actividad-sub-title">Periodo informado</label>
                                 <textarea class="form-control" type="text" 
                                     id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
-                                    placeholder="Ingrese el motivo de ejecución" 
+                                    placeholder="Ingrese el periodo de ejecución" 
                                     [disabled]="(this.idPresupuestoGest == 0)
                                         ||(currentPerProRol.includes('LEC'))"
                                     [(ngModel)]="motivoNuevoEjecutado">
@@ -563,9 +567,6 @@
 
                                     <div class="row">
                                         <div class="col col-md-12 col-lg-12">
-                                            <span class="text-green-700 relative z-10 pl-2 mt-4">
-                                                Ejecución Presupuestaria
-                                            </span>
                                         </div>
                                         <!-- ======= ADD AVANCE SECTION ======= -->
                                         <div class="col col-md-12 col-lg-12">
