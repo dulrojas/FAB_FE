@@ -77,6 +77,7 @@
                                         <thead>
                                             <tr>
                                                 <th style="text-align: center;">ID</th>
+                                                <th style="text-align: center;">Periodo informado</th>
                                                 <th style="text-align: center;">Declaración</th>
                                                 <th style="text-align: center;">Ejecución</th>                                            
                                             </tr>
@@ -85,6 +86,9 @@
                                             <tr *ngFor="let presuAvance of presuAvances; let i = index">
                                                 <td>
                                                     {{ presuAvance.id_proy_presu_avance }}
+                                                </td>
+                                                <td>
+                                                    {{ presuAvance.motivo }}
                                                 </td>
                                                 <td>
                                                     {{ ((presuAvance.fecha_hora).slice(0,10)) }}
@@ -99,7 +103,19 @@
                             <!-- ======= ======= ======= ======= ======= -->
                             <!-- ======= ======= EJECUTADO SECTION ======= ======= -->
                             <div class="col col-md-6 col-lg-6">
-                                <label class="custom-actividad-sub-title">Nuevo Ejecutado</label>
+                                <label class="custom-actividad-sub-title">Periodo informado</label>
+                                <textarea class="form-control" type="text" 
+                                    id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
+                                    placeholder="Ingrese el periodo de ejecución" 
+                                    [disabled]="(this.idPresupuestoGest == 0)
+                                        ||(currentPerProRol.includes('LEC'))"
+                                    [(ngModel)]="motivoNuevoEjecutado">
+                                </textarea>
+                                <span class="custom-alert-message" *ngIf="!valMotivoNuevoEjecutado">
+                                    Debe ingresar un motivo válido, con menos de 100 caracteres.
+                                </span>
+                                <div></div>
+                                <label class="custom-actividad-sub-title">Monto ejecutado</label>
                                 <input class="form-control" type="text" 
                                     id="montoNuevoEjecutado" name="montoNuevoEjecutado" 
                                     placeholder="Ingrese el monto ejecutado" 
@@ -109,18 +125,6 @@
                                     [(ngModel)]="montoNuevoEjecutado"/>
                                 <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">
                                     Debe ingresar un monto válido.
-                                </span>
-                                <div></div>
-                                <label class="custom-actividad-sub-title">Motivo</label>
-                                <textarea class="form-control" type="text" 
-                                    id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
-                                    placeholder="Ingrese el motivo de ejecución" 
-                                    [disabled]="(this.idPresupuestoGest == 0)
-                                        ||(currentPerProRol.includes('LEC'))"
-                                    [(ngModel)]="motivoNuevoEjecutado">
-                                </textarea>
-                                <span class="custom-alert-message" *ngIf="!valMotivoNuevoEjecutado">
-                                    Debe ingresar un motivo válido, con menos de 100 caracteres.
                                 </span>
                                 <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
                                     [disabled]="(this.idPresupuestoGest == 0)
@@ -221,13 +225,10 @@
                         <div class="col col-md-5 col-lg-5">
                             <!-- ======= HEADER SECTION ======= -->
                             <div class="row custom-actividad-header">
-                                <div class="col col-md-6 col-lg-6">
+                                <div class="col col-md-8 col-lg-8">
                                     ACTIVIDADES
                                 </div>
                                 <div class="col col-md-4 col-lg-4">
-                                    PRESUPUESTO
-                                </div>
-                                <div class="col col-md-2 col-lg-2">
                                     AVANCE
                                 </div>
                             </div>
@@ -351,23 +352,16 @@
                                 (click)="onActividadClick(actividadGant)">
                                 <div class="col col-md-5 col-lg-5">
                                     <div class="row">
-                                        <div class="col col-md-6 col-lg-6 px-1">
+                                        <div class="col col-md-8 col-lg-8 px-1">
                                             <div class="col custom-elemento-actividad"
                                                 [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
                                                 {{ actividadGant.actividad }}
                                             </div>
                                         </div>
-                                        <div class="col col-md-3 col-lg-3 px-1">
-                                            <div class="col custom-elemento-actividad justify-content-end"
-                                                [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
-                                                {{ parseAmountFloatToStr(actividadGant.presupuesto) }}
-                                            </div>
-                                        </div>
-                                        <div class="col col-md-3 col-lg-3 px-1">
+                                        <div class="col col-md-4 col-lg-4 px-1">
                                             <div class="col custom-elemento-actividad justify-content-end"
                                                 [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
                                                 {{ actividadGant.porcentajeAvance }}%
-                                                <!--canvas #canvas id="halfCircleChart-{{ actividadGant.codigo }}" width="50" height="50"></canvas-->
                                             </div>
                                         </div>
                                     </div>
@@ -505,7 +499,7 @@
                                     <label>Planificación</label>
                                 </div>
                                 <!-- ======= FECHA INICIO SECTION ======= -->
-                                <div class="col col-md-4 col-lg-4">
+                                <div class="col col-md-6 col-lg-6">
                                     <label for="fecha_inicio">Inicio</label>
                                     <input class="form-control" type="date" 
                                         id="fecha_inicio" name="fecha_inicio" 
@@ -517,7 +511,7 @@
                                     </span>
                                 </div>
                                 <!-- ======= FECHA FIN SECTION ======= -->
-                                <div class="col col-md-4 col-lg-4">
+                                <div class="col col-md-6 col-lg-6">
                                     <label for="fecha_fin">Fin</label>
                                     <input class="form-control" type="date" 
                                         id="fecha_fin" name="fecha_fin" 
@@ -529,19 +523,6 @@
                                     </span>
                                     <span class="custom-alert-message" *ngIf="!valFechaInicio">
                                         La fecha de finalizacion debe ser mayor a la de inicio.
-                                    </span>
-                                </div>
-                                <!-- ======= PRESUPUESTO SECTION ======= -->
-                                <div class="col col-md-4 col-lg-4">
-                                    <label for="presupuesto">Presupuesto</label>
-                                    <input class="form-control" type="text" 
-                                        id="presupuesto" name="presupuesto" 
-                                        [(ngModel)]="presupuesto" 
-                                        [disabled]="(modalAction == 'avance')"
-                                        (change)="onChangedPresupuesto()"
-                                        placeholder="Ingrese el presupuesto de la actividad">
-                                    <span class="custom-alert-message" *ngIf="!valPresupuesto">
-                                        Debe ingresar un monto valido.
                                     </span>
                                 </div>
                             
@@ -559,7 +540,7 @@
                                         
                                     <div class="row">
                                         <!-- ======= PORCENTAJE SECTION ======= -->
-                                        <div class="col col-md-4 col-lg-4">
+                                        <div class="col col-md-10 col-lg-10">
                                             <label for="actAvaAvance">% Avance</label>
                                             <input class="form-control" type="text" 
                                                 id="actAvaAvance" name="actAvaAvance" 
@@ -574,25 +555,9 @@
                                                 El valor ingresado sobrepasa el porcentaje.
                                             </span>
                                         </div>
-                                        <!-- ======= EJECUTADO SECTION ======= -->
-                                        <div class="col col-md-6 col-lg-6">
-                                            <label for="actAvaMonto">Nuevo Ejecutado</label>
-                                            <input class="form-control" type="text" 
-                                                id="actAvaMonto" name="actAvaMonto" 
-                                                placeholder="Ingresa el nuevo monto"
-                                                [(ngModel)]="actAvaMonto" 
-                                                [disabled]="(modalAction == 'add')||(gestion < initGestion)"
-                                                (change)="onChangedAvanceNuevoEjecutado()">
-                                            <span class="custom-alert-message" *ngIf="!valActAvaMonto">
-                                                Debe ingresar un monto válido.
-                                            </span>
-                                            <span class="custom-alert-message" *ngIf="!valActAvaMonto2">
-                                                El valor ingresado sobrepasa el presupuesto.
-                                            </span>
-                                        </div>
                                         <!-- ======= ADD AVANCE SECTION ======= -->
-                                        <div class="col col-md-1 col-lg-1 mt-auto">
-                                            <button class="btn btn-bg-1" 
+                                        <div class="col col-md-2 col-lg-2 mt-auto">
+                                            <button class="btn btn-bg-1" type="button" 
                                                 [disabled]="(modalAction == 'add')||(gestion < initGestion)"
                                                 (click)="onSubmitAvance()">
                                                 <i aria-hidden="true"></i> +
@@ -602,9 +567,6 @@
 
                                     <div class="row">
                                         <div class="col col-md-12 col-lg-12">
-                                            <span class="text-green-700 relative z-10 pl-2 mt-4">
-                                                Ejecución Presupuestaria
-                                            </span>
                                         </div>
                                         <!-- ======= ADD AVANCE SECTION ======= -->
                                         <div class="col col-md-12 col-lg-12">
@@ -613,14 +575,12 @@
                                                     <tr>
                                                         <th>Declaración</th>
                                                         <th>Avance</th>
-                                                        <th>Ejecución</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let actividadAvance of actividadAvances">
                                                         <td>{{ ((actividadAvance.fecha_hora).slice(0,10)) }}</td>
                                                         <td>{{ actividadAvance.avance }}</td>
-                                                        <td>{{ actividadAvance.monto_ejecutado }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

@@ -122,14 +122,6 @@ export class AprendizajesComponent implements OnInit {
     }
   }
 
-  valFecha: any = true;
-  ValidateFecha(){
-    this.valFecha = true;
-    if(!this.fecha){
-      this.valFecha = false;
-    }
-  }
-
   valProblema: any = true;
   ValidateProblema(){
     this.valProblema = true;
@@ -309,7 +301,6 @@ export class AprendizajesComponent implements OnInit {
     this.valArea = true;
     this.valTipo = true;
     this.valAprendizaje = true;
-    this.valFecha = true;
     this.valProblema = true;
     this.valAccion = true;
 
@@ -357,7 +348,7 @@ export class AprendizajesComponent implements OnInit {
       p_id_proy_elemento: parseInt(this.id_proy_elemento,10),
       p_idp_aprendizaje_area: parseInt(this.idp_aprendizaje_area,10),
       p_idp_aprendizaje_tipo: parseInt(this.idp_aprendizaje_tipo,10),
-      p_fecha: this.fecha,
+      p_fecha: (this.fecha)?(this.fecha):(null),
       p_fecha_hora_reg: null
     };
 
@@ -417,7 +408,7 @@ export class AprendizajesComponent implements OnInit {
       p_id_proy_elemento: this.id_proy_elemento,
       p_idp_aprendizaje_area: this.idp_aprendizaje_area,
       p_idp_aprendizaje_tipo: this.idp_aprendizaje_tipo,
-      p_fecha: this.fecha,
+      p_fecha: (this.fecha)?(this.fecha):(null),
       p_fecha_hora_reg: null
     };
 
@@ -486,7 +477,6 @@ export class AprendizajesComponent implements OnInit {
     this.ValidateArea();
     this.ValidateTipo();
     this.ValidateAprendizaje();
-    this.ValidateFecha();
     this.ValidateProblema();
     this.ValidateAccion();
 
@@ -495,7 +485,6 @@ export class AprendizajesComponent implements OnInit {
       this.valArea &&
       this.valTipo &&
       this.valAprendizaje &&
-      this.valFecha &&
       this.valProblema &&
       this.valAccion;
 

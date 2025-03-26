@@ -12,7 +12,7 @@
                     {{headerDataNro01}} Aprendizajes
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    {{headerDataNro02}} Buenas practicas
+                    {{headerDataNro02}} Buenas prácticas
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
                     {{headerDataNro03}} Lecciones
@@ -191,9 +191,7 @@
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="correo">Fecha de aprendizaje</label>
                                     <input class="form-control" type="date" id="fecha" name="fecha" 
-                                        [(ngModel)]="fecha" 
-                                        (change)="ValidateFecha()"/>
-                                    <span class="custom-alert-message" *ngIf="!valFecha">Debe elegir una fecha</span>
+                                        [(ngModel)]="fecha"/>
                                 </div>
 
                                 <!-- ======= ======= PROBLEMA SECTION ======= ======= -->
@@ -224,12 +222,14 @@
                                     <div class="row">
                                         <div class="col col-xl-12 col-lg-12 text-center">
                                             <label>Resultados</label>
+                                            <br>
+                                            <label [hidden]="(idp_aprendizaje_tipo != '')">
+                                                Selecciona un tipo de aprendizaje.
+                                            </label>
                                         </div>
-                                        <div class="col col-xl-6 col-lg-6 custom-pos-qa">
+                                        <div class="col col-xl-12 col-lg-12"
+                                            [hidden]="(idp_aprendizaje_tipo != 1)">
                                             <div class="row">
-                                                <div class="col col-xl-12 col-lg-12">
-                                                    <label class="d-flex align-items-center justify-content-center">Positivos</label>
-                                                </div>
                                                 <div class="col col-xl-12 col-lg-12" *ngFor="let pregunta of preguntas1; let i = index">
                                                     <label class="text-left">{{ pregunta }}</label>
                                                     <input class="form-control" type="text" id="pregunta1-{{ i }}" name="pregunta1-{{ i }}" 
@@ -237,11 +237,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col col-xl-6 col-lg-6 custom-neg-qa">
+                                        <div class="col col-xl-12 col-lg-12"
+                                            [hidden]="(idp_aprendizaje_tipo != 2)">
                                             <div class="row">
-                                                <div class="col col-xl-12 col-lg-12">
-                                                    <label class="d-flex align-items-center justify-content-center">Negativos</label>
-                                                </div>
                                                 <div class="col col-xl-12 col-lg-12" *ngFor="let pregunta of preguntas2; let i = index">
                                                     <label class="text-left">{{ pregunta }}</label>
                                                     <input class="form-control" type="text" id="pregunta2-{{ i }}" name="pregunta2-{{ i }}" 
