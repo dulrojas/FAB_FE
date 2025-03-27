@@ -76,7 +76,6 @@
                                     <table class="table custom-table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th style="text-align: center;">ID</th>
                                                 <th style="text-align: center;">Periodo informado</th>
                                                 <th style="text-align: center;">Declaración</th>
                                                 <th style="text-align: center;">Ejecución</th>                                            
@@ -84,9 +83,6 @@
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let presuAvance of presuAvances; let i = index">
-                                                <td>
-                                                    {{ presuAvance.id_proy_presu_avance }}
-                                                </td>
                                                 <td>
                                                     {{ presuAvance.motivo }}
                                                 </td>

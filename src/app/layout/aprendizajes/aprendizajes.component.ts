@@ -502,11 +502,12 @@ export class AprendizajesComponent implements OnInit {
   // ======= ======= ======= ======= =======
   // ======= ======= DOWNLOAD EXCEL ======= =======
   downloadExcel() {
-    const columnas = ['id_proy_aprende', 'fecha', 'idp_aprendizaje_area', 'idp_aprendizaje_tipo', 'aprendizaje'];
+    const columnas = ['id_proy_aprende', 'fecha', 'sigla', 'aprendizaje', 'problema', 'accion'];
     const today = new Date();
     const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+    let aprendizajesObj = [...this.aprendizajes];
     ExcelExportService.exportToExcel(
-      this.aprendizajes, 
+      aprendizajesObj, 
       'Reporte_Aprendizajes_'+formattedDate, 
       columnas
     );
