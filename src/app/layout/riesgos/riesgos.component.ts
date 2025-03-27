@@ -395,14 +395,14 @@ export class RiesgosComponent implements OnInit {
           };
           this.servRiesgos.addRiesgo(objRiesgo).subscribe(
             (data) => {            
-              alert('Riesgo agregado exitosamente');
+              Notify.success('Riesgo agregado exitosamente');
               this.riesgosSelected = null;
               this.closeModal();
               this.getRiesgos();
             },
-            (error) => {              
+            (error) => {    
+              Notify.failure('Error al guardar la riesgo');          
               console.error(error);
-              alert('Error al guardar la riesgo');
             }
           );
         }
@@ -464,14 +464,14 @@ export class RiesgosComponent implements OnInit {
         }
         this.servRiesgos.editRiesgo(objRiesgo).subscribe(
           (data) => {  
-            alert('Riesgo editado exitosamente');   
+            Notify.success('Riesgo editado exitosamente'); 
             this.riesgosSelected = null;
             this.closeModal();       
             this.getRiesgos();           
           },
-          (error) => {            
+          (error) => {   
+            Notify.failure('Error al editar la riesgo');         
             console.error(error);
-            alert('Error al editar la riesgo');
           }
         );
       }
