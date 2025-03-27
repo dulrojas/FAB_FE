@@ -197,7 +197,7 @@
                           <select class="form-control" 
                             id="id_proy_elemen_padre" name="id_proy_elemen_padre" 
                             [(ngModel)]="id_proy_elemen_padre" (change)="onSelectionChange()">
-                            <option value="" disabled selected>Selecciona un Componente</option>
+                            <option value="null" disabled selected>Selecciona un Componente</option>
                               <option *ngFor="let componente of componentes" [value]="componente.id_proy_elemento">
                               {{ componente.elemento }}
                               </option>
@@ -358,7 +358,7 @@
                         <label for="idp_ocurrencia">Ocurrencia durante la Gestión</label>
                         <select class="form-control" id="idp_ocurrencia" name="idp_ocurrencia" 
                           [(ngModel)]="idp_ocurrencia">
-                          <option value="" disabled selected>Seleccione la ocurrencia durante la gestión</option>
+                          <option value="null" disabled selected>Seleccione la ocurrencia durante la gestión</option>
                           <option *ngFor="let ocurrencia of riegosOcurrencia" [value]="ocurrencia.id_subtipo">
                             {{ ocurrencia.descripcion_subtipo }}
                           </option>
@@ -369,7 +369,7 @@
                         <label for="idp_medidas">Necesidad de Tomar Acciones</label>
                           <select class="form-control" id="idp_medidas" name="idp_medidas" 
                             [(ngModel)]="idp_medidas">
-                            <option value="" disabled>Seleccione necesidad de tomar acciones</option>
+                            <option value="null" disabled>Seleccione necesidad de tomar acciones</option>
                             <option *ngFor="let accion of riesgoTomarAcciones" [value]="accion.id_subtipo">
                               {{ accion.descripcion_subtipo }}
                             </option>
