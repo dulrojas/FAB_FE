@@ -926,7 +926,8 @@ export class BeneficiariosComponent implements OnInit {
     // ======= GET ORGANIZACION TIPO =======
     this.servicios.getParametricaByIdTipo(18).subscribe(
       (data) => {
-        this.beneficiariosListaOrganizacionTipo = data[0].dato;
+        //this.beneficiariosListaOrganizacionTipo = data[0].dato;
+        this.beneficiariosListaOrganizacionTipo = data[0].dato.filter(item => item.id_estado === 1);
       },
       (error) => {
         console.error(error);
@@ -935,8 +936,8 @@ export class BeneficiariosComponent implements OnInit {
     // ======= GET ORGANIZACION TIPO =======
     this.servicios.getParametricaByIdTipo(26).subscribe(
       (data) => {
-        this.beneficiariosListaOrganizacionSubTipo = data[0].dato;
-
+        //this.beneficiariosListaOrganizacionSubTipo = data[0].dato;
+        this.beneficiariosListaOrganizacionSubTipo = data[0].dato.filter(item => item.id_estado === 1);
       },
       (error) => {
         console.error(error);
@@ -1520,7 +1521,8 @@ export class BeneficiariosComponent implements OnInit {
     // ======= GET CONVENIO =======
     this.servicios.getParametricaByIdTipo(21).subscribe(
       (data) => {
-        this.aliadosConvenio = data[0].dato;
+        //this.aliadosConvenio = data[0].dato;
+        this.aliadosConvenio = data[0].dato.filter(item => item.id_estado === 1);
       },
       (error) => {
         console.error(error);
@@ -1780,7 +1782,8 @@ export class BeneficiariosComponent implements OnInit {
     // ======= GET TIPO ORGANIZACION =======
     this.servicios.getParametricaByIdTipo(18).subscribe(
       (data) => {
-        this.orgTipoOrganizacion = data[0].dato;
+        //this.orgTipoOrganizacion = data[0].dato;
+        this.orgTipoOrganizacion = data[0].dato.filter(item => item.id_estado === 1);
       },
       (error) => {
         console.error(error);
