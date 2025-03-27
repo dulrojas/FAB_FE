@@ -908,3 +908,77 @@ canvas {
     border: dashed 2px $third-color;
     cursor: pointer;
 }
+
+// ======= ======= ======= ======= ======= ======= ======= ======= =======
+// ======= ======= =======      CUSTOM RIESGOS     ======= ======= ======= 
+// ======= ======= ======= ======= ======= ======= ======= ======= =======
+    /* Impacto formas y colores */
+        .impacto-button {
+            display: flex;
+            justify-content: center;  
+            align-items: center;      
+            width: 80px;            
+            height: 30px;
+            margin: 0 auto;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+        }
+        .impacto-alto {
+            background-color: #c64d27;
+        }
+        .impacto-medio {
+            background-color: #fdc82f;
+        }
+        .impacto-bajo {
+            background-color: #4E8646;
+        }
+    /* Probabilidad formas y colores */
+        .probabilidad-shape {
+            width: 0;
+            height: 0;
+            margin: 0 auto;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+        }
+        
+        .probabilidad-alto {
+            border-bottom: 30px solid #c64d27;
+        }
+        
+        .probabilidad-medio {
+            border-bottom: 30px solid #fdc82f;
+        }
+        
+        .probabilidad-bajo {
+            border-bottom: 30px solid #4E8646;
+        }
+
+
+    /* Nivel de Riesgo formas y colores */
+        .riesgo-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+        }
+        .riesgo-alto {
+            background-color: #c64d27;
+        }
+        .riesgo-medio {
+            background-color: #fdc82f;
+        }
+        .riesgo-bajo {
+            background-color: #4E8646;
+        }
+
+        .symbol {
+            position: absolute;
+            text-align: center;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px; 
+            color: white; 
+        }

@@ -11,7 +11,7 @@ import { Notify,Report,Confirm } from 'notiflix';
 @Component({
   selector: 'app-riesgos',
   templateUrl: './riesgos.component.html',
-  styleUrls: ['./riesgos.component.scss'],
+  styleUrls: ['../../../styles/styles.scss'],
   animations: [routerTransition()]
 })
 
@@ -104,14 +104,6 @@ export class RiesgosComponent implements OnInit {
         //octava fila
         riesgoEfectividadMedidas: any[] = [];
     // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
-      /*primera fila
-      valComponente: any = true;
-      ValidateComponente(){
-        this.valComponente = true;
-        if(!this.id_proy_elemen_padre){
-          this.valComponente = false;
-        }
-      }*/
       //segunda fila
       valCategoria: any = true;
       ValidateCategoria(){
@@ -205,6 +197,7 @@ export class RiesgosComponent implements OnInit {
               this.servElementos.getElementosMetoEleByIdProy(this.idProyecto).subscribe(
                 (data) => {
                   this.componentes = data[0].dato;
+                  //this.componentes = data[0].dato.filter(elemento => elemento.id_estado === 1);
                 },
                 (error) => {
                   console.error(error);
@@ -214,7 +207,8 @@ export class RiesgosComponent implements OnInit {
           // ======= GET CATEGORÍAS =======  
             this.servicios.getParametricaByIdTipo(14).subscribe(
               (data) => {
-                this.riesgoCategoria = data[0].dato;
+                //this.riesgoCategoria = data[0].dato;
+                this.riesgoCategoria = data[0].dato.filter(categoria => categoria.id_estado === 1);
               },
               (error) => {
                 console.error(error);
@@ -224,7 +218,8 @@ export class RiesgosComponent implements OnInit {
           // ======= GET Identificación del Riesgo =======
             this.servicios.getParametricaByIdTipo(15).subscribe(
               (data) => {
-                this. riegosIdentificacion = data[0].dato;
+                //this. riegosIdentificacion = data[0].dato;
+                this.riegosIdentificacion = data[0].dato.filter(riesgo => riesgo.id_estado === 1);
               },
               (error) => {
                 console.error(error);
@@ -234,7 +229,8 @@ export class RiesgosComponent implements OnInit {
           // ======= GET Ocurrencia durante la Gestión =======
             this.servicios.getParametricaByIdTipo(16).subscribe(
               (data) => {
-                this. riegosOcurrencia = data[0].dato;
+                //this. riegosOcurrencia = data[0].dato;
+                this.riegosOcurrencia = data[0].dato.filter(ocurrencia => ocurrencia.id_estado === 1);
               },
               (error) => {
                 console.error(error);
@@ -243,7 +239,8 @@ export class RiesgosComponent implements OnInit {
           // ======= GET Necesidad de Tomar Acciones =======
             this.servicios.getParametricaByIdTipo(19).subscribe(
               (data) => {
-                this. riesgoTomarAcciones = data[0].dato;
+                //this. riesgoTomarAcciones = data[0].dato;
+                this.riesgoTomarAcciones = data[0].dato.filter(accion => accion.id_estado === 1);
               },
               (error) => {
                 console.error(error);
@@ -253,7 +250,8 @@ export class RiesgosComponent implements OnInit {
           // ======= GET Efectividad de las Medidas =======
             this.servicios.getParametricaByIdTipo(17).subscribe(
               (data) => {
-                this. riesgoEfectividadMedidas = data[0].dato;
+                //this. riesgoEfectividadMedidas = data[0].dato;
+                this.riesgoEfectividadMedidas = data[0].dato.filter(efectividad => efectividad.id_estado === 1);
               },
               (error) => {
                 console.error(error);

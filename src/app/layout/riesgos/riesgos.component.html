@@ -309,12 +309,14 @@
                           </select>
                           <span class="custom-alert-message" *ngIf="!valProbabilidad">Debe elegir una probabilidad</span>
                           <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
-                            <div *ngIf="probabilidad" class="probabilidad-shape" style="transform: scale(0.6);">
-                              <div [ngClass]="{
-                                'probabilidad-alto': probabilidad === '3',
-                                'probabilidad-medio': probabilidad === '2',
-                                'probabilidad-bajo': probabilidad === '1'
-                              }"></div>
+                            <div *ngIf="probabilidad" 
+                                [ngClass]="{
+                                  'probabilidad-shape': true,
+                                  'probabilidad-alto': probabilidad === '3',
+                                  'probabilidad-medio': probabilidad === '2',
+                                  'probabilidad-bajo': probabilidad === '1'
+                                }" 
+                                style="transform: scale(0.6);">
                             </div>
                           </div>
                         </div>
