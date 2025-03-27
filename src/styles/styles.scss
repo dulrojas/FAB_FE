@@ -935,11 +935,10 @@ canvas {
         }
     /* Probabilidad formas y colores */
         .probabilidad-shape {
-            width: 0;
-            height: 0;
+            width: 30px;
+            height: 30px;
             margin: 0 auto;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
+            border-radius: 50%;
         }
         
         .probabilidad-alto {
