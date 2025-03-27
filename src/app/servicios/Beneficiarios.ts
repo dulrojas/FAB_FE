@@ -182,7 +182,7 @@ export class servBeneficiarios {
     // ======= ======= ======= ======= ======= ======= =======
     // ======= =======   DELETE BENEFICIARIO   ======= =======
     // ======= ======= ======= ======= ======= ======= =======
-        deleteBeneficiario(idBeneficiario: number): Observable<any> {
+        deleteBeneficiario(idBeneficiario: number, idPersonaReg: number): Observable<any> {
             const params = {
                 "procedure_name": "sp_beneficiarios",
                 "body": {
@@ -200,7 +200,7 @@ export class servBeneficiarios {
                     { "name": "p_id_proy_actividad", "value": null, "type": "int" },
                     { "name": "p_idp_tipo_evento", "value": null, "type": "int" },
                     { "name": "p_ruta_documento", "value": null, "type": "string" },
-                    { "name": "p_id_persona_reg", "value": null, "type": "int" },
+                    { "name": "p_id_persona_reg", "value": idPersonaReg, "type": "int" },
                     { "name": "p_fecha", "value": null, "type": "string" },
                     { "name": "p_fecha_hora_reg", "value": null, "type": "string" }
                 ]

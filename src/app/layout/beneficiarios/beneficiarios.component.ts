@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ProyectoService } from '../../services/proyectoData.service';
@@ -6,7 +6,7 @@ import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 //Beneficiarios
 //import { servbeneficiarios } from '../../servicios/beneficiarios';
-import { servBeneficiarios } from "../../servicios/Beneficiarios";
+import { servBeneficiarios } from "../../servicios/beneficiarios";
 import { servUbicaGeografica } from "../../servicios/ubicaGeografica";
 import { servListBenef } from "../../servicios/ListBeneficiarios";
 import { servActividad } from "../../servicios/actividad";
@@ -42,8 +42,8 @@ export class BeneficiariosComponent implements OnInit {
     private servInstituciones: servInstituciones,
     //Organizaciones
     private ServOrganizacion: ServOrganizacion,
-
-  ) { }
+    private cdr: ChangeDetectorRef
+  ) {}
 
   // ======= ======= HEADER SECTION ======= =======
   idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
@@ -58,6 +58,7 @@ export class BeneficiariosComponent implements OnInit {
     localStorage.setItem('currentIdProy', (this.idProyecto).toString());
     this.proyectoService.seleccionarProyecto(this.idProyecto);
     this.currentPerProRol = selectedPro.rol;
+
     this.ngOnInit();
     //Beneficiarios
     this.getParametricasBeneficiarios();
@@ -266,6 +267,20 @@ export class BeneficiariosComponent implements OnInit {
   }
 
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
+  valtipoEvento: any = true;
+  ValidateTipoEvento() {
+    this.valtipoEvento = true;
+    if (!this.idp_tipo_evento) {
+      this.valtipoEvento = false;
+    }
+  }
+  valFecha: any = true;
+  ValidateFecha() {
+    this.valFecha = true;
+    if (!this.fecha) {
+      this.valFecha = false;
+    }
+  }
   valTituloEvento: any = true;
   ValidateTituloEvento() {
     this.valTituloEvento = true;
@@ -273,6 +288,28 @@ export class BeneficiariosComponent implements OnInit {
       this.valTituloEvento = false;
     }
   }
+  valDepartamento: any = true;
+  ValidateDepartamento() {
+    this.valDepartamento = true;
+    if (!this.id_ubica_geo_depto) {
+      this.valDepartamento = false;
+    }
+  }
+  valMunicipio: any = true;
+  ValidateMunicipio() {
+    this.valMunicipio = true;
+    if (!this.id_ubica_geo_muni) {
+      this.valMunicipio = false;
+    }
+  }
+  valComunidad: any = true;
+  ValidateComunidad() {
+    this.valComunidad = true;
+    if (!this.id_ubica_geo_comu) {
+      this.valComunidad = false;
+    }
+  }
+
   // ======= ======= OPEN MODALS FUN ======= =======
   private modalRef: NgbModalRef | null = null;
   openModalBeneficiario(content: TemplateRef<any>) {
@@ -368,7 +405,7 @@ export class BeneficiariosComponent implements OnInit {
   // Descargar documento de beneficiario
   downloadDocumentoBeneficiario(): void {
     if (!this.ruta_documento) {
-      alert('No hay documento disponible para descargar');
+      Notify.warning('No hay documento disponible para descargar');
       return;
     }
 
@@ -381,20 +418,20 @@ export class BeneficiariosComponent implements OnInit {
           link.click();
           window.URL.revokeObjectURL(url);
         } else {
-          alert('No se pudo descargar el documento');
+          Notify.warning('No se pudo descargar el documento');
         }
       })
       .catch(error => {
         console.error('Error al descargar el documento:', error);
-        alert('Error al descargar el documento');
+        Notify.failure('Error al descargar el documento');
       });
   }
   // ======= ======= INIT BENEFICIARIOS MODEL ======= =======
   initBeneficiariosModel() {
-    this.modalTitleBeneficiario = "";
+    this.modalTitleBeneficiario = '';
 
     this.id_proy_beneficiario = 0;
-    this.id_proyecto = "";
+    this.id_proyecto = '';
     this.mujeres = 0;
     this.hombres = 0;
     this.titulo_evento = '';
@@ -417,7 +454,12 @@ export class BeneficiariosComponent implements OnInit {
     this.selectedFileBeneficiario = null;
     this.fileNameBeneficiario = '';
 
+    this.valtipoEvento = true;
+    this.valFecha = true;
     this.valTituloEvento = true;
+    this.valDepartamento = true;
+    this.valMunicipio = true;
+    this.valComunidad = true;
   }
   // ======= ======= GET BENEFICIARIOS ======= =======
   getBeneficiarios() {
@@ -425,6 +467,8 @@ export class BeneficiariosComponent implements OnInit {
       (data) => {
         this.beneficiarios = (data[0].dato) ? (data[0].dato) : ([]);
         this.totalLengthBeneficiarios = this.beneficiarios.length;
+        this.countHeaderData();
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error(error);
@@ -454,14 +498,14 @@ export class BeneficiariosComponent implements OnInit {
   addBeneficiario() {
     const objBeneficiario = {
       p_id_proy_beneficiario: 0,
-      p_id_proyecto: this.idProyecto,
+      p_id_proyecto: parseInt(this.idProyecto,10),
       p_mujeres: this.mujeres || 0,
       p_hombres: this.hombres || 0,
       p_titulo_evento: this.titulo_evento,
       p_evento_detalle: this.evento_detalle,
-      p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
-      p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
-      p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
+      p_id_ubica_geo_depto: this.id_ubica_geo_depto,
+      p_id_ubica_geo_muni: this.id_ubica_geo_muni,
+      p_id_ubica_geo_comu: this.id_ubica_geo_comu,
       p_id_proy_actividad: this.id_proy_actividad || null,
       p_idp_tipo_evento: this.idp_tipo_evento,
       p_ruta_documento: null,
@@ -472,14 +516,14 @@ export class BeneficiariosComponent implements OnInit {
 
     this.servBeneficiarios.addBeneficiario(objBeneficiario).subscribe(
       (data) => {
-        alert('Beneficiario agregado exitosamente.');
+        Notify.success('Evento Para Beneficiario agregado exitosamente.');
         this.beneficiariosSelected = null;
         this.getBeneficiarios();
         this.closeModalBeneficiario();
       },
-      (error) => {
+      (error) => {        
+        Notify.failure('Error al guardar Evento Para Beneficiario');
         console.error(error);
-        alert('Error al guardar beneficiario');
       }
     );
   }
@@ -562,7 +606,6 @@ export class BeneficiariosComponent implements OnInit {
         }
       );
     }
-
     this.openModalBeneficiario(modalScope);
   }
   // ======= ======= EDIT BENEFICIARIOS ======= =======
@@ -592,7 +635,7 @@ export class BeneficiariosComponent implements OnInit {
 
     this.servBeneficiarios.editBeneficiario(objBeneficiario).subscribe(
       (data) => {
-        // Si hay un archivo seleccionado, subirlo
+
         if (this.selectedFileBeneficiario) {
           const fileName = `beneficiario_${this.id_proy_beneficiario}_${Date.now()}_${this.fileNameBeneficiario}`;
           this.uploadFile(
@@ -603,20 +646,19 @@ export class BeneficiariosComponent implements OnInit {
             fileName,
             this.id_proy_beneficiario
           );
+          this.getBeneficiarios();
         }
 
-        alert('Beneficiario editado exitosamente');
+        Notify.success('Evento Para Beneficiario editado exitosamente');
         this.beneficiariosSelected = null;
         this.getBeneficiarios();
         this.closeModalBeneficiario();
       },
       (error) => {
-        alert('Error al editar beneficiario');
+        Notify.failure('Error al editar Evento Para Beneficiario');
         console.error(error);
-        this.closeModalBeneficiario();
       }
     );
-    this.closeModalBeneficiario();
   }
   // ======= ======= INIT DELETE BENEFICIARIOS ======= =======
   initDeleteBeneficiario(modalScope: TemplateRef<any>) {
@@ -628,15 +670,15 @@ export class BeneficiariosComponent implements OnInit {
   }
   // ======= ======= DELETE BENEFICIARIOS ======= =======
   deleteBeneficiario() {
-    this.servBeneficiarios.deleteBeneficiario(this.beneficiariosSelected.id_proy_beneficiario).subscribe(
+    this.servBeneficiarios.deleteBeneficiario(this.beneficiariosSelected.id_proy_beneficiario, this.idPersonaReg).subscribe(
       (data) => {
-        alert('Beneficiario eliminado exitosamente');
+        Notify.success('Evento Para Beneficiario eliminado exitosamente');
         this.closeModalBeneficiario();
         this.beneficiariosSelected = null;
         this.getBeneficiarios();
       },
       (error) => {
-        alert('Error al eliminar beneficiario');
+        Notify.failure('Error al eliminar Evento Para Beneficiario');
         console.error(error);
       }
     );
@@ -645,11 +687,21 @@ export class BeneficiariosComponent implements OnInit {
   // ======= ======= ======= ======= VALIDATION BENEFICIARIOS ======= ======= ======= =======
   onSubmitBeneficiario(): void {
     // ======= VALIDATION SECTION =======
-    let valForm = false;
+    let valForm = false;    
+    this.ValidateTipoEvento();
+    this.ValidateFecha();
     this.ValidateTituloEvento();
+    this.ValidateDepartamento();
+    this.ValidateMunicipio();
+    this.ValidateComunidad();
 
     valForm =
-      this.valTituloEvento;
+      this.valtipoEvento &&
+      this.valFecha &&
+      this.valTituloEvento &&
+      this.valDepartamento &&
+      this.valMunicipio &&
+      this.valComunidad;
 
     // ======= ACTION SECTION =======
     if (valForm) {
@@ -661,6 +713,10 @@ export class BeneficiariosComponent implements OnInit {
       this.closeModalBeneficiario();
     }
   }
+
+
+
+
   // ======= ======= GET LISTA DE BENEFICIARIOS POR PROYECTO LLAMADO DESDE BENEFICIARIOS ======= ======= 
 
   beneficiariosListaProyecto: any[] = [];
@@ -682,8 +738,8 @@ export class BeneficiariosComponent implements OnInit {
   }
 
   importarBeneficiariosDesdeProyecto(idProyectoOrigen: number) {
-    if (this.beneficiariosListaProyectoSelected.length === 0) {
-      alert('Debe seleccionar al menos un beneficiario para importar.');
+    if (this.beneficiariosListaProyectoSelected.length === 0) {      
+      Notify.warning('Debe seleccionar al menos un beneficiario para importar.');
       return;
     }
 
@@ -705,8 +761,7 @@ export class BeneficiariosComponent implements OnInit {
     let errores = 0;
 
     beneficiariosAImportar.forEach((nuevoBeneficiario) => {
-      this.servListBenef.addListBene(nuevoBeneficiario).subscribe(
-        () => console.log(`Beneficiario importado: ${nuevoBeneficiario.p_nombre}`),
+      this.servListBenef.addListBene(nuevoBeneficiario).subscribe(        
         (error) => {
           console.error(`Error al importar ${nuevoBeneficiario.p_nombre}`, error);
           errores++;
@@ -715,15 +770,16 @@ export class BeneficiariosComponent implements OnInit {
     });
 
     setTimeout(() => {
-      if (errores > 0) {
-        alert(`Importación finalizada con ${errores} errores.`);
+      if (errores > 0) {       
+        Notify.warning(`Importación finalizada con ${errores} errores.`);
       } else {
-        alert('Importación completada exitosamente.');
+        Notify.success('Importación completada exitosamente con éxito.');
+        this.getBeneficiariosListaPorProyecto();
       }
-      this.getBeneficiariosLista(); // Refresca la lista
-      this.beneficiariosListaProyectoSelected = []; // Limpia la selección después de importar
-      this.closeModalBeneficiarioListaProyecto(); // Cierra el modal
-    }, 500); // Se da un pequeño margen para que terminen las solicitudes asíncronas
+      this.getBeneficiariosLista(); 
+      this.beneficiariosListaProyectoSelected = []; 
+      this.closeModalBeneficiarioListaProyecto(); 
+    }, 500); 
   }
 
   get beneficiariosListaProyectoTable() {
@@ -758,33 +814,34 @@ export class BeneficiariosComponent implements OnInit {
   }
   // ======= ======= IMPORT BENEFICIARIOS LISTA PROYECTO ======= =======
   onFileSelected(event: Event) {
-    console.log("onFileSelected");
+    //console.log("onFileSelected");
 
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
 
     if (file) {
       this.archivo = file; // Asignar el archivo solo si es válido
-      console.log(this.archivo.name);
+      //console.log(this.archivo.name);
       this.importExcelBeneficiario(this.id_proy_beneficiario);
+      Notify.success('Archivo seleccionado correctamente.');
       input.value = ''; // Restablecer el input
       // this.descripcion = this.archivo.name;
       // console.log(this.descripcion);
 
     } else {
       this.archivo = null; // Asegurarse de que sea null si no es válido
-      // Notify.failure('Solo se permiten archivos Excel (.xlsx, .xls)');
+      Notify.failure('Solo se permiten archivos Excel (.xlsx, .xls)');
       input.value = ''; // Restablecer el input
     }
   }
   // ======= ======= IMPORT BENEFICIARIOS LISTA EXCEL ======= =======
   importExcelBeneficiario(id_proy_beneficiario) {
-    console.log("id_proy_beneficiario:", id_proy_beneficiario);
-    console.log(this.archivo);
+    //console.log("id_proy_beneficiario:", id_proy_beneficiario);
+    //console.log(this.archivo);
 
     this.servBeneficiarios.importarData(this.archivo, id_proy_beneficiario).subscribe(
       (data) => {
-        console.log(data);
+        //console.log(data);
         if(data.res=="ERROR"){
           Report.warning(
             'Problemas con la importación',
@@ -814,14 +871,18 @@ export class BeneficiariosComponent implements OnInit {
         link.href = objectUrl;
         link.download = "exportarBeneficiario.xlsx";
         link.click();
+        Notify.success('Lista de Participantes exportados exitosamente.');
         // Liberar memoria
         URL.revokeObjectURL(objectUrl);
       },
       error: (error) => {
+        Notify.failure('Error al exportar la lista de participantes.');        
         console.error('Error al descargar el Excel:', error);
       }
     });
   }
+
+
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
   // ======= ======= LISTA DE BENEFICIARIOS - PROY_BENE_LISTA ======= =======
@@ -988,6 +1049,7 @@ export class BeneficiariosComponent implements OnInit {
       this.valNombre = false;
     }
   }
+  val
   // Función para verificar si un número de documento ya existe
   verificarDocumentoExistente(numDoc: any, idActual: any = null): boolean {
     if (!numDoc) return false;
@@ -1027,12 +1089,9 @@ export class BeneficiariosComponent implements OnInit {
     this.modalRef = this.modalService.open(content, { size: 'xl' });
   }
   closeModalBeneficiarioLista() {
-    console.log(this.modalRef);
     if (this.modalRef) {
       this.modalRef.close();
       this.modalRef = null;
-      // Volver a contar beneficiarios después de cerrar el modal
-      //this.getBeneficiariosLista();     
     }
   }
   // ======= ======= GET BENEFICIARIOS LISTA ======= =======
@@ -1183,13 +1242,13 @@ export class BeneficiariosComponent implements OnInit {
       p_num_doc_identidad: this.num_doc_identidad,
       p_nombre: this.nombre,
       p_es_hombre: this.es_hombre === "true" ? true : (this.es_hombre === "false" ? false : null),
-      p_idp_organizacion_tipo: this.idp_organizacion_tipo || null,
+      p_idp_organizacion_tipo: this.idp_organizacion_tipo,
       p_idp_organizacion_subtipo: this.idp_organizacion_subtipo || null,
       p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
       p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
       p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
       p_comunidad_no_registrada: this.comunidad_no_registrada || null,
-      p_idp_rango_edad: this.idp_rango_edad || null
+      p_idp_rango_edad: this.idp_rango_edad 
     };
     this.servListBenef.addListBene(objBeneficiarioLista).subscribe(
       (data) => {
@@ -1314,12 +1373,10 @@ export class BeneficiariosComponent implements OnInit {
             Notify.success('Participante eliminado exitosamente');
             this.beneficiariosListaSelected = null;
             this.getBeneficiariosLista();
-            //this.closeModalBeneficiarioLista();
-            //this.initEditBeneficiario(this.id_proy_beneficiario);
           },
           (error) => {
-            alert('Error al eliminar beneficiario');
-            //this.closeModalBeneficiarioLista();
+            Notify.failure('Error al eliminar participante');
+            //alert('Error al eliminar beneficiario');
             console.error(error);
           }
         );
