@@ -718,30 +718,40 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     }
 
     // ======= ======= DOWNLOAD FILE FUN ======= =======
-    async avancesDownload(campo_avances: string) {
+    async avancesDownload(campo_avances: string, item?: any) {
       try {
+        // Usar el ID del elemento específico si se proporciona, de lo contrario usar el ID del editAvance
+        const idRegistro = item 
+          ? item.id_proy_indica_avance 
+          : this.editAvance.id_proy_indica_avance;
+    
         const avanceDocumentoURL = await this.downloadFile(
           'proy_indicador_avance',
           campo_avances,
           'id_proy_indica_avance',
-          this.editAvance.id_proy_indica_avance
+          idRegistro
         );
     
         if (avanceDocumentoURL) {
+          const fileName = item 
+            ? this.getFileName(item.ruta_evidencia) 
+            : this.getFileName(this.editAvance.ruta_evidencia);
+    
           const a = document.createElement('a');
-          a.href = avanceDocumentoURL as string;
-          a.download = this.getFileName(this.editAvance.ruta_evidencia) || `Evidencia_${this.editAvance.id_proy_indica_avance}.pdf`;
+          a.href = avanceDocumentoURL;
+          a.download = fileName || `Evidencia_${idRegistro}.pdf`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          window.URL.revokeObjectURL(avanceDocumentoURL as string);
+          window.URL.revokeObjectURL(avanceDocumentoURL);
         } else {
           alert('No se encontró ningún archivo adjunto.');
         }
       } catch (error) {
+        console.error('Error al descargar el archivo:', error);
         alert('Error al descargar el archivo. Por favor, intente nuevamente.');
       }
-    }    
+    }  
     
     // Función auxiliar para obtener el nombre del archivo de la ruta
     getFileName(rutaCompleta: string): string {
@@ -750,28 +760,26 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       return partes[partes.length - 1];
     }
     // ======= ======= DOWNLOAD FILE ======= =======
-    downloadFile(nombreTabla: any, campoTabla: any, idEnTabla: any, idRegistro: any){
-      return new Promise((resolve, reject) => {
-        this.servicios.downloadFile(nombreTabla, campoTabla, idEnTabla, idRegistro).subscribe(
-          (response: Blob) => {
-            if (response instanceof Blob) {
-              const url = window.URL.createObjectURL(response);
-              resolve(url);
-            } 
-            else {
-              resolve(null); 
-            }
-          },
-          (error) => {
-            if (error.status === 404) {
-              resolve(null);
-            } 
-            else {
-              reject(error);
-            }
-          }
-        );
-      });
+    async downloadFile(nombreTabla: string, campoTabla: string, idEnTabla: string, idRegistro: number): Promise<string | null> {
+      try {
+        const response = await this.servicios.downloadFile(nombreTabla, campoTabla, idEnTabla, idRegistro).toPromise();
+        
+        if (response instanceof Blob) {
+          // Crear un URL único para cada descarga
+          const url = window.URL.createObjectURL(new Blob([response], { type: response.type }));
+          return url;
+        } else {
+          console.warn('La respuesta no es un Blob');
+          return null;
+        }
+      } catch (error) {
+        if (error.status === 404) {
+          console.warn('Archivo no encontrado');
+          return null;
+        }
+        console.error('Error al descargar el archivo:', error);
+        return null;
+      }
     }
 
 //  ======= ======= ======= ======= ======= ======= =======  ======= =======  ======= =======

@@ -386,7 +386,9 @@
                               <div *ngIf="item.ruta_evidencia; else sinEvidencia">
                                 <div class="d-flex align-items-center gap-2">
                                   <i class="fas fa-file-alt"></i>
-                                  <a href="javascript:void(0);" (click)="avancesDownload('ruta_evidencia')" title="Descargar evidencia">
+                                  <a href="javascript:void(0);" 
+                                     (click)="avancesDownload('ruta_evidencia', item)" 
+                                     title="Descargar evidencia">
                                     {{ getFileName(item.ruta_evidencia) }}
                                   </a>
                                 </div>
