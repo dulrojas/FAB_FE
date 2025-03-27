@@ -933,6 +933,7 @@ canvas {
         .impacto-bajo {
             background-color: #4E8646;
         }
+
     /* Probabilidad formas y colores */
         .probabilidad-shape {
             width: 30px;
@@ -940,19 +941,15 @@ canvas {
             margin: 0 auto;
             border-radius: 50%;
         }
-        
         .probabilidad-alto {
             border-bottom: 30px solid #c64d27;
         }
-        
         .probabilidad-medio {
             border-bottom: 30px solid #fdc82f;
         }
-        
         .probabilidad-bajo {
             border-bottom: 30px solid #4E8646;
         }
-
 
     /* Nivel de Riesgo formas y colores */
         .riesgo-circle {
@@ -971,7 +968,6 @@ canvas {
         .riesgo-bajo {
             background-color: #4E8646;
         }
-
         .symbol {
             position: absolute;
             text-align: center;

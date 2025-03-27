@@ -5,10 +5,9 @@ import { ProyectoService } from '../../services/proyectoData.service';
 
 import { servicios } from "../../servicios/servicios";
 //Beneficiarios
-//import { servbeneficiarios } from '../../servicios/beneficiarios';
 import { servBeneficiarios } from "../../servicios/beneficiarios";
 import { servUbicaGeografica } from "../../servicios/ubicaGeografica";
-import { servListBenef } from "../../servicios/ListBeneficiarios";
+import { servListBenef } from "../../servicios/beneficiariosLista";
 import { servActividad } from "../../servicios/actividad";
 //Aliados
 import { servAliados } from "../../servicios/aliados";
@@ -200,7 +199,8 @@ export class BeneficiariosComponent implements OnInit {
       // ======= GET TIPO EVENTO =======
       this.servicios.getParametricaByIdTipo(25).subscribe(
         (data) => {
-          this.beneficiariosTipoEvento = data[0].dato;
+          //this.beneficiariosTipoEvento = data[0].dato;
+          this.beneficiariosTipoEvento = data[0].dato.filter(evento => evento.id_estado === 1);
         },
         (error) => {
           console.error(error);
@@ -409,7 +409,6 @@ export class BeneficiariosComponent implements OnInit {
           Notify.warning('No hay documento disponible para descargar');
           return;
         }
-
         this.downloadFile('proy_beneficiarios', 'ruta_documento', 'id_proy_beneficiario', this.id_proy_beneficiario)
           .then((url: any) => {
             if (url) {
