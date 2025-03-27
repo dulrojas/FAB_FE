@@ -41,19 +41,19 @@
                 <!-- AÑADIR -->
                   <button type="button" class="btn btn-view-bg-1" 
                     (click)="initAddRiesgo(riesgosFormModal)"
-                    [disabled]="(riesgosSelected)||(currentPerProRol=='LEC')">
+                    [disabled]="(riesgosSelected)||(currentPerProRol.includes('LEC'))">
                     <i class="fa fa-plus" aria-hidden="true"></i> Añadir
                   </button>
                 <!-- EDITAR -->
                   <button type="button" class="btn btn-view-bg-1" 
                     (click)="initEditRiesgo(riesgosFormModal)"
-                    [disabled]="(!riesgosSelected)||(currentPerProRol=='LEC')">
+                    [disabled]="(!riesgosSelected)||(currentPerProRol.includes('LEC'))">
                     <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                   </button>
                 <!-- ELIMINAR -->
                   <button type="button" class="btn btn-view-bg-1" 
                   (click)="initDeleteRiesgo(deleteRiesgosModal)"
-                  [disabled]="(!riesgosSelected)||(currentPerProRol=='LEC')">
+                  [disabled]="(!riesgosSelected)||(currentPerProRol.includes('LEC'))">
                     <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                   </button>
               </div>
