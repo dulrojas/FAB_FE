@@ -133,7 +133,7 @@ export class servAliados{
   // ======= ======= ======= ======= ======= ======= =======
   // ======= =======      DELETE ALIADO      ======= =======
   // ======= ======= ======= ======= ======= ======= =======
-      deleteAliado(idAliado: number): Observable<any> {
+      deleteAliado(idAliado: number, idPersonaReg: number): Observable<any> {
         const params = {
             "procedure_name": "sp_aliados",
             "body": {
@@ -145,7 +145,7 @@ export class servAliados{
                 { "name": "p_referente", "value": null, "type": "string" },
                 { "name": "p_vinculo", "value": null, "type": "string" },
                 { "name": "p_idp_convenio", "value": null, "type": "int" },
-                { "name": "p_id_persona_reg", "value": null, "type": "int" },
+                { "name": "p_id_persona_reg", "value": idPersonaReg, "type": "int" },
                 { "name": "p_fecha", "value": null, "type": "string" },
                 { "name": "p_fecha_hora_reg", "value": null, "type": "string" }
               ]

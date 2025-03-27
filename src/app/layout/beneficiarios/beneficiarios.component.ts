@@ -29,696 +29,694 @@ export class BeneficiariosComponent implements OnInit {
 
   constructor(
     //General
-    private modalService: NgbModal,
-    private proyectoService: ProyectoService,
-    private servicios: servicios,
+      private modalService: NgbModal,
+      private proyectoService: ProyectoService,
+      private servicios: servicios,
     //Beneficiarios
-    private servBeneficiarios: servBeneficiarios,
-    private servUbicaGeografica: servUbicaGeografica,
-    private servListBenef: servListBenef,
-    private servActividad: servActividad,
+      private servBeneficiarios: servBeneficiarios,
+      private servUbicaGeografica: servUbicaGeografica,
+      private servListBenef: servListBenef,
+      private servActividad: servActividad,
     //Aliados
-    private servAliados: servAliados,
-    private servInstituciones: servInstituciones,
+      private servAliados: servAliados,
+      private servInstituciones: servInstituciones,
     //Organizaciones
-    private ServOrganizacion: ServOrganizacion,
-    private cdr: ChangeDetectorRef
+      private ServOrganizacion: ServOrganizacion,
+      private cdr: ChangeDetectorRef
   ) {}
 
   // ======= ======= HEADER SECTION ======= =======
-  idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
-  idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-  namePersonaReg: any = localStorage.getItem('userFullName');
-  currentPerProRol: any = localStorage.getItem('currentPerProRol');
-  archivo: File | null = null;
+      idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+      idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+      namePersonaReg: any = localStorage.getItem('userFullName');
+      currentPerProRol: any = localStorage.getItem('currentPerProRol');
+      archivo: File | null = null;
 
-  @Output() selectionChange = new EventEmitter<any>();
-  onChildSelectionChange(selectedPro: any) {
-    this.idProyecto = selectedPro.id_proyecto;
-    localStorage.setItem('currentIdProy', (this.idProyecto).toString());
-    this.proyectoService.seleccionarProyecto(this.idProyecto);
-    this.currentPerProRol = selectedPro.rol;
+      @Output() selectionChange = new EventEmitter<any>();
+      onChildSelectionChange(selectedPro: any) {
+        this.idProyecto = selectedPro.id_proyecto;
+        localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+        this.proyectoService.seleccionarProyecto(this.idProyecto);
+        this.currentPerProRol = selectedPro.rol;
 
-    this.ngOnInit();
-    //Beneficiarios
-    this.getParametricasBeneficiarios();
-    this.getBeneficiarios();
-    this.beneficiariosSelected = null;
-    //Lista de Beneficiarios
-    this.getParametricasBeneficiariosLista();
-    this.getBeneficiariosLista();
-    this.beneficiariosListaSelected = null;
-    //Aliados
-    this.getParametricasAliados();
-    this.getAliados();
-    this.aliadosSelected = null;
-    //Organizaciones
-    this.getParametricasOrganizaciones();
-  }
+        this.ngOnInit();
+        //Beneficiarios
+        this.getParametricasBeneficiarios();
+        this.getBeneficiarios();
+        this.beneficiariosSelected = null;
+        //Lista de Beneficiarios
+        this.getParametricasBeneficiariosLista();
+        this.getBeneficiariosLista();
+        this.beneficiariosListaSelected = null;
+        //Aliados
+        this.getParametricasAliados();
+        this.getAliados();
+        this.aliadosSelected = null;
+        //Organizaciones
+        this.getParametricasOrganizaciones();
+      }
   // ======= ======= ======= ======= =======
-  headerDataNro01: any = 0;
-  headerDataNro02: any = 0;
-  headerDataNro03: any = 0;
-  headerDataNro04: any = 0;
+      headerDataNro01: any = 0;
+      headerDataNro02: any = 0;
+      headerDataNro03: any = 0;
+      headerDataNro04: any = 0;
   // ======= ======= ======= ======= =======
-  ngOnInit(): void {
-    //Beneficiarios
-    this.getParametricasBeneficiarios();
-    this.getBeneficiarios();
-    //Lista de Beneficiarios del Proyecto
-    this.getBeneficiariosListaPorProyecto();
-    //Lista de Beneficiarios
-    this.getParametricasBeneficiariosLista();
-    this.getBeneficiariosLista();
-    //Aliados
-    this.getParametricasAliados();
-    this.getAliados();
-    //Organizaciones
-    this.getParametricasOrganizaciones();
-  }
+      ngOnInit(): void {
+        //Beneficiarios
+        this.getParametricasBeneficiarios();
+        this.getBeneficiarios();
+        //Lista de Beneficiarios del Proyecto
+        this.getBeneficiariosListaPorProyecto();
+        //Lista de Beneficiarios
+        this.getParametricasBeneficiariosLista();
+        this.getBeneficiariosLista();
+        //Aliados
+        this.getParametricasAliados();
+        this.getAliados();
+        //Organizaciones
+        this.getParametricasOrganizaciones();
+      }
   // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
-  jsonToString(json: object): string {
-    return JSON.stringify(json);
-  }
-  stringToJson(jsonString: string): object {
-    return JSON.parse(jsonString);
-  }
-  // GET PARAMETRICAS
-  getDescripcionSubtipo(idRegistro: any, paramList: any): string {
-    const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
-    return subtipo ? subtipo.descripcion_subtipo : '';
-  }
-  // GET ORGANIZACION
-  getOrganizacion(idRegistro: any, paramList: any[]): string {
-    if (!paramList || paramList.length === 0) {
-      return '';
-    }
-    const org = paramList.find(elem => elem.id_organizacion == idRegistro);
-    return org ? org.organizacion : '';
-  }
-  // GET ORGANIZACION TIPO
-  getOrganizacionTipo(idRegistro: any, paramList: any): string {
-    const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
-    return subtipo ? subtipo.descripcion_subtipo : '';
-  }
-  // GET DE FECHA Y HORA
-  getCurrentDateTime(): string {
-    const date: Date = new Date();
+      jsonToString(json: object): string {
+        return JSON.stringify(json);
+      }
+      stringToJson(jsonString: string): object {
+        return JSON.parse(jsonString);
+      }
+      // GET PARAMETRICAS
+      getDescripcionSubtipo(idRegistro: any, paramList: any): string {
+        const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
+        return subtipo ? subtipo.descripcion_subtipo : '';
+      }
+      // GET ORGANIZACION
+      getOrganizacion(idRegistro: any, paramList: any[]): string {
+        if (!paramList || paramList.length === 0) {
+          return '';
+        }
+        const org = paramList.find(elem => elem.id_organizacion == idRegistro);
+        return org ? org.organizacion : '';
+      }
+      // GET ORGANIZACION TIPO
+      getOrganizacionTipo(idRegistro: any, paramList: any): string {
+        const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
+        return subtipo ? subtipo.descripcion_subtipo : '';
+      }
+      // GET DE FECHA Y HORA
+      getCurrentDateTime(): string {
+        const date: Date = new Date();
 
-    const day: string = String(date.getDate()).padStart(2, '0');
-    const month: string = String(date.getMonth() + 1).padStart(2, '0');
-    const year: number = date.getFullYear();
+        const day: string = String(date.getDate()).padStart(2, '0');
+        const month: string = String(date.getMonth() + 1).padStart(2, '0');
+        const year: number = date.getFullYear();
 
-    const hours: string = String(date.getHours()).padStart(2, '0');
-    const minutes: string = String(date.getMinutes()).padStart(2, '0');
-    const seconds: string = String(date.getSeconds()).padStart(2, '0');
+        const hours: string = String(date.getHours()).padStart(2, '0');
+        const minutes: string = String(date.getMinutes()).padStart(2, '0');
+        const seconds: string = String(date.getSeconds()).padStart(2, '0');
 
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  }
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      }
   // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======
   // ======= ======= =======    BENEFICIARIOS - PROY_BENEFICIARIOS   ======= ======= =======
   // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= 
   // ======= ======= NGMODEL VARIABLES GENERALES ======= =======  
-  beneficiarios: any[] = [];
-  mainPageBeneficiarios = 1;
-  mainPageSizeBeneficiarios = 10;
-  totalLengthBeneficiarios = 0;
+      beneficiarios: any[] = [];
+      mainPageBeneficiarios = 1;
+      mainPageSizeBeneficiarios = 10;
+      totalLengthBeneficiarios = 0;
   // ======= ======= NGMODEL VARIABLES SECTION BENEFICIARIOS ======= =======
-  modalTitleBeneficiario: any = "";
-  modalActionBeneficiario: any = '';
+      modalTitleBeneficiario: any = "";
+      modalActionBeneficiario: any = '';
 
-  id_proy_beneficiario: any = '';
-  id_proyecto: any = '';
-  mujeres: any = '';
-  hombres: any = '';
-  get total(): number {
-    return (this.mujeres || 0) + (this.hombres || 0);
-  }
-  titulo_evento: any = '';
-  evento_detalle: any = '';
-  id_ubica_geo_depto: any = '';
-  id_ubica_geo_muni: any = '';
-  id_ubica_geo_comu: any = '';
-  id_proy_actividad: any = '';
-  idp_tipo_evento: any = '';
-  ruta_documento: any = '';
-  id_persona_reg: any = '';
-  fecha: any = '';
-  fecha_hora_reg: any = '';
+      id_proy_beneficiario: any = '';
+      id_proyecto: any = '';
+      mujeres: any = '';
+      hombres: any = '';
+      get total(): number {
+        return (this.mujeres || 0) + (this.hombres || 0);
+      }
+      titulo_evento: any = '';
+      evento_detalle: any = '';
+      id_ubica_geo_depto: any = '';
+      id_ubica_geo_muni: any = '';
+      id_ubica_geo_comu: any = '';
+      id_proy_actividad: any = '';
+      idp_tipo_evento: any = '';
+      ruta_documento: any = '';
+      id_persona_reg: any = '';
+      fecha: any = '';
+      fecha_hora_reg: any = '';
 
-  ubica_geo_muni: any = '';
-  ubica_geo_comu: any = '';
+      ubica_geo_muni: any = '';
+      ubica_geo_comu: any = '';
 
-  beneficiarios_persona_registro: any = "";
-  beneficiarios_fecha_registro: any = "";
+      beneficiarios_persona_registro: any = "";
+      beneficiarios_fecha_registro: any = "";
   // ======= ======= LLAMADOS A SELECCIONADORES PARA NODAL BENEFICIARIOS ======= =======
-  beneficiariosTipoEvento: any[] = [];
-  beneficiariosUbicaDepto: any[] = [];
-  beneficiariosUbicaMuni: any[] = [];
-  beneficiariosUbicaComu: any[] = [];
-  beneficiariosActividades: any[] = [];
+      beneficiariosTipoEvento: any[] = [];
+      beneficiariosUbicaDepto: any[] = [];
+      beneficiariosUbicaMuni: any[] = [];
+      beneficiariosUbicaComu: any[] = [];
+      beneficiariosActividades: any[] = [];
 
   // GET UBICACION GEOGRAFICA
-  getUbicacionGeografica(idRegistro: any, paramList: any[]): string {
-    if (!idRegistro || !paramList || paramList.length === 0) {
-      return '';
+    getUbicacionGeografica(idRegistro: any, paramList: any[]): string {
+      if (!idRegistro || !paramList || paramList.length === 0) {
+        return '';
+      }
+      const ubicacion = paramList.find(elem => elem.id_ubica_geo == idRegistro);
+      return ubicacion ? ubicacion.nombre : '';
     }
-    const ubicacion = paramList.find(elem => elem.id_ubica_geo == idRegistro);
-    return ubicacion ? ubicacion.nombre : '';
-  }
   // GET ACTIVIDAD
-  getActividad(idRegistro: any, paramList: any[]): string {
-    if (!paramList || paramList.length === 0) {
-      return '';
+    getActividad(idRegistro: any, paramList: any[]): string {
+      if (!paramList || paramList.length === 0) {
+        return '';
+      }
+      const actividad = paramList.find(elem => elem.id_proy_actividad == idRegistro);
+      return actividad ? actividad.actividad : '';
     }
-    const actividad = paramList.find(elem => elem.id_proy_actividad == idRegistro);
-    return actividad ? actividad.actividad : '';
-  }
 
   // ======= ======= GET PARAMETRICAS BENEFICIARIOS ======= =======
-  getParametricasBeneficiarios(): void {
-    // ======= GET TIPO EVENTO =======
-    this.servicios.getParametricaByIdTipo(25).subscribe(
-      (data) => {
-        this.beneficiariosTipoEvento = data[0].dato;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    // ======= GET UBICA GEO DEPARTAMENTO =======
-    this.servUbicaGeografica.getUbiDepartamentos("Departamento").subscribe(
-      (data) => {
-        this.beneficiariosUbicaDepto = data[0].dato;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-    // ======= GET ACTIVIDADES =======
-    this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
-      (data) => {
-        if (data[0].dato != null) {
-          this.beneficiariosActividades = data[0].dato;
+    getParametricasBeneficiarios(): void {
+      // ======= GET TIPO EVENTO =======
+      this.servicios.getParametricaByIdTipo(25).subscribe(
+        (data) => {
+          this.beneficiariosTipoEvento = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
         }
-        else {
+      );
+      // ======= GET UBICA GEO DEPARTAMENTO =======
+      this.servUbicaGeografica.getUbiDepartamentos("Departamento").subscribe(
+        (data) => {
+          this.beneficiariosUbicaDepto = data[0].dato;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+      // ======= GET ACTIVIDADES =======
+      this.servActividad.getActividadesByIdProy(this.idProyecto).subscribe(
+        (data) => {
+          if (data[0].dato != null) {
+            this.beneficiariosActividades = data[0].dato;
+          }
+          else {
+            this.beneficiariosActividades = [];
+          }
+        },
+        (error) => {
+          console.error(error);
           this.beneficiariosActividades = [];
         }
-      },
-      (error) => {
-        console.error(error);
-        this.beneficiariosActividades = [];
-      }
-    );
-  }
+      );
+    }
   // ======= ======= GET MUNICIPIO ======= =======
-  cargarMunicipiosPorDepartamento(idDepartamento: any) {
-    if (idDepartamento) {
-      this.servUbicaGeografica.getUbiMunicipios(idDepartamento).subscribe(
-        (data) => {
-          this.beneficiariosUbicaMuni = data[0].dato;
-        },
-        (error) => {
-          console.error(error);
-          this.beneficiariosUbicaMuni = [];
-        }
-      );
-    } else {
-      this.beneficiariosUbicaMuni = [];
-    }
-    this.id_ubica_geo_muni = null;
-  }
-  // ======= ======= GET COMUNIDAD ======= =======
-  cargarComunidadPorMunicipio(idMunicipio: any) {
-    if (idMunicipio) {
-      this.servUbicaGeografica.getUbiComunidad(idMunicipio).subscribe(
-        (data) => {
-          this.beneficiariosUbicaComu = data[0].dato;
-        },
-        (error) => {
-          console.error(error);
-          this.beneficiariosUbicaComu = [];
-        }
-      );
-    } else {
-      this.beneficiariosUbicaComu = [];
-    }
-    this.id_ubica_geo_comu = null;
-  }
-
-  // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
-  valtipoEvento: any = true;
-  ValidateTipoEvento() {
-    this.valtipoEvento = true;
-    if (!this.idp_tipo_evento) {
-      this.valtipoEvento = false;
-    }
-  }
-  valFecha: any = true;
-  ValidateFecha() {
-    this.valFecha = true;
-    if (!this.fecha) {
-      this.valFecha = false;
-    }
-  }
-  valTituloEvento: any = true;
-  ValidateTituloEvento() {
-    this.valTituloEvento = true;
-    if ((!this.titulo_evento) || (this.titulo_evento.length >= 50)) {
-      this.valTituloEvento = false;
-    }
-  }
-  valDepartamento: any = true;
-  ValidateDepartamento() {
-    this.valDepartamento = true;
-    if (!this.id_ubica_geo_depto) {
-      this.valDepartamento = false;
-    }
-  }
-  valMunicipio: any = true;
-  ValidateMunicipio() {
-    this.valMunicipio = true;
-    if (!this.id_ubica_geo_muni) {
-      this.valMunicipio = false;
-    }
-  }
-  valComunidad: any = true;
-  ValidateComunidad() {
-    this.valComunidad = true;
-    if (!this.id_ubica_geo_comu) {
-      this.valComunidad = false;
-    }
-  }
-
-  // ======= ======= OPEN MODALS FUN ======= =======
-  private modalRef: NgbModalRef | null = null;
-  openModalBeneficiario(content: TemplateRef<any>) {
-    this.modalRef = this.modalService.open(content, { size: 'xl' });
-  }
-  closeModalBeneficiario() {
-    if (this.modalRef) {
-      this.modalRef.close();
-      this.modalRef = null;
-    }
-  }
-  // ======= ======= GET BENEFICIARIOS ======= =======
-  getModalTitleBeneficiario(modalActionBeneficiario: any) {
-    this.modalTitleBeneficiario = (modalActionBeneficiario == "add") ? ("Añadir Evento Para Beneficiario") : this.modalTitleBeneficiario;
-    this.modalTitleBeneficiario = (modalActionBeneficiario == "edit") ? ("Editar Evento Para Beneficiario") : this.modalTitleBeneficiario;
-    return this.modalTitleBeneficiario;
-  }
-  // ======= ======= BENEFICIARIOS TABLE PAGINATION ======= =======
-  get beneficiariosTable() {
-    const start = (this.mainPageBeneficiarios - 1) * this.mainPageSizeBeneficiarios;
-    return this.beneficiarios.slice(start, start + this.mainPageSizeBeneficiarios);
-  }
-  // ======= ======= ======= ======= =======
-  beneficiariosSelected: any = null;
-  // ======= ======= ======= ======= =======
-  checkboxChangedBeneficiario(beneficiarioSel: any): void {
-    this.beneficiarios.forEach(beneficiario => {
-      if (beneficiarioSel.id_proy_beneficiario == beneficiario.id_proy_beneficiario) {
-        if (beneficiarioSel.selected) {
-          this.beneficiariosSelected = beneficiarioSel;
-        }
-        else {
-          this.beneficiariosSelected = null;
-        }
-      }
-      else {
-        beneficiario.selected = false;
-      }
-    });
-  }
-  // ======= ======= ======= ======= RUTA_DOCUMENTOS BENEFICIARIOS ======= =======
-  selectedFileBeneficiario: File | null = null;
-  fileNameBeneficiario: string = '';
-  onFileChangeBeneficiario(event: any): void {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      this.selectedFileBeneficiario = files[0];
-      this.fileNameBeneficiario = this.selectedFileBeneficiario.name;
-    } else {
-      this.selectedFileBeneficiario = null;
-      this.fileNameBeneficiario = '';
-    }
-  }
-  getFileNameBeneficiario(rutaCompleta: string): string {
-    if (!rutaCompleta) return '';
-    const partes = rutaCompleta.split('/');
-    return partes[partes.length - 1];
-  }
-  // ======= ======= UPLOAD FILE FUN ======= =======
-  uploadFile(file: any, nombreTabla: any, campoTabla: any, idEnTabla: any, fileName: any, idRegistro: any) {
-    this.servicios.uploadFile(file, nombreTabla, campoTabla, idEnTabla, fileName, idRegistro).subscribe(
-      (response) => {
-      },
-      (error) => {
-        console.error('Error al subir el archivo:', error);
-      }
-    );
-  }
-  // ======= ======= DOWNLOAD IMAGE FUN ======= =======
-  downloadFile(nombreTabla: any, campoTabla: any, idEnTabla: any, idRegistro: any) {
-    return new Promise((resolve, reject) => {
-      this.servicios.downloadFile(nombreTabla, campoTabla, idEnTabla, idRegistro).subscribe(
-        (response: Blob) => {
-          if (response instanceof Blob) {
-            const url = window.URL.createObjectURL(response);
-            resolve(url);
+    cargarMunicipiosPorDepartamento(idDepartamento: any) {
+      if (idDepartamento) {
+        this.servUbicaGeografica.getUbiMunicipios(idDepartamento).subscribe(
+          (data) => {
+            this.beneficiariosUbicaMuni = data[0].dato;
+          },
+          (error) => {
+            console.error(error);
+            this.beneficiariosUbicaMuni = [];
           }
-          else {
-            resolve(null);
-          }
-        },
-        (error) => {
-          if (error.status === 404) {
-            resolve(null);
-          }
-          else {
-            reject(error);
-          }
-        }
-      );
-    });
-  }
-  // Descargar documento de beneficiario
-  downloadDocumentoBeneficiario(): void {
-    if (!this.ruta_documento) {
-      Notify.warning('No hay documento disponible para descargar');
-      return;
-    }
-
-    this.downloadFile('proy_beneficiarios', 'ruta_documento', 'id_proy_beneficiario', this.id_proy_beneficiario)
-      .then((url: any) => {
-        if (url) {
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = this.getFileNameBeneficiario(this.ruta_documento);
-          link.click();
-          window.URL.revokeObjectURL(url);
-        } else {
-          Notify.warning('No se pudo descargar el documento');
-        }
-      })
-      .catch(error => {
-        console.error('Error al descargar el documento:', error);
-        Notify.failure('Error al descargar el documento');
-      });
-  }
-  // ======= ======= INIT BENEFICIARIOS MODEL ======= =======
-  initBeneficiariosModel() {
-    this.modalTitleBeneficiario = '';
-
-    this.id_proy_beneficiario = 0;
-    this.id_proyecto = '';
-    this.mujeres = 0;
-    this.hombres = 0;
-    this.titulo_evento = '';
-    this.evento_detalle = null;
-    this.id_ubica_geo_depto = '';
-    this.id_ubica_geo_muni = '';
-    this.id_ubica_geo_comu = '';
-    this.id_proy_actividad = null;
-    this.idp_tipo_evento = '';
-    this.ruta_documento = null;
-    this.id_persona_reg = '';
-    this.fecha = null;
-
-    this.ubica_geo_muni = '';
-    this.ubica_geo_comu = '';
-
-    this.beneficiarios_persona_registro = this.namePersonaReg;
-    this.beneficiarios_fecha_registro = "";
-
-    this.selectedFileBeneficiario = null;
-    this.fileNameBeneficiario = '';
-
-    this.valtipoEvento = true;
-    this.valFecha = true;
-    this.valTituloEvento = true;
-    this.valDepartamento = true;
-    this.valMunicipio = true;
-    this.valComunidad = true;
-  }
-  // ======= ======= GET BENEFICIARIOS ======= =======
-  getBeneficiarios() {
-    this.servBeneficiarios.getBeneficiariosByIdProy(this.idProyecto).subscribe(
-      (data) => {
-        this.beneficiarios = (data[0].dato) ? (data[0].dato) : ([]);
-        this.totalLengthBeneficiarios = this.beneficiarios.length;
-        this.countHeaderData();
-        this.cdr.detectChanges();
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
-  isEditingBeneficiario: any = false;
-  // ======= ======= INIT ADD BENEFICIARIOS ======= =======
-  initAddBeneficiario(modalScope: TemplateRef<any>) {
-    this.initBeneficiariosModel();
-
-    this.beneficiarios_fecha_registro = this.getCurrentDateTime();
-
-    this.modalActionBeneficiario = "add";
-    this.modalTitleBeneficiario = this.getModalTitleBeneficiario("add");
-
-    this.isEditingBeneficiario = false;
-
-    this.mujeres = 0;
-    this.hombres = 0;
-    this.beneficiariosUbicaMuni = [];
-    this.beneficiariosUbicaComu = [];
-
-    this.openModalBeneficiario(modalScope);
-  }
-  // ======= ======= ADD BENEFICIARIOS ======= =======
-  addBeneficiario() {
-    const objBeneficiario = {
-      p_id_proy_beneficiario: 0,
-      p_id_proyecto: parseInt(this.idProyecto,10),
-      p_mujeres: this.mujeres || 0,
-      p_hombres: this.hombres || 0,
-      p_titulo_evento: this.titulo_evento,
-      p_evento_detalle: this.evento_detalle,
-      p_id_ubica_geo_depto: this.id_ubica_geo_depto,
-      p_id_ubica_geo_muni: this.id_ubica_geo_muni,
-      p_id_ubica_geo_comu: this.id_ubica_geo_comu,
-      p_id_proy_actividad: this.id_proy_actividad || null,
-      p_idp_tipo_evento: this.idp_tipo_evento,
-      p_ruta_documento: null,
-      p_id_persona_reg: parseInt(this.idPersonaReg, 10),
-      p_fecha: this.fecha,
-      p_fecha_hora_reg: null
-    };
-
-    this.servBeneficiarios.addBeneficiario(objBeneficiario).subscribe(
-      (data) => {
-        Notify.success('Evento Para Beneficiario agregado exitosamente.');
-        this.beneficiariosSelected = null;
-        this.getBeneficiarios();
-        this.closeModalBeneficiario();
-      },
-      (error) => {        
-        Notify.failure('Error al guardar Evento Para Beneficiario');
-        console.error(error);
-      }
-    );
-  }
-  // ======= ======= INIT EDIT BENEFICIARIOS ======= =======
-  initEditBeneficiario(modalScope: TemplateRef<any>) {
-    this.initBeneficiariosModel();
-    this.modalActionBeneficiario = "edit";
-    this.modalTitleBeneficiario = this.getModalTitleBeneficiario("edit");
-    this.isEditingBeneficiario = true;
-
-    this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;
-    this.id_proyecto = this.beneficiariosSelected.id_proyecto;
-
-    if (this.id_proy_beneficiario) {
-      this.servListBenef.getListBeneByIdProyBene(this.id_proy_beneficiario).subscribe(
-        (data) => {
-          if (data && data[0] && data[0].dato) {
-            this.beneficiariosLista = data[0].dato;
-          } else {
-            this.beneficiariosLista = [];
-          }
-          this.totalLengthBeneficiariosLista = this.beneficiariosLista.length;
-
-          // Contar beneficiarios después de obtener la lista
-          this.countBeneficiarios();
-
-          // Asignar valores después de contar
-          this.mujeres = this.mujeresCount;
-          this.hombres = this.hombresCount;
-        },
-        (error) => {
-          console.error('Error al cargar lista de beneficiarios:', error);
-          this.beneficiariosLista = [];
-          this.totalLengthBeneficiariosLista = 0;
-          this.countBeneficiarios();
-          this.mujeres = 0;
-          this.hombres = 0;
-        }
-      );
-    }
-    this.titulo_evento = this.beneficiariosSelected.titulo_evento;
-    this.evento_detalle = this.beneficiariosSelected.evento_detalle;
-    this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
-    this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;
-    this.id_ubica_geo_comu = this.beneficiariosSelected.id_ubica_geo_comu;
-    this.id_proy_actividad = this.beneficiariosSelected.id_proy_actividad;
-    this.idp_tipo_evento = this.beneficiariosSelected.idp_tipo_evento;
-    this.ruta_documento = this.beneficiariosSelected.ruta_documento;
-    this.id_persona_reg = this.beneficiariosSelected.id_persona_reg;
-    this.fecha = this.beneficiariosSelected.fecha;
-    this.beneficiarios_fecha_registro = this.beneficiariosSelected.fecha_hora_reg;
-
-    this.ubica_geo_muni = this.beneficiariosSelected.ubica_geo_muni;
-    this.ubica_geo_comu = this.beneficiariosSelected.ubica_geo_comu;
-
-    const idMunicipio = this.beneficiariosSelected.id_ubica_geo_muni;
-    const idComunidad = this.beneficiariosSelected.id_ubica_geo_comu;
-
-    if (this.id_ubica_geo_depto) {
-      this.servUbicaGeografica.getUbiMunicipios(this.id_ubica_geo_depto).subscribe(
-        (data) => {
-          this.beneficiariosUbicaMuni = data[0].dato;
-          this.id_ubica_geo_muni = idMunicipio;
-          if (idMunicipio) {
-            this.servUbicaGeografica.getUbiComunidad(idMunicipio).subscribe(
-              (data) => {
-                this.beneficiariosUbicaComu = data[0].dato;
-                this.id_ubica_geo_comu = idComunidad;
-              },
-              (error) => {
-                console.error(error);
-                this.beneficiariosUbicaComu = [];
-              }
-            );
-          }
-        },
-        (error) => {
-          console.error(error);
-          this.beneficiariosUbicaMuni = [];
-        }
-      );
-    }
-    this.openModalBeneficiario(modalScope);
-  }
-  // ======= ======= EDIT BENEFICIARIOS ======= =======
-  calculateTotal() {
-    const total = (this.mujeres || 0) + (this.hombres || 0);
-    return total;
-  }
-
-  editBeneficiario() {
-    const objBeneficiario = {
-      p_id_proy_beneficiario: this.id_proy_beneficiario,
-      p_id_proyecto: this.id_proyecto,
-      p_mujeres: this.mujeres || 0,
-      p_hombres: this.hombres || 0,
-      p_titulo_evento: this.titulo_evento,
-      p_evento_detalle: this.evento_detalle,
-      p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
-      p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
-      p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
-      p_id_proy_actividad: this.id_proy_actividad || null,
-      p_idp_tipo_evento: this.idp_tipo_evento,
-      p_ruta_documento: this.ruta_documento || null,
-      p_id_persona_reg: this.id_persona_reg,
-      p_fecha: this.fecha,
-      p_fecha_hora_reg: this.getCurrentDateTime()
-    };
-
-    this.servBeneficiarios.editBeneficiario(objBeneficiario).subscribe(
-      (data) => {
-
-        if (this.selectedFileBeneficiario) {
-          const fileName = `beneficiario_${this.id_proy_beneficiario}_${Date.now()}_${this.fileNameBeneficiario}`;
-          this.uploadFile(
-            this.selectedFileBeneficiario,
-            'proy_beneficiarios',
-            'ruta_documento',
-            'id_proy_beneficiario',
-            fileName,
-            this.id_proy_beneficiario
-          );
-          this.getBeneficiarios();
-        }
-
-        Notify.success('Evento Para Beneficiario editado exitosamente');
-        this.beneficiariosSelected = null;
-        this.getBeneficiarios();
-        this.closeModalBeneficiario();
-      },
-      (error) => {
-        Notify.failure('Error al editar Evento Para Beneficiario');
-        console.error(error);
-      }
-    );
-  }
-  // ======= ======= INIT DELETE BENEFICIARIOS ======= =======
-  initDeleteBeneficiario(modalScope: TemplateRef<any>) {
-    this.initBeneficiariosModel();
-
-    this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;
-
-    this.openModalBeneficiario(modalScope);
-  }
-  // ======= ======= DELETE BENEFICIARIOS ======= =======
-  deleteBeneficiario() {
-    this.servBeneficiarios.deleteBeneficiario(this.beneficiariosSelected.id_proy_beneficiario, this.idPersonaReg).subscribe(
-      (data) => {
-        Notify.success('Evento Para Beneficiario eliminado exitosamente');
-        this.closeModalBeneficiario();
-        this.beneficiariosSelected = null;
-        this.getBeneficiarios();
-      },
-      (error) => {
-        Notify.failure('Error al eliminar Evento Para Beneficiario');
-        console.error(error);
-      }
-    );
-  }
-
-  // ======= ======= ======= ======= VALIDATION BENEFICIARIOS ======= ======= ======= =======
-  onSubmitBeneficiario(): void {
-    // ======= VALIDATION SECTION =======
-    let valForm = false;    
-    this.ValidateTipoEvento();
-    this.ValidateFecha();
-    this.ValidateTituloEvento();
-    this.ValidateDepartamento();
-    this.ValidateMunicipio();
-    this.ValidateComunidad();
-
-    valForm =
-      this.valtipoEvento &&
-      this.valFecha &&
-      this.valTituloEvento &&
-      this.valDepartamento &&
-      this.valMunicipio &&
-      this.valComunidad;
-
-    // ======= ACTION SECTION =======
-    if (valForm) {
-      if (this.modalActionBeneficiario === 'add') {
-        this.addBeneficiario();
+        );
       } else {
-        this.editBeneficiario();
+        this.beneficiariosUbicaMuni = [];
       }
-      this.closeModalBeneficiario();
+      this.id_ubica_geo_muni = null;
     }
-  }
+  // ======= ======= GET COMUNIDAD ======= =======
+    cargarComunidadPorMunicipio(idMunicipio: any) {
+      if (idMunicipio) {
+        this.servUbicaGeografica.getUbiComunidad(idMunicipio).subscribe(
+          (data) => {
+            this.beneficiariosUbicaComu = data[0].dato;
+          },
+          (error) => {
+            console.error(error);
+            this.beneficiariosUbicaComu = [];
+          }
+        );
+      } else {
+        this.beneficiariosUbicaComu = [];
+      }
+      this.id_ubica_geo_comu = null;
+    }
+  // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
+      valtipoEvento: any = true;
+      ValidateTipoEvento() {
+        this.valtipoEvento = true;
+        if (!this.idp_tipo_evento) {
+          this.valtipoEvento = false;
+        }
+      }
+      valFecha: any = true;
+      ValidateFecha() {
+        this.valFecha = true;
+        if (!this.fecha) {
+          this.valFecha = false;
+        }
+      }
+      valTituloEvento: any = true;
+      ValidateTituloEvento() {
+        this.valTituloEvento = true;
+        if ((!this.titulo_evento) || (this.titulo_evento.length >= 50)) {
+          this.valTituloEvento = false;
+        }
+      }
+      valDepartamento: any = true;
+      ValidateDepartamento() {
+        this.valDepartamento = true;
+        if (!this.id_ubica_geo_depto) {
+          this.valDepartamento = false;
+        }
+      }
+      valMunicipio: any = true;
+      ValidateMunicipio() {
+        this.valMunicipio = true;
+        if (!this.id_ubica_geo_muni) {
+          this.valMunicipio = false;
+        }
+      }
+      valComunidad: any = true;
+      ValidateComunidad() {
+        this.valComunidad = true;
+        if (!this.id_ubica_geo_comu) {
+          this.valComunidad = false;
+        }
+      }
+  // ======= ======= OPEN MODALS FUN ======= =======
+      private modalRef: NgbModalRef | null = null;
+      openModalBeneficiario(content: TemplateRef<any>) {
+        this.modalRef = this.modalService.open(content, { size: 'xl' });
+      }
+      closeModalBeneficiario() {
+        if (this.modalRef) {
+          this.modalRef.close();
+          this.modalRef = null;
+        }
+      }
+  // ======= ======= GET BENEFICIARIOS ======= =======
+      getModalTitleBeneficiario(modalActionBeneficiario: any) {
+        this.modalTitleBeneficiario = (modalActionBeneficiario == "add") ? ("Añadir Evento Para Beneficiario") : this.modalTitleBeneficiario;
+        this.modalTitleBeneficiario = (modalActionBeneficiario == "edit") ? ("Editar Evento Para Beneficiario") : this.modalTitleBeneficiario;
+        return this.modalTitleBeneficiario;
+      }
+  // ======= ======= BENEFICIARIOS TABLE PAGINATION ======= =======
+      get beneficiariosTable() {
+        const start = (this.mainPageBeneficiarios - 1) * this.mainPageSizeBeneficiarios;
+        return this.beneficiarios.slice(start, start + this.mainPageSizeBeneficiarios);
+      }
+  // ======= ======= ======= ======= =======
+      beneficiariosSelected: any = null;
+  // ======= ======= ======= ======= =======
+      checkboxChangedBeneficiario(beneficiarioSel: any): void {
+        this.beneficiarios.forEach(beneficiario => {
+          if (beneficiarioSel.id_proy_beneficiario == beneficiario.id_proy_beneficiario) {
+            if (beneficiarioSel.selected) {
+              this.beneficiariosSelected = beneficiarioSel;
+            }
+            else {
+              this.beneficiariosSelected = null;
+            }
+          }
+          else {
+            beneficiario.selected = false;
+          }
+        });
+      }
+  // ======= ======= ======= ======= RUTA_DOCUMENTOS BENEFICIARIOS ======= =======
+      selectedFileBeneficiario: File | null = null;
+      fileNameBeneficiario: string = '';
+      onFileChangeBeneficiario(event: any): void {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+          this.selectedFileBeneficiario = files[0];
+          this.fileNameBeneficiario = this.selectedFileBeneficiario.name;
+        } else {
+          this.selectedFileBeneficiario = null;
+          this.fileNameBeneficiario = '';
+        }
+      }
+      getFileNameBeneficiario(rutaCompleta: string): string {
+        if (!rutaCompleta) return '';
+        const partes = rutaCompleta.split('/');
+        return partes[partes.length - 1];
+      }
+  // ======= ======= UPLOAD FILE FUN ======= =======
+      uploadFile(file: any, nombreTabla: any, campoTabla: any, idEnTabla: any, fileName: any, idRegistro: any) {
+        this.servicios.uploadFile(file, nombreTabla, campoTabla, idEnTabla, fileName, idRegistro).subscribe(
+          (response) => {
+            console.log('Archivo subido:', response);
+            Notify.success('Archivo subido exitosamente.');
+            this.getBeneficiarios();
+          },
+          (error) => {
+            console.error('Error al subir el archivo:', error);
+          }
+        );
+      }
+  // ======= ======= DOWNLOAD IMAGE FUN ======= =======
+      downloadFile(nombreTabla: any, campoTabla: any, idEnTabla: any, idRegistro: any) {
+        return new Promise((resolve, reject) => {
+          this.servicios.downloadFile(nombreTabla, campoTabla, idEnTabla, idRegistro).subscribe(
+            (response: Blob) => {
+              if (response instanceof Blob) {
+                const url = window.URL.createObjectURL(response);
+                resolve(url);
+              }
+              else {
+                resolve(null);
+              }
+            },
+            (error) => {
+              if (error.status === 404) {
+                resolve(null);
+              }
+              else {
+                reject(error);
+              }
+            }
+          );
+        });
+      }
+  // Descargar documento de beneficiario
+      downloadDocumentoBeneficiario(): void {
+        if (!this.ruta_documento) {
+          Notify.warning('No hay documento disponible para descargar');
+          return;
+        }
 
+        this.downloadFile('proy_beneficiarios', 'ruta_documento', 'id_proy_beneficiario', this.id_proy_beneficiario)
+          .then((url: any) => {
+            if (url) {
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = this.getFileNameBeneficiario(this.ruta_documento);
+              link.click();
+              window.URL.revokeObjectURL(url);
+            } else {
+              Notify.warning('No se pudo descargar el documento');
+            }
+          })
+          .catch(error => {
+            console.error('Error al descargar el documento:', error);
+            Notify.failure('Error al descargar el documento');
+          });
+      }
+  // ======= ======= INIT BENEFICIARIOS MODEL ======= =======
+      initBeneficiariosModel() {
+        this.modalTitleBeneficiario = '';
 
+        this.id_proy_beneficiario = 0;
+        this.id_proyecto = '';
+        this.mujeres = 0;
+        this.hombres = 0;
+        this.titulo_evento = '';
+        this.evento_detalle = null;
+        this.id_ubica_geo_depto = '';
+        this.id_ubica_geo_muni = '';
+        this.id_ubica_geo_comu = '';
+        this.id_proy_actividad = null;
+        this.idp_tipo_evento = '';
+        this.ruta_documento = null;
+        this.id_persona_reg = '';
+        this.fecha = null;
 
+        this.ubica_geo_muni = '';
+        this.ubica_geo_comu = '';
 
+        this.beneficiarios_persona_registro = this.namePersonaReg;
+        this.beneficiarios_fecha_registro = "";
+
+        this.selectedFileBeneficiario = null;
+        this.fileNameBeneficiario = '';
+
+        this.valtipoEvento = true;
+        this.valFecha = true;
+        this.valTituloEvento = true;
+        this.valDepartamento = true;
+        this.valMunicipio = true;
+        this.valComunidad = true;
+      }
+  // ======= ======= GET BENEFICIARIOS ======= =======
+      getBeneficiarios() {
+        this.servBeneficiarios.getBeneficiariosByIdProy(this.idProyecto).subscribe(
+          (data) => {
+            this.beneficiarios = (data[0].dato) ? (data[0].dato) : ([]);
+            this.totalLengthBeneficiarios = this.beneficiarios.length;
+            this.countHeaderData();
+            this.cdr.detectChanges();
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      }
+      isEditingBeneficiario: any = false;
+  // ======= ======= INIT ADD BENEFICIARIOS ======= =======
+      initAddBeneficiario(modalScope: TemplateRef<any>) {
+        this.initBeneficiariosModel();
+
+        this.beneficiarios_fecha_registro = this.getCurrentDateTime();
+
+        this.modalActionBeneficiario = "add";
+        this.modalTitleBeneficiario = this.getModalTitleBeneficiario("add");
+
+        this.isEditingBeneficiario = false;
+
+        this.mujeres = 0;
+        this.hombres = 0;
+        this.beneficiariosUbicaMuni = [];
+        this.beneficiariosUbicaComu = [];
+
+        this.openModalBeneficiario(modalScope);
+      }
+  // ======= ======= ADD BENEFICIARIOS ======= =======
+      addBeneficiario() {
+        const objBeneficiario = {
+          p_id_proy_beneficiario: 0,
+          p_id_proyecto: parseInt(this.idProyecto,10),
+          p_mujeres: this.mujeres || 0,
+          p_hombres: this.hombres || 0,
+          p_titulo_evento: this.titulo_evento,
+          p_evento_detalle: this.evento_detalle,
+          p_id_ubica_geo_depto: this.id_ubica_geo_depto,
+          p_id_ubica_geo_muni: this.id_ubica_geo_muni,
+          p_id_ubica_geo_comu: this.id_ubica_geo_comu,
+          p_id_proy_actividad: this.id_proy_actividad || null,
+          p_idp_tipo_evento: this.idp_tipo_evento,
+          p_ruta_documento: null,
+          p_id_persona_reg: parseInt(this.idPersonaReg, 10),
+          p_fecha: this.fecha,
+          p_fecha_hora_reg: null
+        };
+
+        this.servBeneficiarios.addBeneficiario(objBeneficiario).subscribe(
+          (data) => {
+            Notify.success('Evento Para Beneficiario agregado exitosamente.');
+            this.beneficiariosSelected = null;
+            this.getBeneficiarios();
+            this.closeModalBeneficiario();
+          },
+          (error) => {        
+            Notify.failure('Error al guardar Evento Para Beneficiario');
+            console.error(error);
+          }
+        );
+      }
+  // ======= ======= INIT EDIT BENEFICIARIOS ======= =======
+      initEditBeneficiario(modalScope: TemplateRef<any>) {
+        this.initBeneficiariosModel();
+        this.modalActionBeneficiario = "edit";
+        this.modalTitleBeneficiario = this.getModalTitleBeneficiario("edit");
+        this.isEditingBeneficiario = true;
+
+        this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;
+        this.id_proyecto = this.beneficiariosSelected.id_proyecto;
+
+        if (this.id_proy_beneficiario) {
+          this.servListBenef.getListBeneByIdProyBene(this.id_proy_beneficiario).subscribe(
+            (data) => {
+              if (data && data[0] && data[0].dato) {
+                this.beneficiariosLista = data[0].dato;
+              } else {
+                this.beneficiariosLista = [];
+              }
+              this.totalLengthBeneficiariosLista = this.beneficiariosLista.length;
+
+              // Contar beneficiarios después de obtener la lista
+              this.countBeneficiarios();
+
+              // Asignar valores después de contar
+              this.mujeres = this.mujeresCount;
+              this.hombres = this.hombresCount;
+            },
+            (error) => {
+              console.error('Error al cargar lista de beneficiarios:', error);
+              this.beneficiariosLista = [];
+              this.totalLengthBeneficiariosLista = 0;
+              this.countBeneficiarios();
+              this.mujeres = 0;
+              this.hombres = 0;
+            }
+          );
+        }
+        this.titulo_evento = this.beneficiariosSelected.titulo_evento;
+        this.evento_detalle = this.beneficiariosSelected.evento_detalle;
+        this.id_ubica_geo_depto = this.beneficiariosSelected.id_ubica_geo_depto;
+        this.id_ubica_geo_muni = this.beneficiariosSelected.id_ubica_geo_muni;
+        this.id_ubica_geo_comu = this.beneficiariosSelected.id_ubica_geo_comu;
+        this.id_proy_actividad = this.beneficiariosSelected.id_proy_actividad;
+        this.idp_tipo_evento = this.beneficiariosSelected.idp_tipo_evento;
+        this.ruta_documento = this.beneficiariosSelected.ruta_documento;
+        this.id_persona_reg = this.beneficiariosSelected.id_persona_reg;
+        this.fecha = this.beneficiariosSelected.fecha;
+        this.beneficiarios_fecha_registro = this.beneficiariosSelected.fecha_hora_reg;
+
+        this.ubica_geo_muni = this.beneficiariosSelected.ubica_geo_muni;
+        this.ubica_geo_comu = this.beneficiariosSelected.ubica_geo_comu;
+
+        const idMunicipio = this.beneficiariosSelected.id_ubica_geo_muni;
+        const idComunidad = this.beneficiariosSelected.id_ubica_geo_comu;
+
+        if (this.id_ubica_geo_depto) {
+          this.servUbicaGeografica.getUbiMunicipios(this.id_ubica_geo_depto).subscribe(
+            (data) => {
+              this.beneficiariosUbicaMuni = data[0].dato;
+              this.id_ubica_geo_muni = idMunicipio;
+              if (idMunicipio) {
+                this.servUbicaGeografica.getUbiComunidad(idMunicipio).subscribe(
+                  (data) => {
+                    this.beneficiariosUbicaComu = data[0].dato;
+                    this.id_ubica_geo_comu = idComunidad;
+                  },
+                  (error) => {
+                    console.error(error);
+                    this.beneficiariosUbicaComu = [];
+                  }
+                );
+              }
+            },
+            (error) => {
+              console.error(error);
+              this.beneficiariosUbicaMuni = [];
+            }
+          );
+        }
+        this.openModalBeneficiario(modalScope);
+      }
+  // ======= ======= EDIT BENEFICIARIOS ======= =======
+      calculateTotal() {
+        const total = (this.mujeres || 0) + (this.hombres || 0);
+        return total;
+      }
+
+      editBeneficiario() {
+        const objBeneficiario = {
+          p_id_proy_beneficiario: this.id_proy_beneficiario,
+          p_id_proyecto: this.id_proyecto,
+          p_mujeres: this.mujeres || 0,
+          p_hombres: this.hombres || 0,
+          p_titulo_evento: this.titulo_evento,
+          p_evento_detalle: this.evento_detalle,
+          p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
+          p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
+          p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
+          p_id_proy_actividad: this.id_proy_actividad || null,
+          p_idp_tipo_evento: this.idp_tipo_evento,
+          p_ruta_documento: this.ruta_documento || null,
+          p_id_persona_reg: this.id_persona_reg,
+          p_fecha: this.fecha,
+          p_fecha_hora_reg: this.getCurrentDateTime()
+        };
+
+        this.servBeneficiarios.editBeneficiario(objBeneficiario).subscribe(
+          (data) => {
+
+            if (this.selectedFileBeneficiario) {
+              const fileName = `beneficiario_${this.id_proy_beneficiario}_${Date.now()}_${this.fileNameBeneficiario}`;
+              this.uploadFile(
+                this.selectedFileBeneficiario,
+                'proy_beneficiarios',
+                'ruta_documento',
+                'id_proy_beneficiario',
+                fileName,
+                this.id_proy_beneficiario
+              );
+              this.getBeneficiarios();
+            }
+
+            Notify.success('Evento Para Beneficiario editado exitosamente');
+            this.beneficiariosSelected = null;
+            this.getBeneficiarios();
+            this.closeModalBeneficiario();
+          },
+          (error) => {
+            Notify.failure('Error al editar Evento Para Beneficiario');
+            console.error(error);
+          }
+        );
+      }
+  // ======= ======= INIT DELETE BENEFICIARIOS ======= =======
+      initDeleteBeneficiario(modalScope: TemplateRef<any>) {
+        this.initBeneficiariosModel();
+
+        this.id_proy_beneficiario = this.beneficiariosSelected.id_proy_beneficiario;
+
+        this.openModalBeneficiario(modalScope);
+      }
+  // ======= ======= DELETE BENEFICIARIOS ======= =======
+      deleteBeneficiario() {
+        this.servBeneficiarios.deleteBeneficiario(this.beneficiariosSelected.id_proy_beneficiario, this.idPersonaReg).subscribe(
+          (data) => {
+            Notify.success('Evento Para Beneficiario eliminado exitosamente');
+            this.closeModalBeneficiario();
+            this.beneficiariosSelected = null;
+            this.getBeneficiarios();
+          },
+          (error) => {
+            Notify.failure('Error al eliminar Evento Para Beneficiario');
+            console.error(error);
+          }
+        );
+      }
+  // ======= ======= ======= ======= VALIDATION BENEFICIARIOS ======= ======= ======= =======
+      onSubmitBeneficiario(): void {
+        // ======= VALIDATION SECTION =======
+        let valForm = false;    
+        this.ValidateTipoEvento();
+        this.ValidateFecha();
+        this.ValidateTituloEvento();
+        this.ValidateDepartamento();
+        this.ValidateMunicipio();
+        this.ValidateComunidad();
+
+        valForm =
+          this.valtipoEvento &&
+          this.valFecha &&
+          this.valTituloEvento &&
+          this.valDepartamento &&
+          this.valMunicipio &&
+          this.valComunidad;
+
+        // ======= ACTION SECTION =======
+        if (valForm) {
+          if (this.modalActionBeneficiario === 'add') {
+            this.addBeneficiario();
+          } else {
+            this.editBeneficiario();
+          }
+          this.closeModalBeneficiario();
+        }
+      }
+
+  // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======    
   // ======= ======= GET LISTA DE BENEFICIARIOS POR PROYECTO LLAMADO DESDE BENEFICIARIOS ======= ======= 
-
+  // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======    
   beneficiariosListaProyecto: any[] = [];
   mainPageBeneficiariosListaProyecto = 1;
   mainPageSizeBeneficiariosListaProyecto = 10;
@@ -761,7 +759,8 @@ export class BeneficiariosComponent implements OnInit {
     let errores = 0;
 
     beneficiariosAImportar.forEach((nuevoBeneficiario) => {
-      this.servListBenef.addListBene(nuevoBeneficiario).subscribe(        
+      this.servListBenef.addListBene(nuevoBeneficiario).subscribe( 
+        () => (`Beneficiario importado: ${nuevoBeneficiario.p_nombre}`),       
         (error) => {
           console.error(`Error al importar ${nuevoBeneficiario.p_nombre}`, error);
           errores++;
@@ -770,9 +769,9 @@ export class BeneficiariosComponent implements OnInit {
     });
 
     setTimeout(() => {
-      if (errores > 0) {       
-        Notify.warning(`Importación finalizada con ${errores} errores.`);
-      } else {
+      if (errores > 0) { 
+        Notify.warning(`Importación finalizada con ${errores} errores.`);      
+      } else {        
         Notify.success('Importación completada exitosamente con éxito.');
         this.getBeneficiariosListaPorProyecto();
       }
@@ -856,8 +855,9 @@ export class BeneficiariosComponent implements OnInit {
         }
       },
       (error) => {
-        console.error("mensaje:", error);
-        alert(error.message);
+        console.error("mensaje:", error);        
+        //alert(error.message);
+        Notify.failure('Error al importar Beneficiario(s).');
       }
     );
   }
@@ -881,8 +881,6 @@ export class BeneficiariosComponent implements OnInit {
       }
     });
   }
-
-
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
   // ======= ======= LISTA DE BENEFICIARIOS - PROY_BENE_LISTA ======= =======
@@ -1019,7 +1017,8 @@ export class BeneficiariosComponent implements OnInit {
       this.openModalBeneficiarioLista(modalScope);
       this.beneficiariosListaSelected = null;
     } else {
-      alert('Primero debe seleccionar un beneficiario');
+      //alert('Primero debe seleccionar un beneficiario');
+      Notify.warning('Primero debe seleccionar un beneficiario');
     }
   }
   // Función para contar hombres, mujeres y el total
@@ -1030,43 +1029,81 @@ export class BeneficiariosComponent implements OnInit {
     this.totalCount = this.mujeresCount + this.hombresCount;
   }
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
-  valNumDocIdentidad: any = true;
-  ValidateNumDocIdentidad() {
-    this.valNumDocIdentidad = true;
-    if (!this.num_doc_identidad || this.num_doc_identidad.length >= 10) {
-      this.valNumDocIdentidad = false;
-      return;
-    }
-    // Validar que solo sean números
-    if (!/^\d+$/.test(this.num_doc_identidad)) {
-      this.valNumDocIdentidad = false;
-    }
-  }
-  valNombre: any = true;
-  ValidateNombre() {
-    this.valNombre = true;
-    if ((!this.nombre) || (this.nombre.length >= 100)) {
-      this.valNombre = false;
-    }
-  }
-  val
+      valNumDocIdentidad: any = true;
+      ValidateNumDocIdentidad() {
+        this.valNumDocIdentidad = true;
+        if (!this.num_doc_identidad || this.num_doc_identidad.length >= 10) {
+          this.valNumDocIdentidad = false;
+          return;
+        }
+        // Validar que solo sean números
+        if (!/^\d+$/.test(this.num_doc_identidad)) {
+          this.valNumDocIdentidad = false;
+        }
+      }
+      valNombre: any = true;
+      ValidateNombre() {
+        this.valNombre = true;
+        if ((!this.nombre) || (this.nombre.length >= 100)) {
+          this.valNombre = false;
+        }
+      }
+      valSexo: any = true;
+      ValidateSexo() {
+        this.valSexo = true;
+        if (!this.es_hombre) {
+          this.valSexo = false;
+        }
+      }
+      valOrganizacionTipo: any = true;
+      ValidateOrganizacionTipo() {
+        this.valOrganizacionTipo = true;
+        if (!this.idp_organizacion_tipo) {
+          this.valOrganizacionTipo = false;
+        }
+      }
+      valDeptoLista: any = true;
+      ValidateDeptoLista() {
+        this.valDeptoLista = true;
+        if (!this.id_ubica_geo_depto) {
+          this.valDeptoLista = false;
+        }
+      }
+      valMuniLista: any = true;
+      ValidateMuniLista() {
+        this.valMuniLista = true;
+        if (!this.id_ubica_geo_muni) {
+          this.valMuniLista = false;
+        }
+      }
+      valComuLista: any = true;
+      ValidateComuLista() {
+        this.valComuLista = true;
+        if (!this.id_ubica_geo_comu) {
+          this.valComuLista = false;
+        }
+      }
+      valRangoEdad: any = true;
+      ValidateRangoEdad() {
+        this.valRangoEdad = true;
+        if (!this.idp_rango_edad) {
+          this.valRangoEdad = false;
+        }
+      }
   // Función para verificar si un número de documento ya existe
   verificarDocumentoExistente(numDoc: any, idActual: any = null): boolean {
     if (!numDoc) return false;
-
     // Filtramos la lista para encontrar coincidencias, excluyendo el ID actual en caso de edición
     const documentoExistente = this.beneficiariosLista.find(bene =>
       bene.num_doc_identidad === numDoc &&
       bene.id_proy_bene_lista !== idActual
     );
-
     return !!documentoExistente;
   }
   // Función para marcar documentos duplicados en la lista
   marcarDocumentosDuplicados() {
     // Crear un mapa para contar las ocurrencias de cada número de documento
     const conteoDocumentos = new Map();
-
     // Primero contar las ocurrencias
     this.beneficiariosLista.forEach(bene => {
       if (bene.num_doc_identidad) {
@@ -1074,7 +1111,6 @@ export class BeneficiariosComponent implements OnInit {
         conteoDocumentos.set(bene.num_doc_identidad, count + 1);
       }
     });
-
     // Luego marcar los duplicados
     this.beneficiariosLista.forEach(bene => {
       if (bene.num_doc_identidad && conteoDocumentos.get(bene.num_doc_identidad) > 1) {
@@ -1146,6 +1182,12 @@ export class BeneficiariosComponent implements OnInit {
 
     this.valNumDocIdentidad = true;
     this.valNombre = true;
+    this.valSexo = true;
+    this.valOrganizacionTipo = true;
+    this.valDeptoLista = true;
+    this.valMuniLista = true;
+    this.valComuLista = true;
+    this.valRangoEdad = true;
   }
   // ======= ======= GET BENEFICIARIOS LISTA ======= =======
   getBeneficiariosLista() {
@@ -1227,12 +1269,12 @@ export class BeneficiariosComponent implements OnInit {
   addBeneficiarioLista() {
     // Verificamos que haya un beneficiario seleccionado
     if (!this.beneficiariosSelected) {
-      alert('Error: No hay un beneficiario seleccionado');
+      Notify.warning('No hay un beneficiario seleccionado');
       return;
     }
     // Verificar si el documento ya existe
     if (this.verificarDocumentoExistente(this.num_doc_identidad)) {
-      alert('Error: Ya existe un participante con este número de documento de identidad');
+      Notify.warning('Ya existe un participante con este número de documento de identidad');
       return;
     }
 
@@ -1244,23 +1286,22 @@ export class BeneficiariosComponent implements OnInit {
       p_es_hombre: this.es_hombre === "true" ? true : (this.es_hombre === "false" ? false : null),
       p_idp_organizacion_tipo: this.idp_organizacion_tipo,
       p_idp_organizacion_subtipo: this.idp_organizacion_subtipo || null,
-      p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
-      p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
-      p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
+      p_id_ubica_geo_depto: this.id_ubica_geo_depto,
+      p_id_ubica_geo_muni: this.id_ubica_geo_muni,
+      p_id_ubica_geo_comu: this.id_ubica_geo_comu,
       p_comunidad_no_registrada: this.comunidad_no_registrada || null,
       p_idp_rango_edad: this.idp_rango_edad 
     };
     this.servListBenef.addListBene(objBeneficiarioLista).subscribe(
       (data) => {
-        alert('Participante agregado exitosamente');
+        Notify.success('Participante agregado exitosamente');
         this.beneficiariosListaSelected = null;
         this.getBeneficiariosLista();
-        this.getBeneficiarios();
         this.initEditBeneficiario(this.id_proy_beneficiario);
         this.closeModalBeneficiarioLista();
       },
       (error) => {
-        alert('Error al guardar beneficiario');
+        Notify.failure('Error al guardar beneficiario');
         console.error(error);
       }
     );
@@ -1330,7 +1371,8 @@ export class BeneficiariosComponent implements OnInit {
   editBeneficiarioLista() {
     // Verificar si el documento ya existe (excluyendo el registro actual)
     if (this.verificarDocumentoExistente(this.num_doc_identidad, this.id_proy_bene_lista)) {
-      alert('Error: Ya existe un participante con este número de documento de identidad');
+      //alert('Error: Ya existe un participante con este número de documento de identidad');
+      Notify.warning('Ya existe un participante con este número de documento de identidad');
       return;
     }
     const objBeneficiarioLista = {
@@ -1339,23 +1381,26 @@ export class BeneficiariosComponent implements OnInit {
       p_num_doc_identidad: this.num_doc_identidad,
       p_nombre: this.nombre,
       p_es_hombre: this.es_hombre === "true" ? true : (this.es_hombre === "false" ? false : null),
-      p_idp_organizacion_tipo: this.idp_organizacion_tipo || null,
+      p_idp_organizacion_tipo: this.idp_organizacion_tipo,
       p_idp_organizacion_subtipo: this.idp_organizacion_subtipo || null,
-      p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
-      p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
-      p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
+      p_id_ubica_geo_depto: this.id_ubica_geo_depto,
+      p_id_ubica_geo_muni: this.id_ubica_geo_muni,
+      p_id_ubica_geo_comu: this.id_ubica_geo_comu,
       p_comunidad_no_registrada: this.comunidad_no_registrada || null,
-      p_idp_rango_edad: this.idp_rango_edad || null
+      p_idp_rango_edad: this.idp_rango_edad
     };
     this.servListBenef.editListBene(objBeneficiarioLista).subscribe(
       (data) => {
-        alert('Participante editado exitosamente');
+        //alert('Participante editado exitosamente');
+        Notify.success('Participante editado exitosamente');
         this.beneficiariosListaSelected = null;
         this.getBeneficiariosLista();
+        this.initEditBeneficiario(this.id_proy_beneficiario);
         this.closeModalBeneficiarioLista();
       },
       (error) => {
-        alert('Error al editar beneficiario');
+        //alert('Error al editar beneficiario');
+        Notify.failure('Error al editar beneficiario');
         console.error(error);
       }
     );
@@ -1381,16 +1426,10 @@ export class BeneficiariosComponent implements OnInit {
           }
         );
       },
-      () => {
-      },
-      {
-      },
-      );
-    // this.initBeneficiariosListModel();
-
-    // this.id_proy_bene_lista = this.beneficiariosListaSelected.id_proy_bene_lista;
-
-    // this.openModalBeneficiarioLista(modalScope);
+      () => { },{},);
+     /*this.initBeneficiariosListModel();
+     this.id_proy_bene_lista = this.beneficiariosListaSelected.id_proy_bene_lista;
+     this.openModalBeneficiarioLista(modalScope);*/
   }
   // ======= ======= DELETE BENEFICIARIOS LISTA ======= =======
   deleteBeneficiarioLista() {
@@ -1402,9 +1441,8 @@ export class BeneficiariosComponent implements OnInit {
         //this.closeModalBeneficiarioLista();
         //this.initEditBeneficiario(this.id_proy_beneficiario);
       },
-      (error) => {
-        alert('Error al eliminar beneficiario');
-        //this.closeModalBeneficiarioLista();
+      (error) => {        
+        Notify.failure('Error al eliminar participante');        
         console.error(error);
       }
     );
@@ -1415,10 +1453,22 @@ export class BeneficiariosComponent implements OnInit {
     let valForm = false;
     this.ValidateNumDocIdentidad();
     this.ValidateNombre();
+    this.ValidateSexo();
+    this.ValidateOrganizacionTipo();
+    this.ValidateDeptoLista();
+    this.ValidateMuniLista();
+    this.ValidateComuLista();
+    this.ValidateRangoEdad();
 
     valForm =
       this.valNumDocIdentidad &&
-      this.valNombre;
+      this.valNombre && 
+      this.valSexo &&
+      this.valOrganizacionTipo &&
+      this.valDeptoLista &&
+      this.valMuniLista &&
+      this.valComuLista &&
+      this.valRangoEdad;
 
     // ======= ACTION SECTION =======
     if (valForm) {
@@ -1428,7 +1478,6 @@ export class BeneficiariosComponent implements OnInit {
         this.editBeneficiarioLista();
       }
     }
-    this.closeModalBeneficiarioLista();
   }
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
@@ -1485,6 +1534,13 @@ export class BeneficiariosComponent implements OnInit {
     );
   }
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
+  valFechaAliado: any = true;
+  ValidateFechaAliado() {
+    this.valFechaAliado = true;
+    if (!this.fecha) {
+      this.valFechaAliado = false;
+    }
+  }
   valReferente: any = true;
   ValidateReferente() {
     this.valReferente = true;
@@ -1497,6 +1553,13 @@ export class BeneficiariosComponent implements OnInit {
     this.valVinculo = true;
     if ((!this.vinculo) || (this.vinculo.length >= 255)) {
       this.valVinculo = false;
+    }
+  }
+  valConvenio: any = true;
+  ValidateConvenio() {
+    this.valConvenio = true;
+    if (!this.idp_convenio) {
+      this.valConvenio = false;
     }
   }
   // ======= ======= OPEN MODALS FUN ======= =======
@@ -1555,8 +1618,10 @@ export class BeneficiariosComponent implements OnInit {
     this.aliados_persona_registro = this.namePersonaReg;
     this.aliados_fecha_registro = "";
 
+    this.valFechaAliado = true;
     this.valReferente = true;
     this.valVinculo = true;
+    this.valConvenio = true;
   }
   // ======= ======= GET ALIADOS ======= =======
   getAliados() {
@@ -1596,14 +1661,14 @@ export class BeneficiariosComponent implements OnInit {
       p_fecha_hora_reg: null
     };
     this.servAliados.addAliado(objAliado).subscribe(
-      (data) => {
-        alert('Aliado agregado exitosamente');
+      (data) => {        
+        Notify.success('Aliado agregado exitosamente');
         this.aliadosSelected = null;
         this.closeModalAliado();
         this.getAliados();
       },
-      (error) => {
-        alert('Error al guardar aliado');
+      (error) => {       
+        Notify.failure('Error al guardar aliado');
         console.error(error);
       }
     );
@@ -1641,13 +1706,13 @@ export class BeneficiariosComponent implements OnInit {
     };
     this.servAliados.editAliado(objAliado).subscribe(
       (data) => {
-        alert('Aliado editado exitosamente');
+        Notify.success('Aliado editado exitosamente');
         this.aliadosSelected = null;
         this.closeModalAliado();
         this.getAliados();
       },
-      (error) => {
-        alert('Error al editar aliado');
+      (error) => {       
+        Notify.failure('Error al editar aliado');
         console.error(error);
       }
     );
@@ -1662,30 +1727,33 @@ export class BeneficiariosComponent implements OnInit {
   }
   // ======= ======= DELETE ALIADOS ======= =======
   deleteAliado() {
-    this.servAliados.deleteAliado(this.aliadosSelected.id_proy_aliado).subscribe(
+    this.servAliados.deleteAliado(this.aliadosSelected.id_proy_aliado, this.idPersonaReg).subscribe(
       (data) => {
-        alert('Aliado eliminado exitosamente');
+        Notify.success('Aliado eliminado exitosamente');
         this.aliadosSelected = null;
         this.closeModalAliado();
         this.getAliados();
       },
       (error) => {
-        alert('Error al eliminar aliado');
+        Notify.failure('Error al eliminar aliado');
         console.error(error);
       }
     );
   }
-
   // ======= ======= ======= ======= VALIDATION ALIADOS ======= ======= ======= =======
   onSubmitAliados(): void {
     // ======= VALIDATION SECTION =======
     let valForm = false;
+    this.ValidateFechaAliado();
     this.ValidateReferente();
     this.ValidateVinculo();
+    this.ValidateConvenio();
 
     valForm =
+      this.valFechaAliado &&
       this.valReferente &&
-      this.valVinculo;
+      this.valVinculo &&
+      this.valConvenio;
 
     // ======= ACTION SECTION =======
     if (valForm) {
@@ -1794,7 +1862,7 @@ export class BeneficiariosComponent implements OnInit {
     };
     this.ServOrganizacion.addOrganizacion(objOrganizacion).subscribe(
       (data) => {
-        alert('Organización agregada exitosamente');
+        Notify.success('Organización agregada exitosamente');
         this.getOrganizaciones();
         this.getParametricasAliados();
         this.getParametricasBeneficiarios();
@@ -1802,7 +1870,7 @@ export class BeneficiariosComponent implements OnInit {
       },
       (error) => {
         console.error(error);
-        alert('Error al guardar la organización');
+        Notify.failure('Error al guardar la organización');
       }
     );
   }

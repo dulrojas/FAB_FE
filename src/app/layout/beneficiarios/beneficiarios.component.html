@@ -636,7 +636,7 @@
                                                     id="num_doc_identidad" name="num_doc_identidad"  
                                                     placeholder="Ingresa el CI O ID"
                                                     [(ngModel)]="num_doc_identidad" (change)="ValidateNumDocIdentidad()" maxlength="9"/>
-                                            <span class="custom-alert-message" *ngIf="!valNumDocIdentidad">Debe ingresar el CI O ID</span>
+                                            <span class="custom-alert-message" *ngIf="!valNumDocIdentidad">Debe ingresar el CI O ID Númerico</span>
                                         </div>                                        
                                         <!-- ======= ======= NOMBRE COMPLETO ======= ======= --> 
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
@@ -651,23 +651,25 @@
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="es_hombre">Sexo</label>
                                             <select class="form-control" id="es_hombre" name="es_hombre"
-                                                [(ngModel)]="es_hombre">
+                                                [(ngModel)]="es_hombre" (change)="ValidateSexo()">
                                                 <option value="" disabled selected>Seleccione el Sexo</option>
                                                 <option value="true">M</option>
                                                 <option value="false">F</option>
                                             </select>
+                                            <span class="custom-alert-message" *ngIf="!valSexo">Debe seleccionar el sexo</span>
                                         </div>                                                                                 
                                     <!-- Segunda Fila: TIPO DE ORGANIZACION, INSTITUCION/COMUNIDAD  -->
                                         <!-- ======= ======= TIPO DE ORGANIZACION ======= ======= -->
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
                                             <label for="idp_organizacion_tipo">Tipo de Actor</label>
                                             <select class="form-control" id="idp_organizacion_tipo" name="idp_organizacion_tipo"
-                                                [(ngModel)]="idp_organizacion_tipo" (change)="cargarOrganizacionSubTipoPorTipo(idp_organizacion_tipo)">
+                                                [(ngModel)]="idp_organizacion_tipo" (change)="cargarOrganizacionSubTipoPorTipo(idp_organizacion_tipo)" (change)="ValidateOrganizacionTipo()">
                                                 <option value="" disabled selected>Seleccione un Tipo de Actor</option>
                                                 <option *ngFor="let tipo of beneficiariosListaOrganizacionTipo" [value]="tipo.id_subtipo">
                                                 {{ tipo.descripcion_subtipo }}
                                                 </option>
                                             </select>
+                                            <span class="custom-alert-message" *ngIf="!valOrganizacionTipo">Debe seleccionar el Tipo de Actor</span>
                                         </div>                                        
                                         <!-- ======= ======= INSTITUCION/COMUNIDAD ======= ======= -->
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
@@ -685,34 +687,37 @@
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="id_ubica_geo_depto">Departamento</label>
                                             <select class="form-control" id="id_ubica_geo_depto" name="id_ubica_geo_depto"
-                                                    [(ngModel)]="id_ubica_geo_depto" (change)="cargarMunicipiosPorDepartamentoLista(id_ubica_geo_depto)">
+                                                    [(ngModel)]="id_ubica_geo_depto" (change)="cargarMunicipiosPorDepartamentoLista(id_ubica_geo_depto)" (change)="ValidateDeptoLista()">
                                                 <option value="" disabled selected>Seleccione un departamento</option>
                                                 <option *ngFor="let dep of beneficiariosListaUbicaDepto" [value]="dep.id_ubica_geo">
                                                     {{dep.nombre}}
                                                 </option>
                                             </select>
+                                            <span class="custom-alert-message" *ngIf="!valDeptoLista">Debe seleccionar el Departamento</span>
                                         </div>
                                         <!-- ======= ======= ======= MUNICIPIO ======= ======= ======= -->                                       
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="id_ubica_geo_muni">Municipio</label>
                                             <select class="form-control" id="id_ubica_geo_muni" name="id_ubica_geo_muni"
-                                                [(ngModel)]="id_ubica_geo_muni" (change)="cargarComunidadPorMunicipioLista(id_ubica_geo_muni)">
+                                                [(ngModel)]="id_ubica_geo_muni" (change)="cargarComunidadPorMunicipioLista(id_ubica_geo_muni)" (change)="ValidateMuniLista()">
                                                 <option value="" disabled selected>Seleccione un municipio</option>
                                                 <option *ngFor="let mun of beneficiariosListaUbicaMuni" [value]="mun.id_ubica_geo">
                                                     {{ mun.nombre }}
                                                 </option>
-                                            </select>                                            
+                                            </select>
+                                            <span class="custom-alert-message" *ngIf="!valMuniLista">Debe seleccionar el Municipio</span>
                                         </div> 
                                         <!-- ======= ======= COMUNIDAD ======= ======= -->
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="id_ubica_geo_comu">Comunidad</label>
                                             <select class="form-control" id="id_ubica_geo_comu" name="id_ubica_geo_comu"
-                                                [(ngModel)]="id_ubica_geo_comu">
+                                                [(ngModel)]="id_ubica_geo_comu" (change)="ValidateComuLista()">
                                                 <option value="" disabled selected>Seleccione una comunidad</option>
                                                 <option *ngFor="let mun of  beneficiariosListaUbicaComu" [value]="mun.id_ubica_geo">
                                                     {{ mun.nombre }}
                                                 </option>
-                                            </select> 
+                                            </select>
+                                            <span class="custom-alert-message" *ngIf="!valComuLista">Debe seleccionar la Comunidad</span> 
                                         </div>                                                                                                                   
                                     <!-- Cuarta Fila: OTRO"COMUNIDAD NO REGISTRADA", RANGO DE EDAD -->
                                         <!-- ======= ======= OTRO ======= ======= -->
@@ -727,12 +732,13 @@
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
                                             <label for="idp_rango_edad">Rango de Edad</label>
                                             <select class="form-control" id="idp_rango_edad" name="idp_rango_edad"
-                                                [(ngModel)]="idp_rango_edad">
+                                                [(ngModel)]="idp_rango_edad" (change)="ValidateRangoEdad()">
                                                 <option value="" disabled selected>Seleccione un Rango de Edad</option>
                                                 <option *ngFor="let rango of beneficiariosListaRangoEdad" [value]="rango.id_subtipo">
                                                 {{ rango.descripcion_subtipo }}
                                                 </option>
                                             </select>
+                                            <span class="custom-alert-message" *ngIf="!valRangoEdad">Debe seleccionar el Rango de Edad</span>
                                         </div>                                                                          
                                         <!-- ======= ======= BUTTONS SECTION ======= ======= -->
                                         <div class="modal-footer mt-2">
@@ -790,17 +796,17 @@
                             <div class="col col-xl-12 col-lg-12 text-end">
                                 <button type="button" class="btn btn-view-bg-1" 
                                     (click)="initAddAliado(aliadosFormModal)"
-                                    [disabled]="(aliadosSelected)||(currentPerProRol=='LEC')">
+                                    [disabled]="(aliadosSelected)||(currentPerProRol.includes('LEC'))">
                                     <i class="fa fa-plus" aria-hidden="true"></i> Añadir
                                 </button>
                                 <button type="button" class="btn btn-view-bg-1" 
                                     (click)="initEditAliado(aliadosFormModal)"
-                                    [disabled]="(!aliadosSelected)||(currentPerProRol=='LEC')" >                                    
+                                    [disabled]="(!aliadosSelected)||(currentPerProRol.includes('LEC'))" >                                    
                                     <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                                 </button>
                                 <button type="button" class="btn btn-view-bg-1" 
                                     (click)="initDeleteAliado(deleteAliadoModal)"
-                                    [disabled]="(!aliadosSelected)||(currentPerProRol=='LEC')">
+                                    [disabled]="(!aliadosSelected)||(currentPerProRol.includes('LEC'))">
                                     <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                                 </button> 
                             </div>
@@ -893,7 +899,8 @@
                                             <label for="fecha">Fecha de identificación</label>
                                             <input class="form-control" type="date" 
                                                 id="fecha" name="fecha" 
-                                                [(ngModel)]="fecha"/>
+                                                [(ngModel)]="fecha" (change)="ValidateFechaAliado()"/>
+                                            <span class="custom-alert-message" *ngIf="!valFechaAliado">Debe ingresar la fecha de identificación</span>
                                         </div>
                                     <!-- Segunda Fila: INSTITUCION/ORGANIZACION, +, NOMBRE DE LA ORGANIZACION -->    
                                         <!-- ======= ======= INSTITUCION/ORGANIZACION ======= ======= -->
@@ -929,21 +936,22 @@
                                             <label for="vinculo">Vínculo con los Resultados</label>
                                             <textarea class="form-control" id="vinculo" name="vinculo"
                                                 placeholder="Ingresa la descripción del Vínculo con los Resultados"
-                                                [(ngModel)]="vinculo" (change)="ValidateVinculo()" maxlength="254">
-                                                <span class="custom-alert-message" *ngIf="!valVinculo">Debe ingresar la descripción del Vínculo</span>
-                                            </textarea>                                        
+                                                [(ngModel)]="vinculo" (change)="ValidateVinculo()" maxlength="254">                                                
+                                            </textarea>
+                                            <span class="custom-alert-message" *ngIf="!valVinculo">Debe ingresar la descripción del Vínculo</span>                                        
                                         </div>
                                     <!-- Cuarta Fila: CONVENIO, PERSONA REGISTRO -->
                                         <!-- ======= ======= CONVENIO ======= ======= -->                                    
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
                                             <label for="idp_convenio">Convenio</label>
                                             <select class="form-control" id="idp_convenio" name="idp_convenio"
-                                                [(ngModel)]="idp_convenio">
+                                                [(ngModel)]="idp_convenio" (change)="ValidateConvenio()">
                                                 <option value="" disabled selected>Seleccione un Convenio</option>
                                                 <option *ngFor="let convenio of aliadosConvenio" [value]="convenio.id_subtipo">
                                                 {{ convenio.descripcion_subtipo }}
                                                 </option>
-                                            </select>                                          
+                                            </select>
+                                            <span class="custom-alert-message" *ngIf="!valConvenio">Debe seleccionar el Convenio</span>                                          
                                         </div>
                                         <!-- ======= ======= PERSONA REGISTRO ======= ======= -->                                    
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
