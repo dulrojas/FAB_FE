@@ -172,7 +172,7 @@ export class servRiesgos {
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= DELETE RIESGO ======= ======= =======
   // ======= ======= ======= ======= ======= ======= =======
-    deleteRiesgo(idRiesgo: number): Observable<any> {
+    deleteRiesgo(idRiesgo: number, idPersonaReg: number): Observable<any> {
       const params = {
           "procedure_name": "sp_riesgos",
           "body": {
@@ -195,7 +195,7 @@ export class servRiesgos {
                   { "name": "p_idp_efectividad", "value": null, "type": "int" },
                   { "name": "p_comentarios", "value": null, "type": "string" },
                   { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
-                  { "name": "p_id_persona_reg", "value": null, "type": "int" },
+                  { "name": "p_id_persona_reg", "value": idPersonaReg, "type": "int" },
                   { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
                   { "name": "p_fecha", "value": null, "type": "string" }
               ]

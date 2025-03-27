@@ -232,8 +232,7 @@
                       <div class="col col-xl-4 col-lg-4 mb-auto">
                         <label for="fecha">Fecha de Identificación</label>
                         <input class="form-control" type="date" id="fecha" name="fecha" 
-                        [(ngModel)]="fecha" (change)="ValidateFecha()"/>
-                        <span class="custom-alert-message" *ngIf="!valFecha">Debe elegir una fecha</span>
+                        [(ngModel)]="fecha"/>                        
                       </div>
                     <!-- TERCERA FILA: RIESGO/SUPUESTO/HIPÓTESIS -->
                       <!-- ======= ======= RIESGO/SUPUESTO/HIPÓTESIS ======= ======= -->  
@@ -356,25 +355,23 @@
                       <div class="col col-xl-6 col-lg-6 mb-auto">
                         <label for="idp_ocurrencia">Ocurrencia durante la Gestión</label>
                         <select class="form-control" id="idp_ocurrencia" name="idp_ocurrencia" 
-                          [(ngModel)]="idp_ocurrencia" (change)="ValidateOcurrencia()">
+                          [(ngModel)]="idp_ocurrencia">
                           <option value="" disabled selected>Seleccione la ocurrencia durante la gestión</option>
                           <option *ngFor="let ocurrencia of riegosOcurrencia" [value]="ocurrencia.id_subtipo">
                             {{ ocurrencia.descripcion_subtipo }}
                           </option>
-                        </select>
-                        <span class="custom-alert-message" *ngIf="!valOcurrencia">Debe elegir si existio alguna ocurrencia durante la gestión</span>
+                        </select>                        
                       </div>
                       <!-- ======= ======= NECESIDAD DE TOMAR ACCIONES ======= ======= -->
                       <div class="col col-xl-6 col-lg-6 mb-auto">
                         <label for="idp_medidas">Necesidad de Tomar Acciones</label>
                           <select class="form-control" id="idp_medidas" name="idp_medidas" 
-                            [(ngModel)]="idp_medidas" (change)="ValidateMedidas()">
+                            [(ngModel)]="idp_medidas">
                             <option value="" disabled>Seleccione necesidad de tomar acciones</option>
                             <option *ngFor="let accion of riesgoTomarAcciones" [value]="accion.id_subtipo">
                               {{ accion.descripcion_subtipo }}
                             </option>
-                          </select>
-                          <span class="custom-alert-message" *ngIf="!valMedidas">Debe elegir si existió alguna Necesidad de Tomar Acciones</span>
+                          </select>                          
                       </div>
                     <!-- SEPTIMA FILA: MEDIDAS DE RESPUESTA AL RIESGO-->
                       <!-- ======= ======= MEDIDAS DE RESPUESTA AL RIESGO ======= ======= -->
@@ -382,8 +379,7 @@
                         <label for="medidas">Medidas de Respuesta al Riesgo</label>
                         <input  class="form-control" type="text" 
                               id="medidas" name="medidas" placeholder="Ingresa Medidas de Respuesta al Riesgo"
-                              [(ngModel)]="medidas" (change)="this.ValidateMedida()" maxlength="499"/>
-                              <span class="custom-alert-message" *ngIf="!valMedida">Ingresa Medidas de Respuesta al Riesgo</span>
+                              [(ngModel)]="medidas" maxlength="499"/>                              
                       </div>
                     <!-- SEPARADOR -->  
                     <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646; border-width: 3px;"></div>

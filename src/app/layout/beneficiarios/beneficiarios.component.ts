@@ -855,8 +855,7 @@ export class BeneficiariosComponent implements OnInit {
         }
       },
       (error) => {
-        console.error("mensaje:", error);        
-        //alert(error.message);
+        console.error("mensaje:", error);       
         Notify.failure('Error al importar Beneficiario(s).');
       }
     );
@@ -1017,7 +1016,6 @@ export class BeneficiariosComponent implements OnInit {
       this.openModalBeneficiarioLista(modalScope);
       this.beneficiariosListaSelected = null;
     } else {
-      //alert('Primero debe seleccionar un beneficiario');
       Notify.warning('Primero debe seleccionar un beneficiario');
     }
   }
@@ -1371,7 +1369,6 @@ export class BeneficiariosComponent implements OnInit {
   editBeneficiarioLista() {
     // Verificar si el documento ya existe (excluyendo el registro actual)
     if (this.verificarDocumentoExistente(this.num_doc_identidad, this.id_proy_bene_lista)) {
-      //alert('Error: Ya existe un participante con este número de documento de identidad');
       Notify.warning('Ya existe un participante con este número de documento de identidad');
       return;
     }
@@ -1391,7 +1388,6 @@ export class BeneficiariosComponent implements OnInit {
     };
     this.servListBenef.editListBene(objBeneficiarioLista).subscribe(
       (data) => {
-        //alert('Participante editado exitosamente');
         Notify.success('Participante editado exitosamente');
         this.beneficiariosListaSelected = null;
         this.getBeneficiariosLista();
@@ -1399,7 +1395,6 @@ export class BeneficiariosComponent implements OnInit {
         this.closeModalBeneficiarioLista();
       },
       (error) => {
-        //alert('Error al editar beneficiario');
         Notify.failure('Error al editar beneficiario');
         console.error(error);
       }
@@ -1421,7 +1416,6 @@ export class BeneficiariosComponent implements OnInit {
           },
           (error) => {
             Notify.failure('Error al eliminar participante');
-            //alert('Error al eliminar beneficiario');
             console.error(error);
           }
         );

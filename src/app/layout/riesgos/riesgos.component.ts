@@ -126,13 +126,6 @@ export class RiesgosComponent implements OnInit {
           this.valRiesgo = false;
         }
       }
-      valFecha: any = true;
-      ValidateFecha(){
-        this.valFecha = true;
-        if(!this.fecha){
-          this.valFecha = false;
-        }
-      }
       //tercera fila
       valDescripcion: any = true;
       ValidateDescripcion(){
@@ -169,29 +162,6 @@ export class RiesgosComponent implements OnInit {
         this.valProbabilidad = true;
         if(!this.probabilidad){
           this.valProbabilidad = false;
-        }
-      }
-      //sexta fila
-      valOcurrencia: any = true;
-      ValidateOcurrencia(){
-        this.valOcurrencia = true;
-        if(!this.idp_ocurrencia){
-          this.valOcurrencia = false;
-        }
-      }
-      valMedidas: any = true;
-      ValidateMedidas(){
-        this.valMedidas = true;
-        if(!this.idp_medidas){
-          this.valMedidas = false;
-        }
-      }
-      //septima fila
-      valMedida: any = true;
-      ValidateMedida(){
-        this.valMedida = true;
-        if((!this.medidas)||(this.medidas.length >= 500)){
-          this.valMedida = false;
         }
       }
   // ======= ======= INIT VIEW FUN ======= =======
@@ -367,15 +337,11 @@ export class RiesgosComponent implements OnInit {
 
         this.valCategoria = true;
         this.valRiesgo = true;
-        this.valFecha = true;
         this.valDescripcion = true;
         this.valVinculados = true;
         this.valIdentificacion = true;
         this.valImpacto = true;
-        this.valProbabilidad = true;
-        this.valOcurrencia = true;
-        this.valMedidas = true;
-        this.valMedida = true;     
+        this.valProbabilidad = true;  
       }
     // ======= ======= GET RIESGOS ======= =======
         getRiesgos(){
@@ -518,7 +484,7 @@ export class RiesgosComponent implements OnInit {
       }
   // ======= ======= DELETE RIESGO ======= =======
       deleteRiesgos(){
-        this.servRiesgos.deleteRiesgo(this.riesgosSelected.id_riesgo).subscribe(
+        this.servRiesgos.deleteRiesgo(this.riesgosSelected.id_riesgo, this.idPersonaReg).subscribe(
           (data) => {           
             alert('Riesgo eliminado exitosamente');
             this.riesgosSelected = null;
@@ -570,23 +536,33 @@ export class RiesgosComponent implements OnInit {
     }
   // ======= ======= COUNT HEADER DATA FUNCTION ======= =======
       countHeaderData(): void {
+        // Reiniciar contadores
         this.headerDataNro01 = 0;
         this.headerDataNro02 = 0;
         this.headerDataNro03 = 0;
         this.headerDataNro04 = 0;
-
+      
         this.riesgos.forEach((riesgo) => {
-            const nivel = Number(riesgo.nivel); 
-            if (nivel === 3) {
-                this.headerDataNro01 += 1;
-            } else if (nivel === 2) {
-                this.headerDataNro02 += 1;
-            } else if (nivel === 1) {
-                this.headerDataNro03 += 1;
-            } 
-            if (riesgo.idp_medidas === 1) {
-                this.headerDataNro04 += 1;
-            }
+          // Usar la función mapNivel para determinar el nivel consistentemente
+          const nivelRiesgo = this.mapNivel(riesgo.nivel);
+      
+          // Conteo de riesgos por nivel usando el mapeo de texto
+          switch (nivelRiesgo) {
+            case 'Alto':
+              this.headerDataNro01 += 1;
+              break;
+            case 'Medio':
+              this.headerDataNro02 += 1;
+              break;
+            case 'Bajo':
+              this.headerDataNro03 += 1;
+              break;
+          }
+      
+          // Conteo de riesgos con medidas
+          if (riesgo.idp_medidas === 1) {
+            this.headerDataNro04 += 1;
+          }
         });
       }
       getRiesgosBajo(): number {
@@ -607,29 +583,21 @@ export class RiesgosComponent implements OnInit {
       let valForm = false;
 
       this.ValidateCategoria();
-      this.ValidateFecha();
       this.ValidateRiesgo();
       this.ValidateDescripcion();
       this.ValidateVinculados();
       this.ValidateIdentificacion();
       this.ValidateImpacto();
       this.ValidateProbabilidad();
-      this.ValidateOcurrencia();
-      this.ValidateMedidas();
-      this.ValidateMedida();
 
       valForm = 
         this.valCategoria &&
-        this.valFecha &&
         this.valRiesgo &&
         this.valDescripcion &&
         this.valVinculados &&
         this.valIdentificacion &&
         this.valImpacto &&
-        this.valProbabilidad &&
-        this.valOcurrencia &&
-        this.valMedidas &&
-        this.valMedida;
+        this.valProbabilidad;
 
       // ======= ACTION SECTION =======
       if(valForm){
