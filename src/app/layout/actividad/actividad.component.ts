@@ -87,6 +87,7 @@ export class ActividadComponent implements OnInit {
   gestion: any = "";
   startYear: any = "";
   endYear: any = "";
+  endDate: any = "";
   presupuestoGest: any = 0;
   ejecutadoGest: any = 0;
 
@@ -418,6 +419,7 @@ export class ActividadComponent implements OnInit {
 
         dataReq.presupuesto_mn = this.parseAmountStrToFloat(dataReq.presupuesto_mn.slice(1));
         dataReq.pro_act_presupuesto = this.parseAmountStrToFloat(dataReq.pro_act_presupuesto.slice(1));
+        dataReq.pro_pre_adicional_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_adicional_gestion.slice(1));
 
         dataReq.pro_act_ava_ejecutado = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado.slice(1));
         dataReq.pro_pre_ava_ejecutado = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado.slice(1));
@@ -427,23 +429,23 @@ export class ActividadComponent implements OnInit {
         dataReq.pro_pre_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado_gestion.slice(1));
 
         this.presupuestoProy = this.parseAmountFloatToStr(dataReq.presupuesto_mn);
-        this.presupuestoActProy = this.parseAmountFloatToStr(dataReq.pro_act_presupuesto);
+        this.presupuestoActProy = this.parseAmountFloatToStr(dataReq.presupuesto_mn);
         this.ejecutadoProy = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado + dataReq.pro_pre_ava_ejecutado);
   
         this.initGestion = dataReq.gestion_actual;
         this.gestion = dataReq.gestion_actual;
 
         this.startYear = dataReq.fecha_inicio;
-        this.endYear = (dataReq.fecha_fin_ampliada)?(dataReq.fecha_fin_ampliada):(dataReq.fecha_fin);
+        this.endDate = (dataReq.fecha_fin_ampliada)?(dataReq.fecha_fin_ampliada):(dataReq.fecha_fin);
 
         this.startYear = (this.startYear)?(this.startYear.slice(0,4)):(new Date().getFullYear().toString());
-        this.endYear = (this.endYear)?(this.endYear.slice(0,4)):(new Date().getFullYear().toString());
+        this.endYear = (this.endDate)?(this.endDate.slice(0,4)):(new Date().getFullYear().toString());
 
         if( parseInt(this.endYear) < parseInt(this.gestion) ){
           this.gestion = this.endYear;
         }
 
-        this.presupuestoGest = this.parseAmountFloatToStr(dataReq.pro_act_presupuesto_gestion);
+        this.presupuestoGest = this.parseAmountFloatToStr(dataReq.pro_pre_adicional_gestion);
         this.ejecutadoGest = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado_gestion + dataReq.pro_pre_ava_ejecutado_gestion);
         
         this.createDoughnutChartProyecto();
