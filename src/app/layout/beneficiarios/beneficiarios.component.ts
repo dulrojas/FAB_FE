@@ -955,7 +955,8 @@ export class BeneficiariosComponent implements OnInit {
     // ======= GET RANGO EDAD =======
     this.servicios.getParametricaByIdTipo(20).subscribe(
       (data) => {
-        this.beneficiariosListaRangoEdad = data[0].dato;
+        //this.beneficiariosListaRangoEdad = data[0].dato;
+        this.beneficiariosListaRangoEdad = data[0].dato.filter(rangoEdad => rangoEdad.id_estado === 1);
       },
       (error) => {
         console.error(error);
