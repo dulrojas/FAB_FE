@@ -22,10 +22,12 @@ export class servRiesgos {
             { "name": "p_accion", "value": "C1", "type": "string" },
             { "name": "p_id_riesgo", "value": null, "type": "int" },
             { "name": "p_id_proyecto", "value": null, "type": "int" },
+            { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
+            { "name": "p_idp_categoria", "value": null, "type": "string" },
             { "name": "p_codigo", "value": null, "type": "string" },
+            { "name": "p_fecha", "value": null, "type": "string" },
             { "name": "p_riesgo", "value": null, "type": "string" },
-            { "name": "p_descripcion", "value": null, "type": "string" },
-            { "name": "p_idp_categoria", "value": null, "type": "int" },
+            { "name": "p_descripcion", "value": null, "type": "string" },                
             { "name": "p_vinculados", "value": null, "type": "string" },
             { "name": "p_idp_identificacion", "value": null, "type": "int" },
             { "name": "p_impacto", "value": null, "type": "string" },
@@ -33,12 +35,11 @@ export class servRiesgos {
             { "name": "p_nivel", "value": null, "type": "string" },
             { "name": "p_idp_ocurrencia", "value": null, "type": "int" },
             { "name": "p_idp_medidas", "value": null, "type": "string" },
+            { "name": "p_medidas", "value": null, "type": "string" },
             { "name": "p_idp_efectividad", "value": null, "type": "int" },
             { "name": "p_comentarios", "value": null, "type": "string" },
             { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
-            { "name": "p_id_persona_reg", "value": null, "type": "int" },
-            { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
-            { "name": "p_fecha", "value": null, "type": "string" }
+            { "name": "p_id_persona_reg", "value": null, "type": "int" }
           ]
         }
       };
@@ -61,10 +62,12 @@ export class servRiesgos {
             { "name": "p_accion", "value": "C2", "type": "string" },
             { "name": "p_id_riesgo", "value": null, "type": "int" },
             { "name": "p_id_proyecto", "value": idProy, "type": "int" },
+            { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
+            { "name": "p_idp_categoria", "value": null, "type": "string" },
             { "name": "p_codigo", "value": null, "type": "string" },
+            { "name": "p_fecha", "value": null, "type": "string" },
             { "name": "p_riesgo", "value": null, "type": "string" },
-            { "name": "p_descripcion", "value": null, "type": "string" },
-            { "name": "p_idp_categoria", "value": null, "type": "int" },
+            { "name": "p_descripcion", "value": null, "type": "string" },                
             { "name": "p_vinculados", "value": null, "type": "string" },
             { "name": "p_idp_identificacion", "value": null, "type": "int" },
             { "name": "p_impacto", "value": null, "type": "string" },
@@ -76,9 +79,7 @@ export class servRiesgos {
             { "name": "p_idp_efectividad", "value": null, "type": "int" },
             { "name": "p_comentarios", "value": null, "type": "string" },
             { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
-            { "name": "p_id_persona_reg", "value": null, "type": "int" },
-            { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
-            { "name": "p_fecha", "value": null, "type": "string" }
+            { "name": "p_id_persona_reg", "value": null, "type": "int" }
           ]
         }
       };
@@ -180,24 +181,24 @@ export class servRiesgos {
                   { "name": "p_accion", "value": "D1", "type": "string" },
                   { "name": "p_id_riesgo", "value": idRiesgo, "type": "int" },
                   { "name": "p_id_proyecto", "value": null, "type": "int" },
+                  { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
+                  { "name": "p_idp_categoria", "value": null, "type": "string" },
                   { "name": "p_codigo", "value": null, "type": "string" },
+                  { "name": "p_fecha", "value": null, "type": "string" },
                   { "name": "p_riesgo", "value": null, "type": "string" },
-                  { "name": "p_descripcion", "value": null, "type": "string" },
-                  { "name": "p_idp_categoria", "value": null, "type": "int" },
+                  { "name": "p_descripcion", "value": null, "type": "string" },                
                   { "name": "p_vinculados", "value": null, "type": "string" },
                   { "name": "p_idp_identificacion", "value": null, "type": "int" },
                   { "name": "p_impacto", "value": null, "type": "string" },
                   { "name": "p_probabilidad", "value": null, "type": "string" },
                   { "name": "p_nivel", "value": null, "type": "string" },
-                  { "name": "p_ocurrencia", "value": null, "type": "int" },
+                  { "name": "p_idp_ocurrencia", "value": null, "type": "int" },
                   { "name": "p_idp_medidas", "value": null, "type": "string" },
                   { "name": "p_medidas", "value": null, "type": "string" },
                   { "name": "p_idp_efectividad", "value": null, "type": "int" },
                   { "name": "p_comentarios", "value": null, "type": "string" },
                   { "name": "p_fecha_hora_reg", "value": null, "type": "string" },
-                  { "name": "p_id_persona_reg", "value": idPersonaReg, "type": "int" },
-                  { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },
-                  { "name": "p_fecha", "value": null, "type": "string" }
+                  { "name": "p_id_persona_reg", "value": idPersonaReg, "type": "int" }
               ]
           }
       };

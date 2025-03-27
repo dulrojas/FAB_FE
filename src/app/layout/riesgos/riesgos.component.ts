@@ -6,6 +6,7 @@ import { ProyectoService } from '../../services/proyectoData.service';
 import { servicios } from "../../servicios/servicios";
 import { servRiesgos } from "../../servicios/riesgos";
 import { ElementosService } from "../../servicios/elementos";
+import { Notify,Report,Confirm } from 'notiflix';
 
 @Component({
   selector: 'app-riesgos',
@@ -486,14 +487,14 @@ export class RiesgosComponent implements OnInit {
       deleteRiesgos(){
         this.servRiesgos.deleteRiesgo(this.riesgosSelected.id_riesgo, this.idPersonaReg).subscribe(
           (data) => {           
-            alert('Riesgo eliminado exitosamente');
+            Notify.success('Riesgo eliminado exitosamente');
             this.riesgosSelected = null;
             this.closeModal();
             this.getRiesgos();
           },
-          (error) => {            
+          (error) => { 
+            Notify.failure('Error al eliminar la riesgo');           
             console.error(error);
-            alert('Error al eliminar la riesgo');
           }
         );
       }
