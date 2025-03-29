@@ -14,12 +14,13 @@ import { ElementosService } from '../../servicios/elementos';
 import { MetoElementosService } from '../../servicios/metoElementos';
 import { servActAvance } from '../../servicios/actividadAvance';
 import { NgForm } from '@angular/forms';
+import { Notify,Report,Confirm } from 'notiflix';
 
 // ======= ======= ======= COMPONENTES ======= ======= =======
 @Component({
   selector: 'app-planifEstrategica',
   templateUrl: './planifEstrategica.component.html',
-  styleUrls: ['./planifEstrategica.component.scss'],
+  styleUrls: ['../../../styles/styles.scss'],
   animations: [routerTransition()]
 })
 
@@ -151,7 +152,6 @@ export class PlanifEstrategicaComponent implements OnInit {
           (data: any) => {
             this.planifEstrategica = (data[0].dato) ? (data[0].dato) : ([]);
             this.totalLength = this.planifEstrategica.length;
-            
           },
           (error) => {
             console.error(error);
@@ -281,18 +281,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
     
       if (avanceData) {
-        // Obtener la fecha límite (23:59:59 del día en Bolivia)
-        /*const fechaAvance = new Date(avanceData.fecha_reportar + 'T23:59:59-04:00'); // Aseguramos la zona horaria UTC-4
-    
-        // Obtener la hora actual en UTC y convertirla manualmente a Bolivia (UTC-4)
-        const nowUTC = new Date();
-        const nowBolivia = new Date(nowUTC.getTime() - (4 * 60 * 60 * 1000)); // Restamos 4 horas para Bolivia
-    
-        // Verificar si la fecha ya venció
-        if (nowBolivia > fechaAvance) {
-          alert('No puedes editar este avance porque la fecha ya ha vencido.');
-          return; // Bloqueamos la edición
-        }*/
 
          // Convertir valores a números para comparación
           const lineaBase = parseFloat(this.linea_base);
@@ -300,7 +288,8 @@ export class PlanifEstrategicaComponent implements OnInit {
 
           // Validar que el valor esperado no sea menor que la línea base
           if (valorEsperado < lineaBase) {
-            alert('El valor esperado no puede ser menor que la línea base.');
+            //alert('El valor esperado no puede ser menor que la línea base.');
+            Notify.failure('El valor esperado no puede ser menor que la línea base.');
             return;
           }
     
@@ -320,7 +309,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.modalService.open(content, { size: 'lg', backdrop: 'static' });
     
       } else {
-        console.warn('No se encontraron datos para el ID especificado:', id);
+        //console.warn('No se encontraron datos para el ID especificado:', id);
+        Notify.failure('No se encontraron datos para el ID especificado:' + id);
       }
     }
     
@@ -329,7 +319,8 @@ export class PlanifEstrategicaComponent implements OnInit {
       const valorEsperado = parseFloat(this.editAvance.valor_esperado);
 
       if (valorEsperado < lineaBase) {
-        alert('El valor esperado no puede ser menor que la línea base.');
+        //alert('El valor esperado no puede ser menor que la línea base.');
+        Notify.failure('El valor esperado no puede ser menor que la línea base.');
         return;
       }
       // Crear el objeto con los datos editados
@@ -349,11 +340,13 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.servIndicadorAvance.editIndicadorAvance(avanceEditado).subscribe(
         (response) => {
           this.cargarIndicadoresAvance();
-          alert('Avance aditado correctamente');
+          //alert('Avance aditado correctamente');
+          Notify.success('Avance editado correctamente');
         },
         (error) => {
           console.error('Error al actualizar:', error);
-          alert('Error al actualizar el avance');
+          //alert('Error al actualizar el avance');
+          Notify.failure('Error al actualizar el avance');
         }
       );
       
@@ -365,24 +358,12 @@ export class PlanifEstrategicaComponent implements OnInit {
       const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
       
       if (avanceData) {
-        // Obtener la fecha límite (23:59:59 del día en Bolivia)
-        /*const fechaAvance = new Date(avanceData.fecha_reportar + 'T23:59:59-04:00');
-        
-        // Obtener la hora actual en UTC y convertirla manualmente a Bolivia (UTC-4)
-        const nowUTC = new Date();
-        const nowBolivia = new Date(nowUTC.getTime() - (4 * 60 * 60 * 1000));
-        
-        // Verificar si la fecha ya venció
-        if (nowBolivia > fechaAvance) {
-          alert('No puedes eliminar este avance porque la fecha ya ha vencido.');
-          return;
-        }*/
-        
         // Si la fecha es válida, guardar el ID y abrir el modal
         this.idAvanceToDelete = id;
         this.modalService.open(content, { backdrop: 'static' });
       } else {
-        console.warn('No se encontraron datos para el ID especificado:', id);
+        //console.warn('No se encontraron datos para el ID especificado:', id);
+        Notify.failure('No se encontraron datos para el ID especificado:' + id);
       }
     }
 
@@ -393,11 +374,13 @@ export class PlanifEstrategicaComponent implements OnInit {
           (response) => {
             // Recargar los datos después de eliminar
             this.cargarIndicadoresAvance();
-            alert('Avance eliminado correctamente');           
+            //alert('Avance eliminado correctamente');
+            Notify.success('Avance eliminado correctamente');           
           },
           (error) => {
             console.error('Error al eliminar:', error);
-            alert('Error al eliminar el avance');
+            //alert('Error al eliminar el avance');
+            Notify.failure('Error al eliminar el avance');
           }
         );
       }
@@ -690,7 +673,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     moverElemento(elemento: any, direccion: string): void {
       // Validar que solo se puedan mover indicadores
       if (elemento.tipo !== 'Indicador') {
-        alert('Solo se pueden mover los indicadores');
+        //alert('Solo se pueden mover los indicadores');
+        Notify.failure('Solo se pueden mover los indicadores');
         return;
       }
     
@@ -706,7 +690,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     
       // Validar que el índice esté dentro de los límites
       if (newIndex < 0 || newIndex >= this.combinedData.length) {
-        alert(`No se puede mover más ${direccion === 'arriba' ? 'arriba' : 'abajo'}.`);
+        //alert(`No se puede mover más ${direccion === 'arriba' ? 'arriba' : 'abajo'}.`);
+        Notify.failure(`No se puede mover más ${direccion === 'arriba' ? 'arriba' : 'abajo'}.`);
         return;
       }
     
@@ -716,14 +701,16 @@ export class PlanifEstrategicaComponent implements OnInit {
       );
     
       if (!padreActual) {
-        alert('No se encontró el elemento padre');
+        //alert('No se encontró el elemento padre');
+        Notify.failure('No se encontró el elemento padre');
         return;
       }
     
       // Validar que el movimiento sea dentro del mismo padre
       const elementoDestino = this.combinedData[newIndex];
       if (elementoDestino.id_proy_elem_padre !== elemento.id_proy_elem_padre) {
-        alert('Solo se puede mover dentro del mismo grupo de indicadores');
+        //lert('Solo se puede mover dentro del mismo grupo de indicadores');
+        Notify.failure('Solo se puede mover dentro del mismo grupo de indicadores');
         return;
       }
     
@@ -885,6 +872,7 @@ export class PlanifEstrategicaComponent implements OnInit {
             () => {
               this.getPlanifEstrategica();
               this.loadData();
+
             },
             error => console.error('Error actualizando segundo indicador:', error)
           );
@@ -1037,14 +1025,16 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.servIndicador.addIndicador(objIndicador).subscribe(
         (data) => {
           
-          alert('Indicador añadido correctamente.');
+          //alert('Indicador añadido correctamente.');
+          Notify.success('Indicador añadido correctamente.');
           this.getPlanifEstrategica();
           this.loadData()
           this.cargarIndicadoresAvance();
         },
         (error) => {
 
-          alert('Error al añadir el indicador.');
+          //alert('Error al añadir el indicador.');
+          Notify.failure('Error al añadir el indicador.');
           console.error('Error al guardar los datos:', error);
         }
       );
@@ -1074,14 +1064,16 @@ export class PlanifEstrategicaComponent implements OnInit {
   
       this.servIndicador.editIndicador(objIndicador).subscribe(
         (data) => {
-          alert('Indicador editado correctamente.');
+          //alert('Indicador editado correctamente.');
+          Notify.success('Indicador editado correctamente.');
           this.getPlanifEstrategica();
           this.loadData();
           this.getIndicadorAvance();
           this.cargarIndicadoresAvance();
         },
         (error) => {
-          alert('Error al editar el indicador.');
+          //alert('Error al editar el indicador.');
+          Notify.failure('Error al editar el indicador.');
           console.error(error);
         }
       );
@@ -1168,13 +1160,15 @@ export class PlanifEstrategicaComponent implements OnInit {
         // Validar que tengamos un id_meto_elemento válido
         if (!elemento.id_meto_elemento) {
           console.error('Error: id_meto_elemento no válido');
-          alert('Error al guardar: Tipo de elemento no válido');
+          //alert('Error al guardar: Tipo de elemento no válido');
+          Notify.failure('Error al guardar: Tipo de elemento no válido');
           return;
         }
 
         this.proyElementosService.addElemento(elemento).subscribe(
           (response) => {
-            alert('Elemento guardado correctamente');
+            //alert('Elemento guardado correctamente');
+            Notify.success('Elemento guardado correctamente');
             form.resetForm();
             this.closeModal();
             this.loadData();
@@ -1182,7 +1176,8 @@ export class PlanifEstrategicaComponent implements OnInit {
           },
           (error) => {
             console.error('Error al añadir elemento:', error);
-            alert('Error al guardar el elemento');
+            //alert('Error al guardar el elemento');
+            Notify.failure('Error al guardar el elemento');
           }
         );
       } else if (this.modalAction === "edit") {
@@ -1190,7 +1185,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         
         this.proyElementosService.editElemento(elemento).subscribe(
           (response) => {
-            alert('Elemento actualizado correctamente');
+            //alert('Elemento actualizado correctamente');
+            Notify.success('Elemento actualizado correctamente');
             form.resetForm();
             this.closeModal();
             this.loadData();
@@ -1198,7 +1194,8 @@ export class PlanifEstrategicaComponent implements OnInit {
           },
           (error) => {
             console.error('Error al editar elemento:', error);
-            alert('Error al actualizar el elemento');
+            //alert('Error al actualizar el elemento');
+            Notify.failure('Error al actualizar el elemento');
           }
         );
       }
@@ -1222,10 +1219,12 @@ export class PlanifEstrategicaComponent implements OnInit {
       const tieneHijo = this.combinedData.filter(index => index.id_proy_elem_padre == id );
       
       if (tieneHijo == null || tieneHijo.length === 0 || tipo=="Indicador") {
-        alert('No tiene hijos !- SI -! PUEDES ELIMINAR');
+        //alert('No tiene hijos !- SI -! PUEDES ELIMINAR');
+        Notify.success('No tiene hijos !- SI -! PUEDES ELIMINAR');
         return true;
       } else {
-        alert('Tiene hijos ! NO ! puedes eliminar ');
+        //alert('Tiene hijos ! NO ! puedes eliminar ');
+        Notify.failure('Tiene hijos ! NO ! puedes eliminar ');
         return false;
       }
     }
@@ -1386,15 +1385,17 @@ export class PlanifEstrategicaComponent implements OnInit {
 
     deleteElemento(elemento: any): void {
       if (!elemento) {
-        alert('No hay un elemento seleccionado para eliminar.');
-        console.warn('Elemento no válido para eliminación.');
+        //alert('No hay un elemento seleccionado para eliminar.');
+        //console.warn('Elemento no válido para eliminación.');
+        Notify.failure('No hay un elemento seleccionado para eliminar.');
         return;
       }
   
       // Validar si el elemento tiene hijos activos
       if (this.tieneHijos(elemento, this.combinedData)) {
-        alert('No se puede eliminar este elemento porque tiene hijos activos.');
-        console.warn('El elemento tiene hijos activos y no puede ser eliminado.');
+        //alert('No se puede eliminar este elemento porque tiene hijos activos.');
+        //console.warn('El elemento tiene hijos activos y no puede ser eliminado.');
+        Notify.failure('No se puede eliminar este elemento porque tiene hijos activos.');
         return;
       }
   
@@ -1402,26 +1403,32 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.proyElementosService.deleteElemento(elemento.id_proy_elemento).subscribe(
         (data) => {
           this.combinedData = this.combinedData.filter(el => el !== elemento);
-          alert('Elemento eliminado con éxito.');
+         //alert('Elemento eliminado con éxito.');
+          Notify.success('Elemento eliminado con éxito.');
+          this.getPlanifEstrategica();
+          this.loadData();
         },
         (error) => {
           console.error('Error al eliminar el elemento:', error);
-          alert('Error al eliminar el elemento.');
+          //alert('Error al eliminar el elemento.');
+          Notify.failure('Error al eliminar el elemento.');
         }
       );
     }
 
     deleteIndicador(indicador: any): void {
       if (!indicador) {
-        alert('No hay un indicador seleccionado para eliminar.');
-        console.warn('Indicador no válido para eliminación.');
+        //alert('No hay un indicador seleccionado para eliminar.');
+        //console.warn('Indicador no válido para eliminación.');
+        Notify.failure('No hay un indicador seleccionado para eliminar.');
         return;
       }
   
       // Validar si el indicador tiene hijos activos
       if (this.tieneHijos(indicador, this.combinedData)) {
-        alert('No se puede eliminar este indicador porque tiene hijos activos.');
-        console.warn('El indicador tiene hijos activos y no puede ser eliminado.');
+        //alert('No se puede eliminar este indicador porque tiene hijos activos.');
+        //console.warn('El indicador tiene hijos activos y no puede ser eliminado.');
+        Notify.failure('No se puede eliminar este indicador porque tiene hijos activos.');
         return;
       }
   
@@ -1429,11 +1436,13 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.servIndicador.deleteIndicador(indicador.id_proy_indicador).subscribe(
         (data) => {
           this.combinedData = this.combinedData.filter(el => el !== indicador);
-          alert('Indicador eliminado con éxito.');
+          //alert('Indicador eliminado con éxito.');
+          Notify.success('Indicador eliminado con éxito.');
         },
         (error) => {
           console.error('Error al eliminar el indicador:', error);
-          alert('Error al eliminar el indicador.');
+          //alert('Error al eliminar el indicador.');
+          Notify.failure('Error al eliminar el indicador.');
         }
       );
     }
@@ -1441,7 +1450,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     // Método para eliminar la planificación estratégica con validación de hijos activos
     deletePlanificacionEstrategica() {
       if (!this.planifEstrategicaSelected) {
-        console.warn('No hay un elemento seleccionado para eliminar');
+        //console.warn('No hay un elemento seleccionado para eliminar');
+        Notify.failure('No hay un elemento seleccionado para eliminar');
         return;
       }
   
@@ -1450,7 +1460,8 @@ export class PlanifEstrategicaComponent implements OnInit {
   
       if (!validationResult.canDelete) {
         // Si no se puede eliminar, mostrar el mensaje de advertencia
-        alert(validationResult.message);
+        //alert(validationResult.message);
+        Notify.failure(validationResult.message);
         return;
       }
   
@@ -1464,7 +1475,8 @@ export class PlanifEstrategicaComponent implements OnInit {
           },
           (error) => {
             console.error('Error al eliminar el Indicador:', error);
-            alert('Error al eliminar el indicador');
+            //alert('Error al eliminar el indicador');
+            Notify.failure('Error al eliminar el indicador');
           }
         );
       this.servIndicadorAvance.deleteIndicadorAvanceByIndicador(this.planifEstrategicaSelected.id_proy_indicador).subscribe();
@@ -1473,15 +1485,18 @@ export class PlanifEstrategicaComponent implements OnInit {
           (data) => {
             this.resetSelection();
             this.ngOnInit();
-            alert('Elemento eliminado con éxito.');
+            //alert('Elemento eliminado con éxito.');
+            Notify.success('Elemento eliminado con éxito.');
           },
           (error) => {
             console.error('Error al eliminar el Elemento:', error);
-            alert('Error al eliminar el elemento');
+            //alert('Error al eliminar el elemento');
+            Notify.failure('Error al eliminar el elemento');
           }
         );
       } else {
-        console.warn('No hay un Indicador o Elemento válido seleccionado.');
+        //console.warn('No hay un Indicador o Elemento válido seleccionado.');
+        Notify.failure('No hay un Indicador o Elemento válido seleccionado.');
       }
     }
   
@@ -1590,7 +1605,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         openModalIndicadorAvance(content: TemplateRef<any>) {
           // Asegurarnos de que tenemos un indicador seleccionado
           if (!this.planifEstrategicaSelected?.id_proy_indicador) {
-            alert('Por favor seleccione un indicador primero');
+            //alert('Por favor seleccione un indicador primero');
+            Notify.failure('Por favor seleccione un indicador primero');
             return;
           }
           
@@ -1637,7 +1653,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     // ======= ======= INIT ADD INDICADOR AVANCE ======= =======
         initAddIndicadorAvance(modalScope: TemplateRef<any>) {
           if (!this.planifEstrategicaSelected?.id_proy_indicador) {
-            alert('Por favor seleccione un indicador primero');
+            //alert('Por favor seleccione un indicador primero');
+            Notify.failure('Por favor seleccione un indicador primero');
             return;
           }
         
@@ -1649,7 +1666,8 @@ export class PlanifEstrategicaComponent implements OnInit {
     addIndicadorAvance() {
       // Validar que tenemos todos los campos requeridos
       if (!this.fecha_reportar || !this.valor_esperado || !this.comentarios) {
-        alert('Por favor complete todos los campos requeridos');
+        //alert('Por favor complete todos los campos requeridos');
+        Notify.failure('Por favor complete todos los campos requeridos');
         return;
       }
       // Validar que el valor esperado no sea menor que la línea base
@@ -1657,7 +1675,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         const valorEsperado = parseFloat(this.valor_esperado);
 
         if (valorEsperado < lineaBase) {
-          alert('El valor esperado no puede ser menor que la línea base.');
+          //alert('El valor esperado no puede ser menor que la línea base.');
+          Notify.failure('El valor esperado no puede ser menor que la línea base.');
           return;
         }
             
@@ -1675,14 +1694,16 @@ export class PlanifEstrategicaComponent implements OnInit {
 
       this.servIndicadorAvance.addIndicadorAvance(objIndicadorAvance).subscribe({
         next: (data) => {
-          alert('Avance agregado exitosamente');
+          //alert('Avance agregado exitosamente');
+          Notify.success('Avance agregado exitosamente');
           this.cargarIndicadoresAvance();
           this.getIndicadorAvance();
           this.closeModalIndicadorAvance();
         },
         error: (error) => {
           console.error('Error al guardar los datos:', error);
-          alert('Error al guardar los datos');
+          //alert('Error al guardar los datos');
+          Notify.failure('Error al guardar los datos');          
         }
       });
     }
@@ -1694,16 +1715,17 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.ValidateValorEsperado();
     
       if (!this.fecha_reportar) {
-        alert('La fecha es requerida');
+        //alert('La fecha es requerida');
+        Notify.failure('La fecha es requerida');
         return;
       }
     
       if (this.valComentarios && this.valValorEsperado) {
         this.addIndicadorAvance();
       } else {
-        alert('Por favor corrija los errores en el formulario');
+        //alert('Por favor corrija los errores en el formulario');
+        Notify.failure('Por favor corrija los errores en el formulario');
       }
     }
-    
   
   }

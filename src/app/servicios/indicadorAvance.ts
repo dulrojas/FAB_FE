@@ -59,7 +59,7 @@ export class servIndicadorAvance {
           { "name": "p_id_persona_reporte", "value": null, "type": "int" },
           { "name": "p_valor_reportado", "value": null, "type": "numeric" },
           { "name": "p_comentarios", "value": null, "type": "string" },
-          { "name": "p_ruta_evidencia", "value": null, "type": "string" }
+          { "name": "p_ruta_evidencia", "value": null, "type": "string" },
         ]
       }
     };
