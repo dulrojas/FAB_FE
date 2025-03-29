@@ -12,6 +12,7 @@ import {ElementosService } from '../../servicios/elementos';
 import {MetoElementosService} from '../../servicios/metoElementos';
 import { servicios } from "../../servicios/servicios";
 import { firstValueFrom } from 'rxjs';
+import { Notify,Report,Confirm } from 'notiflix';
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
 @Component({
   selector: 'app-ejec-estrategica',
@@ -120,7 +121,7 @@ export class EjecEstrategicaComponent implements OnInit {
           this.indicadoresAvance = [...this.datosIndicadoresAvance];
           // Obtener la gestión actual de la seleccionada por el usuario
           this.gestion_actual = this.datosIndicadoresAvance[0].gestion_actual;
-          console.log('Gestion Actual:', this.gestion_actual);
+          //console.log('Gestion Actual:', this.gestion_actual);
           this.combinarDatos();
         }
       },
@@ -465,7 +466,8 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     // Verificar si el avance pertenece al año actual para permitir edición
     const puedeEditarPorGestion = this.verificarPermisoEdicionConAvanceAnterior(item);
     if (!puedeEditarPorGestion) {
-      alert(`No se puede reportar el avance porque pertenece a la gestión ${new Date(item.fecha_reportar).getFullYear()} y la gestión actual es ${this.gestion_actual}.`);
+      //alert(`No se puede reportar el avance porque pertenece a la gestión ${new Date(item.fecha_reportar).getFullYear()} y la gestión actual es ${this.gestion_actual}.`);
+      Notify.failure(`No se puede reportar el avance porque pertenece a la gestión ${new Date(item.fecha_reportar).getFullYear()} y la gestión actual es ${this.gestion_actual}.`);
       return; // No abrir el modal si no se puede editar
     }
     
@@ -545,12 +547,14 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
 
   async onEditAvanceSubmit() {
     if (!this.editAvance.id_proy_indica_avance || !this.puedeEditar) {
-      alert('No se puede editar el avance');
+      //alert('No se puede editar el avance');
+      Notify.failure('No se puede editar el avance');
       return;
     }
 
     if (!this.editAvance.id_proy_indica_avance) {
-      alert('No se puede editar el avance: ID inválido');
+      //alert('No se puede editar el avance: ID inválido');
+      Notify.failure('No se puede editar el avance: ID inválido');
       return;
     }
   
@@ -558,7 +562,8 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     if (!this.verificarPermisoEdicionConAvanceAnterior({
       fecha_reportar: this.editAvance.fecha_reportar
     })) {
-      alert('No se puede editar el avance porque pertenece a una gestión anterior.');
+      //alert('No se puede editar el avance porque pertenece a una gestión anterior.');
+      Notify.failure('No se puede editar el avance porque pertenece a una gestión anterior.');
       return;
     }  
   
@@ -568,7 +573,8 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
   
     const nuevoValor = this.convertToNumber(this.editAvance.valor_reportado);
     if (!this.validateAccumulativeProgress(nuevoValor, currentIndex)) {
-      alert('El valor reportado debe ser mayor al último valor reportado en caso de ser el primero debe ser mayor o igual a la linea base');
+      //alert('El valor reportado debe ser mayor al último valor reportado en caso de ser el primero debe ser mayor o igual a la linea base');
+      Notify.failure('El reporte debe ser mayor al último valor reportado si es primero debe ser mayor o igual a la linea base');
       return;
     }
   
@@ -609,7 +615,8 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
             // Actualizamos los datos del indicador
             await this.actualizarDatosIndicador(this.editAvance.id_proy_indicador);
             
-            alert('Avance actualizado exitosamente');
+            //alert('Avance actualizado exitosamente');
+            Notify.success('Avance actualizado exitosamente');
             this.modalService.dismissAll();
             this.selectedFile = null; // Limpiamos la selección del archivo
             
@@ -619,12 +626,14 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         },
         (error) => {
           console.error('Error al actualizar el avance:', error);
-          alert('Error al actualizar el avance');
+          //alert('Error al actualizar el avance');
+          Notify.failure('Error al actualizar el avance');
         }
       );
     } catch (error) {
       console.error('Error:', error);
-      alert('Error en el proceso de actualización');
+      //alert('Error en el proceso de actualización');
+      Notify.failure('Error en el proceso de actualización');
     }
   }
 
@@ -801,12 +810,14 @@ getProximaFechaReporte(avances: any[]): string {
         const fileExtension = file.name.split('.').pop()?.toLowerCase();
     
         if (!allowedExtensions.includes(fileExtension!)) {
-          alert('Formato no permitido. Solo PDF, PNG, JPG, JPEG');
+          //alert('Formato no permitido. Solo PDF, PNG, JPG, JPEG');
+          Notify.failure('Formato no permitido. Solo PDF, PNG, JPG, JPEG');
           return;
         }
     
         if (file.size > fileSizeLimit) {
-          alert('El archivo es demasiado grande. Máximo permitido: 5MB.');
+          //alert('El archivo es demasiado grande. Máximo permitido: 5MB.');
+          Notify.failure('El archivo es demasiado grande. Máximo permitido: 5MB.');
           return;
         }
     
@@ -862,11 +873,13 @@ getProximaFechaReporte(avances: any[]): string {
           document.body.removeChild(a);
           window.URL.revokeObjectURL(avanceDocumentoURL);
         } else {
-          alert('No se encontró ningún archivo adjunto.');
+          //alert('No se encontró ningún archivo adjunto.');
+          Notify.failure('No se encontró ningún archivo adjunto.');
         }
       } catch (error) {
         console.error('Error al descargar el archivo:', error);
-        alert('Error al descargar el archivo. Por favor, intente nuevamente.');
+        //alert('Error al descargar el archivo. Por favor, intente nuevamente.');
+        Notify.failure('Error al descargar el archivo. Por favor, intente nuevamente.');
       }
     }  
     
