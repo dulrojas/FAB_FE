@@ -90,7 +90,7 @@ export class servPresuAvance{
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= DELETE PRESU AVANCE ======= ======= =======
-  deletePresuAvance(idPreAva: any): Observable<any> {
+  deletePresuAvance(idPreAva: number, idPerReg: number): Observable<any> {
     const params = {
       "procedure_name": "sp_proy_presu_avance",
       "body": {

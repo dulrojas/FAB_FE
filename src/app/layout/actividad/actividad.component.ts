@@ -95,6 +95,8 @@ export class ActividadComponent implements OnInit {
   doughnutChartGest: any = null;
   halfCircleChart: any = null;
 
+  idPresuAvance: any = null;
+  fechaPresuAvance: any = null;
   montoNuevoEjecutado: any = null;
   motivoNuevoEjecutado: any = null;
 
@@ -289,6 +291,8 @@ export class ActividadComponent implements OnInit {
     this.modalRefs.push(modalRef);
   }
   closeModal() {
+    this.montoNuevoEjecutado = null;
+    this.motivoNuevoEjecutado = null;
     if (this.modalRefs.length > 0) {
       const lastModal = this.modalRefs.pop();
       lastModal?.close();
@@ -575,6 +579,26 @@ export class ActividadComponent implements OnInit {
     }
   }
   // ======= ======= =======
+  // ======= ======= CHECKBOX CHANGED ======= =======
+  presuAvanceSelected: any = null;
+  onPresuAvanceClick(presuAvanceSel: any) {
+    this.montoNuevoEjecutado = null;
+    this.motivoNuevoEjecutado = null;
+    this.presuAvances.forEach((presuAvance) =>{
+      if(presuAvanceSel.id_proy_presu_avance == presuAvance.id_proy_presu_avance){
+        if(presuAvanceSel.selected){
+          this.presuAvanceSelected = presuAvanceSel;
+        }
+        else{
+          this.presuAvanceSelected = null;
+        }
+      }
+      else{
+        presuAvance.selected = false;
+      }
+    });
+  }
+  // ======= ======= ======= ======= =======
   // ======= ======= GET PRESU AVANCE ======= =======
   getPresuAvance(){
     this.servPresuAvance.getPresuAvanceByIdProy(this.idProyecto).subscribe(
@@ -607,6 +631,9 @@ export class ActividadComponent implements OnInit {
 
       this.servPresuAvance.addPresuAvance(objPresuAvance).subscribe(
         (data) => {
+          this.presuAvanceSelected = null;
+          this.idPresuAvance = null;
+          this.fechaPresuAvance = null;
           this.montoNuevoEjecutado = null;
           this.motivoNuevoEjecutado = null;
 
@@ -617,6 +644,85 @@ export class ActividadComponent implements OnInit {
         }
       );
     }
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= INIT EDIT PRESU EJEC ======= =======
+  initEditPresupuestoEjecutado(modalScope: TemplateRef<any>){
+    this.initActividadModel();
+
+    this.modalAction = "edit";
+    this.modalTitle = "Editar ejecucion de presupuesto";
+
+    this.idPresuAvance = this.presuAvanceSelected.id_proy_presu_avance;
+    this.fechaPresuAvance = this.presuAvanceSelected.fecha_hora.split("T")[0];
+    this.montoNuevoEjecutado = this.presuAvanceSelected.id_proy_presu_avance;
+    this.motivoNuevoEjecutado = this.presuAvanceSelected.motivo;
+
+    this.openModal(modalScope);
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= EDIT PRESU AVANCE ======= =======
+  editPresuAvance(){
+    this.validateMontoNuevoEjecutado();
+    this.validateMotivoNuevoEjecutado();
+
+    let valPreAva = this.valMontoNuevoEjecutado && this.valMotivoNuevoEjecutado;
+
+    if(valPreAva){  
+      let objPresuAvance = {
+        p_id_proy_presu_avance: this.idPresuAvance,
+        p_id_proy_presupuesto: this.idPresupuestoGest,
+        p_monto_avance: this.parseAmountStrToFloat(this.montoNuevoEjecutado),
+        p_id_persona: this.idPersonaReg,
+        p_fecha_hora: null,
+        p_motivo: this.motivoNuevoEjecutado,
+        p_id_proyecto: 0
+      };
+
+      this.servPresuAvance.editPresuAvance(objPresuAvance).subscribe(
+        (data) => {
+          this.presuAvanceSelected = null;
+          this.idPresuAvance = null;
+          this.fechaPresuAvance = null;
+          this.montoNuevoEjecutado = null;
+          this.motivoNuevoEjecutado = null;
+
+          this.getPresuAvance();
+          this.closeModal();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= INIT DELETE PRESU EJEC ======= =======
+  initDeletePresupuestoEjecutado(modalScope: TemplateRef<any>){
+    this.initActividadModel();
+
+    this.idPresuAvance = this.presuAvanceSelected.id_proy_presu_avance;
+
+    this.openModal(modalScope);
+  }
+  // ======= ======= ======= ======= =======
+  // ======= ======= DELETE PRESU AVANCE ======= =======
+  deletePresuAvance(){
+    this.servPresuAvance.deletePresuAvance(this.idPresuAvance, this.idPersonaReg).subscribe(
+      (data) => {
+        this.presuAvanceSelected = null;
+        this.idPresuAvance = null;
+        this.fechaPresuAvance = null;
+        this.montoNuevoEjecutado = null;
+        this.motivoNuevoEjecutado = null;
+
+        this.getPresuAvance();
+        this.closeModal();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
   // ======= ======= ======= ======= =======
   // ======= ======= ON GESTION CHANGED ======= =======

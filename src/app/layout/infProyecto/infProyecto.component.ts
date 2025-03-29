@@ -1184,6 +1184,8 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= PRESUPUESTO FUNCTIONS ======= =======
     presupuestos: any[] = [];
     presupuestoActual:any = {};
+    presupuestoAuxiliar: any = 0;
+    presupuestoTotal: any = 0;
 
     onPresuAdicionalChange(){
       if((this.presupuestoActual.presup_adicional < 0) || (/[a-zA-Z]/.test(this.presupuestoActual.presup_adicional.toString()))) {
@@ -1198,7 +1200,7 @@ export class InfProyectoComponent implements OnInit {
     valPresupAdicional = true;
     ValidatePresuAdicional(){
       this.valPresupAdicional = true;
-      if (!this.presupuestoActual.presup_adicional) {
+      if ((!this.presupuestoActual.presup_adicional)||(this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional)+(this.presupuestoTotal - this.parseAmountStrToFloat(this.presupuestoAuxiliar)) > this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn) )) {
         this.valPresupAdicional = false;
       }
     }
@@ -1274,6 +1276,11 @@ export class InfProyectoComponent implements OnInit {
             // ======= GET CURRENT PRESUPUESTO =======
             this.presupuestos.sort((a, b) => Number(a.anio) - Number(b.anio));
             // ======= ======= =======
+            // ======= SUM ALL PRESUPUESTOS =======
+            this.presupuestoTotal = this.presupuestos.reduce((sum, item) => {
+              return sum + this.parseAmountStrToFloat(item.presup_adicional);
+            }, 0);
+            // ======= ======= =======
             // ======= GET CURRENT PRESUPUESTO =======
             this.presupuestoActual = this.presupuestos.find((presupuesto)=> (presupuesto.anio == this.proyectoScope.gestion_actual));
             this.presupuestoActual.presup_adicional = this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional);
@@ -1298,7 +1305,9 @@ export class InfProyectoComponent implements OnInit {
       this.initFinanciadoresModel();
 
       this.modalAction = "add";
-      this.modalTitle = "Presupuesto Adicional al planificado en Actividades";
+      this.modalTitle = "Presupuesto de la Gestion";
+
+      this.presupuestoAuxiliar = this.presupuestoActual.presup_adicional;
 
       this.openModal(modalScope);
     }

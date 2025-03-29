@@ -371,9 +371,9 @@
                                         [(ngModel)]="proyectoScope.moneda_presupuesto" 
                                         disabled/>
                                 </div>
-                                <div class="col col-md-8 ps-0">
+                                <div class="col col-md-8 ps-0 text-end">
                                     <label class="custom-info-proy-sub-title" for="">Total (Bs)</label>
-                                    <input class="form-control custom-info-proy-input" type="text" 
+                                    <input class="form-control custom-info-proy-input text-end" type="text" 
                                         id="presupuesto_mn" name="presupuesto_mn" 
                                         [(ngModel)]="proyectoScope.presupuesto_mn" 
                                         [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
@@ -441,8 +441,10 @@
                             <div class="col col-md-12 text-end">
                                 <button type="button" class="btn btn-bg-1 custom-btn-info" style="font-size: 10px;"
                                     (click)="initPresuAdicionalForm(presuAdicionalFormModal)"
-                                    [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy.includes([1])))">
-                                    Editar Adicional de gestión
+                                    [disabled]="(!buttonValidations.editMode)||
+                                        ((currentPerProRol.includes('ESC'))&&
+                                        (proyectoScope.idp_estado_proy.includes([1])))">
+                                    Editar Presupuesto de Gestión
                                 </button>
                             </div>
                             <div class="col col-md-12 custom-table-info-proy-4-container">
@@ -888,7 +890,7 @@
     </div>
 </ng-template>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->
-<!-- ======= ======= ======= ADD EDIT PRESU ADICIONAL MODAL ======= ======= ======= -->
+<!-- ======= ======= ======= EDIT PRESU ADICIONAL MODAL ======= ======= ======= -->
 <ng-template #presuAdicionalFormModal let-modal class="custom-modal">
     <div class="modal-header">
         <h4 class="modal-title">{{ modalTitle }}</h4>
@@ -913,19 +915,12 @@
                                     <input class="form-control" type="text" id="anio" name="anio" 
                                         [(ngModel)]="presupuestoActual.anio" disabled/>
                                 </div>
-
-                                <!-- ======= ======= PRESU ACTIV SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="total_actividades_presupuesto">Presupuesto en actividades</label>
-                                    <input class="form-control" type="text" id="total_actividades_presupuesto" 
-                                        name="total_actividades_presupuesto" 
-                                        [(ngModel)]="presupuestoActual.total_actividades_presupuesto" disabled/>
-                                </div>
                                 <!-- ======= ======= PRESU ADICIONAL SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="presup_adicional">Presupuesto adicional</label>
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <label for="presup_adicional">Presupuesto</label>
                                     <input class="form-control" type="text" id="presup_adicional" name="presup_adicional" 
-                                        [(ngModel)]="presupuestoActual.presup_adicional" (change)="onPresuAdicionalChange()" />
+                                        [(ngModel)]="presupuestoActual.presup_adicional" 
+                                        (change)="onPresuAdicionalChange()" />
                                     <span class="custom-alert-message" *ngIf="!valPresupAdicional">
                                         Debe ingresar un presupuesto válido.
                                     </span>

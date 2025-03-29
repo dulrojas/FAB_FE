@@ -76,6 +76,7 @@
                                     <table class="table custom-table table-striped table-bordered">
                                         <thead>
                                             <tr>
+                                                <th></th>
                                                 <th style="text-align: center;">Periodo informado</th>
                                                 <th style="text-align: center;">Declaración</th>
                                                 <th style="text-align: center;">Ejecución</th>                                            
@@ -83,6 +84,12 @@
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let presuAvance of presuAvances; let i = index">
+                                                <td>
+                                                    <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
+                                                        [(ngModel)]="presuAvance.selected"
+                                                        (change)="onPresuAvanceClick(presuAvance)" 
+                                                        [disabled]="(currentPerProRol.includes('ESC'))"/>
+                                                </td>
                                                 <td>
                                                     {{ presuAvance.motivo }}
                                                 </td>
@@ -104,7 +111,9 @@
                                     id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
                                     placeholder="Ingrese el periodo de ejecución" 
                                     [disabled]="(this.idPresupuestoGest == 0)
-                                        ||(currentPerProRol.includes('LEC'))"
+                                        ||(currentPerProRol.includes('LEC'))
+                                        ||(currentPerProRol.includes('ESC'))
+                                        ||(presuAvanceSelected)"
                                     [(ngModel)]="motivoNuevoEjecutado">
                                 </textarea>
                                 <span class="custom-alert-message" *ngIf="!valMotivoNuevoEjecutado">
@@ -116,18 +125,46 @@
                                     id="montoNuevoEjecutado" name="montoNuevoEjecutado" 
                                     placeholder="Ingrese el monto ejecutado" 
                                     [disabled]="(idPresupuestoGest == 0)
-                                        ||(currentPerProRol.includes('LEC'))"
+                                        ||(currentPerProRol.includes('LEC'))
+                                        ||(currentPerProRol.includes('ESC'))
+                                        ||(presuAvanceSelected)"
                                     (change)="onChangedMontoNuevoEjecutado()"
                                     [(ngModel)]="montoNuevoEjecutado"/>
                                 <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">
                                     Debe ingresar un monto válido.
                                 </span>
-                                <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
-                                    [disabled]="(this.idPresupuestoGest == 0)
-                                        ||(currentPerProRol.includes('LEC'))"
-                                    (click)="addPresuAvance()">
-                                    <i aria-hidden="true"></i> Añadir
-                                </button>
+                                <div class="row">
+                                    <div class="col col-md-4 col-lg-4">
+                                        <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
+                                            [disabled]="(this.idPresupuestoGest == 0)
+                                                ||(currentPerProRol.includes('LEC'))
+                                                ||(currentPerProRol.includes('ESC'))
+                                                ||(presuAvanceSelected)"
+                                            (click)="addPresuAvance()">
+                                            <i aria-hidden="true"></i> Añadir
+                                        </button>
+                                    </div>
+                                    <div class="col col-md-4 col-lg-4">
+                                        <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
+                                            [disabled]="(idPresupuestoGest == 0)
+                                                ||(currentPerProRol.includes('LEC'))
+                                                ||(currentPerProRol.includes('ESC'))
+                                                ||(!presuAvanceSelected)"
+                                            (click)="initEditPresupuestoEjecutado(editEjecutadoModal)">
+                                            <i aria-hidden="true"></i> Editar
+                                        </button>
+                                    </div>
+                                    <div class="col col-md-4 col-lg-4">
+                                        <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
+                                            [disabled]="(idPresupuestoGest == 0)
+                                                ||(currentPerProRol.includes('LEC'))
+                                                ||(currentPerProRol.includes('ESC'))
+                                                ||(!presuAvanceSelected)"
+                                            (click)="initDeletePresupuestoEjecutado(deleteEjecutadoModal)">
+                                            <i aria-hidden="true"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </div>
                                 <span class="custom-alert-message" style="font-weight: bold;"
                                     *ngIf="(idPresupuestoGest == 0)">
                                     No existe presupuesto para esta gestion, agrega un presupuesto en Inf. Proyecto.
@@ -698,6 +735,94 @@
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
             <button type="button" class="btn btn-bg-1" (click)="deleteActividad()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= EDIT EJECUTADO MODAL ======= ======= ======= -->
+<ng-template #editEjecutadoModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Editar ejecutado</h4>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col col-md-6 col-lg-6">
+                <label class="custom-actividad-sub-title">ID</label>
+                <input class="form-control" type="text" 
+                    id="idPresuAvance" name="idPresuAvance"
+                    [(ngModel)]="idPresuAvance" disabled/>
+            </div>
+
+            <div class="col col-md-6 col-lg-6">
+                <label class="custom-actividad-sub-title">Fecha registro</label>
+                <input class="form-control" type="date" 
+                    id="fechaPresuAvance" name="fechaPresuAvance" 
+                    [(ngModel)]="fechaPresuAvance" disabled/>
+            </div>
+
+            <div class="col col-md-6 col-lg-6">
+                <label class="custom-actividad-sub-title">Periodo informado</label>
+                <textarea class="form-control" type="text" 
+                    id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
+                    placeholder="Ingrese el periodo de ejecución" 
+                    [(ngModel)]="motivoNuevoEjecutado">
+                </textarea>
+                <span class="custom-alert-message" *ngIf="!valMotivoNuevoEjecutado">
+                    Debe ingresar un motivo válido, con menos de 100 caracteres.
+                </span>
+            </div>
+
+            <div class="col col-md-6 col-lg-6">
+                <label class="custom-actividad-sub-title">Monto ejecutado</label>
+                <input class="form-control" type="text" 
+                    id="montoNuevoEjecutado" name="montoNuevoEjecutado" 
+                    placeholder="Ingrese el monto ejecutado" 
+                    (change)="onChangedMontoNuevoEjecutado()"
+                    [(ngModel)]="montoNuevoEjecutado"/>
+                <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">
+                    Debe ingresar un monto válido.
+                </span>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="editPresuAvance()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Editar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE EJEC MODAL ======= ======= ======= -->
+<ng-template #deleteEjecutadoModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Ejecutado</h4>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar este ejecutado?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="deletePresuAvance()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
             </button>
         </div>
