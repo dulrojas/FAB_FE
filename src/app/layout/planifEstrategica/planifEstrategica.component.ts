@@ -20,7 +20,7 @@ import { Notify,Report,Confirm } from 'notiflix';
 @Component({
   selector: 'app-planifEstrategica',
   templateUrl: './planifEstrategica.component.html',
-  styleUrls: ['./planifEstrategica.component.scss'],
+  styleUrls: ['../../../styles/styles.scss'],
   animations: [routerTransition()]
 })
 

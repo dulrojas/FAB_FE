@@ -17,7 +17,7 @@ import { Notify,Report,Confirm } from 'notiflix';
 @Component({
   selector: 'app-ejec-estrategica',
   templateUrl: './ejecEstrategica.component.html',
-  styleUrls: ['./ejecEstrategica.component.scss'],
+  styleUrls: ['../../../styles/styles.scss'],
   animations: [routerTransition()]
 })
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
