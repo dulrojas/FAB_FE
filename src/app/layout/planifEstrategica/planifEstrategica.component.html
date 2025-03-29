@@ -520,7 +520,7 @@
                                                                     (click)="openModalIndicadorAvance(indicadorAvance)"
                                                                     [disabled]="!planifEstrategicaSelected?.id_proy_indicador">
                                                                 <i class="fa fa-floppy-o" aria-hidden="true"></i> 
-                                                                Añadir Nuevo Avance
+                                                                Añadir Nueva Meta
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -565,7 +565,7 @@
 <!-- Formulario de Edición -->
 <ng-template #editAvanceModal let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Editar Avance de Indicador</h4>        
+        <h4 class="modal-title">Editar Meta</h4>        
     </div>
     <div class="modal-body">
         <form #editAvanceForm="ngForm" (ngSubmit)="onEditSubmit()">
@@ -634,11 +634,11 @@
 <!-- //////////////////////////////////////// MODAL PARA ELIMINAR UN AVANCE  //////////////////////////////////////// -->
 <ng-template #deleteAvance let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Eliminar Periodo de Evaluación</h4>
+        <h4 class="modal-title">Eliminar Meta</h4>
     </div>
     <div class="modal-body">
         <div class="d-flex justify-content-center" style="width: 100%">
-            <p>¿Está seguro de querer eliminar este avance?</p>
+            <p>¿Está seguro de querer eliminar esta Meta?</p>
         </div>
     </div>
     <div class="modal-footer">
@@ -687,7 +687,7 @@
 <ng-template #indicadorAvance let-modal class="custom-modal">
     <!-- Encabezado del Modal-->
     <div class="modal-header">
-        <h4 class="modal-title">Añadir un nuevo Avance</h4>
+        <h4 class="modal-title">Añadir Nueva Meta</h4>
     </div>
     <!-- Cuerpo del Modal-->
     <div class="modal-body">

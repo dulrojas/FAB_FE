@@ -88,6 +88,8 @@ export class EjecEstrategicaComponent implements OnInit {
   }
   // ======= ======= COMBINACION DE DATOS LLAMADOS PARA LA TABLA PRINCIPAL ======= =======
 
+  gestion_actual: any = 0;
+  
   getEjecucionEstrategicaData() {
     // Obtener datos de indicadores
     this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(
@@ -115,7 +117,10 @@ export class EjecEstrategicaComponent implements OnInit {
       (data) => {
         if (data && data[0]?.dato?.[0]) {
           this.datosIndicadoresAvance = data[0].dato; 
-          this.indicadoresAvance = [...this.datosIndicadoresAvance]; 
+          this.indicadoresAvance = [...this.datosIndicadoresAvance];
+          // Obtener la gestión actual de la seleccionada por el usuario
+          this.gestion_actual = this.datosIndicadoresAvance[0].gestion_actual;
+          console.log('Gestion Actual:', this.gestion_actual);
           this.combinarDatos();
         }
       },
@@ -456,12 +461,12 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       
     // Ajustar a zona horaria de Bolivia (UTC-4)
     fechaHoraReporte.setHours(fechaHoraReporte.getHours() - 4);
-
-    // Verificar si el avance anterior es válido para editar
-    const fechaValidaParaEditar = this.verificarPermisoEdicionConAvanceAnterior(item);
-    if (!fechaValidaParaEditar) {
-      alert('No se puede reportar el avance por que se encuentra otro vigente o ya vencio la fecha de para el reporte.');
-      return; // No abrir el modal si la fecha no es válida
+  
+    // Verificar si el avance pertenece al año actual para permitir edición
+    const puedeEditarPorGestion = this.verificarPermisoEdicionConAvanceAnterior(item);
+    if (!puedeEditarPorGestion) {
+      alert(`No se puede reportar el avance porque pertenece a la gestión ${new Date(item.fecha_reportar).getFullYear()} y la gestión actual es ${this.gestion_actual}.`);
+      return; // No abrir el modal si no se puede editar
     }
     
     this.editAvance = {
@@ -477,36 +482,16 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
     this.puedeEditar = this.verificarPermisoEdicion(item.fecha_reportar);
     this.modalService.open(modal, { size: 'lg' });
   }
-  // Función para verificar si se puede editar el avance si la fecha actual aun no vencio
+
   verificarPermisoEdicionConAvanceAnterior(item: any): boolean {
-    const avancesOrdenados = [...this.indicadoresAvance].sort(
-      (a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
-    );
+    // Obtener el año de la fecha a reportar
+    const añoReporte = new Date(item.fecha_reportar).getFullYear();
     
-    const indiceActual = avancesOrdenados.findIndex(
-      avance => avance.id_proy_indica_avance === item.id_proy_indica_avance
-    );
+    // Usar la gestión actual que viene del servicio
+    const añoActual = this.gestion_actual || new Date().getFullYear();
     
-    // Si es el primer avance, siempre se puede editar dentro de su período
-    if (indiceActual === 0) {
-      return this.verificarPermisoEdicion(item.fecha_reportar);
-    }
-    
-    // Obtener el avance anterior
-    const avanceAnterior = avancesOrdenados[indiceActual - 1];
-    const fechaLimiteAnterior = new Date(avanceAnterior.fecha_reportar);
-    fechaLimiteAnterior.setUTCHours(23, 59, 59, 999);
-    
-    // Obtener fecha actual en Bolivia
-    const fechaActual = new Date();
-    const horaBolivia = fechaActual.getTime() + (fechaActual.getTimezoneOffset() * 60000) - (4 * 3600000);
-    const fechaBolivia = new Date(horaBolivia);
-    
-    // Verificar si el periodo anterior ya venció
-    const periodoAnteriorVencido = fechaBolivia > fechaLimiteAnterior;
-    
-    // Solo permitir editar si el periodo anterior ya venció y el actual está vigente
-    return periodoAnteriorVencido && this.verificarPermisoEdicion(item.fecha_reportar);
+    // Solo permitir editar si el reporte pertenece al año actual
+    return añoReporte === parseInt(añoActual.toString());
   }
 
   // Función auxiliar para limpiar valores numéricos
@@ -563,6 +548,19 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       alert('No se puede editar el avance');
       return;
     }
+
+    if (!this.editAvance.id_proy_indica_avance) {
+      alert('No se puede editar el avance: ID inválido');
+      return;
+    }
+  
+    // Verificar si se puede editar según la gestión
+    if (!this.verificarPermisoEdicionConAvanceAnterior({
+      fecha_reportar: this.editAvance.fecha_reportar
+    })) {
+      alert('No se puede editar el avance porque pertenece a una gestión anterior.');
+      return;
+    }  
   
     const currentIndex = this.indicadoresAvance.findIndex(
       avance => avance.id_proy_indica_avance === this.editAvance.id_proy_indica_avance
@@ -672,9 +670,128 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
       throw error;
     }
   }
+
+  // Variable para controlar si se puede editar
+puedeEditar: boolean = false;
+
+/// Nueva función para validar el progreso acumulativo
+validateAccumulativeProgress(newValue: number, currentIndex: number): boolean {
+  // Permitir siempre el valor 0
+  if (newValue === 0) return true;
+  
+  // Obtener los avances ordenados por fecha
+  const avancesOrdenados = [...this.indicadoresAvance].sort(
+    (a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
+  );
+  
+  // Si es el primer registro, validar contra la línea base
+  if (currentIndex === 0) {
+    const lineaBase = parseFloat(this.ejecEstrategicaSelected?.linea_base?.toString().replace(/[^0-9.-]+/g, '') || '0');
+    return newValue >= lineaBase;
+  }
+  
+  // Para registros posteriores, obtener los avances anteriores
+  const avancesAnteriores = avancesOrdenados.slice(0, currentIndex);
+  
+  // Encontrar el último valor reportado válido (mayor a 0)
+  const ultimoValorValido = avancesAnteriores
+    .reverse()
+    .find(avance => this.convertToNumber(avance.valor_reportado) > 0);
+  
+  // Si no hay valor anterior válido, validar contra la línea base
+  if (!ultimoValorValido) {
+    const lineaBase = parseFloat(this.ejecEstrategicaSelected?.linea_base?.toString().replace(/[^0-9.-]+/g, '') || '0');
+    return newValue >= lineaBase;
+  }
+  
+  // Convertir el último valor válido a número
+  const valorAnterior = this.convertToNumber(ultimoValorValido.valor_reportado);
+  
+  // El nuevo valor debe ser mayor o igual al anterior
+  return newValue >= valorAnterior;
+}
+
+/// Función modificada para verificar permisos de edición basado en la gestión (año)
+verificarPermisoEdicion(fechaReportar: string): boolean {
+  // Obtener el año de la fecha de reporte
+  const añoReporte = new Date(fechaReportar).getFullYear();
+  
+  // Usar la gestión actual que ya viene del servicio
+  const añoActual = this.gestion_actual || new Date().getFullYear();
+
+  // Permitir edición solo si el año del reporte es igual al año actual
+  return añoReporte === parseInt(añoActual.toString());
+}
+
+// Función auxiliar actualizada para obtener el último avance válido
+getUltimoAvanceValido(avances: any[]): any {
+  if (!avances || avances.length === 0) return null;
+  
+  // Ordenar avances por fecha de reporte
+  const avancesOrdenados = [...avances].sort((a, b) => 
+    new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
+  );
+
+  const fechaActual = new Date();
+  fechaActual.setHours(fechaActual.getHours() - 4); // Ajuste a hora Bolivia
+
+  // Primero, buscar el último avance que tenga un valor reportado mayor a 0
+  const ultimoConValor = [...avancesOrdenados]
+    .reverse()
+    .find(avance => {
+      const valorReportado = parseFloat(String(avance.valor_reportado).replace(/[^0-9.-]+/g, ''));
+      return valorReportado > 0;
+    });
+
+  if (ultimoConValor) {
+    return ultimoConValor;
+  }
+
+  // Si no hay ninguno con valor reportado, buscar el último avance vencido
+  const ultimoVencido = [...avancesOrdenados]
+    .reverse()
+    .find(avance => {
+      const fechaReporte = new Date(avance.fecha_reportar);
+      fechaReporte.setHours(23, 59, 59, 999);
+      return fechaReporte <= fechaActual;
+    });
+
+  // Si no hay vencidos, retornar el primer avance programado
+  return ultimoVencido || avancesOrdenados[0];
+}
+
+// Función para obtener la próxima fecha a reportar
+getProximaFechaReporte(avances: any[]): string {
+  if (!avances || avances.length === 0) return null;
+  
+  // Obtener fecha actual en zona horaria de Bolivia
+  const fechaActual = new Date();
+  fechaActual.setHours(fechaActual.getHours() - 4); // Ajuste a hora Bolivia
+  
+  // Ordenar avances por fecha
+  const avancesOrdenados = [...avances].sort((a, b) => 
+    new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
+  );
+  
+  // Encontrar la fecha actual de reporte (el período en el que estamos)
+  const fechaActualReporte = avancesOrdenados.find(avance => {
+    const fechaAvance = new Date(avance.fecha_reportar);
+    fechaAvance.setHours(23, 59, 59, 999); // Establecer al final del día
+    return fechaActual <= fechaAvance;
+  });
+  
+  // Si encontramos un período actual, lo retornamos
+  if (fechaActualReporte) {
+    return fechaActualReporte.fecha_reportar;
+  }
+  
+  // Si no encontramos un período actual (todos los períodos han vencido),
+  // retornamos el último período disponible
+  return avancesOrdenados[avancesOrdenados.length - 1].fecha_reportar;
+}
+
 // ======= ======= ======= ======= FUNCION PARA ARCHIVOS ======= =======  ======= =======
      // ======= ======= GET INST OBJETIVOS ======= =======
-
      onFileChange(event: any) {
       const file = event.target.files[0];
     
@@ -781,130 +898,7 @@ getComponentePadre(id_proy_elem_padre: number): { sigla: string, color: string }
         return null;
       }
     }
-
 //  ======= ======= ======= ======= ======= ======= =======  ======= =======  ======= =======
-// Variable para controlar si se puede editar
-puedeEditar: boolean = false;
-
-/// Nueva función para validar el progreso acumulativo
-validateAccumulativeProgress(newValue: number, currentIndex: number): boolean {
-  // Permitir siempre el valor 0
-  if (newValue === 0) return true;
-  
-  // Obtener los avances ordenados por fecha
-  const avancesOrdenados = [...this.indicadoresAvance].sort(
-    (a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
-  );
-  
-  // Si es el primer registro, validar contra la línea base
-  if (currentIndex === 0) {
-    const lineaBase = parseFloat(this.ejecEstrategicaSelected?.linea_base?.toString().replace(/[^0-9.-]+/g, '') || '0');
-    return newValue >= lineaBase;
-  }
-  
-  // Para registros posteriores, obtener los avances anteriores
-  const avancesAnteriores = avancesOrdenados.slice(0, currentIndex);
-  
-  // Encontrar el último valor reportado válido (mayor a 0)
-  const ultimoValorValido = avancesAnteriores
-    .reverse()
-    .find(avance => this.convertToNumber(avance.valor_reportado) > 0);
-  
-  // Si no hay valor anterior válido, validar contra la línea base
-  if (!ultimoValorValido) {
-    const lineaBase = parseFloat(this.ejecEstrategicaSelected?.linea_base?.toString().replace(/[^0-9.-]+/g, '') || '0');
-    return newValue >= lineaBase;
-  }
-  
-  // Convertir el último valor válido a número
-  const valorAnterior = this.convertToNumber(ultimoValorValido.valor_reportado);
-  
-  // El nuevo valor debe ser mayor o igual al anterior
-  return newValue >= valorAnterior;
-}
-
-// Actualiza la función de verificación de permisos de edición
-verificarPermisoEdicion(fechaReportar: string): boolean {
-  // Convertir la fecha de reporte a objeto Date y ajustar al final del día
-  const fechaReporte = new Date(fechaReportar);
-  fechaReporte.setUTCHours(23, 59, 59, 999);
-  
-  // Obtener fecha actual en Bolivia
-  const fechaActual = new Date();
-  // Ajustar a hora Bolivia (UTC-4)
-  const horaBolivia = fechaActual.getTime() + (fechaActual.getTimezoneOffset() * 60000) - (4 * 3600000);
-  const fechaBolivia = new Date(horaBolivia);
-
-  // Permitir edición si la fecha actual es menor o igual a la fecha límite
-  return fechaBolivia <= fechaReporte;
-}
-
-// Función auxiliar actualizada para obtener el último avance válido
-getUltimoAvanceValido(avances: any[]): any {
-  if (!avances || avances.length === 0) return null;
-  
-  // Ordenar avances por fecha de reporte
-  const avancesOrdenados = [...avances].sort((a, b) => 
-    new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
-  );
-
-  const fechaActual = new Date();
-  fechaActual.setHours(fechaActual.getHours() - 4); // Ajuste a hora Bolivia
-
-  // Primero, buscar el último avance que tenga un valor reportado mayor a 0
-  const ultimoConValor = [...avancesOrdenados]
-    .reverse()
-    .find(avance => {
-      const valorReportado = parseFloat(String(avance.valor_reportado).replace(/[^0-9.-]+/g, ''));
-      return valorReportado > 0;
-    });
-
-  if (ultimoConValor) {
-    return ultimoConValor;
-  }
-
-  // Si no hay ninguno con valor reportado, buscar el último avance vencido
-  const ultimoVencido = [...avancesOrdenados]
-    .reverse()
-    .find(avance => {
-      const fechaReporte = new Date(avance.fecha_reportar);
-      fechaReporte.setHours(23, 59, 59, 999);
-      return fechaReporte <= fechaActual;
-    });
-
-  // Si no hay vencidos, retornar el primer avance programado
-  return ultimoVencido || avancesOrdenados[0];
-}
-
-// Función para obtener la próxima fecha a reportar
-getProximaFechaReporte(avances: any[]): string {
-  if (!avances || avances.length === 0) return null;
-  
-  // Obtener fecha actual en zona horaria de Bolivia
-  const fechaActual = new Date();
-  fechaActual.setHours(fechaActual.getHours() - 4); // Ajuste a hora Bolivia
-  
-  // Ordenar avances por fecha
-  const avancesOrdenados = [...avances].sort((a, b) => 
-    new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime()
-  );
-  
-  // Encontrar la fecha actual de reporte (el período en el que estamos)
-  const fechaActualReporte = avancesOrdenados.find(avance => {
-    const fechaAvance = new Date(avance.fecha_reportar);
-    fechaAvance.setHours(23, 59, 59, 999); // Establecer al final del día
-    return fechaActual <= fechaAvance;
-  });
-  
-  // Si encontramos un período actual, lo retornamos
-  if (fechaActualReporte) {
-    return fechaActualReporte.fecha_reportar;
-  }
-  
-  // Si no encontramos un período actual (todos los períodos han vencido),
-  // retornamos el último período disponible
-  return avancesOrdenados[avancesOrdenados.length - 1].fecha_reportar;
-}
 
 countHeaderData() {
   if (this.ejecEstrategicaTable && this.ejecEstrategicaTable.length > 0) {
