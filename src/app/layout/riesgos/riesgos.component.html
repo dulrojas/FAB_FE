@@ -97,9 +97,9 @@
               <!-- IMPACTO -->
               <td>
                 <div class="impacto-button" [ngClass]="{
-                  'impacto-alto': mapProbabilidadImpacto(riesgo.impacto)  === 'Alto',
+                  'impacto-alto':mapProbabilidadImpacto(riesgo.impacto)  === 'Alto',
                   'impacto-medio':mapProbabilidadImpacto(riesgo.impacto)  === 'Medio',
-                  'impacto-bajo':  mapProbabilidadImpacto(riesgo.impacto) === 'Bajo'
+                  'impacto-bajo':mapProbabilidadImpacto(riesgo.impacto) === 'Bajo'
                 }">
                   {{ mapProbabilidadImpacto(riesgo.impacto) }}
                 </div>
@@ -107,9 +107,11 @@
               <!-- PROBABILIDAD -->
               <td>
                 <div class="probabilidad-shape" [ngClass]="{
-                  'probabilidad-alto':mapProbabilidadImpacto(riesgo.probabilidad) === 'Alto',
-                  'probabilidad-medio':mapProbabilidadImpacto(riesgo.probabilidad)=== 'Medio',
-                  'probabilidad-bajo':mapProbabilidadImpacto(riesgo.probabilidad) === 'Bajo'}">
+                  'probabilidad-alto': mapProbabilidadImpacto(riesgo.probabilidad) === 'Alto',
+                  'probabilidad-medio': mapProbabilidadImpacto(riesgo.probabilidad) === 'Medio',
+                  'probabilidad-bajo': mapProbabilidadImpacto(riesgo.probabilidad) === 'Bajo'
+                }">
+                  {{ mapProbabilidadImpacto(riesgo.probabilidad) }}
                 </div>
               </td>
               <!-- NIVEL DE RIESGO -->
@@ -273,7 +275,8 @@
                           <select class="form-control ps-2"
                             id="impacto"
                             name="impacto"
-                            [(ngModel)]="impacto" (change)="this.ValidateImpacto()"
+                            [(ngModel)]="impacto" 
+                            (change)="this.ValidateImpacto()"
                             (ngModelChange)="calcularNivelRiesgo()">
                             <option [value]="null" disabled selected>Seleccione Impacto</option>
                             <option value="3">Alto</option>
@@ -281,14 +284,17 @@
                             <option value="1">Bajo</option>
                           </select>
                           <span class="custom-alert-message" *ngIf="!valImpacto">Debe elegir un impacto</span>
+                          
                           <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
-                            <div *ngIf="impacto" class="impacto-button" >
-                            <div [ngClass]="{
-                                'impacto-alto': impacto === '3',
-                                'impacto-medio': impacto === '2',
-                                'impacto-bajo': impacto === '1'
-                              }">
-                              {{ mapProbabilidadImpacto(impacto) }}</div>
+                            <div *ngIf="impacto" 
+                                [ngClass]="{
+                                  'probabilidad-shape': true, 
+                                  'impacto-alto': impacto === '3',
+                                  'impacto-medio': impacto === '2',
+                                  'impacto-bajo': impacto === '1'
+                                }"
+                                style="transform: scale(0.6);">
+                              {{ mapProbabilidadImpacto(impacto) }}
                             </div>
                           </div>
                         </div>
@@ -317,6 +323,7 @@
                                   'probabilidad-bajo': probabilidad === '1'
                                 }" 
                                 style="transform: scale(0.6);">
+                                {{ mapProbabilidadImpacto(probabilidad) }}
                             </div>
                           </div>
                         </div>

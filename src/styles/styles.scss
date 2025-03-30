@@ -936,19 +936,24 @@ canvas {
 
     /* Probabilidad formas y colores */
         .probabilidad-shape {
-            width: 30px;
+            display: flex;
+            justify-content: center;  
+            align-items: center;      
+            width: 80px;            
             height: 30px;
             margin: 0 auto;
-            border-radius: 50%;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
         }
         .probabilidad-alto {
-            border-bottom: 30px solid #c64d27;
-        }
+            background-color: #c64d27;
+        }        
         .probabilidad-medio {
-            border-bottom: 30px solid #fdc82f;
-        }
+            background-color: #fdc82f;
+        }        
         .probabilidad-bajo {
-            border-bottom: 30px solid #4E8646;
+            background-color: #4E8646;
         }
 
     /* Nivel de Riesgo formas y colores */
