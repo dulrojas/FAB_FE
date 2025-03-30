@@ -821,11 +821,10 @@ export class BeneficiariosComponent implements OnInit {
       this.archivo = file; // Asignar el archivo solo si es válido
       //console.log(this.archivo.name);
       this.importExcelBeneficiario(this.id_proy_beneficiario);
-      Notify.success('Archivo seleccionado correctamente.');
+      //Notify.success('Archivo seleccionado correctamente.');
       input.value = ''; // Restablecer el input
       // this.descripcion = this.archivo.name;
       // console.log(this.descripcion);
-
     } else {
       this.archivo = null; // Asegurarse de que sea null si no es válido
       Notify.failure('Solo se permiten archivos Excel (.xlsx, .xls)');
