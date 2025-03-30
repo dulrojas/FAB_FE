@@ -343,6 +343,11 @@ export class InfProyectoComponent implements OnInit {
       this.modalRefs.push(modalRef);
     }
     
+    openCustomSizeModal(content: TemplateRef<any>, modalSize: string) {
+      const modalRef = this.modalService.open(content, { size: modalSize });
+      this.modalRefs.push(modalRef);
+    }
+    
     openCustomModal(content: TemplateRef<any>, modalConfig: any) {
       const modalRef = this.modalService.open(content, modalConfig);
       this.modalRefs.push(modalRef);
@@ -1186,6 +1191,7 @@ export class InfProyectoComponent implements OnInit {
     presupuestoActual:any = {};
     presupuestoAuxiliar: any = 0;
     presupuestoTotal: any = 0;
+    presuPorcentajeAux: any = 0;
 
     onPresuAdicionalChange(){
       if((this.presupuestoActual.presup_adicional < 0) || (/[a-zA-Z]/.test(this.presupuestoActual.presup_adicional.toString()))) {
@@ -1193,15 +1199,28 @@ export class InfProyectoComponent implements OnInit {
       }
       this.presupuestoActual.presup_adicional = this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional);
       this.presupuestoActual.presup_adicional = this.parseAmountFloatToStr(this.presupuestoActual.presup_adicional);
+
+      this.presuPorcentajeAux = ((this.proyectoScope.presupuesto_mn)?(
+        (this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional))/this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn)):
+        ("0.00")
+      );
+      this.presuPorcentajeAux = this.parseAmountFloatToStr((this.presuPorcentajeAux*100))+"%";
     
       this.ValidatePresuAdicional();
     }
     
-    valPresupAdicional = true;
+    valPresupAdicional1 = true;
+    valPresupAdicional2 = true;
     ValidatePresuAdicional(){
-      this.valPresupAdicional = true;
-      if ((!this.presupuestoActual.presup_adicional)||(this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional)+(this.presupuestoTotal - this.parseAmountStrToFloat(this.presupuestoAuxiliar)) > this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn) )) {
-        this.valPresupAdicional = false;
+      this.valPresupAdicional1 = true;
+      this.valPresupAdicional2 = true;
+      if (this.presupuestoActual.presup_adicional) {
+        if((this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional)+(this.presupuestoTotal - this.parseAmountStrToFloat(this.presupuestoAuxiliar)) > this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn) )){
+          this.valPresupAdicional2 = false;
+        }
+      }
+      else{
+        this.valPresupAdicional1 = false;
       }
     }
 
@@ -1209,14 +1228,6 @@ export class InfProyectoComponent implements OnInit {
       this.servPresupuesto.getPresupuestosByIdProy(this.idProyecto).subscribe(
         (data)=>{
           this.presupuestos = (data[0].dato)?(data[0].dato):([]);
-
-          this.presupuestos.forEach((presupuesto)=>{
-            presupuesto.porcentaje = ((this.proyectoScope.presupuesto_mn)?(
-              (this.parseAmountStrToFloat(presupuesto.presup_adicional))/this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn)):
-              ("0.00")
-            );
-            presupuesto.porcentaje = this.parseAmountFloatToStr(presupuesto.porcentaje);
-          });
 
           if(Boolean(this.proyectoScope.fecha_inicio) && (Boolean(this.proyectoScope.fecha_fin) || Boolean(this.proyectoScope.fecha_fin_ampliada))) {
             let startYear = null;
@@ -1276,13 +1287,28 @@ export class InfProyectoComponent implements OnInit {
             // ======= GET CURRENT PRESUPUESTO =======
             this.presupuestos.sort((a, b) => Number(a.anio) - Number(b.anio));
             // ======= ======= =======
+            // ======= ADD PORCENTAJES =======
+            this.presupuestos.forEach((presupuesto)=>{
+              presupuesto.porcentaje = ((this.proyectoScope.presupuesto_mn)?(
+                (this.parseAmountStrToFloat(presupuesto.presup_adicional))/this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn)):
+                ("0.00")
+              );
+              presupuesto.porcentaje = this.parseAmountFloatToStr((presupuesto.porcentaje*100));
+            });
+            // ======= ======= =======
             // ======= SUM ALL PRESUPUESTOS =======
             this.presupuestoTotal = this.presupuestos.reduce((sum, item) => {
               return sum + this.parseAmountStrToFloat(item.presup_adicional);
             }, 0);
             // ======= ======= =======
             // ======= GET CURRENT PRESUPUESTO =======
+            this.presupuestoActual = null;
             this.presupuestoActual = this.presupuestos.find((presupuesto)=> (presupuesto.anio == this.proyectoScope.gestion_actual));
+            if( !this.presupuestoActual ){
+              this.presupuestoActual = {
+                presup_adicional: "$0.00"
+              };
+            }
             this.presupuestoActual.presup_adicional = this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional);
             this.presupuestoActual.presup_adicional = this.parseAmountFloatToStr(this.presupuestoActual.presup_adicional);
             this.presupuestoActual.porcentaje = ((this.proyectoScope.presupuesto_mn)?(
@@ -1308,8 +1334,9 @@ export class InfProyectoComponent implements OnInit {
       this.modalTitle = "Presupuesto de la Gestion";
 
       this.presupuestoAuxiliar = this.presupuestoActual.presup_adicional;
+      this.presuPorcentajeAux = this.presupuestoActual.porcentaje;
 
-      this.openModal(modalScope);
+      this.openCustomSizeModal(modalScope, 'sm');
     }
     // ======= ======= ======= ======= =======
     // ======= ======= ADD PRESUPEUSTO ======= =======

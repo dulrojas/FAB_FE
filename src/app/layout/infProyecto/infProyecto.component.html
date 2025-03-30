@@ -460,7 +460,7 @@
                                     <tbody>
                                         <tr *ngFor="let presupuesto of presupuestos; let i = index">
                                             <td>{{ presupuesto.anio }}</td>
-                                            <td>{{ presupuesto.presup_adicional }}</td>
+                                            <td>{{ presupuesto.presup_adicional.replace('$', '') }}</td>
                                             <td>{{ (presupuesto.porcentaje+"%") }}</td>
                                         </tr>
                                     </tbody>
@@ -918,12 +918,23 @@
                                 <!-- ======= ======= PRESU ADICIONAL SECTION ======= ======= -->
                                 <div class="col col-xl-12 col-lg-12 mb-auto">
                                     <label for="presup_adicional">Presupuesto</label>
-                                    <input class="form-control" type="text" id="presup_adicional" name="presup_adicional" 
+                                    <input class="form-control text-end" type="text" 
+                                        id="presup_adicional" name="presup_adicional" 
                                         [(ngModel)]="presupuestoActual.presup_adicional" 
                                         (change)="onPresuAdicionalChange()" />
-                                    <span class="custom-alert-message" *ngIf="!valPresupAdicional">
+                                    <span class="custom-alert-message" *ngIf="!valPresupAdicional1">
                                         Debe ingresar un presupuesto válido.
                                     </span>
+                                    <span class="custom-alert-message" *ngIf="!valPresupAdicional2">
+                                        El presupuesto por gestiones supera al presupuesto de proyecto.
+                                    </span>
+                                </div>
+                                <!-- ======= ======= PORCENTAJESECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <label for="presup_adicional">Porcentaje</label>
+                                    <input class="form-control" type="text" 
+                                        id="presup_porcentaje" name="presup_porcentaje" 
+                                        [(ngModel)]="presuPorcentajeAux" disabled/>
                                 </div>
 
                             </div>

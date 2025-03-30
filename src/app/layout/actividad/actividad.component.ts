@@ -86,6 +86,7 @@ export class ActividadComponent implements OnInit {
   initGestion: any = "";
   gestion: any = "";
   startYear: any = "";
+  startDate: any = "";
   endYear: any = "";
   endDate: any = "";
   presupuestoGest: any = 0;
@@ -397,9 +398,11 @@ export class ActividadComponent implements OnInit {
     this.valIdProyElementoPadre = true;
     this.valActividadText = true;
     this.valDescripcion = true;
-    this.valFechaInicio = true;
+    this.valFechaInicio1 = true;
+    this.valFechaInicio2 = true;
     this.valFechaFin = true;
     this.valFechaFin2 = true;
+    this.valFechaFin3 = true;
     this.valResultado = true;
 
     this.valActAvaAvance = true;
@@ -439,10 +442,10 @@ export class ActividadComponent implements OnInit {
         this.initGestion = dataReq.gestion_actual;
         this.gestion = dataReq.gestion_actual;
 
-        this.startYear = dataReq.fecha_inicio;
+        this.startDate = dataReq.fecha_inicio;
         this.endDate = (dataReq.fecha_fin_ampliada)?(dataReq.fecha_fin_ampliada):(dataReq.fecha_fin);
 
-        this.startYear = (this.startYear)?(this.startYear.slice(0,4)):(new Date().getFullYear().toString());
+        this.startYear = (this.startDate)?(this.startDate.slice(0,4)):(new Date().getFullYear().toString());
         this.endYear = (this.endDate)?(this.endDate.slice(0,4)):(new Date().getFullYear().toString());
 
         if( parseInt(this.endYear) < parseInt(this.gestion) ){
@@ -526,22 +529,31 @@ export class ActividadComponent implements OnInit {
     }
   }
 
-  valFechaInicio: any = true;
+  valFechaInicio1: any = true;
+  valFechaInicio2: any = true;
   validateFechaInicio() {
     if (this.fecha_inicio && new Date(this.fecha_inicio + 'T00:00:00Z').getUTCFullYear().toString() >= this.initGestion) {
-      this.valFechaInicio = true;
-    } else {
-      this.valFechaInicio = false;
+      this.valFechaInicio1 = true;
+      if( ( new Date(this.startDate) > new Date(this.fecha_inicio + 'T00:00:00Z') ) || ( new Date(this.fecha_inicio + 'T00:00:00Z') > new Date(this.endDate) ) ){
+        this.valFechaInicio2 = false;
+      }
+    } 
+    else {
+      this.valFechaInicio1 = false;
     }
   }
 
   valFechaFin: any = true;
   valFechaFin2: any = true;
+  valFechaFin3: any = true;
   validateFechaFin() {
     if ((this.fecha_fin)&&( new Date(this.fecha_fin + 'T00:00:00Z').getFullYear().toString() >= this.initGestion )) {
       this.valFechaFin = true;
       if( (new Date(this.fecha_inicio)) < (new Date(this.fecha_fin)) ){
         this.valFechaFin2 = true;
+        if( ( new Date(this.startDate) > new Date(this.fecha_fin + 'T00:00:00Z') ) || ( new Date(this.fecha_fin + 'T00:00:00Z') > new Date(this.endDate) ) ){
+          this.valFechaFin3 = false;
+        }
       }
       else{
         this.valFechaFin2 = false;
@@ -1069,9 +1081,11 @@ export class ActividadComponent implements OnInit {
         this.valIdProyElementoPadre &&
         this.valActividadText &&
         this.valDescripcion &&
-        this.valFechaInicio &&
+        this.valFechaInicio1 &&
+        this.valFechaInicio2 &&
         this.valFechaFin &&
-        this.valFechaFin2
+        this.valFechaFin2 &&
+        this.valFechaFin3
       );
 
       if(valForm){
@@ -1090,9 +1104,11 @@ export class ActividadComponent implements OnInit {
         this.valIdProyElementoPadre &&
         this.valActividadText &&
         this.valDescripcion &&
-        this.valFechaInicio &&
+        this.valFechaInicio1 &&
+        this.valFechaInicio2 &&
         this.valFechaFin &&
-        this.valFechaFin2
+        this.valFechaFin2 &&
+        this.valFechaFin3
       );
 
       if(valForm1){
@@ -1132,7 +1148,7 @@ export class ActividadComponent implements OnInit {
     this.validateFechaInicio();
     this.validateFechaFin();
 
-    if((!this.valFechaInicio) && (!this.valFechaFin) && (!this.valFechaFin2)){
+    if((!this.valFechaInicio1) && (!this.valFechaInicio2) && (!this.valFechaFin) && (!this.valFechaFin2) && (!this.valFechaFin3)){
       return;
     }
 

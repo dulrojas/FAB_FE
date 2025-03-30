@@ -539,8 +539,11 @@
                                         [(ngModel)]="fecha_inicio" 
                                         [disabled]="(modalAction == 'avance')"
                                         (change)="validateFechaInicio()">
-                                    <span class="custom-alert-message" *ngIf="!valFechaInicio">
-                                        Debe ingresar una fecha valida dentro de la gestion actual.
+                                    <span class="custom-alert-message" *ngIf="!valFechaInicio1">
+                                        Debe ingresar una fecha válida dentro de la gestion actual.
+                                    </span>
+                                    <span class="custom-alert-message" *ngIf="!valFechaInicio2">
+                                        Debe ingresar una fecha en el rango del proyecto.
                                     </span>
                                 </div>
                                 <!-- ======= FECHA FIN SECTION ======= -->
@@ -552,10 +555,13 @@
                                         [disabled]="(modalAction == 'avance')"
                                         (change)="validateFechaFin()">
                                     <span class="custom-alert-message" *ngIf="!valFechaFin">
-                                        Debe ingresar una fecha valida dentro de la gestion actual.
+                                        Debe ingresar una fecha válida dentro de la gestion actual.
                                     </span>
-                                    <span class="custom-alert-message" *ngIf="!valFechaInicio">
+                                    <span class="custom-alert-message" *ngIf="!valFechaFin2">
                                         La fecha de finalizacion debe ser mayor a la de inicio.
+                                    </span>
+                                    <span class="custom-alert-message" *ngIf="!valFechaFin3">
+                                        Debe ingresar una fecha en el rango del proyecto.
                                     </span>
                                 </div>
                             

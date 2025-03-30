@@ -185,7 +185,9 @@
                                     <input class="form-control" type="text" id="aprendizaje" name="aprendizaje" 
                                         placeholder="Ingresa el titulo del aprendizaje" [(ngModel)]="aprendizaje" 
                                         (change)="ValidateAprendizaje()"/>
-                                    <span class="custom-alert-message" *ngIf="!valAprendizaje">Debe ingresar un titulo valido, con menos de 50 caracteres</span>
+                                    <span class="custom-alert-message" *ngIf="!valAprendizaje">
+                                        Debe ingresar un título válido, con menos de 50 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= FECHA APREN SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
@@ -202,7 +204,9 @@
                                         [(ngModel)]="problema" 
                                         (change)="ValidateProblema()">
                                     </textarea>
-                                    <span class="custom-alert-message" *ngIf="!valProblema">Debe ingresar un problema valido, con menos de 500 caracteres</span>
+                                    <span class="custom-alert-message" *ngIf="!valProblema">
+                                        Debe ingresar un problema válido, con menos de 500 caracteres
+                                    </span>
                                 </div>
 
                                 <!-- ======= ======= ACCION DESARROLLADA SECTION ======= ======= -->
@@ -212,7 +216,9 @@
                                         placeholder="¿Que se hizo para ayudar al problema?" 
                                         [(ngModel)]="accion" (change)="ValidateAccion()">
                                     </textarea>
-                                    <span class="custom-alert-message" *ngIf="!valAccion">Debe ingresar una accion valida, con menos de 500 caracteres</span>
+                                    <span class="custom-alert-message" *ngIf="!valAccion">
+                                        Debe ingresar una acción válida, con menos de 500 caracteres
+                                    </span>
                                 </div>
 
                                 <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>

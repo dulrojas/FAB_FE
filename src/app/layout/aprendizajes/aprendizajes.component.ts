@@ -505,11 +505,39 @@ export class AprendizajesComponent implements OnInit {
     const columnas = ['id_proy_aprende', 'fecha', 'sigla', 'aprendizaje', 'problema', 'accion'];
     const today = new Date();
     const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+
     let aprendizajesObj = [...this.aprendizajes];
+    let preguntasPos: any[] = null;
+    let preguntasNeg: any[] = null;
+
+    aprendizajesObj.forEach((aprendizaje)=>{
+      let preguntas: any[] = [];
+      let respuestas: any[] = [];
+      if( aprendizaje.idp_aprendizaje_tipo == 1 ){
+        preguntas = this.stringToJson(aprendizaje.preguntas[0].preguntas)["Positivo"];
+        respuestas = this.stringToJson(aprendizaje.respuestas_1)["respuestas"];
+        if( !preguntasPos ){
+          preguntasPos = [...preguntas];
+        }
+      }
+      else{
+        preguntas = this.stringToJson(aprendizaje.preguntas[1].preguntas)["Negativo"];
+        respuestas = this.stringToJson(aprendizaje.respuestas_2)["respuestas"];
+        if( !preguntasNeg ){
+          preguntasNeg = [...preguntas];
+        }
+      }
+      
+      preguntas.forEach((key, index) => 
+        aprendizaje[key] = respuestas[index]
+      )
+
+    });
+
     ExcelExportService.exportToExcel(
       aprendizajesObj, 
       'Reporte_Aprendizajes_'+formattedDate, 
-      columnas
+      [...columnas, ...preguntasPos, ...preguntasNeg]
     );
   }
   // ======= ======= ======= ======= =======
