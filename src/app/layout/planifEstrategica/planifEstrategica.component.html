@@ -255,7 +255,7 @@
                                         id="indicador"
                                         name="indicador"
                                         placeholder="Ingresa el nombre"
-                                        [(ngModel)]="indicador" maxlength="99"
+                                        [(ngModel)]="indicador" maxlength="100"
                                         required/>                             
                                 </div>
                                 <!-- Descripción -->
@@ -267,7 +267,7 @@
                                         id="descripcion"
                                         name="descripcion"
                                         placeholder="Ingresa una descripción"
-                                        [(ngModel)]="descripcion" maxlength="499"
+                                        [(ngModel)]="descripcion" maxlength="500"
                                         required/>                             
                                 </div>
                                 <!-- Comentario -->
@@ -279,7 +279,7 @@
                                         id="comentario"
                                         name="comentario"
                                         placeholder="Ingresa un comentario"
-                                        [(ngModel)]="comentario" maxlength="254"/>                                 
+                                        [(ngModel)]="comentario" maxlength="255"/>                                 
                                 </div>
                                 <!-- Botones -->
                                 <div class="modal-footer mt-2">
@@ -396,7 +396,7 @@
                                         id="indicador"
                                         name="indicador"
                                         placeholder="Ingresa el Nombre de elemento"
-                                        [(ngModel)]="indicador" maxlength="99"
+                                        [(ngModel)]="indicador" maxlength="100"
                                         (change)="ValidateIndicador()"/>
                                 </div>
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
@@ -407,7 +407,7 @@
                                         id="descripcion"
                                         name="descripcion"
                                         placeholder="Ingresa una Descripción"
-                                        [(ngModel)]="descripcion" maxlength="299"/>                                 
+                                        [(ngModel)]="descripcion" maxlength="300"/>                                 
                                 </div>
                                 <!-- Línea base, Medida y Meta Final -->
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
@@ -429,7 +429,7 @@
                                         id="medida"
                                         name="medida"
                                         placeholder="Ingresa un Medida"
-                                        [(ngModel)]="medida" maxlength="19"/>                                 
+                                        [(ngModel)]="medida" maxlength="20"/>                                 
                                 </div>
                                  <!-- Meta Final -->
                                 <div class="col col-xl-2 col-lg-2 mt-auto">
@@ -452,7 +452,7 @@
                                         id="medio_verifica"
                                         name="medio_verifica"
                                         placeholder="Ingresa un Medio de verificación"
-                                        [(ngModel)]="medio_verifica" maxlength="299"/>                               
+                                        [(ngModel)]="medio_verifica" maxlength="300"/>                               
                                 </div>
                                 <!-- Supuestos/Comentario -->
                                 <div class="row">
@@ -466,7 +466,7 @@
                                                 id="comentario"
                                                 name="comentario"
                                                 placeholder="Ingresa un comentario"
-                                                [(ngModel)]="comentario" maxlength="254"/>
+                                                [(ngModel)]="comentario" maxlength="255"/>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -601,7 +601,7 @@
                     class="form-control"
                     [(ngModel)]="editAvance.comentarios"
                     name="comentarios"
-                    maxlength="254"
+                    maxlength="255"
                 ></textarea>
             </div>
                 <div
@@ -726,7 +726,7 @@
                                     <input  class="form-control" type="text" 
                                         id="comentarios" name="comentarios"  
                                         placeholder="Ingresa un comentario"
-                                        [(ngModel)]="comentarios" maxlength="254" (change)="ValidateComentarios()"/> 
+                                        [(ngModel)]="comentarios" maxlength="255" (change)="ValidateComentarios()"/> 
                                     <span class="custom-alert-message" *ngIf="!valComentarios">Debe ingresar un comentario</span>       
                                 </div>
                                 <!-- ======= ======= BUTTONS SECTION ======= ======= -->

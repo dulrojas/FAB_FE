@@ -97,9 +97,9 @@
               <!-- IMPACTO -->
               <td>
                 <div class="impacto-button" [ngClass]="{
-                  'impacto-alto': mapProbabilidadImpacto(riesgo.impacto)  === 'Alto',
+                  'impacto-alto':mapProbabilidadImpacto(riesgo.impacto)  === 'Alto',
                   'impacto-medio':mapProbabilidadImpacto(riesgo.impacto)  === 'Medio',
-                  'impacto-bajo':  mapProbabilidadImpacto(riesgo.impacto) === 'Bajo'
+                  'impacto-bajo':mapProbabilidadImpacto(riesgo.impacto) === 'Bajo'
                 }">
                   {{ mapProbabilidadImpacto(riesgo.impacto) }}
                 </div>
@@ -107,9 +107,11 @@
               <!-- PROBABILIDAD -->
               <td>
                 <div class="probabilidad-shape" [ngClass]="{
-                  'probabilidad-alto':mapProbabilidadImpacto(riesgo.probabilidad) === 'Alto',
-                  'probabilidad-medio':mapProbabilidadImpacto(riesgo.probabilidad)=== 'Medio',
-                  'probabilidad-bajo':mapProbabilidadImpacto(riesgo.probabilidad) === 'Bajo'}">
+                  'probabilidad-alto': mapProbabilidadImpacto(riesgo.probabilidad) === 'Alto',
+                  'probabilidad-medio': mapProbabilidadImpacto(riesgo.probabilidad) === 'Medio',
+                  'probabilidad-bajo': mapProbabilidadImpacto(riesgo.probabilidad) === 'Bajo'
+                }">
+                  {{ mapProbabilidadImpacto(riesgo.probabilidad) }}
                 </div>
               </td>
               <!-- NIVEL DE RIESGO -->
@@ -225,7 +227,7 @@
                         <label for="riesgo">Título de Riesgo</label>
                         <input  class="form-control" type="text" 
                               id="riesgo" name="riesgo"  placeholder="Ingresa el titulo del Riesgo"
-                              [(ngModel)]="riesgo" (change)="ValidateRiesgo()" maxlength="99"/>
+                              [(ngModel)]="riesgo" (change)="ValidateRiesgo()" maxlength="100"/>
                         <span class="custom-alert-message" *ngIf="!valRiesgo">Debe elegir un Riesgo</span>      
                       </div>
                       <!-- ======= ======= FECHA DE IDENTIFICACIÓN ======= ======= -->
@@ -240,7 +242,7 @@
                         <label>Riesgo/Supuesto/Hipótesis</label>
                           <textarea class="form-control" id="descripcion" name="descripcion"
                             placeholder="Ingresa la descripción del riesgo"
-                            [(ngModel)]="descripcion" (change)="ValidateDescripcion()" maxlength="499">
+                            [(ngModel)]="descripcion" (change)="ValidateDescripcion()" maxlength="500">
                           </textarea>
                         <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la Descripción</span>
                       </div>
@@ -250,7 +252,7 @@
                         <label for="vinculados">Individuales/Instituciones Vinculados</label>
                           <input  class="form-control" type="text" 
                                   id="vinculados" name="vinculados" placeholder="Ingresa un Vínculo"
-                                  [(ngModel)]="vinculados" (change)="ValidateVinculados()" maxlength="99"/>
+                                  [(ngModel)]="vinculados" (change)="ValidateVinculados()" maxlength="100"/>
                         <span class="custom-alert-message" *ngIf="!valVinculados">Debe ingresar el vínculo</span>
                       </div>
                       <!-- ======= ======= IDENTIFICACIÓN DEL RIESGO ======= ======= -->
@@ -273,7 +275,8 @@
                           <select class="form-control ps-2"
                             id="impacto"
                             name="impacto"
-                            [(ngModel)]="impacto" (change)="this.ValidateImpacto()"
+                            [(ngModel)]="impacto" 
+                            (change)="this.ValidateImpacto()"
                             (ngModelChange)="calcularNivelRiesgo()">
                             <option [value]="null" disabled selected>Seleccione Impacto</option>
                             <option value="3">Alto</option>
@@ -281,14 +284,17 @@
                             <option value="1">Bajo</option>
                           </select>
                           <span class="custom-alert-message" *ngIf="!valImpacto">Debe elegir un impacto</span>
+                          
                           <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
-                            <div *ngIf="impacto" class="impacto-button" >
-                            <div [ngClass]="{
-                                'impacto-alto': impacto === '3',
-                                'impacto-medio': impacto === '2',
-                                'impacto-bajo': impacto === '1'
-                              }">
-                              {{ mapProbabilidadImpacto(impacto) }}</div>
+                            <div *ngIf="impacto" 
+                                [ngClass]="{
+                                  'probabilidad-shape': true, 
+                                  'impacto-alto': impacto === '3',
+                                  'impacto-medio': impacto === '2',
+                                  'impacto-bajo': impacto === '1'
+                                }"
+                                style="transform: scale(0.6);">
+                              {{ mapProbabilidadImpacto(impacto) }}
                             </div>
                           </div>
                         </div>
@@ -317,6 +323,7 @@
                                   'probabilidad-bajo': probabilidad === '1'
                                 }" 
                                 style="transform: scale(0.6);">
+                                {{ mapProbabilidadImpacto(probabilidad) }}
                             </div>
                           </div>
                         </div>
@@ -381,7 +388,7 @@
                         <label for="medidas">Medidas de Respuesta al Riesgo</label>
                         <input  class="form-control" type="text" 
                               id="medidas" name="medidas" placeholder="Ingresa Medidas de Respuesta al Riesgo"
-                              [(ngModel)]="medidas" maxlength="499"/>                              
+                              [(ngModel)]="medidas" maxlength="500"/>                              
                       </div>
                     <!-- SEPARADOR -->  
                     <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646; border-width: 3px;"></div>
@@ -403,7 +410,7 @@
                       <input class="form-control" type="text" 
                             id="comentarios" name="comentarios" 
                             placeholder="Ingresa Comentarios Adicionales"
-                            [(ngModel)]="comentarios" maxlength="499"/>                  
+                            [(ngModel)]="comentarios" maxlength="500"/>                  
                     </div>
                   <!-- ======= ======= BUTTONS SECTION ======= ======= -->
                   <div class="modal-footer">

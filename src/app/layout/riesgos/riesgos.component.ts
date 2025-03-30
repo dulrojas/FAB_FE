@@ -115,7 +115,7 @@ export class RiesgosComponent implements OnInit {
       valRiesgo: any = true;
       ValidateRiesgo(){
         this.valRiesgo = true;
-        if((!this.riesgo)||(this.riesgo.length >= 100)){
+        if((!this.riesgo)||(this.riesgo.length <= 100)){
           this.valRiesgo = false;
         }
       }
@@ -123,7 +123,7 @@ export class RiesgosComponent implements OnInit {
       valDescripcion: any = true;
       ValidateDescripcion(){
         this.valDescripcion = true;
-        if((!this.descripcion)||(this.descripcion.length >= 500)){
+        if((!this.descripcion)||(this.descripcion.length <= 500)){
           this.valDescripcion = false;
         }
       }
@@ -131,7 +131,7 @@ export class RiesgosComponent implements OnInit {
       valVinculados: any = true;
       ValidateVinculados(){
         this.valVinculados = true;
-        if((!this.vinculados)||(this.vinculados.length >= 100)){
+        if((!this.vinculados)||(this.vinculados.length <= 100)){
           this.valVinculados = false;
         }
       }

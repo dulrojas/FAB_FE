@@ -821,11 +821,10 @@ export class BeneficiariosComponent implements OnInit {
       this.archivo = file; // Asignar el archivo solo si es válido
       //console.log(this.archivo.name);
       this.importExcelBeneficiario(this.id_proy_beneficiario);
-      Notify.success('Archivo seleccionado correctamente.');
+      //Notify.success('Archivo seleccionado correctamente.');
       input.value = ''; // Restablecer el input
       // this.descripcion = this.archivo.name;
       // console.log(this.descripcion);
-
     } else {
       this.archivo = null; // Asegurarse de que sea null si no es válido
       Notify.failure('Solo se permiten archivos Excel (.xlsx, .xls)');
@@ -966,6 +965,7 @@ export class BeneficiariosComponent implements OnInit {
   // ======= GET ORGANIZACION SUBTIPO =======
   cargarOrganizacionSubTipoPorTipo(idTipo: any) {
     this.beneficiariosListaOrganizacionSubTipoFilter = this.beneficiariosListaOrganizacionSubTipo.filter(subtipo => subtipo.id_padre == idTipo);
+    this.idp_organizacion_subtipo = null;
   }
 
   // ======= ======= GET MUNICIPIO ======= =======
@@ -1293,11 +1293,11 @@ export class BeneficiariosComponent implements OnInit {
     };
     this.servListBenef.addListBene(objBeneficiarioLista).subscribe(
       (data) => {
-        Notify.success('Participante agregado exitosamente');
         this.beneficiariosListaSelected = null;
-        this.getBeneficiariosLista();
-        this.initEditBeneficiario(this.id_proy_beneficiario);
+        this.getBeneficiariosLista();        
+        Notify.success('Participante agregado exitosamente');
         this.closeModalBeneficiarioLista();
+        this.initEditBeneficiario(this.id_proy_beneficiario);
       },
       (error) => {
         Notify.failure('Error al guardar beneficiario');
@@ -1473,6 +1473,7 @@ export class BeneficiariosComponent implements OnInit {
         this.editBeneficiarioLista();
       }
     }
+    //this.closeModalBeneficiarioLista();
   }
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
