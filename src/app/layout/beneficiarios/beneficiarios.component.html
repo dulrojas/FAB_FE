@@ -190,7 +190,7 @@
                                                 <input  class="form-control" type="text" 
                                                     id="titulo_evento" name="titulo_evento"  
                                                     placeholder="Ingresa el Evento"
-                                                    [(ngModel)]="titulo_evento" (change)="ValidateTituloEvento()" maxlength="49"/> 
+                                                    [(ngModel)]="titulo_evento" (change)="ValidateTituloEvento()" maxlength="50"/> 
                                                 <span class="custom-alert-message" *ngIf="!valTituloEvento">Debe ingresar el Evento</span>       
                                             </div> 
                                         <!-- Tercera Fila: DEPARTAMENTO, MUNICIPIO, COMUNIDAD Y "+" -->                                                    
@@ -236,7 +236,7 @@
                                                 <label for="evento_detalle">Detalle de evento</label>
                                                 <textarea class="form-control" id="evento_detalle" name="evento_detalle"
                                                     placeholder="Ingresa el detalle del evento"
-                                                    [(ngModel)]="evento_detalle" maxlength="254">                                                
+                                                    [(ngModel)]="evento_detalle" maxlength="255">                                                
                                                 </textarea>                                        
                                             </div> 
                                         <!-- Quinta Fila: DOCUMENTO DE RESPALDO -->
@@ -635,7 +635,7 @@
                                             <input  class="form-control" type="text" 
                                                     id="num_doc_identidad" name="num_doc_identidad"  
                                                     placeholder="Ingresa el CI O ID"
-                                                    [(ngModel)]="num_doc_identidad" (change)="ValidateNumDocIdentidad()" maxlength="9"/>
+                                                    [(ngModel)]="num_doc_identidad" (change)="ValidateNumDocIdentidad()" maxlength="10"/>
                                             <span class="custom-alert-message" *ngIf="!valNumDocIdentidad">Debe ingresar el CI O ID Númerico</span>
                                         </div>                                        
                                         <!-- ======= ======= NOMBRE COMPLETO ======= ======= --> 
@@ -644,7 +644,7 @@
                                             <input  class="form-control" type="text" 
                                                     id="nombre" name="nombre"  
                                                     placeholder="Ingresa el nombre y apellido"
-                                                    [(ngModel)]="nombre" (change)="ValidateNombre()" maxlength="99"/> 
+                                                    [(ngModel)]="nombre" (change)="ValidateNombre()" maxlength="100"/> 
                                             <span class="custom-alert-message" *ngIf="!valNombre">Debe ingresar el nombre y apellido</span>       
                                         </div>
                                         <!-- ======= ======= SEXO ======= ======= -->
@@ -726,7 +726,7 @@
                                             <input  class="form-control" type="text" 
                                                     id="comunidad_no_registrada" name="comunidad_no_registrada"  
                                                     placeholder="Ingresa dato si no se encuentra en las listas Institución o Comunidad "
-                                                    [(ngModel)]="comunidad_no_registrada" maxlength="99"/>
+                                                    [(ngModel)]="comunidad_no_registrada" maxlength="100"/>
                                         </div>
                                         <!-- ======= ======= RANGO DE EDAD ======= ======= -->
                                         <div class="col col-xl-6 col-lg-6 mb-auto">
@@ -927,7 +927,7 @@
                                             <input  class="form-control" type="text" 
                                                 id="referente" name="referente"  
                                                 placeholder="Ingresa el nombre referente"
-                                                [(ngModel)]="referente" (change)="ValidateReferente()" maxlength="99"/> 
+                                                [(ngModel)]="referente" (change)="ValidateReferente()" maxlength="100"/> 
                                             <span class="custom-alert-message" *ngIf="!valReferente">Debe ingresar el nombre referente</span>       
                                         </div>
                                     <!-- Tercera Fila: VINCULO CON RESULTADO --> 
@@ -936,7 +936,7 @@
                                             <label for="vinculo">Vínculo con los Resultados</label>
                                             <textarea class="form-control" id="vinculo" name="vinculo"
                                                 placeholder="Ingresa la descripción del Vínculo con los Resultados"
-                                                [(ngModel)]="vinculo" (change)="ValidateVinculo()" maxlength="254">                                                
+                                                [(ngModel)]="vinculo" (change)="ValidateVinculo()" maxlength="255">                                                
                                             </textarea>
                                             <span class="custom-alert-message" *ngIf="!valVinculo">Debe ingresar la descripción del Vínculo</span>                                        
                                         </div>
@@ -1031,7 +1031,7 @@
                         <input  class="form-control" type="text" 
                             id="organizacion" name="organizacion"  
                             placeholder="Ingresa el Nombre de la Organización"
-                            [(ngModel)]="organizacion" (change)="ValidateOrganizacion()" maxlength="99"/> 
+                            [(ngModel)]="organizacion" (change)="ValidateOrganizacion()" maxlength="100"/> 
                         <span class="custom-alert-message" *ngIf="!valOrganizacion">Debe ingresar el nombre de la Organización</span>       
                     </div>                
                 </div>

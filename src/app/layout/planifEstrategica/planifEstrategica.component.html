@@ -601,7 +601,7 @@
                     class="form-control"
                     [(ngModel)]="editAvance.comentarios"
                     name="comentarios"
-                    maxlength="254"
+                    maxlength="255"
                 ></textarea>
             </div>
                 <div
@@ -726,7 +726,7 @@
                                     <input  class="form-control" type="text" 
                                         id="comentarios" name="comentarios"  
                                         placeholder="Ingresa un comentario"
-                                        [(ngModel)]="comentarios" maxlength="254" (change)="ValidateComentarios()"/> 
+                                        [(ngModel)]="comentarios" maxlength="255" (change)="ValidateComentarios()"/> 
                                     <span class="custom-alert-message" *ngIf="!valComentarios">Debe ingresar un comentario</span>       
                                 </div>
                                 <!-- ======= ======= BUTTONS SECTION ======= ======= -->

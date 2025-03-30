@@ -225,7 +225,7 @@
                         <label for="riesgo">Título de Riesgo</label>
                         <input  class="form-control" type="text" 
                               id="riesgo" name="riesgo"  placeholder="Ingresa el titulo del Riesgo"
-                              [(ngModel)]="riesgo" (change)="ValidateRiesgo()" maxlength="99"/>
+                              [(ngModel)]="riesgo" (change)="ValidateRiesgo()" maxlength="100"/>
                         <span class="custom-alert-message" *ngIf="!valRiesgo">Debe elegir un Riesgo</span>      
                       </div>
                       <!-- ======= ======= FECHA DE IDENTIFICACIÓN ======= ======= -->
@@ -240,7 +240,7 @@
                         <label>Riesgo/Supuesto/Hipótesis</label>
                           <textarea class="form-control" id="descripcion" name="descripcion"
                             placeholder="Ingresa la descripción del riesgo"
-                            [(ngModel)]="descripcion" (change)="ValidateDescripcion()" maxlength="499">
+                            [(ngModel)]="descripcion" (change)="ValidateDescripcion()" maxlength="500">
                           </textarea>
                         <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la Descripción</span>
                       </div>
@@ -250,7 +250,7 @@
                         <label for="vinculados">Individuales/Instituciones Vinculados</label>
                           <input  class="form-control" type="text" 
                                   id="vinculados" name="vinculados" placeholder="Ingresa un Vínculo"
-                                  [(ngModel)]="vinculados" (change)="ValidateVinculados()" maxlength="99"/>
+                                  [(ngModel)]="vinculados" (change)="ValidateVinculados()" maxlength="100"/>
                         <span class="custom-alert-message" *ngIf="!valVinculados">Debe ingresar el vínculo</span>
                       </div>
                       <!-- ======= ======= IDENTIFICACIÓN DEL RIESGO ======= ======= -->
@@ -381,7 +381,7 @@
                         <label for="medidas">Medidas de Respuesta al Riesgo</label>
                         <input  class="form-control" type="text" 
                               id="medidas" name="medidas" placeholder="Ingresa Medidas de Respuesta al Riesgo"
-                              [(ngModel)]="medidas" maxlength="499"/>                              
+                              [(ngModel)]="medidas" maxlength="500"/>                              
                       </div>
                     <!-- SEPARADOR -->  
                     <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646; border-width: 3px;"></div>
@@ -403,7 +403,7 @@
                       <input class="form-control" type="text" 
                             id="comentarios" name="comentarios" 
                             placeholder="Ingresa Comentarios Adicionales"
-                            [(ngModel)]="comentarios" maxlength="499"/>                  
+                            [(ngModel)]="comentarios" maxlength="500"/>                  
                     </div>
                   <!-- ======= ======= BUTTONS SECTION ======= ======= -->
                   <div class="modal-footer">

@@ -965,6 +965,7 @@ export class BeneficiariosComponent implements OnInit {
   // ======= GET ORGANIZACION SUBTIPO =======
   cargarOrganizacionSubTipoPorTipo(idTipo: any) {
     this.beneficiariosListaOrganizacionSubTipoFilter = this.beneficiariosListaOrganizacionSubTipo.filter(subtipo => subtipo.id_padre == idTipo);
+    this.idp_organizacion_subtipo = null;
   }
 
   // ======= ======= GET MUNICIPIO ======= =======
@@ -1292,11 +1293,11 @@ export class BeneficiariosComponent implements OnInit {
     };
     this.servListBenef.addListBene(objBeneficiarioLista).subscribe(
       (data) => {
-        Notify.success('Participante agregado exitosamente');
         this.beneficiariosListaSelected = null;
-        this.getBeneficiariosLista();
-        this.initEditBeneficiario(this.id_proy_beneficiario);
+        this.getBeneficiariosLista();        
+        Notify.success('Participante agregado exitosamente');
         this.closeModalBeneficiarioLista();
+        this.initEditBeneficiario(this.id_proy_beneficiario);
       },
       (error) => {
         Notify.failure('Error al guardar beneficiario');
@@ -1472,6 +1473,7 @@ export class BeneficiariosComponent implements OnInit {
         this.editBeneficiarioLista();
       }
     }
+    //this.closeModalBeneficiarioLista();
   }
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
