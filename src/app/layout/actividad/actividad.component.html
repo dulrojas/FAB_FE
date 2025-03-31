@@ -77,7 +77,7 @@
                                         <thead>
                                             <tr>
                                                 <th></th>
-                                                <th style="text-align: center;">Periodo informado</th>
+                                                <th style="text-align: center;">Descripción</th>
                                                 <th style="text-align: center;">Declaración</th>
                                                 <th style="text-align: center;">Ejecución</th>                                            
                                             </tr>
@@ -106,7 +106,7 @@
                             <!-- ======= ======= ======= ======= ======= -->
                             <!-- ======= ======= EJECUTADO SECTION ======= ======= -->
                             <div class="col col-md-6 col-lg-6">
-                                <label class="custom-actividad-sub-title">Periodo informado</label>
+                                <label class="custom-actividad-sub-title">Descripción</label>
                                 <textarea class="form-control" type="text" 
                                     id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
                                     placeholder="Ingrese el periodo de ejecución" 
@@ -118,6 +118,19 @@
                                 </textarea>
                                 <span class="custom-alert-message" *ngIf="!valMotivoNuevoEjecutado">
                                     Debe ingresar un motivo válido, con menos de 100 caracteres.
+                                </span>
+                                <div></div>
+                                <label class="custom-actividad-sub-title">Fecha ejecución</label>
+                                <input class="form-control" type="date" 
+                                    id="fechaNuevoEjecutado" name="fechaNuevoEjecutado" 
+                                    [disabled]="(idPresupuestoGest == 0)
+                                        ||(currentPerProRol.includes('LEC'))
+                                        ||(currentPerProRol.includes('ESC'))
+                                        ||(presuAvanceSelected)"
+                                    (change)="validateFechaNuevoEjecutado()"
+                                    [(ngModel)]="fechaNuevoEjecutado"/>
+                                <span class="custom-alert-message" *ngIf="!valFechaNuevoEjecutado">
+                                    Debe ingresar una fecha válida, en la gestion actual.
                                 </span>
                                 <div></div>
                                 <label class="custom-actividad-sub-title">Monto ejecutado</label>
@@ -394,7 +407,7 @@
                                         <div class="col col-md-4 col-lg-4 px-1">
                                             <div class="col custom-elemento-actividad justify-content-end"
                                                 [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
-                                                {{ actividadGant.porcentajeAvance }}%
+                                                {{ (actividadGant.avances)?(actividadGant.avances[actividadGant.avances.length - 1].avance):(0) }}%
                                             </div>
                                         </div>
                                     </div>
@@ -410,7 +423,7 @@
                                                 [style.width.%]="actividadGant.date_gap_por">
                                                 <div 
                                                     class="custom-actividad-progress-fill" 
-                                                    [style.width.%]="actividadGant.porcentajeAvance"
+                                                    [style.width.%]="(actividadGant.avances)?(actividadGant.avances[actividadGant.avances.length - 1].avance):(0)"
                                                     [ngClass]="{'custom-elemento-actividad-reprog-fill': (actividadGant.esActividadReprog)}">
                                                 </div>
                                             </div>
@@ -588,10 +601,7 @@
                                                 [disabled]="(modalAction == 'add')||(gestion < initGestion)"
                                                 (change)="validateActAvaAvance()">
                                             <span class="custom-alert-message" *ngIf="!valActAvaAvance">
-                                                Debe ingresar un monto válido.
-                                            </span>
-                                            <span class="custom-alert-message" *ngIf="!valActAvaAvance2">
-                                                El valor ingresado sobrepasa el porcentaje.
+                                                Debe ingresar un valor válido.
                                             </span>
                                         </div>
                                         <!-- ======= ADD AVANCE SECTION ======= -->

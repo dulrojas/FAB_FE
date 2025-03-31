@@ -175,7 +175,7 @@ export class PdfExportService {
     doc.text("Planificacion Operativa Anual", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
     
-    tableHeader = [["AÑO", "PRESUPUESTO ANUAL PLANIFICADO EN ACTIVIDADES", "PRESUPUESTO FUERA DE ACTIVIDADES", "TOTAL"]];
+    tableHeader = [["AÑO", "PRESUPUESTO DE LA GESTION"]];
     autoTable(doc, {
       startY: verticalPadding,
       headStyles: {

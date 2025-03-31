@@ -74,7 +74,6 @@ export class ActividadComponent implements OnInit {
 
   actividadAvances: any = [];
   actividadAvanceMonto: any = [];
-  actividadAvanceAvances: any = [];
 
   actAvaAvance: any = "";
 
@@ -99,6 +98,7 @@ export class ActividadComponent implements OnInit {
   idPresuAvance: any = null;
   fechaPresuAvance: any = null;
   montoNuevoEjecutado: any = null;
+  fechaNuevoEjecutado: any = null;
   motivoNuevoEjecutado: any = null;
 
   elementos: any[] = [];
@@ -293,6 +293,7 @@ export class ActividadComponent implements OnInit {
   }
   closeModal() {
     this.montoNuevoEjecutado = null;
+    this.fechaNuevoEjecutado = null;
     this.motivoNuevoEjecutado = null;
     if (this.modalRefs.length > 0) {
       const lastModal = this.modalRefs.pop();
@@ -393,6 +394,7 @@ export class ActividadComponent implements OnInit {
     this.actAvaAvance = "";
 
     this.valMontoNuevoEjecutado = true;
+    this.valFechaNuevoEjecutado = true;
     this.valMotivoNuevoEjecutado = true;
 
     this.valIdProyElementoPadre = true;
@@ -406,7 +408,6 @@ export class ActividadComponent implements OnInit {
     this.valResultado = true;
 
     this.valActAvaAvance = true;
-    this.valActAvaAvance2 = true;
 
   }
   // ======= ======= ======= ======= =======
@@ -490,6 +491,16 @@ export class ActividadComponent implements OnInit {
     }
   }
 
+  valFechaNuevoEjecutado: any = true;
+  validateFechaNuevoEjecutado(){
+    if( ( this.fechaNuevoEjecutado ) && ( new Date(this.fechaNuevoEjecutado + 'T00:00:00Z').getUTCFullYear().toString() == this.initGestion ) ){
+      this.valFechaNuevoEjecutado = true;
+    }
+    else{
+      this.valFechaNuevoEjecutado = false;
+    }
+  }
+
   valMotivoNuevoEjecutado: any = true;
   validateMotivoNuevoEjecutado(){
     if((this.motivoNuevoEjecutado)&&(this.motivoNuevoEjecutado.length < 100)){
@@ -566,15 +577,17 @@ export class ActividadComponent implements OnInit {
   // ======= ======= =======
   // ======= ACTIVIDAD AVANCE VALIDATIONS =======
   valActAvaAvance: any = true;
-  valActAvaAvance2: any = true;
   validateActAvaAvance() {
-    if(this.actAvaAvance) {
+
+    let lastAvance = (this.actividadAvances[this.actividadAvances.length - 1 ]).avance;
+
+    if( this.actAvaAvance ) {
       this.valActAvaAvance = true;
-      if( (parseFloat(this.actAvaAvance) + parseFloat(this.actividadAvanceAvances)) <= 100 ){
-        this.valActAvaAvance2 = true;
+      if( ( parseFloat(this.actAvaAvance) > lastAvance ) && ( parseFloat(this.actAvaAvance) <= 100 ) ){
+        this.valActAvaAvance = true;
       }
       else{
-        this.valActAvaAvance2 = false;
+        this.valActAvaAvance = false;
       }
     } 
     else {
@@ -595,6 +608,7 @@ export class ActividadComponent implements OnInit {
   presuAvanceSelected: any = null;
   onPresuAvanceClick(presuAvanceSel: any) {
     this.montoNuevoEjecutado = null;
+    this.fechaNuevoEjecutado = null;
     this.motivoNuevoEjecutado = null;
     this.presuAvances.forEach((presuAvance) =>{
       if(presuAvanceSel.id_proy_presu_avance == presuAvance.id_proy_presu_avance){
@@ -626,9 +640,10 @@ export class ActividadComponent implements OnInit {
   // ======= ======= ADD PRESU AVANCE ======= =======
   addPresuAvance(){
     this.validateMontoNuevoEjecutado();
+    this.validateFechaNuevoEjecutado();
     this.validateMotivoNuevoEjecutado();
 
-    let valPreAva = this.valMontoNuevoEjecutado && this.valMotivoNuevoEjecutado;
+    let valPreAva = this.valMontoNuevoEjecutado && this.valFechaNuevoEjecutado && this.valMotivoNuevoEjecutado;
 
     if(valPreAva){  
       let objPresuAvance = {
@@ -636,7 +651,7 @@ export class ActividadComponent implements OnInit {
         p_id_proy_presupuesto: this.idPresupuestoGest,
         p_monto_avance: this.parseAmountStrToFloat(this.montoNuevoEjecutado),
         p_id_persona: this.idPersonaReg,
-        p_fecha_hora: null,
+        p_fecha_hora: this.fechaNuevoEjecutado,
         p_motivo: this.motivoNuevoEjecutado,
         p_id_proyecto: 0
       };
@@ -647,6 +662,7 @@ export class ActividadComponent implements OnInit {
           this.idPresuAvance = null;
           this.fechaPresuAvance = null;
           this.montoNuevoEjecutado = null;
+          this.fechaNuevoEjecutado = null;
           this.motivoNuevoEjecutado = null;
 
           this.getPresuAvance();
@@ -668,6 +684,7 @@ export class ActividadComponent implements OnInit {
     this.idPresuAvance = this.presuAvanceSelected.id_proy_presu_avance;
     this.fechaPresuAvance = this.presuAvanceSelected.fecha_hora.split("T")[0];
     this.montoNuevoEjecutado = this.presuAvanceSelected.id_proy_presu_avance;
+    this.fechaNuevoEjecutado = this.presuAvanceSelected.motivo;
     this.motivoNuevoEjecutado = this.presuAvanceSelected.motivo;
 
     this.openModal(modalScope);
@@ -676,9 +693,10 @@ export class ActividadComponent implements OnInit {
   // ======= ======= EDIT PRESU AVANCE ======= =======
   editPresuAvance(){
     this.validateMontoNuevoEjecutado();
+    this.validateFechaNuevoEjecutado();
     this.validateMotivoNuevoEjecutado();
 
-    let valPreAva = this.valMontoNuevoEjecutado && this.valMotivoNuevoEjecutado;
+    let valPreAva = this.valMontoNuevoEjecutado && this.valFechaNuevoEjecutado && this.valMotivoNuevoEjecutado;
 
     if(valPreAva){  
       let objPresuAvance = {
@@ -686,7 +704,7 @@ export class ActividadComponent implements OnInit {
         p_id_proy_presupuesto: this.idPresupuestoGest,
         p_monto_avance: this.parseAmountStrToFloat(this.montoNuevoEjecutado),
         p_id_persona: this.idPersonaReg,
-        p_fecha_hora: null,
+        p_fecha_hora: this.fechaNuevoEjecutado,
         p_motivo: this.motivoNuevoEjecutado,
         p_id_proyecto: 0
       };
@@ -697,6 +715,7 @@ export class ActividadComponent implements OnInit {
           this.idPresuAvance = null;
           this.fechaPresuAvance = null;
           this.montoNuevoEjecutado = null;
+          this.fechaNuevoEjecutado = null;
           this.motivoNuevoEjecutado = null;
 
           this.getPresuAvance();
@@ -726,6 +745,7 @@ export class ActividadComponent implements OnInit {
         this.idPresuAvance = null;
         this.fechaPresuAvance = null;
         this.montoNuevoEjecutado = null;
+        this.fechaNuevoEjecutado = null;
         this.motivoNuevoEjecutado = null;
 
         this.getPresuAvance();
@@ -927,13 +947,6 @@ export class ActividadComponent implements OnInit {
 
     this.actividadAvances = (this.actividadSelected.avances)?(this.actividadSelected.avances):([]);
 
-    this.actividadAvanceAvances = 0;
-    this.actividadAvanceMonto = 0;
-    this.actividadAvances.forEach((actAvance) => {
-      this.actividadAvanceAvances += parseFloat(actAvance.avance);
-      this.actividadAvanceMonto += this.parseAmountStrToFloat(actAvance.monto_ejecutado);
-    });
-
     this.openModal(modalScope);
   }
   // ======= ======= ======= ======= =======
@@ -1012,13 +1025,6 @@ export class ActividadComponent implements OnInit {
     this.resultado = this.actividadSelected.resultado;
 
     this.actividadAvances = (this.actividadSelected.avances)?(this.actividadSelected.avances):([]);
-
-    this.actividadAvanceAvances = 0;
-    this.actividadAvanceMonto = 0;
-    this.actividadAvances.forEach((actAvance) => {
-      this.actividadAvanceAvances += parseFloat(actAvance.avance);
-      this.actividadAvanceMonto += this.parseAmountStrToFloat(actAvance.monto_ejecutado);
-    });
 
     this.openModal(modalScope);
   }
@@ -1121,10 +1127,7 @@ export class ActividadComponent implements OnInit {
   onSubmitAvance(): void {
     this.validateActAvaAvance();
 
-    let valForm = (
-      this.valActAvaAvance &&
-      this.valActAvaAvance2
-    );
+    let valForm = this.valActAvaAvance;
 
     if(valForm){
       this.avanceActividad();
@@ -1235,8 +1238,7 @@ export class ActividadComponent implements OnInit {
       'fecha_fin', 
       'descripcion', 
       'id_proy_elem_padre', 
-      'id_proy_acti_repro', 
-      'presupuesto'
+      'id_proy_acti_repro'
     ];
     const today = new Date();
     const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');

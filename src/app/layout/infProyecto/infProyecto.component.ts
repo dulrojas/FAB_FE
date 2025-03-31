@@ -689,11 +689,9 @@ export class InfProyectoComponent implements OnInit {
         monto  
       ]));
 
-      projectObj.presupuestos = this.presupuestos.map(({ anio, total_actividades_presupuesto, presup_adicional, total_presup }) => ([  
+      projectObj.presupuestos = this.presupuestos.map(({ anio, presup_adicional }) => ([  
         anio,  
-        total_actividades_presupuesto,  
-        presup_adicional,  
-        total_presup  
+        presup_adicional
       ]));
       // ======= ======= =======
       // ======= ALCANCE GEO SECTION =======
@@ -762,7 +760,7 @@ export class InfProyectoComponent implements OnInit {
 
       projectObj.gestion = presupuestoEjecutado.gestion_actual;
 
-      projectObj.pro_act_presupuesto = presupuestoEjecutado.pro_act_presupuesto;
+      projectObj.pro_act_presupuesto = presupuestoEjecutado.pro_pre_adicional;
       projectObj.pro_act_ejecutado = 
         "$"+this.parseAmountFloatToStr(
           this.parseAmountStrToFloat(presupuestoEjecutado.pro_act_ava_ejecutado) + 
@@ -770,7 +768,7 @@ export class InfProyectoComponent implements OnInit {
         )
       ;
       
-      projectObj.pro_act_presupuesto_gestion = presupuestoEjecutado.pro_act_presupuesto_gestion;
+      projectObj.pro_act_presupuesto_gestion = presupuestoEjecutado.pro_pre_adicional_gestion;
       projectObj.pro_act_ejecutado = 
         "$"+this.parseAmountFloatToStr(
           this.parseAmountStrToFloat(presupuestoEjecutado.pro_act_ava_ejecutado_gestion) + 
@@ -1191,17 +1189,18 @@ export class InfProyectoComponent implements OnInit {
     presupuestoActual:any = {};
     presupuestoAuxiliar: any = 0;
     presupuestoTotal: any = 0;
+    presuPresupuestoAux: any = 0;
     presuPorcentajeAux: any = 0;
 
     onPresuAdicionalChange(){
-      if((this.presupuestoActual.presup_adicional < 0) || (/[a-zA-Z]/.test(this.presupuestoActual.presup_adicional.toString()))) {
+      if((this.presuPresupuestoAux < 0) || (/[a-zA-Z]/.test(this.presuPresupuestoAux.toString()))) {
         this.presupuestoActual.presup_adicional = 0;
       }
-      this.presupuestoActual.presup_adicional = this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional);
-      this.presupuestoActual.presup_adicional = this.parseAmountFloatToStr(this.presupuestoActual.presup_adicional);
+      this.presuPresupuestoAux = this.parseAmountStrToFloat(this.presuPresupuestoAux);
+      this.presuPresupuestoAux = this.parseAmountFloatToStr(this.presuPresupuestoAux);
 
       this.presuPorcentajeAux = ((this.proyectoScope.presupuesto_mn)?(
-        (this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional))/this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn)):
+        (this.parseAmountStrToFloat(this.presuPresupuestoAux))/this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn)):
         ("0.00")
       );
       this.presuPorcentajeAux = this.parseAmountFloatToStr((this.presuPorcentajeAux*100))+"%";
@@ -1214,8 +1213,8 @@ export class InfProyectoComponent implements OnInit {
     ValidatePresuAdicional(){
       this.valPresupAdicional1 = true;
       this.valPresupAdicional2 = true;
-      if (this.presupuestoActual.presup_adicional) {
-        if((this.parseAmountStrToFloat(this.presupuestoActual.presup_adicional)+(this.presupuestoTotal - this.parseAmountStrToFloat(this.presupuestoAuxiliar)) > this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn) )){
+      if (this.presuPresupuestoAux){
+        if((this.parseAmountStrToFloat(this.presuPresupuestoAux)+(this.presupuestoTotal - this.parseAmountStrToFloat(this.presupuestoAuxiliar)) > this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn) )){
           this.valPresupAdicional2 = false;
         }
       }
@@ -1334,6 +1333,7 @@ export class InfProyectoComponent implements OnInit {
       this.modalTitle = "Presupuesto de la Gestion";
 
       this.presupuestoAuxiliar = this.presupuestoActual.presup_adicional;
+      this.presuPresupuestoAux = this.presupuestoActual.presup_adicional;
       this.presuPorcentajeAux = this.presupuestoActual.porcentaje;
 
       this.openCustomSizeModal(modalScope, 'sm');
@@ -1364,6 +1364,8 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= EDIT PRESUPUESTO ======= =======
     editPresupuesto(){
+      this.presupuestoActual.presup_adicional = this.presuPresupuestoAux;
+
       let presupuestoObj = {
         p_id_proy_presupuesto: this.presupuestoActual.id_proy_presupuesto,
         p_id_proyecto: this.idProyecto,
@@ -1377,6 +1379,7 @@ export class InfProyectoComponent implements OnInit {
 
       this.servPresupuesto.editPresupuesto(presupuestoObj).subscribe(
         (data)=>{
+          this.getPresupuestos();
         },
         (error)=>{
           console.error(error);

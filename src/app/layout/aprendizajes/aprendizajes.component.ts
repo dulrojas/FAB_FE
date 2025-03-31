@@ -502,7 +502,7 @@ export class AprendizajesComponent implements OnInit {
   // ======= ======= ======= ======= =======
   // ======= ======= DOWNLOAD EXCEL ======= =======
   downloadExcel() {
-    const columnas = ['id_proy_aprende', 'fecha', 'sigla', 'aprendizaje', 'problema', 'accion'];
+    const columnas = ['fecha', 'sigla', 'aprendizaje', 'problema', 'accion'];
     const today = new Date();
     const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
 
