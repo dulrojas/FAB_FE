@@ -65,7 +65,7 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th style="text-align: center;">ID</th>
+                                    <th style="text-align: center;">N°</th>
                                     <th style="text-align: center;">FECHA</th>
                                     <th>DEPARTAMENTO</th>
                                     <th>MUNICIPIO</th> 
@@ -87,7 +87,8 @@
                                             (change)="checkboxChangedBeneficiario(beneficiario)"                                            
                                             id="checkbox-{{ i }}" name="checkbox-{{ i }}">
                                     </td>
-                                    <td style="text-align: center;">{{ beneficiario.id_proy_beneficiario }}</td>
+                                    <!-- <td style="text-align: center;">{{ beneficiario.id_proy_beneficiario }}</td> -->
+                                    <td style="text-align: center">{{ i + 1 }}</td> 
                                     <td style="text-align: center;">{{ beneficiario.fecha | date:'dd/MM/yyyy' }}</td>
                                     <td>{{ getUbicacionGeografica(beneficiario.id_ubica_geo_depto, beneficiariosUbicaDepto) }}</td>
                                     <td>{{ beneficiario.ubica_geo_muni }}</td>
@@ -131,7 +132,8 @@
         <ng-template #beneficiariosFormModal let-modal class="custom-modal">
             <!-- Encabezado del Modal-->
             <div class="modal-header">
-                <h4 class="modal-title">{{ modalTitleBeneficiario }} </h4>        
+                <h4 class="modal-title">{{ modalTitleBeneficiario }} </h4> 
+                <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Cerrar')"></button>       
             </div>
             <!-- Cuerpo del Modal -->
             <div class="modal-body">
@@ -142,15 +144,15 @@
                                 <div class="card-body custom-card">
                                     <div class="row">   
                                         <!-- Primera Fila: ID, TIPO DE EVENTO, FECHA DE EVENTO -->
-                                            <!-- ======= ======= ======= ID ======= ======= ======= -->
+                                            <!-- ======= ======= ======= ID ======= ======= ======= 
                                             <div class="col col-xl-2 col-lg-2 mb-auto">
                                                 <label  for="id_proy_beneficiario">ID</label>
                                                 <input  class="form-control" type="text" 
                                                         id="id_proy_beneficiario" name="id_proy_beneficiario" 
                                                         [(ngModel)]="id_proy_beneficiario" disabled/>
-                                            </div> 
+                                            </div> -->
                                             <!-- ======= ======= ======= ======= ======= ======= -->
-                                            <div class="col col-xl-4 col-lg-4 mb-auto">                                        
+                                            <div class="col col-xl-6 col-lg-6 mb-auto">                                        
                                             </div>
                                             <!-- ======= ======= TIPO DE EVENTO ======= ======= --> 
                                             <div class="col col-xl-3 col-lg-3 mb-auto">
@@ -504,7 +506,7 @@
                                         <thead>
                                             <tr>
                                                 <th></th>
-                                                <th style="text-align: center;">#</th>
+                                                <!--<th style="text-align: center;">#</th>-->
                                                 <th style="text-align: center;">CI o ID</th>
                                                 <th style="text-align: center;">Nombre y Apellido</th>
                                                 <th style="text-align: center;">Sexo</th>
@@ -524,7 +526,7 @@
                                                         (change)="checkboxChangedBeneficiarioLista(beneficiarioLista)"                                                      
                                                         id="checkbox-{{ i }}" name="checkbox-{{ i }}">
                                                 </td>
-                                                <td style="text-align: center;" [ngStyle]="{'color': beneficiarioLista.documentoDuplicado ? 'red' : 'inherit'}">{{ beneficiarioLista.id_proy_bene_lista }}</td>
+                                                <!--<td style="text-align: center;" [ngStyle]="{'color': beneficiarioLista.documentoDuplicado ? 'red' : 'inherit'}">{{ beneficiarioLista.id_proy_bene_lista }}</td>-->
                                                 <td style="text-align: center;" [ngStyle]="{'color': beneficiarioLista.documentoDuplicado ? 'red' : 'inherit'}">{{ beneficiarioLista.num_doc_identidad }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.nombre }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.genero }}</td>
@@ -583,7 +585,7 @@
                                             <div class="d-flex justify-content-end">
                                                 <!-- ======= ======= CANCELAR ======= ======= -->
                                                     <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                                                        <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                                        <i class="fa fa-times" aria-hidden="true"></i> Cerrar
                                                     </button>                                                                                                                                                                                             
                                                 <!-- ======= ======= AÑADIR ======= ======= -->
                                                     <button type="button" class="btn btn-bg-1" 
@@ -819,7 +821,7 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th style="text-align: center;">ID</th>
+                                    <th style="text-align: center;">N°</th>
                                     <th style="text-align: center;">Fecha</th>
                                     <th>Institución / Organización</th>
                                     <th>Nombre del Referente</th>
@@ -836,7 +838,8 @@
                                             (change)="checkboxChangedAliado(aliado)"
                                             id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
                                     </td>  
-                                    <td style="text-align: center;">{{ aliado.id_proy_aliado }}</td>
+                                    <!--<td style="text-align: center;">{{ aliado.id_proy_aliado }}</td>-->
+                                    <td style="text-align: center">{{ i + 1 }}</td>
                                     <td style="text-align: center;">{{ aliado.fecha | date:'dd/MM/yyyy' }}</td>
                                     <td>{{ getOrganizacion(aliado.id_organizacion, aliadosOrganizacion) }}</td>
                                     <td>{{ aliado.referente }}</td>
@@ -884,15 +887,15 @@
                             <div class="card-body custom-card">
                                 <div class="row">
                                     <!-- Primera Fila: ID, FECHA DE IDENTIFICACION-->
-                                        <!-- ======= ======= ======= ID ======= ======= ======= -->
+                                        <!-- ======= ======= ======= ID ======= ======= ======= 
                                         <div class="col col-xl-2 col-lg-2 mb-auto">
                                             <label  for="id_proy_aliado">ID</label>
                                             <input  class="form-control" type="text" 
                                                     id="id_proy_aliado" name="id_proy_aliado" 
                                                     [(ngModel)]="id_proy_aliado" disabled/>
-                                        </div>
+                                        </div>-->
                                         <!-- ======= ======= ======= ======= ======= ======= -->
-                                        <div class="col col-xl-7 col-lg-7 mb-auto">                                        
+                                        <div class="col col-xl-9 col-lg-9 mb-auto">                                        
                                         </div>                                        
                                         <!-- ======= ======= FECHA DE IDENTIFICACION ======= ======= --> 
                                         <div class="col col-xl-3 col-lg-3 mb-auto">

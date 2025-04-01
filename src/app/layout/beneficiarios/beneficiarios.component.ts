@@ -283,7 +283,7 @@ export class BeneficiariosComponent implements OnInit {
       valTituloEvento: any = true;
       ValidateTituloEvento() {
         this.valTituloEvento = true;
-        if ((!this.titulo_evento) || (this.titulo_evento.length >= 50)) {
+        if (!this.titulo_evento || this.titulo_evento.trim().length === 0  || this.titulo_evento.trim().length > 50) {
           this.valTituloEvento = false;
         }
       }
@@ -773,7 +773,9 @@ export class BeneficiariosComponent implements OnInit {
       } else {        
         Notify.success('Importación completada exitosamente con éxito.');
         this.getBeneficiariosListaPorProyecto();
+        this.getBeneficiariosLista();
       }
+      this.getBeneficiariosListaPorProyecto();
       this.getBeneficiariosLista(); 
       this.beneficiariosListaProyectoSelected = []; 
       this.closeModalBeneficiarioListaProyecto(); 
@@ -1031,7 +1033,7 @@ export class BeneficiariosComponent implements OnInit {
       valNumDocIdentidad: any = true;
       ValidateNumDocIdentidad() {
         this.valNumDocIdentidad = true;
-        if (!this.num_doc_identidad || this.num_doc_identidad.length >= 10) {
+        if (!this.num_doc_identidad || this.num_doc_identidad.length > 10) {
           this.valNumDocIdentidad = false;
           return;
         }
@@ -1043,7 +1045,7 @@ export class BeneficiariosComponent implements OnInit {
       valNombre: any = true;
       ValidateNombre() {
         this.valNombre = true;
-        if ((!this.nombre) || (this.nombre.length >= 100)) {
+        if ((!this.nombre) || (this.nombre.length > 100)) {
           this.valNombre = false;
         }
       }
@@ -1541,14 +1543,14 @@ export class BeneficiariosComponent implements OnInit {
   valReferente: any = true;
   ValidateReferente() {
     this.valReferente = true;
-    if ((!this.referente) || (this.referente.length >= 100)) {
+    if ((!this.referente) || (this.referente.length > 100)) {
       this.valReferente = false;
     }
   }
   valVinculo: any = true;
   ValidateVinculo() {
     this.valVinculo = true;
-    if ((!this.vinculo) || (this.vinculo.length >= 255)) {
+    if ((!this.vinculo) || (this.vinculo.length > 255)) {
       this.valVinculo = false;
     }
   }
@@ -1802,7 +1804,7 @@ export class BeneficiariosComponent implements OnInit {
   valOrganizacion: any = true;
   ValidateOrganizacion() {
     this.valOrganizacion = true;
-    if ((!this.organizacion) || (this.organizacion.length >= 100)) {
+    if ((!this.organizacion) || (this.organizacion.length > 100)) {
       this.valOrganizacion = false;
     }
   }

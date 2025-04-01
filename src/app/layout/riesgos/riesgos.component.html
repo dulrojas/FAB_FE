@@ -56,6 +56,11 @@
                   [disabled]="(!riesgosSelected)||(currentPerProRol.includes('LEC'))">
                     <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                   </button>
+                <!-- EXPORTAR -->
+                  <button type="button" class="btn btn-view-bg-1"
+                  (click)="downloadExcel()">
+                  <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
+                </button>
               </div>
           </div>
         </div>
@@ -64,7 +69,7 @@
           <thead>
             <tr>
               <th></th>
-              <th style="text-align: center;">ID</th>
+              <th style="text-align: center;">N°</th>
               <th>CATEGORÍA</th>
               <th style="text-align: center;">IDENTIFICACIÓN</th>
               <th>RIESGO/SUPUESTO/HIPÓTESIS</th>
@@ -87,7 +92,8 @@
                       id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
               </td> 
               <!-- ID -->    
-              <td style="text-align: center;" >{{ riesgo.id_riesgo }}</td>
+              <td style="text-align: center">{{ i + 1 }}</td>  
+              <!--<td style="text-align: center;" >{{ riesgo.id_riesgo }}</td> --> 
               <!-- CATEGORÍA -->
               <td>{{ getDescripcionSubtipo(riesgo.idp_categoria, riesgoCategoria) }}</td>
               <!-- FECHA -->
@@ -107,11 +113,11 @@
               <!-- PROBABILIDAD -->
               <td>
                 <div class="probabilidad-shape" [ngClass]="{
-                  'probabilidad-alto': mapProbabilidadImpacto(riesgo.probabilidad) === 'Alto',
-                  'probabilidad-medio': mapProbabilidadImpacto(riesgo.probabilidad) === 'Medio',
-                  'probabilidad-bajo': mapProbabilidadImpacto(riesgo.probabilidad) === 'Bajo'
+                  'probabilidad-alto': mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') === 'Alta',
+                  'probabilidad-medio': mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') === 'Media',
+                  'probabilidad-bajo': mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') === 'Baja'
                 }">
-                  {{ mapProbabilidadImpacto(riesgo.probabilidad) }}
+                  {{ mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') }}
                 </div>
               </td>
               <!-- NIVEL DE RIESGO -->
@@ -172,29 +178,30 @@
               <div class="card-body custom-card">
                 <div class="row">
                   <!-- PRIMERA FILA: ID, FECHA DE REGISTRO, PERSONA REGISTRO, COMPONENTE -->
-                      <!-- ======= ======= ID ======= ======= -->
+                      <!-- ======= ======= ID ======= ======= 
                       <div class="col col-xl-2 col-lg-2 mb-auto">
                         <label for="id_riesgo">ID </label>
                         <input  class="form-control" type="text"
                                 id="id_riesgo" name="id_riesgo"
                                 [(ngModel)]="id_riesgo" disabled/>
+                      </div> -->
+                      <!-- ======= ======= PERSONA REGISTRO ======= ======= -->
+                      <div class="col col-xl-4 col-lg-4 mb-auto">
+                        <label for="persona_registro">Persona Registro</label>
+                        <input  class="form-control" type="text" 
+                                id="persona_registro" name="persona_registro" 
+                                [(ngModel)]="persona_registro" disabled/>
                       </div>
                       <!-- ======= ======= FECHA DE REGISTRO ======= ======= -->
                       <div class="col col-xl-3 col-lg-3 mb-auto">
                         <label  for="fecha_registro">Fecha de Registro</label>
                         <input  class="form-control" type="text"
                                 id="fecha_registro" name="fecha_registro"
-                                [(ngModel)]="fecha_registro" disabled/>
-                      </div>
-                      <!-- ======= ======= PERSONA REGISTRO ======= ======= -->
-                      <div class="col col-xl-3 col-lg-3 mb-auto">
-                        <label for="persona_registro">Persona Registro</label>
-                        <input  class="form-control" type="text" 
-                                id="persona_registro" name="persona_registro" 
-                                [(ngModel)]="persona_registro" disabled/>
-                      </div>
+                                [value]="fecha_registro | date: 'dd-MM-yyyy HH:mm'" 
+                                disabled/>
+                      </div>                      
                       <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
-                      <div class="col col-xl-3 col-lg-3 mb-auto">
+                      <div class="col col-xl-4 col-lg-4 mb-auto">
                         <label for="id_proy_elemen_padre">Componente</label>
                           <select class="form-control" 
                             id="id_proy_elemen_padre" name="id_proy_elemen_padre" 
@@ -309,9 +316,9 @@
                             [(ngModel)]="probabilidad" (change)="this.ValidateProbabilidad()"
                             (ngModelChange)="calcularNivelRiesgo()">
                             <option [value]="null" disabled selected>Seleccione Probabilidad</option>
-                            <option value="3">Alto</option>
-                            <option value="2">Medio</option>
-                            <option value="1">Bajo</option>
+                            <option value="3">Alta</option>
+                            <option value="2">Media</option>
+                            <option value="1">Baja</option>
                           </select>
                           <span class="custom-alert-message" *ngIf="!valProbabilidad">Debe elegir una probabilidad</span>
                           <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
@@ -323,7 +330,7 @@
                                   'probabilidad-bajo': probabilidad === '1'
                                 }" 
                                 style="transform: scale(0.6);">
-                                {{ mapProbabilidadImpacto(probabilidad) }}
+                                {{ mapProbabilidadImpacto(probabilidad, 'femenino') }}
                             </div>
                           </div>
                         </div>
