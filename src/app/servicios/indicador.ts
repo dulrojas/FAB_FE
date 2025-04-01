@@ -35,7 +35,9 @@ export class servIndicador {
               {"name": "p_id_estado", "value": null, "type": "int"},
               {"name": "p_id_inst_categoria_1", "value": null, "type": "int"},
               {"name": "p_id_inst_categoria_2", "value": null, "type": "int"},
-              {"name": "p_id_inst_categoria_3", "value": null, "type": "int"}
+              {"name": "p_id_inst_categoria_3", "value": null, "type": "int"},
+              {"name": "p_id_persona_reg", "value": null, "type": "int"},
+              {"name": "p_es_estrategico", "value": null, "type": "boolean"}
             ]
           }
         };
@@ -73,15 +75,17 @@ export class servIndicador {
               {"name": "p_id_estado", "value": null, "type": "int"},
               {"name": "p_id_inst_categoria_1", "value": null, "type": "int"},
               {"name": "p_id_inst_categoria_2", "value": null, "type": "int"},
-              {"name": "p_id_inst_categoria_3", "value": null, "type": "int"}
+              {"name": "p_id_inst_categoria_3", "value": null, "type": "int"},
+              {"name": "p_id_persona_reg", "value": null, "type": "int"},
+              {"name": "p_es_estrategico", "value": null, "type": "boolean"}
             ]
           }
         };
 
-        const ip = localStorage.getItem('ip') || '';
-          const headers = new HttpHeaders({
-            'ip': "127.0.0.1"
-          });
+        const ip = localStorage.getItem('ip') || '127.0.0.1';
+        const headers = new HttpHeaders({
+          'ip': ip
+        });
         
           return this.http.post<any>(this.URL, params, { headers });
       }
@@ -111,15 +115,16 @@ export class servIndicador {
               { "name": "p_id_estado", "value": obj.p_id_estado, "type": "int" },
               { "name": "p_id_inst_categoria_1", "value": obj.p_inst_categoria_1, "type": "int" },
               { "name": "p_id_inst_categoria_2", "value": obj.p_inst_categoria_2, "type": "int" },
-              { "name": "p_id_inst_categoria_3", "value": obj.p_inst_categoria_3, "type": "int" }
+              { "name": "p_id_inst_categoria_3", "value": obj.p_inst_categoria_3, "type": "int" },
+              { "name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int" },
+              { "name": "p_es_estrategico", "value": obj.p_es_estrategico, "type": "boolean" }
             ]
           }
-        };
-        console.log('datos enm eel metodo de add des pues ',params);
+        };        
       
-        const ip = localStorage.getItem('ip') || '';
+        const ip = localStorage.getItem('ip') || '127.0.0.1';
         const headers = new HttpHeaders({
-          'ip': ip || "127.0.0.1"
+          'ip': ip
         });
       
         return this.http.post<any>(this.URL, params, { headers });
@@ -148,14 +153,16 @@ export class servIndicador {
               { "name": "p_id_estado", "value": obj.p_id_estado, "type": "int" },
               { "name": "p_id_inst_categoria_1", "value": obj.p_inst_categoria_1, "type": "int" },
               { "name": "p_id_inst_categoria_2", "value": obj.p_inst_categoria_2, "type": "int" },
-              { "name": "p_id_inst_categoria_3", "value": obj.p_inst_categoria_3, "type": "int" }
+              { "name": "p_id_inst_categoria_3", "value": obj.p_inst_categoria_3, "type": "int" },
+              { "name": "p_id_persona_reg", "value": obj.p_id_persona_reg, "type": "int" },
+              { "name": "p_es_estrategico", "value": obj.p_es_estrategico, "type": "boolean"}
             ]
           }
         };
       
-        const ip = localStorage.getItem('ip') || '';
+        const ip = localStorage.getItem('ip') || '127.0.0.1';
         const headers = new HttpHeaders({
-          'ip': ip || "127.0.0.1"
+          'ip': ip
         });
       
         return this.http.post<any>(this.URL, params, { headers });
@@ -184,14 +191,16 @@ export class servIndicador {
               { "name": "p_id_estado", "value": null, "type": "int" },
               { "name": "p_id_inst_categoria_1", "value": null, "type": "int" },
               { "name": "p_id_inst_categoria_2", "value": null, "type": "int" },
-              { "name": "p_id_inst_categoria_3", "value": null, "type": "int" }
+              { "name": "p_id_inst_categoria_3", "value": null, "type": "int" },
+              { "name": "p_id_persona_reg", "value": null, "type": "int" },
+              { "name": "p_es_estrategico", "value": null, "type": "boolean" }
             ]
           }
         };
       
-        const ip = localStorage.getItem('ip') || '';
+        const ip = localStorage.getItem('ip') || '127.0.0.1';
         const headers = new HttpHeaders({
-          'ip': ip || "127.0.0.1"
+          'ip': ip
         });
       
         return this.http.post<any>(this.URL, params, { headers });

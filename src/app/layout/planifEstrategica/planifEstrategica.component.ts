@@ -25,9 +25,82 @@ import { Notify,Report,Confirm } from 'notiflix';
 })
 
 export class PlanifEstrategicaComponent implements OnInit {
+
+  constructor(
+    protected modalService: NgbModal,
+     private proyectoService: ProyectoService,
+    protected cdr: ChangeDetectorRef,
+    protected servicios: servicios,
+    protected servInstCategorias: servInstCategorias,
+    protected servApredizaje: servAprendizaje,
+    protected servIndicador: servIndicador,
+    protected servIndicadorAvance: servIndicadorAvance,
+    protected proyElementosService: ElementosService,
+    protected servmetoElemento: MetoElementosService,
+    protected servActAvance: servActAvance,
+  ) { }
+
+  // ======= ======= HEADER SECTION ======= =======
+      idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
+      idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
+      namePersonaReg: any = localStorage.getItem('userFullName');
+      currentPerProRol: any = localStorage.getItem('currentPerProRol');
+
+      @Output() selectionChange = new EventEmitter<any>();
+      onChildSelectionChange(selectedPro: any) {
+        this.idProyecto = selectedPro.id_proyecto;
+        localStorage.setItem('currentIdProy', (this.idProyecto).toString());
+        this.proyectoService.seleccionarProyecto(this.idProyecto);
+        this.currentPerProRol = selectedPro.rol;
+
+        this.ngOnInit()
+        this.getParametricas();
+        this.getPlanifEstrategica();
+        this.initPlanifEstrategicaModel();
+        this.planifEstrategicaSelected = null
+      }
+  // ======= ======= INIT VIEW FUN ======= =======
+      ngOnInit(): void {
+        this.loadMetoElemento();
+        this.getParametricas();
+        this.getPlanifEstrategica(); 
+        this.loadData();
+        this.countHeaderData();
+        this.cargarIndicadoresAvance();
+      }
+  // ============ counter  variables section ====== =====
+      headerDataNro01: any = 0;
+      headerDataNro02: any = 0;
+      headerDataNro03: any = 0;
+      headerDataNro04: any = 0;
+  // ======= ======= ======= ======= =======  ======= ======= =======  =======
+      jsonToString(json: object): string {
+        return JSON.stringify(json);
+      }
+      stringToJson(jsonString: string): object {
+        return JSON.parse(jsonString);
+      }
+      // GET PARAMETRICAS
+      getDescripcionSubtipo(idRegistro: any, paramList: any): string {
+        const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
+        return subtipo ? subtipo.descripcion_subtipo : 'Null';
+      }
+      getCurrentDateTime(): string {
+        const date: Date = new Date();
+
+        const day: string = String(date.getDate()).padStart(2, '0');
+        const month: string = String(date.getMonth() + 1).padStart(2, '0');
+        const year: number = date.getFullYear();
+
+        const hours: string = String(date.getHours()).padStart(2, '0');
+        const minutes: string = String(date.getMinutes()).padStart(2, '0');
+        const seconds: string = String(date.getSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      }
+
   // ======= ======= VARIABLES SECTION ======= =======
   planifEstrategica: any[] = [];
-
   // ======= ======= VARIABLES PAGINACION ======= =======
   mainPage = 1;
   mainPageSize = 50;
@@ -51,12 +124,6 @@ export class PlanifEstrategicaComponent implements OnInit {
     comentarios: any,  
     ruta_evidencia: any,
   };
-
-// ============ counter  variables section ====== =====
-  headerDataNro01: any = 0;
-  headerDataNro02: any = 0;
-  headerDataNro03: any = 0;
-  headerDataNro04: any = 0;
 
   // ======= ======= NGMODEL VARIABLES SECTION ======= =======
   modalAction: any = "";
@@ -88,6 +155,9 @@ export class PlanifEstrategicaComponent implements OnInit {
   inst_categoria_2: any = "";
   inst_categoria_3: any = "";
 
+  id_persona_reg: any = "";
+  es_estrategico: any = "";
+
   sigla: any = "";
   color: any = "";
 
@@ -105,59 +175,6 @@ export class PlanifEstrategicaComponent implements OnInit {
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
   valComponente: any = false;
-
-  constructor(
-    protected modalService: NgbModal,
-     private proyectoService: ProyectoService,
-    protected cdr: ChangeDetectorRef,
-    protected servicios: servicios,
-    protected servInstCategorias: servInstCategorias,
-    protected servApredizaje: servAprendizaje,
-    protected servIndicador: servIndicador,
-    protected servIndicadorAvance: servIndicadorAvance,
-    protected proyElementosService: ElementosService,
-    protected servmetoElemento: MetoElementosService,
-    protected servActAvance: servActAvance,
-  ) { }
-    // ======= ======= HEADER SECTION ======= =======
-    idProyecto: any = parseInt(localStorage.getItem('currentIdProy'));
-      idPersonaReg: any = parseInt(localStorage.getItem('currentIdPer'));
-      namePersonaReg: any = localStorage.getItem('userFullName');
-      currentPerProRol: any = localStorage.getItem('currentPerProRol');
-      @Output() selectionChange = new EventEmitter<any>();
-      onChildSelectionChange(selectedPro: any) {
-        this.idProyecto = selectedPro.id_proyecto;
-        localStorage.setItem('currentIdProy', (this.idProyecto).toString());
-        this.proyectoService.seleccionarProyecto(this.idProyecto);
-        this.currentPerProRol = selectedPro.rol;
-      this.ngOnInit()
-      this.getParametricas();
-      this.getPlanifEstrategica();
-      this.initPlanifEstrategicaModel();
-      this.planifEstrategicaSelected = null
-    }
-
-    ngOnInit(): void {
-      this.loadMetoElemento();
-      this.getParametricas();
-      this.getPlanifEstrategica(); 
-      this.loadData();
-      this.countHeaderData();
-      this.cargarIndicadoresAvance();
-    }
-
-      // ======= ======= GET INDICADORES ======= =======
-      getPlanifEstrategica() {
-        this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(
-          (data: any) => {
-            this.planifEstrategica = (data[0].dato) ? (data[0].dato) : ([]);
-            this.totalLength = this.planifEstrategica.length;
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
-      }
   
     loadMetoElemento() {
       this.servmetoElemento.getMetoElementosByMetodologia(2).subscribe(
@@ -212,183 +229,6 @@ export class PlanifEstrategicaComponent implements OnInit {
     editPlanifEstrategica(planifEstrategicaOGOERE: any, planifEstrategicaIN: any): void {
       this.initEditPlanifEstrategica(planifEstrategicaOGOERE, planifEstrategicaIN);
       this.cargarIndicadoresAvance();
-    }
-  
-    // ======= ======= ======= ======= =======  ======= ======= =======  =======
-      jsonToString(json: object): string {
-        return JSON.stringify(json);
-      }
-    
-      stringToJson(jsonString: string): object {
-        return JSON.parse(jsonString);
-      }
-    
-      getDescripcionSubtipo(idRegistro: any, paramList: any): string {
-        const subtipo = paramList.find(elem => elem.id_subtipo == idRegistro);
-        return subtipo ? subtipo.descripcion_subtipo : 'Null';
-      }
-    
-      getCurrentDateTime(): string {
-        const date: Date = new Date();
-    
-        const day: string = String(date.getDate()).padStart(2, '0');
-        const month: string = String(date.getMonth() + 1).padStart(2, '0');
-        const year: number = date.getFullYear();
-    
-        const hours: string = String(date.getHours()).padStart(2, '0');
-        const minutes: string = String(date.getMinutes()).padStart(2, '0');
-        const seconds: string = String(date.getSeconds()).padStart(2, '0');
-    
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      }
-    // ======= ======= GET PARAMETRICAS ======= =======
-    
-    isEditing: boolean = false;
-    idAvanceToDelete: number | null = null; 
-    selectedIdProyIndicador: number | null = null; 
-  
-    cargarIndicadoresAvance() {
-      this.isEditing = true;
-      
-      // Reiniciar los datos antes de cargar nuevos valores
-      this.datosAliados = [];
-      this.planifIDindAvance = [];
-      this.planifPeriodofecha = [];
-      this.planifMetaEsperada = [];
-    
-      if (this.selectedIdProyIndicador) {
-        this.servIndicadorAvance.getIndicadoresAvanceById(this.selectedIdProyIndicador).subscribe(
-          (response: any) => {
-            this.datosAliados = response[0]?.dato || [];
-    
-            // Ordenar por fecha de la más antigua a la más nueva
-            this.datosAliados.sort((a: any, b: any) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime());
-    
-            if (this.datosAliados.length > 0) {
-              this.planifIDindAvance = this.datosAliados.map((item: any) => item.id_proy_indica_avance);
-              this.planifPeriodofecha = this.datosAliados.map((item: any) => item.fecha_reportar);
-              this.planifMetaEsperada = this.datosAliados.map((item: any) => item.valor_esperado);
-            }
-          },
-          (error) => {
-            console.error('Error al cargar los datos:', error);
-          }
-        );
-      }
-    }
-    
-    openEditPeriodoModal(content: any, id: number) {
-      const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
-    
-      if (avanceData) {
-
-         // Convertir valores a números para comparación
-          const lineaBase = parseFloat(this.linea_base);
-          const valorEsperado = parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', ''));
-
-          // Validar que el valor esperado no sea menor que la línea base
-          if (valorEsperado < lineaBase) {
-            //alert('El valor esperado no puede ser menor que la línea base.');
-            Notify.failure('El valor esperado no puede ser menor que la línea base.');
-            return;
-          }
-    
-        // Si la fecha aún es válida, continuar con la edición
-        this.editAvance = {
-          id_proy_indica_avance: avanceData.id_proy_indica_avance,
-          id_proy_indicador: avanceData.id_proy_indicador || null,  
-          fecha_reportar: avanceData.fecha_reportar || '', 
-          valor_esperado: parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', '')) || 0,   
-          fecha_hora_reporte: new Date().toISOString(),
-          id_persona_reporte: avanceData.id_persona_reporte || null,
-          valor_reportado: 0 ,
-          comentarios: avanceData.comentarios || '',  
-          ruta_evidencia: avanceData.ruta_evidencia || '',  
-        };
-    
-        this.modalService.open(content, { size: 'lg', backdrop: 'static' });
-    
-      } else {
-        //console.warn('No se encontraron datos para el ID especificado:', id);
-        Notify.failure('No se encontraron datos para el ID especificado:' + id);
-      }
-    }
-    
-    onEditAvanceSubmit() {
-      const lineaBase = parseFloat(this.linea_base);
-      const valorEsperado = parseFloat(this.editAvance.valor_esperado);
-
-      if (valorEsperado < lineaBase) {
-        //alert('El valor esperado no puede ser menor que la línea base.');
-        Notify.failure('El valor esperado no puede ser menor que la línea base.');
-        return;
-      }
-      // Crear el objeto con los datos editados
-      const avanceEditado = {
-        p_id_proy_indicador_avance: this.editAvance.id_proy_indica_avance,
-        p_id_proy_indicador: this.editAvance.id_proy_indicador,
-        p_fecha_reportar: this.editAvance.fecha_reportar,
-        p_valor_esperado: this.editAvance.valor_esperado,
-        p_fecha_hora_reporte: this.editAvance.fecha_hora_reporte,               
-        p_id_persona_reporte: this.editAvance.id_persona_reporte,
-        p_valor_reportado: 0, 
-        p_comentarios: this.editAvance.comentarios,
-        p_ruta_evidencia: this.editAvance.ruta_evidencia,
-      };
-  
-      // Llamar al servicio para actualizar los datos
-      this.servIndicadorAvance.editIndicadorAvance(avanceEditado).subscribe(
-        (response) => {
-          this.cargarIndicadoresAvance();
-          //alert('Avance aditado correctamente');
-          Notify.success('Avance editado correctamente');
-        },
-        (error) => {
-          console.error('Error al actualizar:', error);
-          //alert('Error al actualizar el avance');
-          Notify.failure('Error al actualizar el avance');
-        }
-      );
-      
-    }
-
-    // Método para abrir el modal de eliminación
-    openDeletePeriodoModal(content: any, id: number) {
-      // Verificar si el avance existe
-      const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
-      
-      if (avanceData) {
-        // Si la fecha es válida, guardar el ID y abrir el modal
-        this.idAvanceToDelete = id;
-        this.modalService.open(content, { backdrop: 'static' });
-      } else {
-        //console.warn('No se encontraron datos para el ID especificado:', id);
-        Notify.failure('No se encontraron datos para el ID especificado:' + id);
-      }
-    }
-
-    // Método para eliminar el avance
-    onDeleteAvanceSubmit() {
-      if (this.idAvanceToDelete) {
-        this.servIndicadorAvance.deleteIndicadorAvance(this.idAvanceToDelete).subscribe(
-          (response) => {
-            // Recargar los datos después de eliminar
-            this.cargarIndicadoresAvance();
-            //alert('Avance eliminado correctamente');
-            Notify.success('Avance eliminado correctamente');           
-          },
-          (error) => {
-            console.error('Error al eliminar:', error);
-            //alert('Error al eliminar el avance');
-            Notify.failure('Error al eliminar el avance');
-          }
-        );
-      }
-    }
-  
-    cerrarFormulario() {
-      this.isEditing = false; 
-      this.selectedIdProyIndicador = null; 
     }
   
     // ======= ======= ======= ======= ======= ======= =======  ======= =======        
@@ -455,290 +295,6 @@ export class PlanifEstrategicaComponent implements OnInit {
     getElementoNombre(sigla: any): string {
       const elemento = this.metoElementoData.find(comp => comp.sigla === sigla);
       return elemento ? elemento.meto_elemento : 'Indicador';
-    }
-  
-    // ======= ======= ======= ======= ======= ======= =======  ======= ======= 
-    // ======= ======= JERARQUIA DE PADRE ======= =======
-    validParents: any[] = [];
-    tipo: string = '';
-    
-    convertToNumber(value: any): number | string {
-      if (!value) {
-        return "";
-      }
-    
-      const numberValue = parseFloat(value.toString().replace(/[$,]/g, ''));
-      
-      return isNaN(numberValue) ? "" : numberValue;
-    }
-    
-  
-    // Filtrar padres válidos en función del tipo del elemento a crear
-    getValidParents(tipo: string): any[] {
-      if (!this.elementosTabla || !Array.isArray(this.elementosTabla)) {
-        console.error("combinedData no está disponible o no es un array válido");
-        return [];
-      }
-  
-      switch (tipo) {
-        case 'OG': // Objetivo General no tiene padres válidos (es la raíz)
-          return [];
-  
-        case 'OE': // Objetivo Específico solo puede tener como padre un OG
-          return this.elementosTabla.filter(el => el.id_meto_elemento === 1);
-  
-        case 'RE': // Resultado Estratégico puede tener como padre un OG o un OE
-          return this.elementosTabla.filter(el => el.id_meto_elemento === 1 || el.id_meto_elemento === 2);
-  
-        case 'IN': // Indicador puede tener como padre un OG, OE o RE
-          return this.elementosTabla.filter(el =>
-            el.id_meto_elemento === 1 ||
-            el.id_meto_elemento === 2 ||
-            el.id_meto_elemento === 3
-          );
-  
-        default:
-          return [];
-      }
-    }
-    getMetoElementoId(tipo: string): number {
-      switch (tipo) {
-        case 'OG':
-          return 1; // ID para Objetivo General
-        case 'OE':
-          return 2; // ID para Objetivo Específico
-        case 'RE':
-          return 3; // ID para Resultado Estratégico
-        case 'IN':
-          return 4; // ID para Indicador
-        default:
-          return 0;
-      }
-    }
-
-    // Validar si un padre seleccionado es válido para el tipo actual
-    validarPadre(tipo: string, parentCodigo: string): boolean {
-      if (!parentCodigo || !tipo) {
-        console.error("parentCodigo o tipo no definidos correctamente");
-        return false;
-      }
-  
-      const validParents = this.getValidParents(tipo);
-      return validParents.some(parent => parent.codigo === parentCodigo);
-    }
-  
-  
-    // Método para manejar cambios en el tipo y filtrar padres válidos
-    onParentChange(): void {
-      if (this.selectedParentCodigo) {
-        switch (this.tipo) {
-          case 'OG':
-            this.codigo = this.generateCodigoOG();
-            break;
-          case 'OE':
-            this.codigo = this.generarCodigoOE(this.selectedParentCodigo);
-            break;
-          case 'RE':
-            this.codigo = this.generarCodigoRE(this.selectedParentCodigo);
-            break;
-          case 'IN':
-            this.codigo = this.generarCodigoIN(this.selectedParentCodigo);
-            break;
-          default:
-            this.codigo = '';
-            break;
-        }
-      } else {
-        this.codigo = ''; // Limpia el código si no hay un padre seleccionado
-      }
-    }
-  
-    // ======= ======= GENERAR CÓDIGO ======= ======= 
-    // Método para obtener el último código de "OG" y generar el siguiente código.
-    generateCodigoOG(): string {
-      // Verificar si hay elementos en combinedData
-      if (this.combinedData.length === 0) {
-        return "1.0.0.0"; // Si no hay elementos, empezar desde 1.0.0.0
-      }
-    
-      // Obtener los elementos de tipo OG (Objetivo General)
-      const ogElements = this.combinedData.filter(el => 
-        el.id_meto_elemento === 1 || 
-        (el.sigla && el.sigla === 'OG')
-      );
-    
-      // Si no hay elementos OG, devolver 1.0.0.0
-      if (ogElements.length === 0) {
-        return "1.0.0.0";
-      }
-    
-      // Buscar el código más alto de los OG.
-      const lastOG = ogElements.reduce((max, el) => {
-        if (!el.codigo) return max;
-        
-        const currentCode = el.codigo.split('.').map(Number);
-        if (currentCode[0] > max[0]) {
-          return currentCode;
-        }
-        return max;
-      }, [0, 0, 0, 0]); 
-    
-      // Incrementar el primer dígito del código.
-      lastOG[0]++;
-    
-      // Formatear el nuevo código en el formato "X.0.0.0".
-      return `${lastOG[0]}.0.0.0`;
-    }
-    // Generar código para OE
-    generarCodigoOE(parentCodigo: string): string {
-      // Filtrar solo los elementos cuyo padre es el OG correspondiente
-      const oeElements = this.combinedData.filter(el => el.id_proy_elem_padre === 1 && el.codigo.startsWith(parentCodigo.split('.')[0]));
-  
-      // Encontrar el último código de OE
-      const lastOE = oeElements.reduce((max, el) => {
-        const currentCode = el.codigo.split('.').map(Number);
-        if (currentCode[1] > max[1]) return currentCode;
-        return max;
-      }, [Number(parentCodigo.split('.')[0]), 0, 0, 0]);
-  
-      // Incrementar el segundo nivel del código
-      lastOE[1]++;
-  
-      // Verificar si el código generado ya existe
-      let newCode = `${lastOE[0]}.${lastOE[1]}.0.0`;
-      while (this.combinedData.some(el => el.codigo === newCode)) {
-        lastOE[1]++; // Incrementa hasta encontrar un código no utilizado
-        newCode = `${lastOE[0]}.${lastOE[1]}.0.0`;
-      }
-  
-      return newCode;
-    }
-    generarCodigoRE(parentCodigo: string): string {
-      // Convertir el código del padre a un array de números para trabajar con los niveles
-      const parentCodeArray = parentCodigo.split('.').map(Number);
-  
-      // Filtrar elementos que coincidan con el prefijo del código del padre seleccionado
-      const reElements = this.combinedData.filter(el => {
-        const currentCodeArray = el.codigo.split('.').map(Number);
-        return (
-          currentCodeArray[0] === parentCodeArray[0] && // Mismo nivel 1
-          currentCodeArray[1] === parentCodeArray[1]    // Mismo nivel 2
-        );
-      });
-  
-      // Reducir para encontrar el último código válido en el tercer nivel (nivel 2 del array)
-      const lastRE = reElements.reduce((max, el) => {
-        const currentCodeArray = el.codigo.split('.').map(Number);
-        if (currentCodeArray[2] > max[2]) {
-          return currentCodeArray; // Actualizamos si el nivel 3 es mayor
-        }
-        return max;
-      }, [...parentCodeArray]); // Inicializamos con el código del padre convertido a números
-  
-      // Incrementar el tercer nivel del código
-      lastRE[2]++;
-  
-      // Generar y retornar el nuevo código en el formato correcto
-      return `${lastRE[0]}.${lastRE[1]}.${lastRE[2]}.0`;
-    }
-  
-    generarCodigoIN(parentCodigo: string): string {
-      // Convertimos el código del padre a un array de números para la comparación
-      const parentCodeArray = parentCodigo.split('.').map(Number);
-  
-      // Filtrar elementos que coincidan con el prefijo del código del padre seleccionado
-      const inElements = this.combinedData.filter(el => {
-        const currentCodeArray = el.codigo.split('.').map(Number);
-        return (
-          currentCodeArray[0] === parentCodeArray[0] && // Mismo nivel 1
-          currentCodeArray[1] === parentCodeArray[1] && // Mismo nivel 2
-          currentCodeArray[2] === parentCodeArray[2]    // Mismo nivel 3
-        );
-      });
-  
-      // Reducir para encontrar el último código válido en el nivel 4
-      const lastIN = inElements.reduce((max, el) => {
-        const currentCodeArray = el.codigo.split('.').map(Number);
-        if (currentCodeArray[3] > max[3]) {
-          return currentCodeArray; // Actualizamos si el nivel 4 es mayor
-        }
-        return max;
-      }, parentCodeArray); // Inicializamos con el código del padre convertido a números
-  
-      // Incrementar el cuarto nivel del código
-      lastIN[3]++;
-      return `${lastIN[0]}.${lastIN[1]}.${lastIN[2]}.${lastIN[3]}`; // Formateamos el nuevo código
-    }
-  
-    moverElemento(elemento: any, direccion: string): void {
-      // Validar que solo se puedan mover indicadores
-      if (elemento.tipo !== 'Indicador') {
-        //alert('Solo se pueden mover los indicadores');
-        Notify.failure('Solo se pueden mover los indicadores');
-        return;
-      }
-    
-      // Encontrar el índice actual del elemento
-      const index = this.combinedData.findIndex(el => el === elemento);
-      if (index === -1) {
-        console.error('Elemento no encontrado.');
-        return;
-      }
-    
-      // Determinar el nuevo índice
-      let newIndex = direccion === 'arriba' ? index - 1 : index + 1;
-    
-      // Validar que el índice esté dentro de los límites
-      if (newIndex < 0 || newIndex >= this.combinedData.length) {
-        //alert(`No se puede mover más ${direccion === 'arriba' ? 'arriba' : 'abajo'}.`);
-        Notify.failure(`No se puede mover más ${direccion === 'arriba' ? 'arriba' : 'abajo'}.`);
-        return;
-      }
-    
-      // Obtener el elemento padre
-      const padreActual = this.combinedData.find(el => 
-        el.id_proy_elemento === elemento.id_proy_elem_padre
-      );
-    
-      if (!padreActual) {
-        //alert('No se encontró el elemento padre');
-        Notify.failure('No se encontró el elemento padre');
-        return;
-      }
-    
-      // Validar que el movimiento sea dentro del mismo padre
-      const elementoDestino = this.combinedData[newIndex];
-      if (elementoDestino.id_proy_elem_padre !== elemento.id_proy_elem_padre) {
-        //lert('Solo se puede mover dentro del mismo grupo de indicadores');
-        Notify.failure('Solo se puede mover dentro del mismo grupo de indicadores');
-        return;
-      }
-    
-      // Obtener todos los indicadores del mismo padre
-      const indicadoresHermanos = this.combinedData.filter(el => 
-        el.tipo === 'Indicador' && 
-        el.id_proy_elem_padre === elemento.id_proy_elem_padre
-      );
-    
-      // Reordenar códigos
-      this.reordenarCodigos(elemento, elementoDestino, indicadoresHermanos);
-    
-      // Intercambiar elementos en la lista
-      [this.combinedData[index], this.combinedData[newIndex]] = 
-        [this.combinedData[newIndex], this.combinedData[index]];
-    
-      // Actualizar en la base de datos
-      this.actualizarIndicadoresEnBD(elemento, elementoDestino);
-    
-    }
-    private reordenarCodigos(indicadorActual: any, indicadorDestino: any, indicadoresHermanos: any[]): void {
-      // Ordenar indicadores por código
-      indicadoresHermanos.sort((a, b) => this.compareCode(a.codigo, b.codigo));
-      
-      // Intercambiar códigos entre los indicadores
-      const codigoTemp = indicadorActual.codigo;
-      indicadorActual.codigo = indicadorDestino.codigo;
-      indicadorDestino.codigo = codigoTemp;
     }
 
     getParametricas() {
@@ -843,7 +399,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_id_estado: indicador1.id_estado,
         p_inst_categoria_1: indicador1.id_inst_categoria_1,
         p_inst_categoria_2: indicador1.id_inst_categoria_2,
-        p_inst_categoria_3: indicador1.id_inst_categoria_3
+        p_inst_categoria_3: indicador1.id_inst_categoria_3,
+        p_es_estrategico: indicador1.es_estrategico
       };
     
       const objIndicador2 = {
@@ -862,7 +419,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_id_estado: indicador2.id_estado,
         p_inst_categoria_1: indicador2.id_inst_categoria_1,
         p_inst_categoria_2: indicador2.id_inst_categoria_2,
-        p_inst_categoria_3: indicador2.id_inst_categoria_3
+        p_inst_categoria_3: indicador2.id_inst_categoria_3,
+        p_es_estrategico: indicador2.es_estrategico
       };
     
       // Realizar las actualizaciones en la base de datos
@@ -902,13 +460,28 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.inst_categoria_1 = "";
       this.inst_categoria_2 = "";
       this.inst_categoria_3 = "";
+      this.id_persona_reg = "";
+      this.es_estrategico = "";
   
       this.sigla = null;
       this.color = null;
   
       this.valComponente = true;
-
     }
+
+    // ======= ======= GET INDICADORES ======= =======
+    getPlanifEstrategica() {
+      this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(
+        (data: any) => {
+          this.planifEstrategica = (data[0].dato) ? (data[0].dato) : ([]);
+          this.totalLength = this.planifEstrategica.length;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
     initAddPlanifEstrategica(modalScope: TemplateRef<any>, id_proy_elem_padre?: number): void {
       this.initPlanifEstrategicaModel();
@@ -939,68 +512,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.openModal(modalScope);
     }
 
-    combinePlanifEstrategicaAndElementos(): any {
-      // Mapear datos de planifEstrategica
-  
-      const planifEstrategicaMapped = this.planifEstrategica.map((item: any) => ({
-        id_proy_indicador: item.id_proy_indicador,
-        tipo: 'Indicador',
-        id_proyecto: item.id_proyecto,
-        id_proy_elem_padre: item.id_proy_elem_padre,
-        codigo: item.codigo || '-',
-        indicador: item.indicador || '-',
-        descripcion: item.descripcion || '-',
-        comentario: item.comentario,
-        orden: item.orden,
-        linea_base: item.linea_base || '-',
-        medida: item.medida || '-',
-        meta_final: item.meta_final || '-',
-        medio_verifica: item.medio_verifica || '-',
-        id_estado: item.id_estado,
-        id_inst_categoria_1: item.id_inst_categoria_1,
-        id_inst_categoria_2: item.id_inst_categoria_2,
-        id_inst_categoria_3: item.id_inst_categoria_3,
-        color:'#FDC82F',
-        sigla: 'IN',
-      }));
-  
-      // Mapear datos de elementosTabla
-      const elementosTablaMapped = this.elementosTabla.map((item: any) => ({
-        id_proy_elemento: item.id_proy_elemento,
-        tipo: 'Elemento',
-        id_proyecto: item.id_proyecto,
-        id_meto_elemento: item.id_meto_elemento,
-        id_proy_elem_padre: item.id_proy_elem_padre,
-        codigo: item.codigo || '-',
-        elemento: item.elemento || '-',
-        descripcion: item.descripcion || '-',
-        comentario: item.comentario,
-        nivel: item.nivel,
-        orden: item.orden,
-        idp_estado: item.idp_estado,
-        color:this.getColorElemento(item.id_meto_elemento),
-        sigla:this.getSiglaElemento(item.id_meto_elemento),
-        peso: item.peso,
-      }));
-      // Combinar ambas tablas
-      this.combinedData = [...planifEstrategicaMapped, ...elementosTablaMapped];
-  
-      // Ordenar los datos combinados
-      this.combinedData.sort((a, b) => {
-        const comparisonByCode = this.compareCode(a.codigo, b.codigo);
-        if (comparisonByCode !== 0) {
-          return comparisonByCode;
-        }
-  
-        // Si los códigos son iguales, ordenar por tipo (sigla)
-        const typeWeightA = this.getTypeWeight(a.sigla);
-        const typeWeightB = this.getTypeWeight(b.sigla);
-        return typeWeightA - typeWeightB;
-      });
-  
-      this.countHeaderData();
-    }
-  
     // ======= ======= ======= ======= AÑADIR INDICADOR ======= =======  ======= =======
     addIndicador() {
       const objIndicador = {
@@ -1019,17 +530,19 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_id_estado: this.id_estado || null,
         p_inst_categoria_1: parseInt(this.inst_categoria_1, 10) || null,
         p_inst_categoria_2: parseInt(this.inst_categoria_2, 10) || null,
-        p_inst_categoria_3: parseInt(this.inst_categoria_3, 10) || null
+        p_inst_categoria_3: parseInt(this.inst_categoria_3, 10) || null,
+        p_id_persona_reg: this.idPersonaReg  || null,
+        p_es_estrategico: this.es_estrategico === true
       };
 
       this.servIndicador.addIndicador(objIndicador).subscribe(
         (data) => {
-          
           //alert('Indicador añadido correctamente.');
           Notify.success('Indicador añadido correctamente.');
           this.getPlanifEstrategica();
           this.loadData()
           this.cargarIndicadoresAvance();
+          this.closeModal();
         },
         (error) => {
 
@@ -1040,6 +553,59 @@ export class PlanifEstrategicaComponent implements OnInit {
       );
       this.loadData()
     }
+
+    // ======= ======= ======= ======= INIT EDIT INDICADOR ======= =======  ======= =======
+    initEditPlanifEstrategica(planifEstrategicaOGOERE: TemplateRef<any>, planifEstrategicaIN: TemplateRef<any>) {
+      if (!this.planifEstrategicaSelected) {
+        console.error("No hay un elemento seleccionado para editar.");
+        return;
+      }
+      this.initPlanifEstrategicaModel();
+      this.cargarCategoriasParaEdicion();
+      this.modalAction = "edit";
+      this.modalTitle = this.getModalTitle("edit");
+      
+      this.selectedParentCodigo=this.getCodigoPadre(this.planifEstrategicaSelected.id_proy_elem_padre);
+      this.id_proy_indicador = this.planifEstrategicaSelected.id_proy_indicador;
+      this.id_proyecto = this.planifEstrategicaSelected.id_proyecto;
+      this.id_meto_elemento = this.planifEstrategicaSelected.id_meto_elemento;
+      this.id_proy_elem_padre = this.planifEstrategicaSelected.id_proy_elem_padre;
+      this.codigo = this.planifEstrategicaSelected.codigo;
+      this.indicador = this.planifEstrategicaSelected.elemento||this.planifEstrategicaSelected.indicador ;
+      this.descripcion = this.planifEstrategicaSelected.descripcion;
+      this.comentario = this.planifEstrategicaSelected.comentario;
+      this.orden = this.planifEstrategicaSelected.orden;
+      this.linea_base = this.convertToNumber(this.planifEstrategicaSelected.linea_base);
+      this.medida = this.planifEstrategicaSelected.medida;
+      this.meta_final = this.convertToNumber(this.planifEstrategicaSelected.meta_final);
+      this.medio_verifica = this.planifEstrategicaSelected.medio_verifica;
+      this.id_estado = this.planifEstrategicaSelected.id_estado;
+      this.inst_categoria_1 = this.planifEstrategicaSelected.id_inst_categoria_1;
+      this.inst_categoria_2 = this.planifEstrategicaSelected.id_inst_categoria_2;
+      this.inst_categoria_3 = this.planifEstrategicaSelected.id_inst_categoria_3;
+      this.es_estrategico = !!this.planifEstrategicaSelected.es_estrategico;
+      this.sigla = this.planifEstrategicaSelected.sigla;
+      this.color = this.planifEstrategicaSelected.color;
+      
+      this.tipo = this.getSiglaElemento(this.planifEstrategicaSelected.id_meto_elemento); 
+      this.validParents = this.getValidParents(this.tipo);
+  if( this.planifEstrategicaSelected.tipo=='Elemento')
+    {
+        // Abrir el modal correspondiente
+        switch (this.planifEstrategicaSelected.id_meto_elemento) {
+          case 1: // Objetivo General
+          case 2: // Objetivo Específico
+          case 3: // Resultado Estratégico
+            this.openModal(planifEstrategicaOGOERE);
+    
+            break;
+          default:
+            console.error("Tipo de elemento desconocido.");
+        }
+    }else {
+      this.openModal(planifEstrategicaIN);
+    }
+}
     // ======= ======= ======= ======= EDITAR INDICADOR ======= =======  ======= =======
     editIndicador() {
   
@@ -1059,10 +625,13 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_id_estado: this.id_estado,
         p_inst_categoria_1: parseInt(this.inst_categoria_1, 10),
         p_inst_categoria_2: parseInt(this.inst_categoria_2, 10),
-        p_inst_categoria_3: parseInt(this.inst_categoria_3, 10)
+        p_inst_categoria_3: parseInt(this.inst_categoria_3, 10),
+        p_id_persona_reg: this.idPersonaReg,
+        p_es_estrategico: this.es_estrategico === true
       };
-  
+      console.log(objIndicador);
       this.servIndicador.editIndicador(objIndicador).subscribe(
+        
         (data) => {
           //alert('Indicador editado correctamente.');
           Notify.success('Indicador editado correctamente.');
@@ -1080,60 +649,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.getPlanifEstrategica();
       this.loadData();
     }
-
-    // ======= ======= ======= ======= EDITAR ELEMENTO ======= =======  ======= =======
-    initEditPlanifEstrategica(planifEstrategicaOGOERE: TemplateRef<any>, planifEstrategicaIN: TemplateRef<any>) {
-        if (!this.planifEstrategicaSelected) {
-          console.error("No hay un elemento seleccionado para editar.");
-          return;
-        }
-        this.initPlanifEstrategicaModel();
-        this.cargarCategoriasParaEdicion();
-        this.modalAction = "edit";
-        this.modalTitle = this.getModalTitle("edit");
-
-        console.log(this.planifEstrategicaSelected);
-        
-        this.selectedParentCodigo=this.getCodigoPadre(this.planifEstrategicaSelected.id_proy_elem_padre);
-        this.id_proy_indicador = this.planifEstrategicaSelected.id_proy_indicador;
-        this.id_proyecto = this.planifEstrategicaSelected.id_proyecto;
-        this.id_meto_elemento = this.planifEstrategicaSelected.id_meto_elemento;
-        this.id_proy_elem_padre = this.planifEstrategicaSelected.id_proy_elem_padre;
-        this.codigo = this.planifEstrategicaSelected.codigo;
-        this.indicador = this.planifEstrategicaSelected.elemento||this.planifEstrategicaSelected.indicador ;
-        this.descripcion = this.planifEstrategicaSelected.descripcion;
-        this.comentario = this.planifEstrategicaSelected.comentario;
-        this.orden = this.planifEstrategicaSelected.orden;
-        this.linea_base = this.convertToNumber(this.planifEstrategicaSelected.linea_base);
-        this.medida = this.planifEstrategicaSelected.medida;
-        this.meta_final = this.convertToNumber(this.planifEstrategicaSelected.meta_final);
-        this.medio_verifica = this.planifEstrategicaSelected.medio_verifica;
-        this.id_estado = this.planifEstrategicaSelected.id_estado;
-        this.inst_categoria_1 = this.planifEstrategicaSelected.id_inst_categoria_1;
-        this.inst_categoria_2 = this.planifEstrategicaSelected.id_inst_categoria_2;
-        this.inst_categoria_3 = this.planifEstrategicaSelected.id_inst_categoria_3;
-        this.sigla = this.planifEstrategicaSelected.sigla;
-        this.color = this.planifEstrategicaSelected.color;
-        
-        this.tipo = this.getSiglaElemento(this.planifEstrategicaSelected.id_meto_elemento); 
-        this.validParents = this.getValidParents(this.tipo);
-    if( this.planifEstrategicaSelected.tipo=='Elemento')
-      {
-          // Abrir el modal correspondiente
-          switch (this.planifEstrategicaSelected.id_meto_elemento) {
-            case 1: // Objetivo General
-            case 2: // Objetivo Específico
-            case 3: // Resultado Estratégico
-              this.openModal(planifEstrategicaOGOERE);
-      
-              break;
-            default:
-              console.error("Tipo de elemento desconocido.");
-          }
-      }else {
-        this.openModal(planifEstrategicaIN);
-      }
-  }
 
   // ======= ======= ======= ======= =======
   onSubmitElemento(form: NgForm): void {
@@ -1213,6 +728,69 @@ export class PlanifEstrategicaComponent implements OnInit {
        this.openModal(modalScope);
       } 
       this.ngOnInit();
+    }
+
+    combinePlanifEstrategicaAndElementos(): any {
+      // Mapear datos de planifEstrategica
+  
+      const planifEstrategicaMapped = this.planifEstrategica.map((item: any) => ({
+        id_proy_indicador: item.id_proy_indicador,
+        tipo: 'Indicador',
+        id_proyecto: item.id_proyecto,
+        id_proy_elem_padre: item.id_proy_elem_padre,
+        codigo: item.codigo || '-',
+        indicador: item.indicador || '-',
+        descripcion: item.descripcion || '-',
+        comentario: item.comentario,
+        orden: item.orden,
+        linea_base: item.linea_base || '-',
+        medida: item.medida || '-',
+        meta_final: item.meta_final || '-',
+        medio_verifica: item.medio_verifica || '-',
+        id_estado: item.id_estado,
+        id_inst_categoria_1: item.id_inst_categoria_1,
+        id_inst_categoria_2: item.id_inst_categoria_2,
+        id_inst_categoria_3: item.id_inst_categoria_3,
+        es_estrategico: item.es_estrategico,
+        color:'#FDC82F',
+        sigla: 'IN',
+      }));
+  
+      // Mapear datos de elementosTabla
+      const elementosTablaMapped = this.elementosTabla.map((item: any) => ({
+        id_proy_elemento: item.id_proy_elemento,
+        tipo: 'Elemento',
+        id_proyecto: item.id_proyecto,
+        id_meto_elemento: item.id_meto_elemento,
+        id_proy_elem_padre: item.id_proy_elem_padre,
+        codigo: item.codigo || '-',
+        elemento: item.elemento || '-',
+        descripcion: item.descripcion || '-',
+        comentario: item.comentario,
+        nivel: item.nivel,
+        orden: item.orden,
+        idp_estado: item.idp_estado,
+        color:this.getColorElemento(item.id_meto_elemento),
+        sigla:this.getSiglaElemento(item.id_meto_elemento),
+        peso: item.peso,
+      }));
+      // Combinar ambas tablas
+      this.combinedData = [...planifEstrategicaMapped, ...elementosTablaMapped];
+  
+      // Ordenar los datos combinados
+      this.combinedData.sort((a, b) => {
+        const comparisonByCode = this.compareCode(a.codigo, b.codigo);
+        if (comparisonByCode !== 0) {
+          return comparisonByCode;
+        }
+  
+        // Si los códigos son iguales, ordenar por tipo (sigla)
+        const typeWeightA = this.getTypeWeight(a.sigla);
+        const typeWeightB = this.getTypeWeight(b.sigla);
+        return typeWeightA - typeWeightB;
+      });
+  
+      this.countHeaderData();
     }
   
     verificPadre(id: any,tipo:string): any {
@@ -1418,16 +996,12 @@ export class PlanifEstrategicaComponent implements OnInit {
 
     deleteIndicador(indicador: any): void {
       if (!indicador) {
-        //alert('No hay un indicador seleccionado para eliminar.');
-        //console.warn('Indicador no válido para eliminación.');
         Notify.failure('No hay un indicador seleccionado para eliminar.');
         return;
       }
   
       // Validar si el indicador tiene hijos activos
       if (this.tieneHijos(indicador, this.combinedData)) {
-        //alert('No se puede eliminar este indicador porque tiene hijos activos.');
-        //console.warn('El indicador tiene hijos activos y no puede ser eliminado.');
         Notify.failure('No se puede eliminar este indicador porque tiene hijos activos.');
         return;
       }
@@ -1436,7 +1010,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.servIndicador.deleteIndicador(indicador.id_proy_indicador).subscribe(
         (data) => {
           this.combinedData = this.combinedData.filter(el => el !== indicador);
-          //alert('Indicador eliminado con éxito.');
           Notify.success('Indicador eliminado con éxito.');
         },
         (error) => {
@@ -1450,7 +1023,6 @@ export class PlanifEstrategicaComponent implements OnInit {
     // Método para eliminar la planificación estratégica con validación de hijos activos
     deletePlanificacionEstrategica() {
       if (!this.planifEstrategicaSelected) {
-        //console.warn('No hay un elemento seleccionado para eliminar');
         Notify.failure('No hay un elemento seleccionado para eliminar');
         return;
       }
@@ -1459,8 +1031,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       const validationResult = this.canDeleteElementByCode(this.planifEstrategicaSelected, this.combinedData);
   
       if (!validationResult.canDelete) {
-        // Si no se puede eliminar, mostrar el mensaje de advertencia
-        //alert(validationResult.message);
         Notify.failure(validationResult.message);
         return;
       }
@@ -1509,7 +1079,238 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.loadData();
     }
   
+    // ======= ======= SUBMIT FORM ======= =======
+    onSubmit(): void {
+      // ======= VALIDATION SECTION =======
+      this.ValidateComponente();
+
+      if (this.modalAction === "add") {
+        this.addIndicador();
+      } else if (this.modalAction === "edit") {
+        this.editIndicador();
+      }
+      this.closeModal();
+      this.ngOnInit();
+      this.loadData();
+    }
+
+    getIdPadreByCodig(codigo: any): any {
+      const elemento = this.elementosTabla.find((item: any) => item.codigo === codigo);
+      return elemento ? elemento.id_proy_elemento : null;
+    }
+
+    // ======= ======= ======= ======= ======= ======= =======  ======= ======= 
+    // ======= ======= JERARQUIA DE PADRE ======= =======
+    validParents: any[] = [];
+    tipo: string = '';
+    convertToNumber(value: any): number | string {
+      if (!value) {
+        return "";
+      }
+      const numberValue = parseFloat(value.toString().replace(/[$,]/g, ''));
+      return isNaN(numberValue) ? "" : numberValue;
+    }
+    // Filtrar padres válidos en función del tipo del elemento a crear
+    getValidParents(tipo: string): any[] {
+      if (!this.elementosTabla || !Array.isArray(this.elementosTabla)) {
+        console.error("combinedData no está disponible o no es un array válido");
+        return [];
+      }
+      switch (tipo) {
+        case 'OG': // Objetivo General no tiene padres válidos (es la raíz)
+          return [];
   
+        case 'OE': // Objetivo Específico solo puede tener como padre un OG
+          return this.elementosTabla.filter(el => el.id_meto_elemento === 1);
+  
+        case 'RE': // Resultado Estratégico puede tener como padre un OG o un OE
+          return this.elementosTabla.filter(el => el.id_meto_elemento === 1 || el.id_meto_elemento === 2);
+  
+        case 'IN': // Indicador puede tener como padre un OG, OE o RE
+          return this.elementosTabla.filter(el =>
+            el.id_meto_elemento === 1 ||
+            el.id_meto_elemento === 2 ||
+            el.id_meto_elemento === 3
+          );
+        default:
+          return [];
+      }
+    }
+    getMetoElementoId(tipo: string): number {
+      switch (tipo) {
+        case 'OG':
+          return 1; // ID para Objetivo General
+        case 'OE':
+          return 2; // ID para Objetivo Específico
+        case 'RE':
+          return 3; // ID para Resultado Estratégico
+        case 'IN':
+          return 4; // ID para Indicador
+        default:
+          return 0;
+      }
+    }
+    // Validar si un padre seleccionado es válido para el tipo actual
+    validarPadre(tipo: string, parentCodigo: string): boolean {
+      if (!parentCodigo || !tipo) {
+        console.error("parentCodigo o tipo no definidos correctamente");
+        return false;
+      }
+  
+      const validParents = this.getValidParents(tipo);
+      return validParents.some(parent => parent.codigo === parentCodigo);
+    }
+    // Método para manejar cambios en el tipo y filtrar padres válidos
+    onParentChange(): void {
+      if (this.selectedParentCodigo) {
+        switch (this.tipo) {
+          case 'OG':
+            this.codigo = this.generateCodigoOG();
+            break;
+          case 'OE':
+            this.codigo = this.generarCodigoOE(this.selectedParentCodigo);
+            break;
+          case 'RE':
+            this.codigo = this.generarCodigoRE(this.selectedParentCodigo);
+            break;
+          case 'IN':
+            this.codigo = this.generarCodigoIN(this.selectedParentCodigo);
+            break;
+          default:
+            this.codigo = '';
+            break;
+        }
+      } else {
+        this.codigo = ''; // Limpia el código si no hay un padre seleccionado
+      }
+    }
+    // ======= =======  ======= =======  GENERAR CÓDIGO OG OE RE IN ======= ======= ======= ======= 
+      // ======= ======= Generar código para OG  ======= =======
+        generateCodigoOG(): string {
+          if (this.combinedData.length === 0) {
+            return "1.0.0.0"; 
+          }
+          const ogElements = this.combinedData.filter(el => 
+            el.id_meto_elemento === 1 || 
+            (el.sigla && el.sigla === 'OG')
+          );
+          if (ogElements.length === 0) {
+            return "1.0.0.0";
+          }
+          const lastOG = ogElements.reduce((max, el) => {
+            if (!el.codigo) return max;
+            const currentCode = el.codigo.split('.').map(Number);
+            if (currentCode[0] > max[0]) {
+              return currentCode;
+            }
+            return max;
+          }, [0, 0, 0, 0]); 
+          lastOG[0]++;
+          return `${lastOG[0]}.0.0.0`;
+        }
+      // ======= ======= Generar código para OE  ======= =======
+        generarCodigoOE(parentCodigo: string): string {
+          const oeElements = this.combinedData.filter(el => el.id_proy_elem_padre === 1 && el.codigo.startsWith(parentCodigo.split('.')[0]));
+          const lastOE = oeElements.reduce((max, el) => {
+            const currentCode = el.codigo.split('.').map(Number);
+            if (currentCode[1] > max[1]) return currentCode;
+            return max;
+          }, [Number(parentCodigo.split('.')[0]), 0, 0, 0]);
+          lastOE[1]++;
+          let newCode = `${lastOE[0]}.${lastOE[1]}.0.0`;
+          while (this.combinedData.some(el => el.codigo === newCode)) {
+            lastOE[1]++;
+            newCode = `${lastOE[0]}.${lastOE[1]}.0.0`;
+          }
+          return newCode;
+        }
+    // ======= ======= Generar código para RE  ======= =======
+        generarCodigoRE(parentCodigo: string): string {
+          const parentCodeArray = parentCodigo.split('.').map(Number);
+          const reElements = this.combinedData.filter(el => {
+            const currentCodeArray = el.codigo.split('.').map(Number);
+            return (
+              currentCodeArray[0] === parentCodeArray[0] && 
+              currentCodeArray[1] === parentCodeArray[1]    
+            );
+          });
+          const lastRE = reElements.reduce((max, el) => {
+            const currentCodeArray = el.codigo.split('.').map(Number);
+            if (currentCodeArray[2] > max[2]) {
+              return currentCodeArray; 
+            }
+            return max;
+          }, [...parentCodeArray]); 
+          lastRE[2]++;
+          return `${lastRE[0]}.${lastRE[1]}.${lastRE[2]}.0`;
+        }
+    // ======= ======= Generar código para IN  ======= =======
+        generarCodigoIN(parentCodigo: string): string {
+          const parentCodeArray = parentCodigo.split('.').map(Number);
+          const inElements = this.combinedData.filter(el => {
+            const currentCodeArray = el.codigo.split('.').map(Number);
+            return (
+              currentCodeArray[0] === parentCodeArray[0] && 
+              currentCodeArray[1] === parentCodeArray[1] && 
+              currentCodeArray[2] === parentCodeArray[2]    
+            );
+          });
+          const lastIN = inElements.reduce((max, el) => {
+            const currentCodeArray = el.codigo.split('.').map(Number);
+            if (currentCodeArray[3] > max[3]) {
+              return currentCodeArray; 
+            }
+            return max;
+          }, parentCodeArray);
+          lastIN[3]++;
+          return `${lastIN[0]}.${lastIN[1]}.${lastIN[2]}.${lastIN[3]}`;
+        }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+    // ======= ======= Mover Indicador arriba abajo  ======= =======
+      moverElemento(elemento: any, direccion: string): void {
+        if (elemento.tipo !== 'Indicador') {
+          Notify.failure('Solo se pueden mover los indicadores');
+          return;
+        }
+        const index = this.combinedData.findIndex(el => el === elemento);
+        if (index === -1) {
+          console.error('Elemento no encontrado.');
+          return;
+        }
+        let newIndex = direccion === 'arriba' ? index - 1 : index + 1;
+        if (newIndex < 0 || newIndex >= this.combinedData.length) {
+          Notify.failure(`No se puede mover más ${direccion === 'arriba' ? 'arriba' : 'abajo'}.`);
+          return;
+        }
+        const padreActual = this.combinedData.find(el => 
+          el.id_proy_elemento === elemento.id_proy_elem_padre
+        );
+        if (!padreActual) {
+          Notify.failure('No se encontró el elemento padre');
+          return;
+        }
+        const elementoDestino = this.combinedData[newIndex];
+        if (elementoDestino.id_proy_elem_padre !== elemento.id_proy_elem_padre) {
+          Notify.failure('Solo se puede mover dentro del mismo grupo de indicadores');
+          return;
+        }
+        const indicadoresHermanos = this.combinedData.filter(el => 
+          el.tipo === 'Indicador' && 
+          el.id_proy_elem_padre === elemento.id_proy_elem_padre
+        );
+        this.reordenarCodigos(elemento, elementoDestino, indicadoresHermanos);
+        [this.combinedData[index], this.combinedData[newIndex]] = 
+          [this.combinedData[newIndex], this.combinedData[index]];
+        this.actualizarIndicadoresEnBD(elemento, elementoDestino);
+      }
+      private reordenarCodigos(indicadorActual: any, indicadorDestino: any, indicadoresHermanos: any[]): void {
+        indicadoresHermanos.sort((a, b) => this.compareCode(a.codigo, b.codigo));
+        const codigoTemp = indicadorActual.codigo;
+        indicadorActual.codigo = indicadorDestino.codigo;
+        indicadorDestino.codigo = codigoTemp;
+      }
+    // ======= ======= ======= ======= ======= ======= =======  ======= =======
+
     countHeaderData(): void {
       this.headerDataNro01=0;
       this.headerDataNro02=0;
@@ -1536,27 +1337,155 @@ export class PlanifEstrategicaComponent implements OnInit {
         }
       });
     }
-  
-  
-    // ======= ======= SUBMIT FORM ======= =======
-    onSubmit(): void {
-      // ======= VALIDATION SECTION =======
-      this.ValidateComponente();
 
-      if (this.modalAction === "add") {
-        this.addIndicador();
-      } else if (this.modalAction === "edit") {
-        this.editIndicador();
+    // ======= ======= GET EDIT INDICADOR AVANCE ======= =======
+    isEditing: boolean = false;
+    idAvanceToDelete: number | null = null; 
+    selectedIdProyIndicador: number | null = null; 
+  
+    cargarIndicadoresAvance() {
+      this.isEditing = true;
+      
+      // Reiniciar los datos antes de cargar nuevos valores
+      this.datosAliados = [];
+      this.planifIDindAvance = [];
+      this.planifPeriodofecha = [];
+      this.planifMetaEsperada = [];
+    
+      if (this.selectedIdProyIndicador) {
+        this.servIndicadorAvance.getIndicadoresAvanceById(this.selectedIdProyIndicador).subscribe(
+          (response: any) => {
+            this.datosAliados = response[0]?.dato || [];
+    
+            // Ordenar por fecha de la más antigua a la más nueva
+            this.datosAliados.sort((a: any, b: any) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime());
+    
+            if (this.datosAliados.length > 0) {
+              this.planifIDindAvance = this.datosAliados.map((item: any) => item.id_proy_indica_avance);
+              this.planifPeriodofecha = this.datosAliados.map((item: any) => item.fecha_reportar);
+              this.planifMetaEsperada = this.datosAliados.map((item: any) => item.valor_esperado);
+            }
+          },
+          (error) => {
+            console.error('Error al cargar los datos:', error);
+          }
+        );
       }
-      this.closeModal();
-      this.ngOnInit();
-      this.loadData();
     }
-    getIdPadreByCodig(codigo: any): any {
-      const elemento = this.elementosTabla.find((item: any) => item.codigo === codigo);
-      return elemento ? elemento.id_proy_elemento : null;
+    
+    openEditPeriodoModal(content: any, id: number) {
+      const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
+    
+      if (avanceData) {
+
+         // Convertir valores a números para comparación
+          const lineaBase = parseFloat(this.linea_base);
+          const valorEsperado = parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', ''));
+
+          // Validar que el valor esperado no sea menor que la línea base
+          if (valorEsperado < lineaBase) {
+            //alert('El valor esperado no puede ser menor que la línea base.');
+            Notify.failure('El valor esperado no puede ser menor que la línea base.');
+            return;
+          }
+    
+        // Si la fecha aún es válida, continuar con la edición
+        this.editAvance = {
+          id_proy_indica_avance: avanceData.id_proy_indica_avance,
+          id_proy_indicador: avanceData.id_proy_indicador || null,  
+          fecha_reportar: avanceData.fecha_reportar || '', 
+          valor_esperado: parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', '')) || 0,   
+          fecha_hora_reporte: new Date().toISOString(),
+          id_persona_reporte: avanceData.id_persona_reporte || null,
+          valor_reportado: 0 ,
+          comentarios: avanceData.comentarios || '',  
+          ruta_evidencia: avanceData.ruta_evidencia || '',  
+        };
+    
+        this.modalService.open(content, { size: 'lg', backdrop: 'static' });
+    
+      } else {
+        //console.warn('No se encontraron datos para el ID especificado:', id);
+        Notify.failure('No se encontraron datos para el ID especificado:' + id);
+      }
+    }
+    
+    onEditAvanceSubmit() {
+      const lineaBase = parseFloat(this.linea_base);
+      const valorEsperado = parseFloat(this.editAvance.valor_esperado);
+
+      if (valorEsperado < lineaBase) {
+        //alert('El valor esperado no puede ser menor que la línea base.');
+        Notify.failure('El valor esperado no puede ser menor que la línea base.');
+        return;
+      }
+      // Crear el objeto con los datos editados
+      const avanceEditado = {
+        p_id_proy_indicador_avance: this.editAvance.id_proy_indica_avance,
+        p_id_proy_indicador: this.editAvance.id_proy_indicador,
+        p_fecha_reportar: this.editAvance.fecha_reportar,
+        p_valor_esperado: this.editAvance.valor_esperado,
+        p_fecha_hora_reporte: this.editAvance.fecha_hora_reporte,               
+        p_id_persona_reporte: this.editAvance.id_persona_reporte,
+        p_valor_reportado: 0, 
+        p_comentarios: this.editAvance.comentarios,
+        p_ruta_evidencia: this.editAvance.ruta_evidencia,
+      };
+  
+      // Llamar al servicio para actualizar los datos
+      this.servIndicadorAvance.editIndicadorAvance(avanceEditado).subscribe(
+        (response) => {
+          this.cargarIndicadoresAvance();
+          //alert('Avance aditado correctamente');
+          Notify.success('Avance editado correctamente');
+        },
+        (error) => {
+          console.error('Error al actualizar:', error);
+          //alert('Error al actualizar el avance');
+          Notify.failure('Error al actualizar el avance');
+        }
+      );
+      
+    }
+
+    // Método para abrir el modal de eliminación
+    openDeletePeriodoModal(content: any, id: number) {
+      // Verificar si el avance existe
+      const avanceData = this.datosAliados.find(p => p.id_proy_indica_avance === id);
+      
+      if (avanceData) {
+        // Si la fecha es válida, guardar el ID y abrir el modal
+        this.idAvanceToDelete = id;
+        this.modalService.open(content, { backdrop: 'static' });
+      } else {
+        //console.warn('No se encontraron datos para el ID especificado:', id);
+        Notify.failure('No se encontraron datos para el ID especificado:' + id);
+      }
+    }
+
+    // Método para eliminar el avance
+    onDeleteAvanceSubmit() {
+      if (this.idAvanceToDelete) {
+        this.servIndicadorAvance.deleteIndicadorAvance(this.idAvanceToDelete).subscribe(
+          (response) => {
+            // Recargar los datos después de eliminar
+            this.cargarIndicadoresAvance();
+            //alert('Avance eliminado correctamente');
+            Notify.success('Avance eliminado correctamente');           
+          },
+          (error) => {
+            console.error('Error al eliminar:', error);
+            //alert('Error al eliminar el avance');
+            Notify.failure('Error al eliminar el avance');
+          }
+        );
+      }
     }
   
+    cerrarFormulario() {
+      this.isEditing = false; 
+      this.selectedIdProyIndicador = null; 
+    }
     
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
 // ============== INDICADOR AVANCE - PROY_INDICADOR_AVANCE  ==============

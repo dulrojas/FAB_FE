@@ -7,6 +7,7 @@ import { servicios } from "../../servicios/servicios";
 import { servRiesgos } from "../../servicios/riesgos";
 import { ElementosService } from "../../servicios/elementos";
 import { Notify,Report,Confirm } from 'notiflix';
+import { ExcelExportService } from '../../services/excelExport.service';
 
 @Component({
   selector: 'app-riesgos',
@@ -115,7 +116,7 @@ export class RiesgosComponent implements OnInit {
       valRiesgo: any = true;
       ValidateRiesgo(){
         this.valRiesgo = true;
-        if((!this.riesgo)||(this.riesgo.length <= 100)){
+        if (!this.riesgo || this.riesgo.trim().length === 0 || this.riesgo.trim().length > 100) {
           this.valRiesgo = false;
         }
       }
@@ -123,7 +124,7 @@ export class RiesgosComponent implements OnInit {
       valDescripcion: any = true;
       ValidateDescripcion(){
         this.valDescripcion = true;
-        if((!this.descripcion)||(this.descripcion.length <= 500)){
+        if (!this.descripcion || this.descripcion.trim().length === 0 || this.descripcion.trim().length > 500) {
           this.valDescripcion = false;
         }
       }
@@ -131,7 +132,7 @@ export class RiesgosComponent implements OnInit {
       valVinculados: any = true;
       ValidateVinculados(){
         this.valVinculados = true;
-        if((!this.vinculados)||(this.vinculados.length <= 100)){
+        if (!this.vinculados || this.vinculados.trim().length === 0 || this.vinculados.trim().length > 100) {
           this.valVinculados = false;
         }
       }
@@ -331,8 +332,8 @@ export class RiesgosComponent implements OnInit {
         this.persona_registro = this.namePersonaReg;
         this.fecha_registro = "";
 
-        this.sigla = "";
-        this.color = "ffffff";
+        this.sigla = null;
+        this.color = null;
 
         this.valCategoria = true;
         this.valRiesgo = true;
@@ -395,7 +396,7 @@ export class RiesgosComponent implements OnInit {
             (data) => {            
               Notify.success('Riesgo agregado exitosamente');
               this.riesgosSelected = null;
-              this.closeModal();
+              //this.closeModal();
               this.getRiesgos();
             },
             (error) => {    
@@ -407,6 +408,7 @@ export class RiesgosComponent implements OnInit {
   // ======= ======= INIT EDIT RIESGO ======= =======
       initEditRiesgo(modalScope: TemplateRef<any>) {
         this.initRiesgosModel(); 
+
         this.modalAction = "edit";
         this.modalTitle = this.getModalTitle("edit");
       
@@ -464,7 +466,7 @@ export class RiesgosComponent implements OnInit {
           (data) => {  
             Notify.success('Riesgo editado exitosamente'); 
             this.riesgosSelected = null;
-            this.closeModal();       
+            //this.closeModal();       
             this.getRiesgos();           
           },
           (error) => {   
@@ -497,14 +499,14 @@ export class RiesgosComponent implements OnInit {
         );
       }
   // ======= ======= Funcion de mapero para prbabilidad y Impacto ======= =======   
-      mapProbabilidadImpacto(value: any): string {
+      mapProbabilidadImpacto(value: any, genero: 'masculino' | 'femenino' = 'masculino'): string {
         switch (value) {
           case '1':
-            return 'Bajo';
+            return genero === 'femenino' ? 'Baja' : 'Bajo';
           case '2':
-            return 'Medio';
+            return genero === 'femenino' ? 'Media' : 'Medio';
           case '3':
-            return 'Alto';
+            return genero === 'femenino' ? 'Alta' : 'Alto';
           default:
             return 'Desconocido';
         }
@@ -608,5 +610,38 @@ export class RiesgosComponent implements OnInit {
         this.closeModal();
       }
     }
+  // ======= ======= DOWNLOAD EXCEL ======= ======= 
+  downloadExcel() {
+    const columnas = [ 
+      'id_riesgo',
+      //'id_proyecto',
+      //'id_proy_elemen_padre',
+      //'idp_categoria',
+      //'codigo',
+      'fecha',
+      'riesgo',
+      'descripcion',
+      'vinculados',
+      'idp_identificacion',
+      'impacto',
+      'probabilidad',
+      'nivel',
+      'idp_ocurrencia',
+      'idp_medidas',
+      'medidas',
+      'idp_efectividad',
+      'comentarios',
+      //'fecha_hora_reg',
+      //'id_persona_reg'
+    ]; 
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+    let riesgosObj = [...this.riesgos];
+    ExcelExportService.exportToExcel(
+      riesgosObj,
+      'Reporte_Riesgos_' + formattedDate,
+      columnas      
+    )
+  } 
 
 }
