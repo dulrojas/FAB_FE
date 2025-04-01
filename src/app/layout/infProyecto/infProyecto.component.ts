@@ -1082,7 +1082,7 @@ export class InfProyectoComponent implements OnInit {
       this.financiadores.id_proy_finan = this.financiadoresSelected.id_proy_finan;
       this.financiadores.porcentaje = this.financiadoresSelected.porcentaje;
       this.financiadores.id_proyecto = this.idProyecto;
-      this.financiadores.monto = this.financiadoresSelected.monto;
+      this.financiadores.monto = this.parseAmountFloatToStr(this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn) * ( this.financiadores.porcentaje / 100 ));
       this.financiadores.id_institucion_fin = this.financiadoresSelected.id_institucion_fin;
       this.financiadores.idp_tipo_finan = this.financiadoresSelected.idp_tipo_finan;
       this.financiadores.idp_estado = this.financiadoresSelected.idp_estado;

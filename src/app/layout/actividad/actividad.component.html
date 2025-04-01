@@ -146,6 +146,9 @@
                                 <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">
                                     Debe ingresar un monto válido.
                                 </span>
+                                <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado2">
+                                    El monto ingresado supera el presupuesto de la gestion.
+                                </span>
                                 <div class="row">
                                     <div class="col col-md-4 col-lg-4">
                                         <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
@@ -407,7 +410,7 @@
                                         <div class="col col-md-4 col-lg-4 px-1">
                                             <div class="col custom-elemento-actividad justify-content-end"
                                                 [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
-                                                {{ (actividadGant.avances)?(actividadGant.avances[actividadGant.avances.length - 1].avance):(0) }}%
+                                                {{ getLastAvance(actividadGant) }}%
                                             </div>
                                         </div>
                                     </div>
@@ -423,7 +426,7 @@
                                                 [style.width.%]="actividadGant.date_gap_por">
                                                 <div 
                                                     class="custom-actividad-progress-fill" 
-                                                    [style.width.%]="(actividadGant.avances)?(actividadGant.avances[actividadGant.avances.length - 1].avance):(0)"
+                                                    [style.width.%]="getLastAvance(actividadGant)"
                                                     [ngClass]="{'custom-elemento-actividad-reprog-fill': (actividadGant.esActividadReprog)}">
                                                 </div>
                                             </div>
@@ -777,8 +780,8 @@
             <div class="col col-md-6 col-lg-6">
                 <label class="custom-actividad-sub-title">Fecha registro</label>
                 <input class="form-control" type="date" 
-                    id="fechaPresuAvance" name="fechaPresuAvance" 
-                    [(ngModel)]="fechaPresuAvance" disabled/>
+                    id="fechaNuevoEjecutado" name="fechaNuevoEjecutado" 
+                    [(ngModel)]="fechaNuevoEjecutado" disabled/>
             </div>
 
             <div class="col col-md-6 col-lg-6">
@@ -802,6 +805,9 @@
                     [(ngModel)]="montoNuevoEjecutado"/>
                 <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">
                     Debe ingresar un monto válido.
+                </span>
+                <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado2">
+                    El monto ingresado supera el presupuesto de la gestion.
                 </span>
             </div>
 
