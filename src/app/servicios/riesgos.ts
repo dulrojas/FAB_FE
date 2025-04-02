@@ -59,7 +59,7 @@ export class servRiesgos {
         "procedure_name": "sp_riesgos",
         "body": {
           "params": [
-            { "name": "p_accion", "value": "C2", "type": "string" },
+            { "name": "p_accion", "value": "C3", "type": "string" },
             { "name": "p_id_riesgo", "value": null, "type": "int" },
             { "name": "p_id_proyecto", "value": idProy, "type": "int" },
             { "name": "p_id_proy_elemen_padre", "value": null, "type": "int" },

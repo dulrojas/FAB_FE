@@ -475,40 +475,33 @@ export class PlanifEstrategicaComponent implements OnInit {
         (data: any) => {
           this.planifEstrategica = (data[0].dato) ? (data[0].dato) : ([]);
           this.totalLength = this.planifEstrategica.length;
+          
         },
         (error) => {
           console.error(error);
         }
       );
     }
-
     // ======= ======= ======= ======= ======= ======= =======  ======= =======
     initAddPlanifEstrategica(modalScope: TemplateRef<any>, id_proy_elem_padre?: number): void {
       this.initPlanifEstrategicaModel();
-  
       this.modalAction = "add";
       this.modalTitle = this.getModalTitle("add");
-  
-      // Si se pasa un ID, establece el elemento automáticamente
       if (id_proy_elem_padre) {
         this.id_proy_elem_padre = id_proy_elem_padre;
         this.tipo = this.getSiglaElemento(id_proy_elem_padre); 
         this.sigla = this.getSiglaElemento(id_proy_elem_padre); 
-        
         this.color=this.getColorElemento(id_proy_elem_padre);
         this.validParents = this.getValidParents(this.tipo);
-        // Si el tipo es OG, generar el código automáticamente
         if (this.tipo === 'OG') {
-          this.codigo = this.generateCodigoOG(); // Generar el código para OG
+          this.codigo = this.generateCodigoOG(); 
         }
-  
       }
       this.isEditing = false;
       this.datosAliados = [];
       this.planifIDindAvance = [];
       this.planifPeriodofecha = [];
       this.planifMetaEsperada = [];
-
       this.openModal(modalScope);
     }
 
@@ -532,9 +525,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_inst_categoria_2: parseInt(this.inst_categoria_2, 10) || null,
         p_inst_categoria_3: parseInt(this.inst_categoria_3, 10) || null,
         p_id_persona_reg: this.idPersonaReg  || null,
-        p_es_estrategico: this.es_estrategico === true
+        p_es_estrategico: this.es_estrategico
       };
-
       this.servIndicador.addIndicador(objIndicador).subscribe(
         (data) => {
           //alert('Indicador añadido correctamente.');
@@ -545,7 +537,6 @@ export class PlanifEstrategicaComponent implements OnInit {
           this.closeModal();
         },
         (error) => {
-
           //alert('Error al añadir el indicador.');
           Notify.failure('Error al añadir el indicador.');
           console.error('Error al guardar los datos:', error);
@@ -583,7 +574,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.inst_categoria_1 = this.planifEstrategicaSelected.id_inst_categoria_1;
       this.inst_categoria_2 = this.planifEstrategicaSelected.id_inst_categoria_2;
       this.inst_categoria_3 = this.planifEstrategicaSelected.id_inst_categoria_3;
-      this.es_estrategico = !!this.planifEstrategicaSelected.es_estrategico;
+      this.es_estrategico = this.planifEstrategicaSelected.es_estrategico;
       this.sigla = this.planifEstrategicaSelected.sigla;
       this.color = this.planifEstrategicaSelected.color;
       
@@ -629,7 +620,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_id_persona_reg: this.idPersonaReg,
         p_es_estrategico: this.es_estrategico === true
       };
-      console.log(objIndicador);
+      //console.log(objIndicador);
       this.servIndicador.editIndicador(objIndicador).subscribe(
         
         (data) => {
@@ -1110,6 +1101,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       const numberValue = parseFloat(value.toString().replace(/[$,]/g, ''));
       return isNaN(numberValue) ? "" : numberValue;
     }
+      
     // Filtrar padres válidos en función del tipo del elemento a crear
     getValidParents(tipo: string): any[] {
       if (!this.elementosTabla || !Array.isArray(this.elementosTabla)) {

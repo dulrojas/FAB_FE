@@ -64,8 +64,7 @@
                         <table class="table custom-table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th style="text-align: center;">N°</th>
+                                    <th></th>                                    
                                     <th style="text-align: center;">FECHA</th>
                                     <th>DEPARTAMENTO</th>
                                     <th>MUNICIPIO</th> 
@@ -86,9 +85,7 @@
                                             [(ngModel)]="beneficiario.selected"
                                             (change)="checkboxChangedBeneficiario(beneficiario)"                                            
                                             id="checkbox-{{ i }}" name="checkbox-{{ i }}">
-                                    </td>
-                                    <!-- <td style="text-align: center;">{{ beneficiario.id_proy_beneficiario }}</td> -->
-                                    <td style="text-align: center">{{ i + 1 }}</td> 
+                                    </td>                                    
                                     <td style="text-align: center;">{{ beneficiario.fecha | date:'dd/MM/yyyy' }}</td>
                                     <td>{{ getUbicacionGeografica(beneficiario.id_ubica_geo_depto, beneficiariosUbicaDepto) }}</td>
                                     <td>{{ beneficiario.ubica_geo_muni }}</td>
@@ -143,14 +140,7 @@
                             <div class="card mb-3">
                                 <div class="card-body custom-card">
                                     <div class="row">   
-                                        <!-- Primera Fila: ID, TIPO DE EVENTO, FECHA DE EVENTO -->
-                                            <!-- ======= ======= ======= ID ======= ======= ======= 
-                                            <div class="col col-xl-2 col-lg-2 mb-auto">
-                                                <label  for="id_proy_beneficiario">ID</label>
-                                                <input  class="form-control" type="text" 
-                                                        id="id_proy_beneficiario" name="id_proy_beneficiario" 
-                                                        [(ngModel)]="id_proy_beneficiario" disabled/>
-                                            </div> -->
+                                        <!-- Primera Fila: TIPO DE EVENTO, FECHA DE EVENTO -->                                            
                                             <!-- ======= ======= ======= ======= ======= ======= -->
                                             <div class="col col-xl-6 col-lg-6 mb-auto">                                        
                                             </div>
@@ -505,13 +495,15 @@
                                     <table class="table custom-table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th></th>
-                                                <!--<th style="text-align: center;">#</th>-->
+                                                <th></th>                                                
                                                 <th style="text-align: center;">CI o ID</th>
                                                 <th style="text-align: center;">Nombre y Apellido</th>
                                                 <th style="text-align: center;">Sexo</th>
                                                 <th style="text-align: center;">Tipo de actor</th>
-                                                <th style="text-align: center;">Institución</th>                                                
+                                                <th style="text-align: center;">Institución</th>
+                                                <th style="text-align: center;">Departamento</th>
+                                                <th style="text-align: center;">Municipio</th>
+                                                <th style="text-align: center;">Comunidad</th>                                                
                                                 <th style="text-align: center;">Otro</th>
                                                 <th style="text-align: center;">Rango de edad</th>
                                             </tr>
@@ -525,13 +517,15 @@
                                                         [(ngModel)]="beneficiarioLista.selected"
                                                         (change)="checkboxChangedBeneficiarioLista(beneficiarioLista)"                                                      
                                                         id="checkbox-{{ i }}" name="checkbox-{{ i }}">
-                                                </td>
-                                                <!--<td style="text-align: center;" [ngStyle]="{'color': beneficiarioLista.documentoDuplicado ? 'red' : 'inherit'}">{{ beneficiarioLista.id_proy_bene_lista }}</td>-->
+                                                </td>                                                
                                                 <td style="text-align: center;" [ngStyle]="{'color': beneficiarioLista.documentoDuplicado ? 'red' : 'inherit'}">{{ beneficiarioLista.num_doc_identidad }}</td>
-                                                <td style="text-align: center;">{{ beneficiarioLista.nombre }}</td>
+                                                <td style="text-align: center;" [ngStyle]="{'color': beneficiarioLista.documentoDuplicado ? 'red' : 'inherit'}">{{ beneficiarioLista.nombre }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.genero }}</td>
                                                 <td style="text-align: center;">{{ beneficiarioLista.tipo_actor }}</td>
-                                                <td style="text-align: center;">{{ getDescripcionSubtipo(beneficiarioLista.idp_organizacion_subtipo,beneficiariosListaOrganizacionSubTipo )}}</td>                                                
+                                                <td style="text-align: center;">{{ beneficiarioLista.organizacion_subtipo}}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.departamento}}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.municipio}}</td>
+                                                <td style="text-align: center;">{{ beneficiarioLista.comunidad}}</td>                                                
                                                 <td style="text-align: center;">{{ beneficiarioLista.comunidad_no_registrada }}</td>                                                
                                                 <td style="text-align: center;">{{ beneficiarioLista.rango_edad }}</td>
                                             </tr>
@@ -820,8 +814,7 @@
                         <table class="table custom-table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th style="text-align: center;">N°</th>
+                                    <th></th>                                    
                                     <th style="text-align: center;">Fecha</th>
                                     <th>Institución / Organización</th>
                                     <th>Nombre del Referente</th>
@@ -837,9 +830,7 @@
                                             [(ngModel)]="aliado.selected" 
                                             (change)="checkboxChangedAliado(aliado)"
                                             id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
-                                    </td>  
-                                    <!--<td style="text-align: center;">{{ aliado.id_proy_aliado }}</td>-->
-                                    <td style="text-align: center">{{ i + 1 }}</td>
+                                    </td> 
                                     <td style="text-align: center;">{{ aliado.fecha | date:'dd/MM/yyyy' }}</td>
                                     <td>{{ getOrganizacion(aliado.id_organizacion, aliadosOrganizacion) }}</td>
                                     <td>{{ aliado.referente }}</td>

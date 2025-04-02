@@ -69,7 +69,6 @@
           <thead>
             <tr>
               <th></th>
-              <th style="text-align: center;">N°</th>
               <th>CATEGORÍA</th>
               <th style="text-align: center;">IDENTIFICACIÓN</th>
               <th>RIESGO/SUPUESTO/HIPÓTESIS</th>
@@ -91,9 +90,6 @@
                       (change)="checkboxChanged(riesgo)"
                       id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
               </td> 
-              <!-- ID -->    
-              <td style="text-align: center">{{ i + 1 }}</td>  
-              <!--<td style="text-align: center;" >{{ riesgo.id_riesgo }}</td> --> 
               <!-- CATEGORÍA -->
               <td>{{ getDescripcionSubtipo(riesgo.idp_categoria, riesgoCategoria) }}</td>
               <!-- FECHA -->
@@ -177,14 +173,7 @@
             <div class="card mb-3">
               <div class="card-body custom-card">
                 <div class="row">
-                  <!-- PRIMERA FILA: ID, FECHA DE REGISTRO, PERSONA REGISTRO, COMPONENTE -->
-                      <!-- ======= ======= ID ======= ======= 
-                      <div class="col col-xl-2 col-lg-2 mb-auto">
-                        <label for="id_riesgo">ID </label>
-                        <input  class="form-control" type="text"
-                                id="id_riesgo" name="id_riesgo"
-                                [(ngModel)]="id_riesgo" disabled/>
-                      </div> -->
+                  <!-- PRIMERA FILA: FECHA DE REGISTRO, PERSONA REGISTRO, COMPONENTE -->                      
                       <!-- ======= ======= PERSONA REGISTRO ======= ======= -->
                       <div class="col col-xl-4 col-lg-4 mb-auto">
                         <label for="persona_registro">Persona Registro</label>
