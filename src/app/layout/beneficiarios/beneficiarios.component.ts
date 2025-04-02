@@ -622,9 +622,9 @@ export class BeneficiariosComponent implements OnInit {
           p_hombres: this.hombres || 0,
           p_titulo_evento: this.titulo_evento,
           p_evento_detalle: this.evento_detalle,
-          p_id_ubica_geo_depto: this.id_ubica_geo_depto || null,
-          p_id_ubica_geo_muni: this.id_ubica_geo_muni || null,
-          p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
+          p_id_ubica_geo_depto: this.id_ubica_geo_depto,
+          p_id_ubica_geo_muni: this.id_ubica_geo_muni,
+          p_id_ubica_geo_comu: this.id_ubica_geo_comu,
           p_id_proy_actividad: this.id_proy_actividad || null,
           p_idp_tipo_evento: this.idp_tipo_evento,
           p_ruta_documento: this.ruta_documento || null,
@@ -647,6 +647,7 @@ export class BeneficiariosComponent implements OnInit {
                 this.id_proy_beneficiario
               );
               this.getBeneficiarios();
+              this.closeModalBeneficiario();
             }
 
             Notify.success('Evento Para Beneficiario editado exitosamente');
@@ -657,7 +658,7 @@ export class BeneficiariosComponent implements OnInit {
           (error) => {
             Notify.failure('Error al editar Evento Para Beneficiario');
             console.error(error);
-          }
+          }          
         );
       }
   // ======= ======= INIT DELETE BENEFICIARIOS ======= =======
@@ -746,13 +747,13 @@ export class BeneficiariosComponent implements OnInit {
       p_num_doc_identidad: beneficiario.num_doc_identidad,
       p_nombre: beneficiario.nombre,
       p_es_hombre: beneficiario.genero === "M",
-      p_idp_organizacion_tipo: beneficiario.idp_organizacion_tipo || null,
+      p_idp_organizacion_tipo: beneficiario.idp_organizacion_tipo,
       p_idp_organizacion_subtipo: beneficiario.idp_organizacion_subtipo || null,
       p_id_ubica_geo_depto: beneficiario.id_ubica_geo_depto || null,
       p_id_ubica_geo_muni: beneficiario.id_ubica_geo_muni || null,
       p_id_ubica_geo_comu: beneficiario.id_ubica_geo_comu || null,
       p_comunidad_no_registrada: beneficiario.comunidad_no_registrada || null,
-      p_idp_rango_edad: beneficiario.idp_rango_edad || null
+      p_idp_rango_edad: beneficiario.idp_rango_edad
     }));
 
     let errores = 0;
