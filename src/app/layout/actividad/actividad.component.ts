@@ -515,7 +515,7 @@ export class ActividadComponent implements OnInit {
 
   valFechaNuevoEjecutado: any = true;
   validateFechaNuevoEjecutado(){
-    if( ( this.fechaNuevoEjecutado ) && ( new Date(this.fechaNuevoEjecutado + 'T00:00:00Z').getUTCFullYear().toString() == this.gestion ) ){
+    if( ( this.fechaNuevoEjecutado ) && ( new Date(this.fechaNuevoEjecutado + 'T00:00:00Z').getUTCFullYear().toString() == this.initGestion ) ){
       this.valFechaNuevoEjecutado = true;
     }
     else{

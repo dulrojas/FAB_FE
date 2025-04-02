@@ -88,7 +88,8 @@
                                                     <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
                                                         [(ngModel)]="presuAvance.selected"
                                                         (change)="onPresuAvanceClick(presuAvance)" 
-                                                        [disabled]="(currentPerProRol.includes('ESC'))"/>
+                                                        [disabled]="(currentPerProRol.includes('ESC'))
+                                                            ||(gestion != initGestion)"/>
                                                 </td>
                                                 <td>
                                                     {{ presuAvance.motivo }}
@@ -113,6 +114,7 @@
                                     [disabled]="(this.idPresupuestoGest == 0)
                                         ||(currentPerProRol.includes('LEC'))
                                         ||(currentPerProRol.includes('ESC'))
+                                        ||(gestion != initGestion)
                                         ||(presuAvanceSelected)"
                                     [(ngModel)]="motivoNuevoEjecutado">
                                 </textarea>
@@ -126,6 +128,7 @@
                                     [disabled]="(idPresupuestoGest == 0)
                                         ||(currentPerProRol.includes('LEC'))
                                         ||(currentPerProRol.includes('ESC'))
+                                        ||(gestion != initGestion)
                                         ||(presuAvanceSelected)"
                                     (change)="validateFechaNuevoEjecutado()"
                                     [(ngModel)]="fechaNuevoEjecutado"/>
@@ -140,6 +143,7 @@
                                     [disabled]="(idPresupuestoGest == 0)
                                         ||(currentPerProRol.includes('LEC'))
                                         ||(currentPerProRol.includes('ESC'))
+                                        ||(gestion != initGestion)
                                         ||(presuAvanceSelected)"
                                     (change)="onChangedMontoNuevoEjecutado()"
                                     [(ngModel)]="montoNuevoEjecutado"/>
@@ -155,6 +159,7 @@
                                             [disabled]="(this.idPresupuestoGest == 0)
                                                 ||(currentPerProRol.includes('LEC'))
                                                 ||(currentPerProRol.includes('ESC'))
+                                                ||(gestion != initGestion)
                                                 ||(presuAvanceSelected)"
                                             (click)="addPresuAvance()">
                                             <i aria-hidden="true"></i> Añadir
@@ -165,6 +170,7 @@
                                             [disabled]="(idPresupuestoGest == 0)
                                                 ||(currentPerProRol.includes('LEC'))
                                                 ||(currentPerProRol.includes('ESC'))
+                                                ||(gestion != initGestion)
                                                 ||(!presuAvanceSelected)"
                                             (click)="initEditPresupuestoEjecutado(editEjecutadoModal)">
                                             <i aria-hidden="true"></i> Editar
@@ -175,6 +181,7 @@
                                             [disabled]="(idPresupuestoGest == 0)
                                                 ||(currentPerProRol.includes('LEC'))
                                                 ||(currentPerProRol.includes('ESC'))
+                                                ||(gestion != initGestion)
                                                 ||(!presuAvanceSelected)"
                                             (click)="initDeletePresupuestoEjecutado(deleteEjecutadoModal)">
                                             <i aria-hidden="true"></i> Eliminar
