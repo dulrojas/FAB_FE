@@ -425,7 +425,7 @@
                                                 <td>{{ getInstitucionName(financiador.id_institucion_fin) }}</td>
                                                 <td>{{ getTipoFinanParam(financiador.idp_tipo_finan) }}</td>
                                                 <td>{{ financiador.porcentaje }}</td>
-                                                <td>{{ financiador.monto }}</td>
+                                                <td>{{ parseAmountFloatToStr(parseAmountStrToFloat(proyectoScope.presupuesto_mn) * ( financiador.porcentaje / 100 )) }}</td>
                                             </tr>
                                         </tbody>
                                     </table>

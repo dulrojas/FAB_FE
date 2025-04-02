@@ -96,7 +96,6 @@ export class ActividadComponent implements OnInit {
   halfCircleChart: any = null;
 
   idPresuAvance: any = null;
-  fechaPresuAvance: any = null;
   montoNuevoEjecutado: any = null;
   fechaNuevoEjecutado: any = null;
   motivoNuevoEjecutado: any = null;
@@ -365,12 +364,26 @@ export class ActividadComponent implements OnInit {
   }
   onChangedMontoNuevoEjecutado(){
     this.montoNuevoEjecutado = this.getFormatedMonto(this.montoNuevoEjecutado);
+    this.validateMontoNuevoEjecutado();
   }
 
   onPadreChanged(){
     let elementoScope = (this.elementos.find((elemento)=>(elemento.id_proy_elemento == this.id_proy_elemento_padre)));
     this.proy_elemento_padre = elementoScope.elemento;
     this.validateIdProyElementoPadre();
+  }
+
+  getLastAvance(actividadGant: any) {
+    if (!actividadGant || !Array.isArray(actividadGant.avances)) {
+      return 0;
+    }
+
+    if (actividadGant.avances.length > 0) {
+      let avance = actividadGant.avances[actividadGant.avances.length - 1].avance;
+      return avance;
+    }
+
+    return 0;
   }
   // ======= ======= ======= ======= =======
   // ======= ======= INIT ACTIVIDAD NGMODEL ======= =======
@@ -482,9 +495,18 @@ export class ActividadComponent implements OnInit {
 
   // ======= PRESU EJECUTADO VALIDATIONS =======
   valMontoNuevoEjecutado: any = true;
+  valMontoNuevoEjecutado2: any = true;
   validateMontoNuevoEjecutado(){
+    this.valMontoNuevoEjecutado = true;
+    this.valMontoNuevoEjecutado2 = true;
     if((this.montoNuevoEjecutado)&&((this.parseAmountStrToFloat(this.montoNuevoEjecutado))>0)){
       this.valMontoNuevoEjecutado = true;
+      if( ((this.parseAmountStrToFloat(this.montoNuevoEjecutado))+( this.parseAmountStrToFloat(this.presupuestoGest) - ((this.presuAvanceSelected)?(this.parseAmountStrToFloat((this.presuAvanceSelected.monto_avance).slice(1))):(0)) ) <= this.parseAmountStrToFloat(this.presupuestoGest)) ){
+        this.valMontoNuevoEjecutado2 = true;
+      }
+      else{
+        this.valMontoNuevoEjecutado2 = false;
+      }
     }
     else{
       this.valMontoNuevoEjecutado = false;
@@ -543,6 +565,8 @@ export class ActividadComponent implements OnInit {
   valFechaInicio1: any = true;
   valFechaInicio2: any = true;
   validateFechaInicio() {
+    this.valFechaInicio1 = true;
+    this.valFechaInicio2 = true;
     if (this.fecha_inicio && new Date(this.fecha_inicio + 'T00:00:00Z').getUTCFullYear().toString() >= this.initGestion) {
       this.valFechaInicio1 = true;
       if( ( new Date(this.startDate) > new Date(this.fecha_inicio + 'T00:00:00Z') ) || ( new Date(this.fecha_inicio + 'T00:00:00Z') > new Date(this.endDate) ) ){
@@ -558,6 +582,9 @@ export class ActividadComponent implements OnInit {
   valFechaFin2: any = true;
   valFechaFin3: any = true;
   validateFechaFin() {
+    this.valFechaFin = true;
+    this.valFechaFin2 = true;
+    this.valFechaFin3 = true;
     if ((this.fecha_fin)&&( new Date(this.fecha_fin + 'T00:00:00Z').getFullYear().toString() >= this.initGestion )) {
       this.valFechaFin = true;
       if( (new Date(this.fecha_inicio)) < (new Date(this.fecha_fin)) ){
@@ -643,7 +670,12 @@ export class ActividadComponent implements OnInit {
     this.validateFechaNuevoEjecutado();
     this.validateMotivoNuevoEjecutado();
 
-    let valPreAva = this.valMontoNuevoEjecutado && this.valFechaNuevoEjecutado && this.valMotivoNuevoEjecutado;
+    let valPreAva = 
+      this.valMontoNuevoEjecutado && 
+      this.valMontoNuevoEjecutado2 && 
+      this.valFechaNuevoEjecutado && 
+      this.valMotivoNuevoEjecutado
+    ;
 
     if(valPreAva){  
       let objPresuAvance = {
@@ -660,11 +692,11 @@ export class ActividadComponent implements OnInit {
         (data) => {
           this.presuAvanceSelected = null;
           this.idPresuAvance = null;
-          this.fechaPresuAvance = null;
           this.montoNuevoEjecutado = null;
           this.fechaNuevoEjecutado = null;
           this.motivoNuevoEjecutado = null;
 
+          this.getPresupuestoEjecutado();
           this.getPresuAvance();
         },
         (error) => {
@@ -682,9 +714,8 @@ export class ActividadComponent implements OnInit {
     this.modalTitle = "Editar ejecucion de presupuesto";
 
     this.idPresuAvance = this.presuAvanceSelected.id_proy_presu_avance;
-    this.fechaPresuAvance = this.presuAvanceSelected.fecha_hora.split("T")[0];
-    this.montoNuevoEjecutado = this.presuAvanceSelected.id_proy_presu_avance;
-    this.fechaNuevoEjecutado = this.presuAvanceSelected.motivo;
+    this.montoNuevoEjecutado = (this.presuAvanceSelected.monto_avance).slice(1);
+    this.fechaNuevoEjecutado = this.presuAvanceSelected.fecha_hora.split("T")[0];
     this.motivoNuevoEjecutado = this.presuAvanceSelected.motivo;
 
     this.openModal(modalScope);
@@ -696,7 +727,12 @@ export class ActividadComponent implements OnInit {
     this.validateFechaNuevoEjecutado();
     this.validateMotivoNuevoEjecutado();
 
-    let valPreAva = this.valMontoNuevoEjecutado && this.valFechaNuevoEjecutado && this.valMotivoNuevoEjecutado;
+    let valPreAva = 
+      this.valMontoNuevoEjecutado && 
+      this.valMontoNuevoEjecutado2 && 
+      this.valFechaNuevoEjecutado && 
+      this.valMotivoNuevoEjecutado
+    ;
 
     if(valPreAva){  
       let objPresuAvance = {
@@ -713,11 +749,11 @@ export class ActividadComponent implements OnInit {
         (data) => {
           this.presuAvanceSelected = null;
           this.idPresuAvance = null;
-          this.fechaPresuAvance = null;
           this.montoNuevoEjecutado = null;
           this.fechaNuevoEjecutado = null;
           this.motivoNuevoEjecutado = null;
 
+          this.getPresupuestoEjecutado();
           this.getPresuAvance();
           this.closeModal();
         },
@@ -743,7 +779,6 @@ export class ActividadComponent implements OnInit {
       (data) => {
         this.presuAvanceSelected = null;
         this.idPresuAvance = null;
-        this.fechaPresuAvance = null;
         this.montoNuevoEjecutado = null;
         this.fechaNuevoEjecutado = null;
         this.motivoNuevoEjecutado = null;
