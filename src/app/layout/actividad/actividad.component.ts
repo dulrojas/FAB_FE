@@ -501,7 +501,7 @@ export class ActividadComponent implements OnInit {
     this.valMontoNuevoEjecutado2 = true;
     if((this.montoNuevoEjecutado)&&((this.parseAmountStrToFloat(this.montoNuevoEjecutado))>0)){
       this.valMontoNuevoEjecutado = true;
-      if( ((this.parseAmountStrToFloat(this.montoNuevoEjecutado))+( this.parseAmountStrToFloat(this.presupuestoGest) - ((this.presuAvanceSelected)?(this.parseAmountStrToFloat((this.presuAvanceSelected.monto_avance).slice(1))):(0)) ) <= this.parseAmountStrToFloat(this.presupuestoGest)) ){
+      if( ((this.parseAmountStrToFloat(this.montoNuevoEjecutado))+( this.parseAmountStrToFloat(this.ejecutadoGest) - ((this.presuAvanceSelected)?(this.parseAmountStrToFloat((this.presuAvanceSelected.monto_avance).slice(1))):(0)) ) <= this.parseAmountStrToFloat(this.presupuestoGest)) ){
         this.valMontoNuevoEjecutado2 = true;
       }
       else{
@@ -515,7 +515,7 @@ export class ActividadComponent implements OnInit {
 
   valFechaNuevoEjecutado: any = true;
   validateFechaNuevoEjecutado(){
-    if( ( this.fechaNuevoEjecutado ) && ( new Date(this.fechaNuevoEjecutado + 'T00:00:00Z').getUTCFullYear().toString() == this.initGestion ) ){
+    if( ( this.fechaNuevoEjecutado ) && ( new Date(this.fechaNuevoEjecutado + 'T00:00:00Z').getUTCFullYear().toString() == this.gestion ) ){
       this.valFechaNuevoEjecutado = true;
     }
     else{
@@ -683,7 +683,7 @@ export class ActividadComponent implements OnInit {
         p_id_proy_presupuesto: this.idPresupuestoGest,
         p_monto_avance: this.parseAmountStrToFloat(this.montoNuevoEjecutado),
         p_id_persona: this.idPersonaReg,
-        p_fecha_hora: this.fechaNuevoEjecutado,
+        p_fecha_hora: (this.fechaNuevoEjecutado + " 00:00:00.00"),
         p_motivo: this.motivoNuevoEjecutado,
         p_id_proyecto: 0
       };
@@ -740,7 +740,7 @@ export class ActividadComponent implements OnInit {
         p_id_proy_presupuesto: this.idPresupuestoGest,
         p_monto_avance: this.parseAmountStrToFloat(this.montoNuevoEjecutado),
         p_id_persona: this.idPersonaReg,
-        p_fecha_hora: this.fechaNuevoEjecutado,
+        p_fecha_hora: (this.fechaNuevoEjecutado + " 00:00:00.00"),
         p_motivo: this.motivoNuevoEjecutado,
         p_id_proyecto: 0
       };
@@ -805,8 +805,9 @@ export class ActividadComponent implements OnInit {
           dataReq.pro_act_presupuesto_gestion = this.parseAmountStrToFloat(dataReq.pro_act_presupuesto_gestion.slice(1));
           dataReq.pro_act_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_act_ava_ejecutado_gestion.slice(1));
           dataReq.pro_pre_ava_ejecutado_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_ava_ejecutado_gestion.slice(1));
+          dataReq.pro_pre_adicional_gestion = this.parseAmountStrToFloat(dataReq.pro_pre_adicional_gestion.slice(1));
 
-          this.presupuestoGest = this.parseAmountFloatToStr(dataReq.pro_act_presupuesto_gestion);
+          this.presupuestoGest = this.parseAmountFloatToStr(dataReq.pro_pre_adicional_gestion);
           this.ejecutadoGest = this.parseAmountFloatToStr(dataReq.pro_act_ava_ejecutado_gestion + dataReq.pro_pre_ava_ejecutado_gestion);
           
           this.createDoughnutChartGestion();
