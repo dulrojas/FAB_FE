@@ -613,30 +613,36 @@ export class RiesgosComponent implements OnInit {
   // ======= ======= DOWNLOAD EXCEL ======= ======= 
   downloadExcel() {
     const columnas = [ 
-      'id_riesgo',
+      //'id_riesgo',
       //'id_proyecto',
       //'id_proy_elemen_padre',
-      //'idp_categoria',
+      'categoria',
       //'codigo',
       'fecha',
       'riesgo',
       'descripcion',
       'vinculados',
-      'idp_identificacion',
+      'identificacion',
       'impacto',
       'probabilidad',
       'nivel',
-      'idp_ocurrencia',
-      'idp_medidas',
+      'ocurrencia',
+      'idpmedidas',
       'medidas',
-      'idp_efectividad',
+      'efectividad',
       'comentarios',
       //'fecha_hora_reg',
       //'id_persona_reg'
     ]; 
     const today = new Date();
     const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
-    let riesgosObj = [...this.riesgos];
+   // Transformamos los valores de impacto, probabilidad y nivel
+      let riesgosObj = this.riesgos.map(riesgo => ({
+        ...riesgo,
+        impacto: this.mapProbabilidadImpacto(riesgo.impacto),
+        probabilidad: this.mapProbabilidadImpacto(riesgo.probabilidad),
+        nivel: this.mapNivel(riesgo.nivel)
+      }));
     ExcelExportService.exportToExcel(
       riesgosObj,
       'Reporte_Riesgos_' + formattedDate,
