@@ -934,7 +934,7 @@ export class BeneficiariosComponent implements OnInit {
         console.error(error);
       }
     );
-    // ======= GET ORGANIZACION TIPO =======
+    // ======= GET ORGANIZACION SUBTIPO =======
     this.servicios.getParametricaByIdTipo(26).subscribe(
       (data) => {
         //this.beneficiariosListaOrganizacionSubTipo = data[0].dato;
@@ -965,6 +965,11 @@ export class BeneficiariosComponent implements OnInit {
     );
   }
   // ======= GET ORGANIZACION SUBTIPO =======
+  getDescripcionOrganizacionSubtipo(idRegistro: any, paramList: any): string {
+    const subtipo = paramList.find(elem => elem.id_padre.id_subtipo == idRegistro);
+    return subtipo ? subtipo.descripcion_subtipo : '';
+  }
+
   cargarOrganizacionSubTipoPorTipo(idTipo: any) {
     this.beneficiariosListaOrganizacionSubTipoFilter = this.beneficiariosListaOrganizacionSubTipo.filter(subtipo => subtipo.id_padre == idTipo);
     this.idp_organizacion_subtipo = null;
