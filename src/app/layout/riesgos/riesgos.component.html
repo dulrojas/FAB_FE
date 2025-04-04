@@ -1,453 +1,456 @@
 <!-- ====== ======= ======= ======= ======= HEADER ======= ======= ======= ======= ======= -->
-  <div [@routerTransition]>
-    <!-- Encabezado -->
-    <div class="row col-md-12">   
-        <div class="col col-md-6 align-items-center custom-body-header">
-          <app-bodyHeader 
-                  (selectionChange)="onChildSelectionChange($event)">
-          </app-bodyHeader>
-        </div>
-        <!-- Tarjetas de Estadísticas -->
-        <div class="col col-md-6 text-center">
-          <div class="row">
-            <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-              {{headerDataNro01}} Riesgo(s) Alto(s)
-            </div>
-            <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-              {{headerDataNro02}} Riesgo(s) Medio(s)
-            </div>
-            <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-              {{headerDataNro03}} Riesgo(s) Bajo(s)
-            </div>
-            <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
-              {{headerDataNro04}} A tomar medidas
-            </div>
+<div [@routerTransition]>
+  <!-- Encabezado -->
+  <div class="row">   
+      <div class="col-md-6 align-items-center custom-body-header">
+        <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+        </app-bodyHeader>
+      </div>
+      <!-- Tarjetas de Estadísticas -->
+      <div class="col-md-6 text-center">
+        <div class="row">
+          <div class="col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+            {{headerDataNro01}} Riesgo(s) Alto(s)
+          </div>
+          <div class="col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+            {{headerDataNro02}} Riesgo(s) Medio(s)
+          </div>
+          <div class="col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+            {{headerDataNro03}} Riesgo(s) Bajo(s)
+          </div>
+          <div class="col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+            {{headerDataNro04}} A tomar medidas
           </div>
         </div>
-    </div>
+      </div>
   </div>
-
+</div>
 <!-- ====== ======= ======= ======= TABLA PROY_RIESGOS ======= ======= ======= ======= -->
-  <div [@routerTransition]>
-    <!-- Tabla -->
-    <div class="card mt-3">
-      <div class="card-body custom-card table-responsive">
-        <!-- Encabezado y Botones -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h2 class="title" style="color: #4E8646;">Gestión de Riesgos</h2>
-            <!-- Botones de Acción -->
-            <div class="row">              
-              <div class="col col-xl-12 col-lg-12 text-end">
-                <!-- AÑADIR -->
-                  <button type="button" class="btn btn-view-bg-1" 
-                    (click)="initAddRiesgo(riesgosFormModal)"
-                    [disabled]="(riesgosSelected)||(currentPerProRol.includes('LEC'))">
-                    <i class="fa fa-plus" aria-hidden="true"></i> Añadir
-                  </button>
-                <!-- EDITAR -->
-                  <button type="button" class="btn btn-view-bg-1" 
-                    (click)="initEditRiesgo(riesgosFormModal)"
-                    [disabled]="(!riesgosSelected)||(currentPerProRol.includes('LEC'))">
-                    <i class="fa fa-pencil" aria-hidden="true"></i> Editar
-                  </button>
-                <!-- ELIMINAR -->
-                  <button type="button" class="btn btn-view-bg-1" 
-                  (click)="initDeleteRiesgo(deleteRiesgosModal)"
-                  [disabled]="(!riesgosSelected)||(currentPerProRol.includes('LEC'))">
-                    <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
-                  </button>
-                <!-- EXPORTAR -->
-                  <button type="button" class="btn btn-view-bg-1"
-                  (click)="downloadExcel()">
-                  <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
+<div [@routerTransition]>
+  <!-- Tabla -->
+  <div class="card mt-3">
+    <div class="card-body custom-card table-responsive">
+      <!-- Encabezado y Botones -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="title" style="color: #4E8646;">Gestión de Riesgos</h2>
+          <!-- Botones de Acción -->
+          <div class="row">              
+            <div class="col-xl-12 col-lg-12 text-end">
+              <!-- AÑADIR -->
+                <button type="button" class="btn btn-view-bg-1" 
+                  (click)="initAddRiesgo(riesgosFormModal)"
+                  [disabled]="(riesgosSelected)||(currentPerProRol.includes('LEC'))">
+                  <i class="fa fa-plus" aria-hidden="true"></i> Añadir
                 </button>
-              </div>
+              <!-- EDITAR -->
+                <button type="button" class="btn btn-view-bg-1" 
+                  (click)="initEditRiesgo(riesgosFormModal)"
+                  [disabled]="(!riesgosSelected)||(currentPerProRol.includes('LEC'))">
+                  <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                </button>
+              <!-- ELIMINAR -->
+                <button type="button" class="btn btn-view-bg-1" 
+                (click)="initDeleteRiesgo(deleteRiesgosModal)"
+                [disabled]="(!riesgosSelected)||(currentPerProRol.includes('LEC'))">
+                  <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                </button>
+              <!-- EXPORTAR -->
+                <button type="button" class="btn btn-view-bg-1"
+                (click)="downloadExcel()">
+                <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
+              </button>
+            </div>
+        </div>
+      </div>
+      <!-- Tabla de Riesgo -->
+      <div class="row">
+        <div class="container">
+          <table class="table custom-table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th></th>
+                <th>CATEGORÍA</th>
+                <th style="text-align: center;">IDENTIFICACIÓN</th>
+                <th>RIESGO/SUPUESTO/HIPÓTESIS</th>
+                <th style="text-align: center;">IMPACTO</th>
+                <th style="text-align: center;">PROBABILIDAD</th>
+                <th style="text-align: center;">NIVEL DE RIESGO</th>
+                <th style="text-align: center;">TOMAR MEDIDAS</th>
+                <th>EFECTIVIDAD</th>
+                <th>COMENTARIOS</th>
+              </tr>
+            </thead>
+            <!-- Cuerpo de la Tabla -->
+            <tbody>
+              <tr *ngFor="let riesgo of riesgosTable; let i = index" >
+                <!-- CHECKBOX -->
+                <td>
+                  <input type="checkbox" 
+                        [(ngModel)]="riesgo.selected" 
+                        (change)="checkboxChanged(riesgo)"
+                        id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
+                </td> 
+                <!-- CATEGORÍA -->
+                <td>{{ getDescripcionSubtipo(riesgo.idp_categoria, riesgoCategoria) }}</td>
+                <!-- FECHA -->
+                <td style="text-align: center;">{{ riesgo.fecha | date:'dd/MM/yyyy'}}</td>
+                <!-- TITULO DE RIESGO -->
+                <td>{{ riesgo.riesgo }}</td>
+                <!-- IMPACTO -->
+                <td>
+                  <div class="impacto-button" [ngClass]="{
+                    'impacto-alto': mapProbabilidadImpacto(riesgo.impacto)  === 'Alto',
+                    'impacto-medio': mapProbabilidadImpacto(riesgo.impacto)  === 'Medio',
+                    'impacto-bajo': mapProbabilidadImpacto(riesgo.impacto) === 'Bajo'
+                  }">
+                    {{ mapProbabilidadImpacto(riesgo.impacto) }}
+                  </div>
+                </td>
+                <!-- PROBABILIDAD -->
+                <td>
+                  <div class="probabilidad-shape" [ngClass]="{
+                    'probabilidad-alto': mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') === 'Alta',
+                    'probabilidad-medio': mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') === 'Media',
+                    'probabilidad-bajo': mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') === 'Baja'
+                  }">
+                    {{ mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') }}
+                  </div>
+                </td>
+                <!-- NIVEL DE RIESGO -->
+                <td>
+                  <div class="riesgo-circle"
+                  [ngClass]="{
+                    'riesgo-alto': mapNivel(riesgo.nivel) === 'Alto',
+                    'riesgo-medio': mapNivel(riesgo.nivel) === 'Medio',
+                    'riesgo-bajo': mapNivel(riesgo.nivel) === 'Bajo'}">
+                    <span *ngIf="mapNivel(riesgo.nivel) === 'Alto'" class="symbol">✕</span>
+                    <span *ngIf="mapNivel(riesgo.nivel) === 'Medio'" class="symbol">!</span>
+                    <span *ngIf="mapNivel(riesgo.nivel) === 'Bajo'" class="symbol">✓</span>
+                  </div>
+                </td>
+                <!-- TOMAR MEDIDAS -->
+                <td style="text-align: center;">{{ getDescripcionSubtipo(riesgo.idp_medidas, riesgoTomarAcciones) }}</td>
+                <!-- EFECTIVIDAD -->
+                <td>{{ getDescripcionSubtipo(riesgo.idp_efectividad, riesgoEfectividadMedidas) }}</td>
+                <!-- COMENTARIOS -->
+                <td>{{ riesgo.comentarios }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- Botones de tabla -->
+          <div class="d-flex justify-content-center">
+            <ngb-pagination 
+              [(page)]="mainPage" 
+              [pageSize]="mainPageSize" 
+              [collectionSize]="totalLength"
+              [maxSize]="3"
+              [rotate]="true"
+              [boundaryLinks]="true">
+            </ngb-pagination>
+          </div>
+          <!-- Si la tabla esta vacia -->
+          <div class="row" *ngIf="riesgosTable.length === 0"> 
+            <div class="custom-no-data-container">
+              <span class="custom-no-data-message">
+                No hay registros para mostrar
+              </span>
+            </div>
           </div>
         </div>
-        <!-- Tabla de Riesgo -->
-        <table class="table custom-table table-striped table-bordered">
-          <thead>
-            <tr>
-              <th></th>
-              <th>CATEGORÍA</th>
-              <th style="text-align: center;">IDENTIFICACIÓN</th>
-              <th>RIESGO/SUPUESTO/HIPÓTESIS</th>
-              <th style="text-align: center;">IMPACTO</th>
-              <th style="text-align: center;">PROBABILIDAD</th>
-              <th style="text-align: center;">NIVEL DE RIESGO</th>
-              <th style="text-align: center;">TOMAR MEDIDAS</th>
-              <th>EFECTIVIDAD</th>
-              <th>COMENTARIOS</th>
-            </tr>
-          </thead>
-          <!-- Cuerpo de la Tabla -->
-          <tbody>
-            <tr *ngFor="let riesgo of riesgosTable; let i = index" >
-              <!-- CHECKBOX -->
-              <td>
-                <input type="checkbox" 
-                      [(ngModel)]="riesgo.selected" 
-                      (change)="checkboxChanged(riesgo)"
-                      id ="checkbox-{{ i }}" name = "checkbox-{{ i }}">
-              </td> 
-              <!-- CATEGORÍA -->
-              <td>{{ getDescripcionSubtipo(riesgo.idp_categoria, riesgoCategoria) }}</td>
-              <!-- FECHA -->
-              <td style="text-align: center;">{{ riesgo.fecha | date:'dd/MM/yyyy'}}</td>
-              <!-- TITULO DE RIESGO -->
-              <td>{{ riesgo.riesgo }}</td>
-              <!-- IMPACTO -->
-              <td>
-                <div class="impacto-button" [ngClass]="{
-                  'impacto-alto':mapProbabilidadImpacto(riesgo.impacto)  === 'Alto',
-                  'impacto-medio':mapProbabilidadImpacto(riesgo.impacto)  === 'Medio',
-                  'impacto-bajo':mapProbabilidadImpacto(riesgo.impacto) === 'Bajo'
-                }">
-                  {{ mapProbabilidadImpacto(riesgo.impacto) }}
-                </div>
-              </td>
-              <!-- PROBABILIDAD -->
-              <td>
-                <div class="probabilidad-shape" [ngClass]="{
-                  'probabilidad-alto': mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') === 'Alta',
-                  'probabilidad-medio': mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') === 'Media',
-                  'probabilidad-bajo': mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') === 'Baja'
-                }">
-                  {{ mapProbabilidadImpacto(riesgo.probabilidad, 'femenino') }}
-                </div>
-              </td>
-              <!-- NIVEL DE RIESGO -->
-              <td>
-                <div class="riesgo-circle"
-                [ngClass]="{
-                  'riesgo-alto': mapNivel(riesgo.nivel) === 'Alto',
-                  'riesgo-medio':mapNivel(riesgo.nivel) === 'Medio',
-                  'riesgo-bajo': mapNivel(riesgo.nivel) === 'Bajo'}">
-                  <span *ngIf="mapNivel(riesgo.nivel) === 'Alto'" class="symbol">✕</span>
-                  <span *ngIf="mapNivel(riesgo.nivel) === 'Medio'" class="symbol">!</span>
-                  <span *ngIf="mapNivel(riesgo.nivel) === 'Bajo'" class="symbol">✓</span>
-                </div>
-              </td>
-              <!-- TOMAR MEDIDAS -->
-              <td style="text-align: center;">{{ getDescripcionSubtipo(riesgo.idp_medidas, riesgoTomarAcciones) }}</td>
-              <!-- EFECTIVIDAD -->
-              <td>{{ getDescripcionSubtipo(riesgo.idp_efectividad, riesgoEfectividadMedidas) }}</td>
-              <!-- COMENTARIOS -->
-              <td>{{ riesgo.comentarios }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- Botones de tabla -->
-              <div class="d-flex justify-content-center">
-                <ngb-pagination 
-                  [(page)]="mainPage" 
-                  [pageSize]="mainPageSize" 
-                  [collectionSize]="totalLength"
-                  [maxSize]="3"
-                  [rotate]="true"
-                  [boundaryLinks]="true">
-                </ngb-pagination>
-              </div>
-        <!-- Si la tabla esta vacia -->
-        <div class="row" *ngIf="riesgosTable.length === 0"> 
-          <div class="custom-no-data-container">
-            <span class="custom-no-data-message">
-              No hay registros para mostrar
-            </span>
-          </div>
-        </div>
+      </div>
     </div>
   </div>
+</div>
 
 <!-- ======= ======= ======= ======= MODAL AÑADIR-EDITAR RIESGO ======= ======= ======= ======= -->
-  <ng-template #riesgosFormModal let-modal class="custom-modal">
-    <!-- Encabezado del Modal-->
-    <div class="modal-header">
-        <h4 class="modal-title">{{ modalTitle }}</h4>
-    </div>
-    <!-- Cuerpo del Modal -->
-    <div class="modal-body">
-      <form #riesgosForm="ngForm" (ngSubmit)="onSubmit(riesgosForm)">
-        <div class="row">
-          <div class="col col-xl-12 col-lg-12">
-            <div class="card mb-3">
-              <div class="card-body custom-card">
-                <div class="row">
-                  <!-- PRIMERA FILA: FECHA DE REGISTRO, PERSONA REGISTRO, COMPONENTE -->                      
-                      <!-- ======= ======= PERSONA REGISTRO ======= ======= -->
-                      <div class="col col-xl-4 col-lg-4 mb-auto">
-                        <label for="persona_registro">Persona Registro</label>
-                        <input  class="form-control" type="text" 
-                                id="persona_registro" name="persona_registro" 
-                                [(ngModel)]="persona_registro" disabled/>
-                      </div>
-                      <!-- ======= ======= FECHA DE REGISTRO ======= ======= -->
-                      <div class="col col-xl-3 col-lg-3 mb-auto">
-                        <label  for="fecha_registro">Fecha de Registro</label>
-                        <input  class="form-control" type="text"
-                                id="fecha_registro" name="fecha_registro"
-                                [value]="fecha_registro | date: 'dd-MM-yyyy HH:mm'" 
-                                disabled/>
-                      </div>                      
-                      <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
-                      <div class="col col-xl-4 col-lg-4 mb-auto">
-                        <label for="id_proy_elemen_padre">Componente</label>
-                          <select class="form-control" 
-                            id="id_proy_elemen_padre" name="id_proy_elemen_padre" 
-                            [(ngModel)]="id_proy_elemen_padre" (change)="onSelectionChange()">
-                            <option value="null" disabled selected>Selecciona un Componente</option>
-                              <option *ngFor="let componente of componentes" [value]="componente.id_proy_elemento">
-                              {{ componente.elemento }}
-                              </option>
-                          </select>                          
-                      </div>
-                      <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
-                      <div class="col col-xl-1 col-lg-1 mt-auto">
-                        <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
-                      </div>
-                    <!-- SEGUNDA FILA: CATEGORÍA, TÍTULO DE RIESGO, FECHA DE IDENTIFICACIÓN -->
-                      <!-- ======= ======= CATEGORÍA ======= ======= -->
-                      <div class="col col-xl-3 col-lg-3 mb-auto">
-                        <label for="idp_categoria">Categoría</label>
-                          <select class="form-control" id="idp_categoria" name="idp_categoria"
-                            [(ngModel)]="idp_categoria" (change)="ValidateCategoria()">
-                            <option value="" disabled selected>Seleccione una categoría</option>
-                            <option *ngFor="let categoria of riesgoCategoria" [value]="categoria.id_subtipo">
-                              {{ categoria.descripcion_subtipo }}
+<ng-template #riesgosFormModal let-modal class="custom-modal">
+  <!-- Encabezado del Modal-->
+  <div class="modal-header">
+      <h4 class="modal-title">{{ modalTitle }}</h4>
+  </div>
+  <!-- Cuerpo del Modal -->
+  <div class="modal-body">
+    <form #riesgosForm="ngForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-xl-12 col-lg-12">
+          <div class="card mb-3">
+            <div class="card-body custom-card">
+              <div class="row">
+                <!-- PRIMERA FILA: FECHA DE REGISTRO, PERSONA REGISTRO, COMPONENTE -->                      
+                    <!-- ======= ======= PERSONA REGISTRO ======= ======= -->
+                    <div class="col-xl-4 col-lg-4 mb-auto">
+                      <label for="persona_registro">Persona Registro</label>
+                      <input  class="form-control" type="text" 
+                              id="persona_registro" name="persona_registro" 
+                              [(ngModel)]="persona_registro" disabled/>
+                    </div>
+                    <!-- ======= ======= FECHA DE REGISTRO ======= ======= -->
+                    <div class="col-xl-3 col-lg-3 mb-auto">
+                      <label  for="fecha_registro">Fecha de Registro</label>
+                      <input  class="form-control" type="text"
+                              id="fecha_registro" name="fecha_registro"
+                              [value]="fecha_registro | date: 'dd-MM-yyyy HH:mm'" 
+                              disabled/>
+                    </div>                      
+                    <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                    <div class="col-xl-4 col-lg-4 mb-auto">
+                      <label for="id_proy_elemen_padre">Componente</label>
+                        <select class="form-control" 
+                          id="id_proy_elemen_padre" name="id_proy_elemen_padre" 
+                          [(ngModel)]="id_proy_elemen_padre" (change)="onSelectionChange()">
+                          <option [ngValue]="null" disabled selected>Selecciona un Componente</option>
+                            <option *ngFor="let componente of componentes" [value]="componente.id_proy_elemento">
+                            {{ componente.elemento }}
                             </option>
-                          </select>
-                          <span class="custom-alert-message" *ngIf="!valCategoria">Debe elegir una Categoría</span>
-                      </div>
-                      <!-- ======= ======= TÍTULO DE RIESGO ======= ======= -->
-                      <div class="col col-xl-5 col-lg-5 mb-auto">
-                        <label for="riesgo">Título de Riesgo</label>
-                        <input  class="form-control" type="text" 
-                              id="riesgo" name="riesgo"  placeholder="Ingresa el titulo del Riesgo"
-                              [(ngModel)]="riesgo" (change)="ValidateRiesgo()" maxlength="100"/>
-                        <span class="custom-alert-message" *ngIf="!valRiesgo">Debe elegir un Riesgo</span>      
-                      </div>
-                      <!-- ======= ======= FECHA DE IDENTIFICACIÓN ======= ======= -->
-                      <div class="col col-xl-4 col-lg-4 mb-auto">
-                        <label for="fecha">Fecha de Identificación</label>
-                        <input class="form-control" type="date" id="fecha" name="fecha" 
-                        [(ngModel)]="fecha"/>                        
-                      </div>
-                    <!-- TERCERA FILA: RIESGO/SUPUESTO/HIPÓTESIS -->
-                      <!-- ======= ======= RIESGO/SUPUESTO/HIPÓTESIS ======= ======= -->  
-                      <div class="col col-xl-12 col-lg-12 mb-auto">
-                        <label>Riesgo/Supuesto/Hipótesis</label>
-                          <textarea class="form-control" id="descripcion" name="descripcion"
-                            placeholder="Ingresa la descripción del riesgo"
-                            [(ngModel)]="descripcion" (change)="ValidateDescripcion()" maxlength="500">
-                          </textarea>
-                        <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la Descripción</span>
-                      </div>
-                    <!-- CUARTA FILA: INDIVIDUALES/INSTITUCIONES VINCULADOS, IDENTIFICACIÓN DEL RIESGO-->
-                      <!-- ======= ======= INDIVIDUALES/INSTITUCIONES VINCULADOS ======= ======= -->   
-                      <div class="col col-xl-6 col-lg-6 mb-auto">
-                        <label for="vinculados">Individuales/Instituciones Vinculados</label>
-                          <input  class="form-control" type="text" 
-                                  id="vinculados" name="vinculados" placeholder="Ingresa un Vínculo"
-                                  [(ngModel)]="vinculados" (change)="ValidateVinculados()" maxlength="100"/>
-                        <span class="custom-alert-message" *ngIf="!valVinculados">Debe ingresar el vínculo</span>
-                      </div>
-                      <!-- ======= ======= IDENTIFICACIÓN DEL RIESGO ======= ======= -->
-                      <div class="col col-xl-6 col-lg-6 mb-auto">
-                        <label for="idp_identificacion">Identificación del Riesgo</label>
-                          <select class="form-control" id="idp_identificacion" name="idp_identificacion" 
-                            [(ngModel)]="idp_identificacion" (change)="ValidateIdentificacion()" >
-                            <option value="" disabled selected>Seleccione una Identificación del Riesgo</option>
-                            <option *ngFor="let identificacion of riegosIdentificacion" [value]="identificacion.id_subtipo">
-                              {{ identificacion.descripcion_subtipo }}
-                            </option>
-                          </select>
-                          <span class="custom-alert-message" *ngIf="!valIdentificacion">Debe elegir una Identificacion</span>
-                      </div>
-                  <!-- QUINTA FILA:  IMPACTO, PROBABILIDAD , NIVEL DE RIESGO -->   
-                      <!-- ======= ======= IMPACTO ======= ======= -->
-                      <div class="col col-xl-4 col-lg-4 mb-auto">
-                        <label for="impacto">Impacto</label>
-                        <div class="position-relative">
-                          <select class="form-control ps-2"
-                            id="impacto"
-                            name="impacto"
-                            [(ngModel)]="impacto" 
-                            (change)="this.ValidateImpacto()"
-                            (ngModelChange)="calcularNivelRiesgo()">
-                            <option [value]="null" disabled selected>Seleccione Impacto</option>
-                            <option value="3">Alto</option>
-                            <option value="2">Medio</option>
-                            <option value="1">Bajo</option>
-                          </select>
-                          <span class="custom-alert-message" *ngIf="!valImpacto">Debe elegir un impacto</span>
-                          
-                          <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
-                            <div *ngIf="impacto" 
-                                [ngClass]="{
-                                  'probabilidad-shape': true, 
-                                  'impacto-alto': impacto === '3',
-                                  'impacto-medio': impacto === '2',
-                                  'impacto-bajo': impacto === '1'
-                                }"
-                                style="transform: scale(0.6);">
-                              {{ mapProbabilidadImpacto(impacto) }}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- ======= ======= PROBABILIDAD ======= ======= -->
-                      <div class="col col-xl-4 col-lg-4 mb-auto">
-                        <label for="probabilidad">Probabilidad</label>
-                        <div class="position-relative">
-                          <select class="form-control ps-2"
-                            id="probabilidad"
-                            name="probabilidad"
-                            [(ngModel)]="probabilidad" (change)="this.ValidateProbabilidad()"
-                            (ngModelChange)="calcularNivelRiesgo()">
-                            <option [value]="null" disabled selected>Seleccione Probabilidad</option>
-                            <option value="3">Alta</option>
-                            <option value="2">Media</option>
-                            <option value="1">Baja</option>
-                          </select>
-                          <span class="custom-alert-message" *ngIf="!valProbabilidad">Debe elegir una probabilidad</span>
-                          <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
-                            <div *ngIf="probabilidad" 
-                                [ngClass]="{
-                                  'probabilidad-shape': true,
-                                  'probabilidad-alto': probabilidad === '3',
-                                  'probabilidad-medio': probabilidad === '2',
-                                  'probabilidad-bajo': probabilidad === '1'
-                                }" 
-                                style="transform: scale(0.6);">
-                                {{ mapProbabilidadImpacto(probabilidad, 'femenino') }}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- ======= ======= NIVEL DE RIESGO ======= ======= -->
-                      <div class="col col-xl-4 col-lg-4 mb-auto">
-                        <label for="nivelRiesgo">Nivel de Riesgo</label>
-                        <div class="position-relative">
-                          <input
-                            class="form-control ps-2"
-                            id="nivel"
-                            name="nivel"
-                            [ngModel]="nivel ? mapNivel(nivel) : ''"
-                            disabled
-                            [ngClass]="{
-                              'nivel-alto': nivel === '6' || nivel === '9',
-                              'nivel-medio': nivel === '3' || nivel === '4',
-                              'nivel-bajo': nivel === '1' || nivel === '2'
-                            }">
-                          <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
-                            <div *ngIf="nivel" class="riesgo-circle" style="transform: scale(0.6);"
-                              [ngClass]="{
-                                'riesgo-alto': nivel === '6' || nivel === '9',
-                                'riesgo-medio': nivel === '3' || nivel === '4',
-                                'riesgo-bajo': nivel === '1' || nivel === '2'
-                              }">
-                              <span class="symbol" *ngIf="nivel === '6' || nivel === '9'">✕</span>
-                              <span class="symbol" *ngIf="nivel === '3' || nivel === '4'">!</span>
-                              <span class="symbol" *ngIf="nivel === '1' || nivel === '2'">✓</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    <!-- SEPARADOR -->  
-                    <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646; border-width: 3px;"></div>
-                    <!-- SEXTA FILA: OCURRENCIA DURANTE LA GESTIÓN, NECESIDAD DE TOMAR ACCIONES -->
-                      <!-- ======= ======= OCURRENCIA DURANTE LA GESTIÓN ======= ======= -->
-                      <div class="col col-xl-6 col-lg-6 mb-auto">
-                        <label for="idp_ocurrencia">Ocurrencia durante la Gestión</label>
-                        <select class="form-control" id="idp_ocurrencia" name="idp_ocurrencia" 
-                          [(ngModel)]="idp_ocurrencia">
-                          <option value="null" disabled selected>Seleccione la ocurrencia durante la gestión</option>
-                          <option *ngFor="let ocurrencia of riegosOcurrencia" [value]="ocurrencia.id_subtipo">
-                            {{ ocurrencia.descripcion_subtipo }}
+                        </select>                          
+                    </div>
+                    <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                    <div class="col-xl-1 col-lg-1 mt-auto">
+                      <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
+                    </div>
+                  <!-- SEGUNDA FILA: CATEGORÍA, TÍTULO DE RIESGO, FECHA DE IDENTIFICACIÓN -->
+                    <!-- ======= ======= CATEGORÍA ======= ======= -->
+                    <div class="col-xl-3 col-lg-3 mb-auto">
+                      <label for="idp_categoria">Categoría</label>
+                        <select class="form-control" id="idp_categoria" name="idp_categoria"
+                          [(ngModel)]="idp_categoria" (change)="ValidateCategoria()">
+                          <option [ngValue]="''" disabled selected>Seleccione una categoría</option>
+                          <option *ngFor="let categoria of riesgoCategoria" [value]="categoria.id_subtipo">
+                            {{ categoria.descripcion_subtipo }}
                           </option>
-                        </select>                        
-                      </div>
-                      <!-- ======= ======= NECESIDAD DE TOMAR ACCIONES ======= ======= -->
-                      <div class="col col-xl-6 col-lg-6 mb-auto">
-                        <label for="idp_medidas">Necesidad de Tomar Acciones</label>
-                          <select class="form-control" id="idp_medidas" name="idp_medidas" 
-                            [(ngModel)]="idp_medidas">
-                            <option value="null" disabled>Seleccione necesidad de tomar acciones</option>
-                            <option *ngFor="let accion of riesgoTomarAcciones" [value]="accion.id_subtipo">
-                              {{ accion.descripcion_subtipo }}
-                            </option>
-                          </select>                          
-                      </div>
-                    <!-- SEPTIMA FILA: MEDIDAS DE RESPUESTA AL RIESGO-->
-                      <!-- ======= ======= MEDIDAS DE RESPUESTA AL RIESGO ======= ======= -->
-                      <div class="col col-xl-12 col-lg-12 mb-auto">
-                        <label for="medidas">Medidas de Respuesta al Riesgo</label>
+                        </select>
+                        <span class="custom-alert-message" *ngIf="!valCategoria">Debe elegir una Categoría</span>
+                    </div>
+                    <!-- ======= ======= TÍTULO DE RIESGO ======= ======= -->
+                    <div class="col-xl-5 col-lg-5 mb-auto">
+                      <label for="riesgo">Título de Riesgo</label>
+                      <input  class="form-control" type="text" 
+                            id="riesgo" name="riesgo"  placeholder="Ingresa el titulo del Riesgo"
+                            [(ngModel)]="riesgo" (change)="ValidateRiesgo()" maxlength="100"/>
+                      <span class="custom-alert-message" *ngIf="!valRiesgo">Debe elegir un Riesgo</span>      
+                    </div>
+                    <!-- ======= ======= FECHA DE IDENTIFICACIÓN ======= ======= -->
+                    <div class="col-xl-4 col-lg-4 mb-auto">
+                      <label for="fecha">Fecha de Identificación</label>
+                      <input class="form-control" type="date" id="fecha" name="fecha" 
+                      [(ngModel)]="fecha"/>                        
+                    </div>
+                  <!-- TERCERA FILA: RIESGO/SUPUESTO/HIPÓTESIS -->
+                    <!-- ======= ======= RIESGO/SUPUESTO/HIPÓTESIS ======= ======= -->  
+                    <div class="col-xl-12 col-lg-12 mb-auto">
+                      <label>Riesgo/Supuesto/Hipótesis</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion"
+                          placeholder="Ingresa la descripción del riesgo"
+                          [(ngModel)]="descripcion" (change)="ValidateDescripcion()" maxlength="500"></textarea>
+                      <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar la Descripción</span>
+                    </div>
+                  <!-- CUARTA FILA: INDIVIDUALES/INSTITUCIONES VINCULADOS, IDENTIFICACIÓN DEL RIESGO-->
+                    <!-- ======= ======= INDIVIDUALES/INSTITUCIONES VINCULADOS ======= ======= -->   
+                    <div class="col-xl-6 col-lg-6 mb-auto">
+                      <label for="vinculados">Individuales/Instituciones Vinculados</label>
                         <input  class="form-control" type="text" 
-                              id="medidas" name="medidas" placeholder="Ingresa Medidas de Respuesta al Riesgo"
-                              [(ngModel)]="medidas" maxlength="500"/>                              
+                                id="vinculados" name="vinculados" placeholder="Ingresa un Vínculo"
+                                [(ngModel)]="vinculados" (change)="ValidateVinculados()" maxlength="100"/>
+                      <span class="custom-alert-message" *ngIf="!valVinculados">Debe ingresar el vínculo</span>
+                    </div>
+                    <!-- ======= ======= IDENTIFICACIÓN DEL RIESGO ======= ======= -->
+                    <div class="col-xl-6 col-lg-6 mb-auto">
+                      <label for="idp_identificacion">Identificación del Riesgo</label>
+                        <select class="form-control" id="idp_identificacion" name="idp_identificacion" 
+                          [(ngModel)]="idp_identificacion" (change)="ValidateIdentificacion()" >
+                          <option [ngValue]="''" disabled selected>Seleccione una Identificación del Riesgo</option>
+                          <option *ngFor="let identificacion of riegosIdentificacion" [value]="identificacion.id_subtipo">
+                            {{ identificacion.descripcion_subtipo }}
+                          </option>
+                        </select>
+                        <span class="custom-alert-message" *ngIf="!valIdentificacion">Debe elegir una Identificacion</span>
+                    </div>
+                <!-- QUINTA FILA:  IMPACTO, PROBABILIDAD , NIVEL DE RIESGO -->   
+                    <!-- ======= ======= IMPACTO ======= ======= -->
+                    <div class="col-xl-4 col-lg-4 mb-auto">
+                      <label for="impacto">Impacto</label>
+                      <div class="position-relative">
+                        <select class="form-control ps-2"
+                          id="impacto"
+                          name="impacto"
+                          [(ngModel)]="impacto" 
+                          (change)="ValidateImpacto()"
+                          (ngModelChange)="calcularNivelRiesgo()">
+                          <option [ngValue]="null" disabled selected>Seleccione Impacto</option>
+                          <option value="3">Alto</option>
+                          <option value="2">Medio</option>
+                          <option value="1">Bajo</option>
+                        </select>
+                        <span class="custom-alert-message" *ngIf="!valImpacto">Debe elegir un impacto</span>
+                        
+                        <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
+                          <div *ngIf="impacto" 
+                              [ngClass]="{
+                                'probabilidad-shape': true, 
+                                'impacto-alto': impacto === '3',
+                                'impacto-medio': impacto === '2',
+                                'impacto-bajo': impacto === '1'
+                              }"
+                              style="transform: scale(0.6);">
+                            {{ mapProbabilidadImpacto(impacto) }}
+                          </div>
+                        </div>
                       </div>
-                    <!-- SEPARADOR -->  
-                    <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646; border-width: 3px;"></div>
-                    <!-- OCTAVA FILA: EFECTIVIDAD DE LAS MEDIDAS, COMENTARIOS ADICIONALES -->
-                    <!-- ======= ======= EFECTIVIDAD DE LAS MEDIDAS ======= ======= --> 
-                    <div class="col col-xl-4 col-lg-4 mb-auto">
-                      <label for="idp_efectividad">Efectividad de las Medidas</label>
-                      <select class="form-control" id="idp_efectividad" name="idp_efectividad" 
-                        [(ngModel)]="idp_efectividad">
-                        <option [value]="null">Seleccione efectividad de las medidas</option>
-                        <option *ngFor="let efectividad of riesgoEfectividadMedidas" [value]="efectividad.id_subtipo">
-                          {{ efectividad.descripcion_subtipo }}
+                    </div>
+                    <!-- ======= ======= PROBABILIDAD ======= ======= -->
+                    <div class="col-xl-4 col-lg-4 mb-auto">
+                      <label for="probabilidad">Probabilidad</label>
+                      <div class="position-relative">
+                        <select class="form-control ps-2"
+                          id="probabilidad"
+                          name="probabilidad"
+                          [(ngModel)]="probabilidad" 
+                          (change)="ValidateProbabilidad()"
+                          (ngModelChange)="calcularNivelRiesgo()">
+                          <option [ngValue]="null" disabled selected>Seleccione Probabilidad</option>
+                          <option value="3">Alta</option>
+                          <option value="2">Media</option>
+                          <option value="1">Baja</option>
+                        </select>
+                        <span class="custom-alert-message" *ngIf="!valProbabilidad">Debe elegir una probabilidad</span>
+                        <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
+                          <div *ngIf="probabilidad" 
+                              [ngClass]="{
+                                'probabilidad-shape': true,
+                                'probabilidad-alto': probabilidad === '3',
+                                'probabilidad-medio': probabilidad === '2',
+                                'probabilidad-bajo': probabilidad === '1'
+                              }" 
+                              style="transform: scale(0.6);">
+                              {{ mapProbabilidadImpacto(probabilidad, 'femenino') }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- ======= ======= NIVEL DE RIESGO ======= ======= -->
+                    <div class="col-xl-4 col-lg-4 mb-auto">
+                      <label for="nivelRiesgo">Nivel de Riesgo</label>
+                      <div class="position-relative">
+                        <input
+                          class="form-control ps-2"
+                          id="nivel"
+                          name="nivel"
+                          [ngModel]="nivel ? mapNivel(nivel) : ''"
+                          disabled
+                          [ngClass]="{
+                            'nivel-alto': nivel === '6' || nivel === '9',
+                            'nivel-medio': nivel === '3' || nivel === '4',
+                            'nivel-bajo': nivel === '1' || nivel === '2'
+                          }">
+                        <div class="position-absolute top-50 end-0 translate-middle-y pe-4">
+                          <div *ngIf="nivel" class="riesgo-circle" style="transform: scale(0.6);"
+                            [ngClass]="{
+                              'riesgo-alto': nivel === '6' || nivel === '9',
+                              'riesgo-medio': nivel === '3' || nivel === '4',
+                              'riesgo-bajo': nivel === '1' || nivel === '2'
+                            }">
+                            <span class="symbol" *ngIf="nivel === '6' || nivel === '9'">✕</span>
+                            <span class="symbol" *ngIf="nivel === '3' || nivel === '4'">!</span>
+                            <span class="symbol" *ngIf="nivel === '1' || nivel === '2'">✓</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <!-- SEPARADOR -->  
+                  <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646; border-width: 3px;"></div>
+                  <!-- SEXTA FILA: OCURRENCIA DURANTE LA GESTIÓN, NECESIDAD DE TOMAR ACCIONES -->
+                    <!-- ======= ======= OCURRENCIA DURANTE LA GESTIÓN ======= ======= -->
+                    <div class="col-xl-6 col-lg-6 mb-auto">
+                      <label for="idp_ocurrencia">Ocurrencia durante la Gestión</label>
+                      <select class="form-control" id="idp_ocurrencia" name="idp_ocurrencia" 
+                        [(ngModel)]="idp_ocurrencia">
+                        <option [ngValue]="null" disabled selected>Seleccione la ocurrencia durante la gestión</option>
+                        <option *ngFor="let ocurrencia of riegosOcurrencia" [value]="ocurrencia.id_subtipo">
+                          {{ ocurrencia.descripcion_subtipo }}
                         </option>
-                      </select>                  
+                      </select>                        
                     </div>
-                    <!-- ======= ======= COMENTARIOS ADICIONALES ======= ======= -->
-                    <div class="col col-xl-8 col-lg-8 mb-auto">
-                      <label for="comentarios">Comentarios Adicionales</label>
-                      <input class="form-control" type="text" 
-                            id="comentarios" name="comentarios" 
-                            placeholder="Ingresa Comentarios Adicionales"
-                            [(ngModel)]="comentarios" maxlength="500"/>                  
+                    <!-- ======= ======= NECESIDAD DE TOMAR ACCIONES ======= ======= -->
+                    <div class="col-xl-6 col-lg-6 mb-auto">
+                      <label for="idp_medidas">Necesidad de Tomar Acciones</label>
+                        <select class="form-control" id="idp_medidas" name="idp_medidas" 
+                          [(ngModel)]="idp_medidas" (change)="onMedidasChange()">
+                          <option [ngValue]="null" disabled>Seleccione necesidad de tomar acciones</option>
+                          <option *ngFor="let accion of riesgoTomarAcciones" [value]="accion.id_subtipo">
+                            {{ accion.descripcion_subtipo }}
+                          </option>
+                        </select>                          
                     </div>
-                  <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-                  <div class="modal-footer">
-                    <div class="d-flex justify-content-center" style="width: 100%;">
-                      <button type="button" class="btn btn-bg-3" (click)="closeModal('Cerrar')">
-                        <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                      </button>
-                      <button type="button" class="btn btn-bg-1" [disabled]="riesgosForm.invalid" (click)="onSubmit()">
-                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
-                      </button>
+                  <!-- SEPTIMA FILA: MEDIDAS DE RESPUESTA AL RIESGO-->
+                    <!-- ======= ======= MEDIDAS DE RESPUESTA AL RIESGO ======= ======= -->
+                    <div class="col-xl-12 col-lg-12 mb-auto">
+                      <label for="medidas">Medidas de Respuesta al Riesgo</label>
+                      <input  class="form-control" type="text" 
+                            id="medidas" name="medidas" placeholder="Ingresa Medidas de Respuesta al Riesgo"
+                            [(ngModel)]="medidas" maxlength="500"/>                              
                     </div>
+                  <!-- SEPARADOR -->  
+                  <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646; border-width: 3px;"></div>
+                  <!-- OCTAVA FILA: EFECTIVIDAD DE LAS MEDIDAS, COMENTARIOS ADICIONALES -->
+                  <!-- ======= ======= EFECTIVIDAD DE LAS MEDIDAS ======= ======= --> 
+                  <div class="col-xl-4 col-lg-4 mb-auto">
+                    <label for="idp_efectividad">Efectividad de las Medidas</label>
+                    <select class="form-control" id="idp_efectividad" name="idp_efectividad" 
+                      [(ngModel)]="idp_efectividad" [disabled]="isDisabled">
+                      <option [ngValue]="null">Seleccione efectividad de las medidas</option>
+                      <option *ngFor="let efectividad of riesgoEfectividadMedidas" [value]="efectividad.id_subtipo">
+                        {{ efectividad.descripcion_subtipo }}
+                      </option>
+                    </select>                  
                   </div>
-                </div>
+                  <!-- ======= ======= COMENTARIOS ADICIONALES ======= ======= -->
+                  <div class="col-xl-8 col-lg-8 mb-auto">
+                    <label for="comentarios">Comentarios Adicionales</label>
+                    <input class="form-control" type="text" 
+                          id="comentarios" name="comentarios" 
+                          placeholder="Ingresa Comentarios Adicionales"
+                          [(ngModel)]="comentarios" maxlength="500" [disabled]="isDisabled"/>                  
+                  </div>                
               </div>
-              </div>
+            </div>
           </div>
         </div>
-      </form>
-    </div>
-  </ng-template>
+      </div>
+      <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+      <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+          <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+            <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+          </button>                      
+          <button type="button" class="btn btn-bg-1" [disabled]="riesgosForm.invalid" (click)="onSubmit()">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
 
 <!-- ======= ======= ======= DELETE RIESGOS ======= ======= ======= -->
-  <ng-template #deleteRiesgosModal let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Eliminar Riesgo</h4>
-    </div>
-    <div class="modal-body">
-        <div class="d-flex justify-content-center" style="width: 100%;">
-            <p>Esta seguro de querer eliminar el registro de este Riesgo?</p>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <div class="d-flex justify-content-center" style="width: 100%;">
-            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
-            <button type="button" class="btn btn-bg-3" (click)="closeModal()">
-                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
-            </button>
-            <button type="button" class="btn btn-bg-1" (click)="deleteRiesgos()">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
-            </button>
-        </div>
-    </div>
-  </ng-template>
-<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<ng-template #deleteRiesgosModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Eliminar Riesgo</h4>
+  </div>
+  <div class="modal-body">
+      <div class="d-flex justify-content-center" style="width: 100%;">
+          <p>Esta seguro de querer eliminar el registro de este Riesgo?</p>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <div class="d-flex justify-content-center" style="width: 100%;">
+          <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+          <button type="button" class="btn btn-bg-3" (click)="closeModal()">
+              <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+          </button>
+          <button type="button" class="btn btn-bg-1" (click)="deleteRiesgos()">
+              <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+          </button>
+      </div>
+  </div>
+</ng-template>

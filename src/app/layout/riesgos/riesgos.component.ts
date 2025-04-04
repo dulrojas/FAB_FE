@@ -324,8 +324,8 @@ export class RiesgosComponent implements OnInit {
         this.impacto = null;
         this.probabilidad = null;
         this.nivel = null;
-        this.idp_ocurrencia = "";
-        this.idp_medidas = "";
+        this.idp_ocurrencia = null;
+        this.idp_medidas = null;
         this.medidas = null;
         this.idp_efectividad = null;
         this.comentarios = null;
@@ -432,9 +432,10 @@ export class RiesgosComponent implements OnInit {
         this.comentarios = this.riesgosSelected.comentarios;
         this.fecha_registro = this.riesgosSelected.fecha_hora_reg;
         this.id_persona_reg = this.riesgosSelected.id_persona_reg;
-      
+
         this.sigla = this.riesgosSelected.sigla;
         this.color = this.riesgosSelected.color;
+        this.onMedidasChange();
       
         this.openModal(modalScope); 
       }
@@ -610,44 +611,48 @@ export class RiesgosComponent implements OnInit {
         this.closeModal();
       }
     }
+
+  // ======= ======= NECESIDAD DE TOMAR ACCIONES FUNCION PARA DESABILITAR======= =======
+      isDisabled: boolean = false;
+      onMedidasChange() {
+        if (+this.idp_medidas === 3) {
+            this.isDisabled = true; 
+        } else {
+            this.isDisabled = false; 
+        }
+      }
   // ======= ======= DOWNLOAD EXCEL ======= ======= 
-  downloadExcel() {
-    const columnas = [ 
-      //'id_riesgo',
-      //'id_proyecto',
-      //'id_proy_elemen_padre',
-      'categoria',
-      //'codigo',
-      'fecha',
-      'riesgo',
-      'descripcion',
-      'vinculados',
-      'identificacion',
-      'impacto',
-      'probabilidad',
-      'nivel',
-      'ocurrencia',
-      'idpmedidas',
-      'medidas',
-      'efectividad',
-      'comentarios',
-      //'fecha_hora_reg',
-      //'id_persona_reg'
-    ]; 
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
-   // Transformamos los valores de impacto, probabilidad y nivel
-      let riesgosObj = this.riesgos.map(riesgo => ({
-        ...riesgo,
-        impacto: this.mapProbabilidadImpacto(riesgo.impacto),
-        probabilidad: this.mapProbabilidadImpacto(riesgo.probabilidad),
-        nivel: this.mapNivel(riesgo.nivel)
-      }));
-    ExcelExportService.exportToExcel(
-      riesgosObj,
-      'Reporte_Riesgos_' + formattedDate,
-      columnas      
-    )
-  } 
+      downloadExcel() {
+        const columnas = [ 
+          'fecha',
+          'categoria',          
+          'riesgo',
+          'descripcion',
+          'vinculados',
+          'identificacion',
+          'impacto',
+          'probabilidad',
+          'nivel',
+          'ocurrencia',
+          'nececidad_de_tomar_medidas',
+          'medidas',
+          'efectividad',
+          'comentarios'
+        ]; 
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+      // Transformamos los valores de impacto, probabilidad y nivel
+          let riesgosObj = this.riesgos.map(riesgo => ({
+            ...riesgo,
+            impacto: this.mapProbabilidadImpacto(riesgo.impacto),
+            probabilidad: this.mapProbabilidadImpacto(riesgo.probabilidad),
+            nivel: this.mapNivel(riesgo.nivel)
+          }));
+        ExcelExportService.exportToExcel(
+          riesgosObj,
+          'Reporte_Riesgos_' + formattedDate,
+          columnas      
+        )
+      } 
 
 }
