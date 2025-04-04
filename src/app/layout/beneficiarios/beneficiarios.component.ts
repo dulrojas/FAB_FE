@@ -1152,7 +1152,7 @@ export class BeneficiariosComponent implements OnInit {
       p_idp_organizacion_subtipo: this.idp_organizacion_subtipo || null,
       p_id_ubica_geo_depto: this.id_ubica_geo_depto,
       p_id_ubica_geo_muni: this.id_ubica_geo_muni,
-      p_id_ubica_geo_comu: this.id_ubica_geo_comu,
+      p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
       p_comunidad_no_registrada: this.comunidad_no_registrada || null,
       p_idp_rango_edad: this.idp_rango_edad 
     };
@@ -1248,7 +1248,7 @@ export class BeneficiariosComponent implements OnInit {
       p_idp_organizacion_subtipo: this.idp_organizacion_subtipo || null,
       p_id_ubica_geo_depto: this.id_ubica_geo_depto,
       p_id_ubica_geo_muni: this.id_ubica_geo_muni,
-      p_id_ubica_geo_comu: this.id_ubica_geo_comu,
+      p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
       p_comunidad_no_registrada: this.comunidad_no_registrada || null,
       p_idp_rango_edad: this.idp_rango_edad
     };
@@ -1797,10 +1797,10 @@ export class BeneficiariosComponent implements OnInit {
   downloadExcelAliados() {
     const columnas = [ 
       'fecha',
-      'id_organizacion',
+      'nombre_organizacion',
       'referente',
       'vinculo',
-      'idp_convenio'     
+      'convenio'     
     ]; 
     const today = new Date();
     const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
