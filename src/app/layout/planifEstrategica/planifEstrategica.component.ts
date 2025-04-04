@@ -15,6 +15,7 @@ import { MetoElementosService } from '../../servicios/metoElementos';
 import { servActAvance } from '../../servicios/actividadAvance';
 import { NgForm } from '@angular/forms';
 import { Notify,Report,Confirm } from 'notiflix';
+import { ExcelExportService } from '../../services/excelExport.service';
 
 // ======= ======= ======= COMPONENTES ======= ======= =======
 @Component({
@@ -176,16 +177,7 @@ export class PlanifEstrategicaComponent implements OnInit {
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
   valComponente: any = false;
   
-    loadMetoElemento() {
-      this.servmetoElemento.getMetoElementosByMetodologia(2).subscribe(
-        (data: any) => {
-          this.metoElementoData = (data[0]?.dato) ? data[0].dato : [];
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    }
+    
   
     loadData(): void {
       this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(
@@ -297,6 +289,17 @@ export class PlanifEstrategicaComponent implements OnInit {
       return elemento ? elemento.meto_elemento : 'Indicador';
     }
 
+    loadMetoElemento() {
+      this.servmetoElemento.getMetoElementosByMetodologia(2).subscribe(
+        (data: any) => {
+          this.metoElementoData = (data[0]?.dato) ? data[0].dato : [];
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+    
     getParametricas() {
       // Cargar categorías de nivel 1
       this.servInstCategorias.getCategoriaById(1).subscribe(
@@ -1101,6 +1104,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       const numberValue = parseFloat(value.toString().replace(/[$,]/g, ''));
       return isNaN(numberValue) ? "" : numberValue;
     }
+    
       
     // Filtrar padres válidos en función del tipo del elemento a crear
     getValidParents(tipo: string): any[] {
@@ -1372,12 +1376,17 @@ export class PlanifEstrategicaComponent implements OnInit {
 
          // Convertir valores a números para comparación
           const lineaBase = parseFloat(this.linea_base);
+          const metaFinal = parseFloat(this.meta_final);
           const valorEsperado = parseFloat(avanceData.valor_esperado.replace('$', '').replace(',', ''));
 
           // Validar que el valor esperado no sea menor que la línea base
           if (valorEsperado < lineaBase) {
             //alert('El valor esperado no puede ser menor que la línea base.');
             Notify.failure('El valor esperado no puede ser menor que la línea base.');
+            return;
+          }
+          if (valorEsperado > metaFinal) {
+            Notify.failure('El valor esperado no puede ser mayor que la meta final.');
             return;
           }
     
@@ -1397,18 +1406,30 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.modalService.open(content, { size: 'lg', backdrop: 'static' });
     
       } else {
-        //console.warn('No se encontraron datos para el ID especificado:', id);
         Notify.failure('No se encontraron datos para el ID especificado:' + id);
       }
     }
     
     onEditAvanceSubmit() {
       const lineaBase = parseFloat(this.linea_base);
+      const metaFinal = parseFloat(this.meta_final);
       const valorEsperado = parseFloat(this.editAvance.valor_esperado);
 
       if (valorEsperado < lineaBase) {
         //alert('El valor esperado no puede ser menor que la línea base.');
         Notify.failure('El valor esperado no puede ser menor que la línea base.');
+        return;
+      }
+      if (valorEsperado > metaFinal) {
+        Notify.failure('El valor esperado no puede ser mayor que la meta final.');
+        return;
+      }
+      // Validar coherencia con fechas anteriores y posteriores
+      if (!this.validarCoherenciaValorEsperado(
+        this.editAvance.fecha_reportar, 
+        valorEsperado,
+        this.editAvance.id_proy_indica_avance
+      )) {
         return;
       }
       // Crear el objeto con los datos editados
@@ -1428,12 +1449,10 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.servIndicadorAvance.editIndicadorAvance(avanceEditado).subscribe(
         (response) => {
           this.cargarIndicadoresAvance();
-          //alert('Avance aditado correctamente');
           Notify.success('Avance editado correctamente');
         },
         (error) => {
           console.error('Error al actualizar:', error);
-          //alert('Error al actualizar el avance');
           Notify.failure('Error al actualizar el avance');
         }
       );
@@ -1517,7 +1536,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         valComentarios: any = true;
         ValidateComentarios(){
           this.valComentarios = true;
-          if((!this.comentarios)||(this.comentarios.length >= 255)){
+          if((!this.comentarios)||(this.comentarios.length > 255)){
             this.valComentarios = false;
           }
         }
@@ -1582,22 +1601,70 @@ export class PlanifEstrategicaComponent implements OnInit {
           this.initIndicadorAvanceModel();
           this.modalActionInAvance = "add";
           this.openModalIndicadorAvance(modalScope);
-        }     
+        } 
+        
+    // Función para validar la coherencia entre fecha y valor esperado
+      validarCoherenciaValorEsperado(fechaNueva: string, valorEsperadoNuevo: number, idAvanceActual: number = 0): boolean {
+        // Convertir la fecha nueva a objeto Date para comparaciones
+        const fechaNuevaObj = new Date(fechaNueva);
+        
+        // Filtrar el avance actual si estamos editando
+        const avancesExistentes = this.datosAliados.filter(avance => 
+          avance.id_proy_indica_avance !== idAvanceActual
+        );
+        
+        // Encontrar avance anterior (fecha más reciente antes de la nueva fecha)
+        const avanceAnterior = avancesExistentes
+          .filter(avance => new Date(avance.fecha_reportar) < fechaNuevaObj)
+          .sort((a, b) => new Date(b.fecha_reportar).getTime() - new Date(a.fecha_reportar).getTime())[0];
+        
+        // Encontrar avance posterior (fecha más cercana después de la nueva fecha)
+        const avancePosterior = avancesExistentes
+          .filter(avance => new Date(avance.fecha_reportar) > fechaNuevaObj)
+          .sort((a, b) => new Date(a.fecha_reportar).getTime() - new Date(b.fecha_reportar).getTime())[0];
+        
+        // Validar coherencia con avance anterior
+        if (avanceAnterior) {
+          const valorAnterior = parseFloat(avanceAnterior.valor_esperado.toString().replace('$', '').replace(',', ''));
+          if (valorEsperadoNuevo < valorAnterior) {
+            Notify.failure(`El valor esperado (${valorEsperadoNuevo}) no puede ser menor que el valor de la fecha anterior ${avanceAnterior.fecha_reportar} (${valorAnterior})`);
+            return false;
+          }
+        }
+        
+        // Validar coherencia con avance posterior
+        if (avancePosterior) {
+          const valorPosterior = parseFloat(avancePosterior.valor_esperado.toString().replace('$', '').replace(',', ''));
+          if (valorEsperadoNuevo > valorPosterior) {
+            Notify.failure(`El valor esperado (${valorEsperadoNuevo}) no puede ser mayor que el valor de la fecha posterior ${avancePosterior.fecha_reportar} (${valorPosterior})`);
+            return false;
+          }
+        }
+        
+        return true;
+      }
     // ======= ======= ADD INDICADOR AVANCE ======= =======
     addIndicadorAvance() {
       // Validar que tenemos todos los campos requeridos
-      if (!this.fecha_reportar || !this.valor_esperado || !this.comentarios) {
-        //alert('Por favor complete todos los campos requeridos');
+      if (!this.fecha_reportar || !this.valor_esperado || !this.comentarios) {        
         Notify.failure('Por favor complete todos los campos requeridos');
         return;
       }
       // Validar que el valor esperado no sea menor que la línea base
         const lineaBase = parseFloat(this.linea_base);
+        const metaFinal = parseFloat(this.meta_final);
         const valorEsperado = parseFloat(this.valor_esperado);
 
         if (valorEsperado < lineaBase) {
           //alert('El valor esperado no puede ser menor que la línea base.');
           Notify.failure('El valor esperado no puede ser menor que la línea base.');
+          return;
+        }
+        if (valorEsperado > metaFinal) {
+          Notify.failure('El valor esperado no puede ser mayor que la meta final.');
+          return;
+        }
+        if (!this.validarCoherenciaValorEsperado(this.fecha_reportar, valorEsperado)) {
           return;
         }
             
@@ -1615,7 +1682,6 @@ export class PlanifEstrategicaComponent implements OnInit {
 
       this.servIndicadorAvance.addIndicadorAvance(objIndicadorAvance).subscribe({
         next: (data) => {
-          //alert('Avance agregado exitosamente');
           Notify.success('Avance agregado exitosamente');
           this.cargarIndicadoresAvance();
           this.getIndicadorAvance();
@@ -1623,7 +1689,6 @@ export class PlanifEstrategicaComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al guardar los datos:', error);
-          //alert('Error al guardar los datos');
           Notify.failure('Error al guardar los datos');          
         }
       });
@@ -1648,5 +1713,47 @@ export class PlanifEstrategicaComponent implements OnInit {
         Notify.failure('Por favor corrija los errores en el formulario');
       }
     }
+
+    // ======= ======= DOWNLOAD EXCEL ======= ======= 
+  downloadExcel() {
+    const columnas = [ 
+        'sigla',            // Sigla
+        'codigo',           // Código        
+        'planificacion',   // Nombre de la planificación
+        'id_inst_categoria_1', // Categoría 1
+        'id_inst_categoria_2', // Categoría 2
+        'id_inst_categoria_3', // Categoría 3 
+        'linea_base',       // Línea base
+        'medida',           // Medida
+        'meta_final',       // Meta final
+        'descripcion',      // Descripción
+        'medio_verifica',   // Medio de verificación
+        'comentario',       // Comentario 
+        'es_estrategico',   // Es estratégico             
+    ]; 
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+    const indicadorObj = this.combinedData.map((item: any) => ({      
+      sigla: item.sigla, // Sigla
+      codigo: item.codigo, // Código
+      planificacion: item.tipo === 'Elemento' ? item.elemento : item.indicador, // Combina "elemento" e "indicador" en una sola columna
+      id_inst_categoria_1: item.id_inst_categoria_1,
+      id_inst_categoria_2: item.id_inst_categoria_2,
+      id_inst_categoria_3: item.id_inst_categoria_3,
+      linea_base: item.linea_base, // Línea base
+      medida: item.medida, // Medida
+      meta_final: item.meta_final, // Meta final
+      descripcion: item.descripcion, // Descripción
+      medio_verifica: item.medio_verifica, // Medio de verificación
+      comentario: item.comentario, // Comentario
+      es_estrategico: item.es_estrategico, // Es estratégico
+  }));
+
+    ExcelExportService.exportToExcel(
+      indicadorObj,
+      'Reporte_PlanificacionEstrategica_' + formattedDate,
+      columnas      
+    )
+  } 
   
   }

@@ -17,6 +17,7 @@ import { ServOrganizacion } from "../../servicios/organizaciones";
 import { log } from 'console';
 import { Notify,Report,Confirm } from 'notiflix';
 import { timeout } from 'rxjs';
+import { ExcelExportService } from '../../services/excelExport.service';
 
 @Component({
   selector: 'app-beneficiarios',
@@ -713,174 +714,30 @@ export class BeneficiariosComponent implements OnInit {
           this.closeModalBeneficiario();
         }
       }
-
-  // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======    
-  // ======= ======= GET LISTA DE BENEFICIARIOS POR PROYECTO LLAMADO DESDE BENEFICIARIOS ======= ======= 
-  // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======    
-  beneficiariosListaProyecto: any[] = [];
-  mainPageBeneficiariosListaProyecto = 1;
-  mainPageSizeBeneficiariosListaProyecto = 10;
-  totalLengthBeneficiariosListaProyecto = 0;
-  beneficiariosListaProyectoSelected: any[] = [];
-
-  getBeneficiariosListaPorProyecto() {
-    this.servBeneficiarios.getBeneficiariosListaPorIdProy(this.idProyecto).subscribe(
-      (data) => {
-        this.beneficiariosListaProyecto = (data[0].dato) ? (data[0].dato) : ([]);
-        this.totalLengthBeneficiariosListaProyecto = this.beneficiariosListaProyecto.length;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
-
-  importarBeneficiariosDesdeProyecto(idProyectoOrigen: number) {
-    if (this.beneficiariosListaProyectoSelected.length === 0) {      
-      Notify.warning('Debe seleccionar al menos un beneficiario para importar.');
-      return;
-    }
-
-    const beneficiariosAImportar = this.beneficiariosListaProyectoSelected.map((beneficiario) => ({
-      p_id_proy_bene_lista: 0,
-      p_id_proy_beneficiario: this.id_proy_beneficiario,
-      p_num_doc_identidad: beneficiario.num_doc_identidad,
-      p_nombre: beneficiario.nombre,
-      p_es_hombre: beneficiario.genero === "M",
-      p_idp_organizacion_tipo: beneficiario.idp_organizacion_tipo,
-      p_idp_organizacion_subtipo: beneficiario.idp_organizacion_subtipo || null,
-      p_id_ubica_geo_depto: beneficiario.id_ubica_geo_depto || null,
-      p_id_ubica_geo_muni: beneficiario.id_ubica_geo_muni || null,
-      p_id_ubica_geo_comu: beneficiario.id_ubica_geo_comu || null,
-      p_comunidad_no_registrada: beneficiario.comunidad_no_registrada || null,
-      p_idp_rango_edad: beneficiario.idp_rango_edad
-    }));
-
-    let errores = 0;
-
-    beneficiariosAImportar.forEach((nuevoBeneficiario) => {
-      this.servListBenef.addListBene(nuevoBeneficiario).subscribe( 
-        () => (`Beneficiario importado: ${nuevoBeneficiario.p_nombre}`),       
-        (error) => {
-          console.error(`Error al importar ${nuevoBeneficiario.p_nombre}`, error);
-          errores++;
-        }
-      );
-    });
-
-    setTimeout(() => {
-      if (errores > 0) { 
-        Notify.warning(`Importación finalizada con ${errores} errores.`);      
-      } else {        
-        Notify.success('Importación completada exitosamente con éxito.');
-        this.getBeneficiariosListaPorProyecto();
-        this.getBeneficiariosLista();
-      }
-      this.getBeneficiariosListaPorProyecto();
-      this.getBeneficiariosLista(); 
-      this.beneficiariosListaProyectoSelected = []; 
-      this.closeModalBeneficiarioListaProyecto(); 
-    }, 500); 
-  }
-
-  get beneficiariosListaProyectoTable() {
-    const start = (this.mainPageBeneficiariosListaProyecto - 1) * this.mainPageSizeBeneficiariosListaProyecto;
-    return this.beneficiariosListaProyecto.slice(start, start + this.mainPageSizeBeneficiariosListaProyecto);
-  }
-
-  checkboxChangedBeneficiarioListaProyecto(beneficiarioSel: any): void {
-    if (beneficiarioSel.selected) {
-      // Verifica si el beneficiario no está ya seleccionado antes de agregarlo
-      if (!this.beneficiariosListaProyectoSelected.some(b => b.num_doc_identidad === beneficiarioSel.num_doc_identidad)) {
-        this.beneficiariosListaProyectoSelected.push(beneficiarioSel);
-      }
-    } else {
-      // Elimina el beneficiario de la lista seleccionada
-      this.beneficiariosListaProyectoSelected = this.beneficiariosListaProyectoSelected.filter(b => b.num_doc_identidad !== beneficiarioSel.num_doc_identidad);
-    }
-  }
-  // ======= ======= OPEN/CLOSE MODAL BENEFICIARIO LISTA PROYECTO ======= =======
-  private modalRefListaProyecto: NgbModalRef | null = null;
-
-  openModalBeneficiarioListaProyecto(content: TemplateRef<any>) {
-    this.getBeneficiariosListaPorProyecto();  // Asegura que los beneficiarios se carguen
-    this.modalRefListaProyecto = this.modalService.open(content, { size: 'xl' });
-  }
-
-  closeModalBeneficiarioListaProyecto() {
-    if (this.modalRefListaProyecto) {
-      this.modalRefListaProyecto.close();
-      this.modalRefListaProyecto = null;
-    }
-  }
-  // ======= ======= IMPORT BENEFICIARIOS LISTA PROYECTO ======= =======
-  onFileSelected(event: Event) {
-    //console.log("onFileSelected");
-
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-
-    if (file) {
-      this.archivo = file; // Asignar el archivo solo si es válido
-      //console.log(this.archivo.name);
-      this.importExcelBeneficiario(this.id_proy_beneficiario);
-      //Notify.success('Archivo seleccionado correctamente.');
-      input.value = ''; // Restablecer el input
-      // this.descripcion = this.archivo.name;
-      // console.log(this.descripcion);
-    } else {
-      this.archivo = null; // Asegurarse de que sea null si no es válido
-      Notify.failure('Solo se permiten archivos Excel (.xlsx, .xls)');
-      input.value = ''; // Restablecer el input
-    }
-  }
-  // ======= ======= IMPORT BENEFICIARIOS LISTA EXCEL ======= =======
-  importExcelBeneficiario(id_proy_beneficiario) {
-    //console.log("id_proy_beneficiario:", id_proy_beneficiario);
-    //console.log(this.archivo);
-
-    this.servBeneficiarios.importarData(this.archivo, id_proy_beneficiario).subscribe(
-      (data) => {
-        //console.log(data);
-        if(data.res=="ERROR"){
-          Report.warning(
-            'Problemas con la importación',
-            ' '+data.message,
-            'aceptar'
-            );
-          return;
-        }
-        else{
-          this.getBeneficiariosLista();
-          Notify.success('Beneficiario(s) importado(s) exitosamente.');
-        }
-      },
-      (error) => {
-        console.error("mensaje:", error);       
-        Notify.failure('Error al importar Beneficiario(s).');
-      }
-    );
-  }
-  // ======= ======= EXPORT BENEFICIARIOS LISTA EXCEL ======= =======
-  exportarExcelBeneficiario() {
-    this.servBeneficiarios.exportarData(this.id_proy_beneficiario).subscribe({
-      next: (response: Blob) => {
-        // Crear un enlace temporal para la descarga
-        const link = document.createElement('a');
-        const objectUrl = URL.createObjectURL(response);
-        link.href = objectUrl;
-        link.download = "exportarBeneficiario.xlsx";
-        link.click();
-        Notify.success('Lista de Participantes exportados exitosamente.');
-        // Liberar memoria
-        URL.revokeObjectURL(objectUrl);
-      },
-      error: (error) => {
-        Notify.failure('Error al exportar la lista de participantes.');        
-        console.error('Error al descargar el Excel:', error);
-      }
-    });
-  }
+    // ======= ======= DOWNLOAD EXCEL ======= ======= 
+      downloadExcel() {
+        const columnas = [ 
+          'tipo_evento', 
+          'fecha',
+          'departamento',
+          'municipio',
+          'comunidad',        
+          'titulo_evento',
+          'evento_detalle',          
+          'mujeres',
+          'hombres',
+          'total', 
+          'actividad'        
+        ]; 
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+        let beneficiariosObj = [...this.beneficiarios];
+        ExcelExportService.exportToExcel(
+          beneficiariosObj,
+          'Reporte_Beneficiarios_' + formattedDate,
+          columnas      
+        )
+      }  
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
   // ======= ======= LISTA DE BENEFICIARIOS - PROY_BENE_LISTA ======= =======
@@ -1483,6 +1340,173 @@ export class BeneficiariosComponent implements OnInit {
     }
     //this.closeModalBeneficiarioLista();
   }
+  // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======    
+  // ======= ======= GET LISTA DE BENEFICIARIOS POR PROYECTO LLAMADO DESDE BENEFICIARIOS ======= ======= 
+  // ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= =======    
+  beneficiariosListaProyecto: any[] = [];
+  mainPageBeneficiariosListaProyecto = 1;
+  mainPageSizeBeneficiariosListaProyecto = 10;
+  totalLengthBeneficiariosListaProyecto = 0;
+  beneficiariosListaProyectoSelected: any[] = [];
+
+  getBeneficiariosListaPorProyecto() {
+    this.servBeneficiarios.getBeneficiariosListaPorIdProy(this.idProyecto).subscribe(
+      (data) => {
+        this.beneficiariosListaProyecto = (data[0].dato) ? (data[0].dato) : ([]);
+        this.totalLengthBeneficiariosListaProyecto = this.beneficiariosListaProyecto.length;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  importarBeneficiariosDesdeProyecto(idProyectoOrigen: number) {
+    if (this.beneficiariosListaProyectoSelected.length === 0) {      
+      Notify.warning('Debe seleccionar al menos un beneficiario para importar.');
+      return;
+    }
+
+    const beneficiariosAImportar = this.beneficiariosListaProyectoSelected.map((beneficiario) => ({
+      p_id_proy_bene_lista: 0,
+      p_id_proy_beneficiario: this.id_proy_beneficiario,
+      p_num_doc_identidad: beneficiario.num_doc_identidad,
+      p_nombre: beneficiario.nombre,
+      p_es_hombre: beneficiario.genero === "M",
+      p_idp_organizacion_tipo: beneficiario.idp_organizacion_tipo,
+      p_idp_organizacion_subtipo: beneficiario.idp_organizacion_subtipo || null,
+      p_id_ubica_geo_depto: beneficiario.id_ubica_geo_depto || null,
+      p_id_ubica_geo_muni: beneficiario.id_ubica_geo_muni || null,
+      p_id_ubica_geo_comu: beneficiario.id_ubica_geo_comu || null,
+      p_comunidad_no_registrada: beneficiario.comunidad_no_registrada || null,
+      p_idp_rango_edad: beneficiario.idp_rango_edad
+    }));
+
+    let errores = 0;
+
+    beneficiariosAImportar.forEach((nuevoBeneficiario) => {
+      this.servListBenef.addListBene(nuevoBeneficiario).subscribe( 
+        () => (`Beneficiario importado: ${nuevoBeneficiario.p_nombre}`),       
+        (error) => {
+          console.error(`Error al importar ${nuevoBeneficiario.p_nombre}`, error);
+          errores++;
+        }
+      );
+    });
+
+    setTimeout(() => {
+      if (errores > 0) { 
+        Notify.warning(`Importación finalizada con ${errores} errores.`);      
+      } else {        
+        Notify.success('Importación completada exitosamente con éxito.');
+        this.getBeneficiariosListaPorProyecto();
+        this.getBeneficiariosLista();
+      }
+      this.getBeneficiariosListaPorProyecto();
+      this.getBeneficiariosLista(); 
+      this.beneficiariosListaProyectoSelected = []; 
+      this.closeModalBeneficiarioListaProyecto(); 
+    }, 500); 
+  }
+
+  get beneficiariosListaProyectoTable() {
+    const start = (this.mainPageBeneficiariosListaProyecto - 1) * this.mainPageSizeBeneficiariosListaProyecto;
+    return this.beneficiariosListaProyecto.slice(start, start + this.mainPageSizeBeneficiariosListaProyecto);
+  }
+
+  checkboxChangedBeneficiarioListaProyecto(beneficiarioSel: any): void {
+    if (beneficiarioSel.selected) {
+      // Verifica si el beneficiario no está ya seleccionado antes de agregarlo
+      if (!this.beneficiariosListaProyectoSelected.some(b => b.num_doc_identidad === beneficiarioSel.num_doc_identidad)) {
+        this.beneficiariosListaProyectoSelected.push(beneficiarioSel);
+      }
+    } else {
+      // Elimina el beneficiario de la lista seleccionada
+      this.beneficiariosListaProyectoSelected = this.beneficiariosListaProyectoSelected.filter(b => b.num_doc_identidad !== beneficiarioSel.num_doc_identidad);
+    }
+  }
+  // ======= ======= OPEN/CLOSE MODAL BENEFICIARIO LISTA PROYECTO ======= =======
+  private modalRefListaProyecto: NgbModalRef | null = null;
+
+  openModalBeneficiarioListaProyecto(content: TemplateRef<any>) {
+    this.getBeneficiariosListaPorProyecto();  // Asegura que los beneficiarios se carguen
+    this.modalRefListaProyecto = this.modalService.open(content, { size: 'xl' });
+  }
+
+  closeModalBeneficiarioListaProyecto() {
+    if (this.modalRefListaProyecto) {
+      this.modalRefListaProyecto.close();
+      this.modalRefListaProyecto = null;
+    }
+  }
+  // ======= ======= IMPORT BENEFICIARIOS LISTA PROYECTO ======= =======
+  onFileSelected(event: Event) {
+    //console.log("onFileSelected");
+
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (file) {
+      this.archivo = file; // Asignar el archivo solo si es válido
+      //console.log(this.archivo.name);
+      this.importExcelBeneficiario(this.id_proy_beneficiario);
+      //Notify.success('Archivo seleccionado correctamente.');
+      input.value = ''; // Restablecer el input
+      // this.descripcion = this.archivo.name;
+      // console.log(this.descripcion);
+    } else {
+      this.archivo = null; // Asegurarse de que sea null si no es válido
+      Notify.failure('Solo se permiten archivos Excel (.xlsx, .xls)');
+      input.value = ''; // Restablecer el input
+    }
+  }
+  // ======= ======= IMPORT BENEFICIARIOS LISTA EXCEL ======= =======
+  importExcelBeneficiario(id_proy_beneficiario) {
+    //console.log("id_proy_beneficiario:", id_proy_beneficiario);
+    //console.log(this.archivo);
+
+    this.servBeneficiarios.importarData(this.archivo, id_proy_beneficiario).subscribe(
+      (data) => {
+        //console.log(data);
+        if(data.res=="ERROR"){
+          Report.warning(
+            'Problemas con la importación',
+            ' '+data.message,
+            'aceptar'
+            );
+          return;
+        }
+        else{
+          this.getBeneficiariosLista();
+          Notify.success('Beneficiario(s) importado(s) exitosamente.');
+        }
+      },
+      (error) => {
+        console.error("mensaje:", error);       
+        Notify.failure('Error al importar Beneficiario(s).');
+      }
+    );
+  }
+  // ======= ======= EXPORT BENEFICIARIOS LISTA EXCEL ======= =======
+  exportarExcelBeneficiario() {
+    this.servBeneficiarios.exportarData(this.id_proy_beneficiario).subscribe({
+      next: (response: Blob) => {
+        // Crear un enlace temporal para la descarga
+        const link = document.createElement('a');
+        const objectUrl = URL.createObjectURL(response);
+        link.href = objectUrl;
+        link.download = "exportarBeneficiario.xlsx";
+        link.click();
+        Notify.success('Lista de Participantes exportados exitosamente.');
+        // Liberar memoria
+        URL.revokeObjectURL(objectUrl);
+      },
+      error: (error) => {
+        Notify.failure('Error al exportar la lista de participantes.');        
+        console.error('Error al descargar el Excel:', error);
+      }
+    });
+  }
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
   // ======= ======= =======  ALIADOS - PROY_ALIADOS  ======= ======= =======
@@ -1770,6 +1794,23 @@ export class BeneficiariosComponent implements OnInit {
       this.closeModalAliado();
     }
   }
+  downloadExcelAliados() {
+    const columnas = [ 
+      'fecha',
+      'id_organizacion',
+      'referente',
+      'vinculo',
+      'idp_convenio'     
+    ]; 
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+    let aliadosObj = [...this.aliados];
+    ExcelExportService.exportToExcel(
+     aliadosObj,
+      'Reporte_Aliados_' + formattedDate,
+      columnas      
+    )
+  }  
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
   // ======= ======= =======      ORGANIZACIONES      ======= ======= =======
   // ======= ======= ======= ======= ======= ======= =======  ======= =======  

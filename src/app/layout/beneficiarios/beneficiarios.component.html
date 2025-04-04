@@ -55,6 +55,11 @@
                                     [disabled]="(!beneficiariosSelected)||(currentPerProRol.includes('LEC'))">
                                     <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
                                 </button>
+                                <!-- EXPORTAR -->
+                                <button type="button" class="btn btn-view-bg-1"
+                                (click)="downloadExcel()">
+                                <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
+                                </button>
                             </div>
                         </div>
                 </div>
@@ -356,96 +361,6 @@
                 </div>
             </div>
         </ng-template>
-
-
-
-<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-<!-- //////////////// MODAL PARA IMPORTAR LISTA DE BENEFICIARIOS DE UN PROYECTO DE BENEFICIARIOS  //////////////// -->
-<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// --> 
-    <ng-template #listaBeneficiariosProyectoModal let-modal class="custom-modal">
-        <!-- Encabezado del Modal-->
-        <div class="modal-header">
-            <h4 class="modal-title">Lista de Participantes del Proyecto Actual</h4>
-        </div>
-        <!-- Cuerpo del Modal-->
-        <div class="modal-body">
-            <div class="row">
-                <div class="col col-xl-12 col-lg-12">
-                    <div class="card mb-3">
-                        <div class="card-body custom-card">
-                            <div class="row">                            
-                                <div class="container mt-4">
-                                    <table class="table custom-table table-striped table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th></th> 
-                                                <th style="text-align: center;">Evento</th>                                           
-                                                <th style="text-align: center;">CI o ID</th>
-                                                <th style="text-align: center;">Nombre y Apellido</th>
-                                                <th style="text-align: center;">Sexo</th>                                                
-                                            </tr>
-                                        </thead>
-                                        <!-- Cuerpo de la Tabla -->
-                                        <tbody>                                            
-                                            <tr *ngFor="let beneficiario of beneficiariosListaProyectoTable; let i = index">
-                                                <td>
-                                                    <input
-                                                        type="checkbox"
-                                                        [(ngModel)]="beneficiario.selected"
-                                                        (change)="checkboxChangedBeneficiarioListaProyecto(beneficiario)"                                                      
-                                                        id="checkbox-{{ i }}" name="checkbox-{{ i }}">
-                                                </td>
-                                                <td style="text-align: center;">{{ beneficiario.titulo_evento }}</td>                                            
-                                                <td style="text-align: center;">{{ beneficiario.num_doc_identidad }}</td>
-                                                <td style="text-align: center;">{{ beneficiario.nombre }}</td>
-                                                <td style="text-align: center;">{{ beneficiario.genero }}</td>                                                
-                                            </tr>
-                                        </tbody>
-                                    </table>                                    
-                                    <!-- Botones de tabla -->
-                                    <div class="d-flex justify-content-center mt-4">
-                                        <ngb-pagination
-                                          [(page)]="mainPageBeneficiariosListaProyecto"
-                                          [pageSize]="mainPageSizeBeneficiariosListaProyecto"
-                                          [collectionSize]="totalLengthBeneficiariosListaProyecto"
-                                          [maxSize]="3"
-                                          [rotate]="true"
-                                          [boundaryLinks]="true">
-                                        </ngb-pagination>
-                                      </div>
-                                    <!-- Si la tabla esta vacia -->
-                                    <div *ngIf="beneficiariosListaProyectoTable.length === 0" class="custom-no-data-container mt-2">
-                                        No hay participantes registrados en los Beneficiarios.                                    
-                                    </div>                                
-                                    <!-- Botone para importar de un proyecto -->                                    
-                                    <div class="row mt-3">
-                                        <div class="col col-xl-12 col-lg-12">
-                                            <div class="d-flex justify-content-end">
-                                                <!-- ======= ======= CANCELAR ======= ======= -->
-                                                    <button type="button" class="btn btn-bg-3" (click)="closeModalBeneficiarioListaProyecto()">
-                                                        <i class="fa fa-times" aria-hidden="true"></i> Cancelar
-                                                    </button>
-                                                <!-- ======= ======= IMPORTAR ======= =======  
-                                                    <button type="button" class="btn btn-bg-1" (click)="importBeneficiariosListaProyecto()" [disabled]="!beneficiariosListaProyectoSelected">
-                                                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar
-                                                    </button>  -->
-                                                    <button type="button" class="btn btn-bg-1"
-                                                    (click)="importarBeneficiariosDesdeProyecto(idProyectoOrigen)"
-                                                    [disabled]="!beneficiariosListaProyectoSelected.length === 0">
-                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar
-                                            </button>                                                                                                                                                                              
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </ng-template>
-
 
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- ////////////////////////////////////   MODAL PARA LISTA DE BENEFICIARIOS   ////////////////////////////////// -->
@@ -777,7 +692,93 @@
                 </button>
             </div>
         </div>
-    </ng-template>       
+    </ng-template>
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- //////////////// MODAL PARA IMPORTAR LISTA DE BENEFICIARIOS DE UN PROYECTO DE BENEFICIARIOS  //////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// --> 
+    <ng-template #listaBeneficiariosProyectoModal let-modal class="custom-modal">
+        <!-- Encabezado del Modal-->
+        <div class="modal-header">
+            <h4 class="modal-title">Lista de Participantes del Proyecto Actual</h4>
+        </div>
+        <!-- Cuerpo del Modal-->
+        <div class="modal-body">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">                            
+                                <div class="container mt-4">
+                                    <table class="table custom-table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th></th> 
+                                                <th style="text-align: center;">Evento</th>                                           
+                                                <th style="text-align: center;">CI o ID</th>
+                                                <th style="text-align: center;">Nombre y Apellido</th>
+                                                <th style="text-align: center;">Sexo</th>                                                
+                                            </tr>
+                                        </thead>
+                                        <!-- Cuerpo de la Tabla -->
+                                        <tbody>                                            
+                                            <tr *ngFor="let beneficiario of beneficiariosListaProyectoTable; let i = index">
+                                                <td>
+                                                    <input
+                                                        type="checkbox"
+                                                        [(ngModel)]="beneficiario.selected"
+                                                        (change)="checkboxChangedBeneficiarioListaProyecto(beneficiario)"                                                      
+                                                        id="checkbox-{{ i }}" name="checkbox-{{ i }}">
+                                                </td>
+                                                <td style="text-align: center;">{{ beneficiario.titulo_evento }}</td>                                            
+                                                <td style="text-align: center;">{{ beneficiario.num_doc_identidad }}</td>
+                                                <td style="text-align: center;">{{ beneficiario.nombre }}</td>
+                                                <td style="text-align: center;">{{ beneficiario.genero }}</td>                                                
+                                            </tr>
+                                        </tbody>
+                                    </table>                                    
+                                    <!-- Botones de tabla -->
+                                    <div class="d-flex justify-content-center mt-4">
+                                        <ngb-pagination
+                                        [(page)]="mainPageBeneficiariosListaProyecto"
+                                        [pageSize]="mainPageSizeBeneficiariosListaProyecto"
+                                        [collectionSize]="totalLengthBeneficiariosListaProyecto"
+                                        [maxSize]="3"
+                                        [rotate]="true"
+                                        [boundaryLinks]="true">
+                                        </ngb-pagination>
+                                    </div>
+                                    <!-- Si la tabla esta vacia -->
+                                    <div *ngIf="beneficiariosListaProyectoTable.length === 0" class="custom-no-data-container mt-2">
+                                        No hay participantes registrados en los Beneficiarios.                                    
+                                    </div>                                
+                                    <!-- Botone para importar de un proyecto -->                                    
+                                    <div class="row mt-3">
+                                        <div class="col col-xl-12 col-lg-12">
+                                            <div class="d-flex justify-content-end">
+                                                <!-- ======= ======= CANCELAR ======= ======= -->
+                                                    <button type="button" class="btn btn-bg-3" (click)="closeModalBeneficiarioListaProyecto()">
+                                                        <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                                    </button>
+                                                <!-- ======= ======= IMPORTAR ======= =======  
+                                                    <button type="button" class="btn btn-bg-1" (click)="importBeneficiariosListaProyecto()" [disabled]="!beneficiariosListaProyectoSelected">
+                                                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar
+                                                    </button>  -->
+                                                    <button type="button" class="btn btn-bg-1"
+                                                    (click)="importarBeneficiariosDesdeProyecto(idProyectoOrigen)"
+                                                    [disabled]="!beneficiariosListaProyectoSelected.length === 0">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> Importar
+                                            </button>                                                                                                                                                                              
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>   
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- ////////////////////////////////////////  TABLA ALIADOS PROY-ALIADOS //////////////////////////////////////// -->
 <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -804,6 +805,11 @@
                                     (click)="initDeleteAliado(deleteAliadoModal)"
                                     [disabled]="(!aliadosSelected)||(currentPerProRol.includes('LEC'))">
                                     <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                                </button>
+                                <!-- EXPORTAR -->
+                                <button type="button" class="btn btn-view-bg-1"
+                                    (click)="downloadExcelAliados()">
+                                    <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
                                 </button> 
                             </div>
                         </div>
