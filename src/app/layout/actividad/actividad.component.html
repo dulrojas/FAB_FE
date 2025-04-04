@@ -88,7 +88,8 @@
                                                     <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
                                                         [(ngModel)]="presuAvance.selected"
                                                         (change)="onPresuAvanceClick(presuAvance)" 
-                                                        [disabled]="(currentPerProRol.includes('ESC'))"/>
+                                                        [disabled]="(currentPerProRol.includes('ESC'))
+                                                            ||(gestion != initGestion)"/>
                                                 </td>
                                                 <td>
                                                     {{ presuAvance.motivo }}
@@ -113,6 +114,7 @@
                                     [disabled]="(this.idPresupuestoGest == 0)
                                         ||(currentPerProRol.includes('LEC'))
                                         ||(currentPerProRol.includes('ESC'))
+                                        ||(gestion != initGestion)
                                         ||(presuAvanceSelected)"
                                     [(ngModel)]="motivoNuevoEjecutado">
                                 </textarea>
@@ -126,11 +128,12 @@
                                     [disabled]="(idPresupuestoGest == 0)
                                         ||(currentPerProRol.includes('LEC'))
                                         ||(currentPerProRol.includes('ESC'))
+                                        ||(gestion != initGestion)
                                         ||(presuAvanceSelected)"
                                     (change)="validateFechaNuevoEjecutado()"
                                     [(ngModel)]="fechaNuevoEjecutado"/>
                                 <span class="custom-alert-message" *ngIf="!valFechaNuevoEjecutado">
-                                    Debe ingresar una fecha válida, en la gestion actual.
+                                    Debe ingresar una fecha válida, en la gestion.
                                 </span>
                                 <div></div>
                                 <label class="custom-actividad-sub-title">Monto ejecutado</label>
@@ -140,6 +143,7 @@
                                     [disabled]="(idPresupuestoGest == 0)
                                         ||(currentPerProRol.includes('LEC'))
                                         ||(currentPerProRol.includes('ESC'))
+                                        ||(gestion != initGestion)
                                         ||(presuAvanceSelected)"
                                     (change)="onChangedMontoNuevoEjecutado()"
                                     [(ngModel)]="montoNuevoEjecutado"/>
@@ -147,7 +151,7 @@
                                     Debe ingresar un monto válido.
                                 </span>
                                 <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado2">
-                                    El monto ingresado supera el presupuesto de la gestion.
+                                    El monto ingresado supera el presupuesto de la gestión.
                                 </span>
                                 <div class="row">
                                     <div class="col col-md-4 col-lg-4">
@@ -155,6 +159,7 @@
                                             [disabled]="(this.idPresupuestoGest == 0)
                                                 ||(currentPerProRol.includes('LEC'))
                                                 ||(currentPerProRol.includes('ESC'))
+                                                ||(gestion != initGestion)
                                                 ||(presuAvanceSelected)"
                                             (click)="addPresuAvance()">
                                             <i aria-hidden="true"></i> Añadir
@@ -165,6 +170,7 @@
                                             [disabled]="(idPresupuestoGest == 0)
                                                 ||(currentPerProRol.includes('LEC'))
                                                 ||(currentPerProRol.includes('ESC'))
+                                                ||(gestion != initGestion)
                                                 ||(!presuAvanceSelected)"
                                             (click)="initEditPresupuestoEjecutado(editEjecutadoModal)">
                                             <i aria-hidden="true"></i> Editar
@@ -175,6 +181,7 @@
                                             [disabled]="(idPresupuestoGest == 0)
                                                 ||(currentPerProRol.includes('LEC'))
                                                 ||(currentPerProRol.includes('ESC'))
+                                                ||(gestion != initGestion)
                                                 ||(!presuAvanceSelected)"
                                             (click)="initDeletePresupuestoEjecutado(deleteEjecutadoModal)">
                                             <i aria-hidden="true"></i> Eliminar
