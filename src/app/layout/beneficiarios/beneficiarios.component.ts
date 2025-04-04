@@ -318,6 +318,7 @@ export class BeneficiariosComponent implements OnInit {
         if (this.modalRef) {
           this.modalRef.close();
           this.modalRef = null;
+          this.cdr.detectChanges();
         }
       }
   // ======= ======= GET BENEFICIARIOS ======= =======

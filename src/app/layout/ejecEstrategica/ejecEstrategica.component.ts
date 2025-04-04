@@ -13,6 +13,8 @@ import {MetoElementosService} from '../../servicios/metoElementos';
 import { servicios } from "../../servicios/servicios";
 import { firstValueFrom } from 'rxjs';
 import { Notify,Report,Confirm } from 'notiflix';
+import { ExcelExportService } from '../../services/excelExport.service';
+
 // ======= ======= ======= ======= ======= ======= =======  ======= =======
 @Component({
   selector: 'app-ejec-estrategica',
@@ -951,5 +953,34 @@ countHeaderData() {
     }).length;
   }
 }
+
+// ======= ======= DOWNLOAD EXCEL ======= ======= 
+    downloadExcel() {
+      const columnas = [        
+            'codigo',           // Código 
+            'categoria1', // Categoría 1
+            'subcategoria2', // Categoría 2
+            'tipo3', // Categoría 3        
+            'indicador',   // Nombre de la planificación           
+            'descripcion',      // Descripción
+            'medio_verifica',   // Medio de verificación
+            'linea_base',       // Línea base
+            'medida',           // Medida
+            'meta_final',       // Meta final
+            'comentario',       // Comentario
+            //'fecha_reportar', // Fecha de reporte
+            //'valor_esperado',
+            //'valor_reportado',
+            //'comentarios'
+      ]; 
+      const today = new Date();
+      const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+      let ejecucionObj = [...this.ejecEstrategicaTable];
+      ExcelExportService.exportToExcel(
+        ejecucionObj,
+        'Reporte_EjecucionEstrategica_' + formattedDate,
+        columnas      
+      )
+    } 
 
 }

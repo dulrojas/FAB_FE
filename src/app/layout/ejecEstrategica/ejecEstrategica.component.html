@@ -42,6 +42,11 @@
               [disabled]="(!ejecEstrategicaSelected)||(currentPerProRol.includes('LEC'))">
               <i aria-hidden="true"></i> Reportar
             </button>
+            <!-- EXPORTAR -->
+            <button type="button" class="btn btn-view-bg-1"
+            (click)="downloadExcel()">
+            <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
+            </button>
           </div>
         </div>
       </div>

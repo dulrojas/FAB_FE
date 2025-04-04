@@ -1715,45 +1715,45 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
 
     // ======= ======= DOWNLOAD EXCEL ======= ======= 
-  downloadExcel() {
-    const columnas = [ 
-        'sigla',            // Sigla
-        'codigo',           // Código        
-        'planificacion',   // Nombre de la planificación
-        'id_inst_categoria_1', // Categoría 1
-        'id_inst_categoria_2', // Categoría 2
-        'id_inst_categoria_3', // Categoría 3 
-        'linea_base',       // Línea base
-        'medida',           // Medida
-        'meta_final',       // Meta final
-        'descripcion',      // Descripción
-        'medio_verifica',   // Medio de verificación
-        'comentario',       // Comentario 
-        'es_estrategico',   // Es estratégico             
-    ]; 
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
-    const indicadorObj = this.combinedData.map((item: any) => ({      
-      sigla: item.sigla, // Sigla
-      codigo: item.codigo, // Código
-      planificacion: item.tipo === 'Elemento' ? item.elemento : item.indicador, // Combina "elemento" e "indicador" en una sola columna
-      id_inst_categoria_1: item.id_inst_categoria_1,
-      id_inst_categoria_2: item.id_inst_categoria_2,
-      id_inst_categoria_3: item.id_inst_categoria_3,
-      linea_base: item.linea_base, // Línea base
-      medida: item.medida, // Medida
-      meta_final: item.meta_final, // Meta final
-      descripcion: item.descripcion, // Descripción
-      medio_verifica: item.medio_verifica, // Medio de verificación
-      comentario: item.comentario, // Comentario
-      es_estrategico: item.es_estrategico, // Es estratégico
-  }));
+      downloadExcel() {
+        const columnas = [ 
+            'sigla',            // Sigla
+            'codigo',           // Código        
+            'planificacion',   // Nombre de la planificación
+            'id_inst_categoria_1', // Categoría 1
+            'id_inst_categoria_2', // Categoría 2
+            'id_inst_categoria_3', // Categoría 3 
+            'linea_base',       // Línea base
+            'medida',           // Medida
+            'meta_final',       // Meta final
+            'descripcion',      // Descripción
+            'medio_verifica',   // Medio de verificación
+            'comentario',       // Comentario 
+            'es_estrategico',   // Es estratégico             
+        ]; 
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+        const indicadorObj = this.combinedData.map((item: any) => ({      
+          sigla: item.sigla, // Sigla
+          codigo: item.codigo, // Código
+          planificacion: item.tipo === 'Elemento' ? item.elemento : item.indicador, 
+          id_inst_categoria_1: item.id_inst_categoria_1,
+          id_inst_categoria_2: item.id_inst_categoria_2,
+          id_inst_categoria_3: item.id_inst_categoria_3,
+          linea_base: item.linea_base, // Línea base
+          medida: item.medida, // Medida
+          meta_final: item.meta_final, // Meta final
+          descripcion: item.descripcion, // Descripción
+          medio_verifica: item.medio_verifica, // Medio de verificación
+          comentario: item.comentario, // Comentario
+          es_estrategico: item.es_estrategico, // Es estratégico
+      }));
 
-    ExcelExportService.exportToExcel(
-      indicadorObj,
-      'Reporte_PlanificacionEstrategica_' + formattedDate,
-      columnas      
-    )
-  } 
+        ExcelExportService.exportToExcel(
+          indicadorObj,
+          'Reporte_PlanificacionEstrategica_' + formattedDate,
+          columnas      
+        )
+      } 
   
   }
