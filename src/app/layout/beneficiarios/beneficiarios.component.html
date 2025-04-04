@@ -93,8 +93,8 @@
                                     </td>                                    
                                     <td style="text-align: center;">{{ beneficiario.fecha | date:'dd/MM/yyyy' }}</td>
                                     <td>{{ getUbicacionGeografica(beneficiario.id_ubica_geo_depto, beneficiariosUbicaDepto) }}</td>
-                                    <td>{{ beneficiario.ubica_geo_muni }}</td>
-                                    <td>{{ beneficiario.ubica_geo_comu }}</td>
+                                    <td>{{ beneficiario.municipio }}</td>
+                                    <td>{{ beneficiario.comunidad }}</td>
                                     <td>{{getDescripcionSubtipo(beneficiario.idp_tipo_evento, beneficiariosTipoEvento) }}</td>                                    
                                     <td>{{ beneficiario.titulo_evento }}</td>
                                     <td style="text-align: center;">{{ beneficiario.mujeres }}</td>
