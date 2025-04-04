@@ -835,14 +835,16 @@ export class ActividadComponent implements OnInit {
   // ======= ======= ======= ======= =======
   // ======= ======= GROUP ACTIVIDADES BY ELEMENT AND GESTION ======= =======
   groupActividadesGant(){
-    this.actividadesGest = this.actividades.filter((actividad)=>( actividad.fecha_inicio.slice(0,4) == this.gestion ));
+    this.actividadesGest = this.actividades.filter((actividad)=>( 
+      (actividad.fecha_inicio.slice(0,4) <= this.gestion) &&
+      (actividad.fecha_fin.slice(0,4) >= this.gestion) 
+    ));
 
     this.elementosGant = [];
     this.elementos.forEach((elemento)=>{
       let elementoToAdd = {...elemento};
       elementoToAdd.childrens = this.actividadesGest.filter(
         (actividadObj) =>
-          //actividadObj.codigo.startsWith(elemento.codigo.slice(0, -2))
           (actividadObj.id_proy_elem_padre == elemento.id_proy_elemento)
       );
 
