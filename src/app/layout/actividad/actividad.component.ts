@@ -606,7 +606,7 @@ export class ActividadComponent implements OnInit {
   valActAvaAvance: any = true;
   validateActAvaAvance() {
 
-    let lastAvance = (this.actividadAvances[this.actividadAvances.length - 1 ]).avance;
+    let lastAvance = (this.actividadAvances.length > 0)?((this.actividadAvances[this.actividadAvances.length - 1 ]).avance):(0);
 
     if( this.actAvaAvance ) {
       this.valActAvaAvance = true;
