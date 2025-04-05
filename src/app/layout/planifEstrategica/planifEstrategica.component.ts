@@ -175,9 +175,6 @@ export class PlanifEstrategicaComponent implements OnInit {
 
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= VALDIATE FUNCTIONS SECTION ======= =======
-  valComponente: any = false;
-  
-    
   
     loadData(): void {
       this.servIndicador.getIndicadorByIdProy(this.idProyecto).subscribe(
@@ -202,6 +199,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
   
     // == ====== section validator  =====
+    valComponente: any = false;
     ValidateComponente() {
       if (this.id_proy_elem_padre) {
         this.valComponente = true;
@@ -464,7 +462,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.inst_categoria_2 = "";
       this.inst_categoria_3 = "";
       this.id_persona_reg = "";
-      this.es_estrategico = "";
+      this.es_estrategico = false;
   
       this.sigla = null;
       this.color = null;
@@ -519,29 +517,30 @@ export class PlanifEstrategicaComponent implements OnInit {
         p_descripcion: this.descripcion || null,
         p_comentario: this.comentario || null,
         p_orden: this.orden || null,
-        p_linea_base: this.convertToNumber(this.linea_base),
+        p_linea_base: this.convertToNumber(this.linea_base) || null,
         p_medida: this.medida || null,
-        p_meta_final: this.convertToNumber(this.meta_final),
+        p_meta_final: this.convertToNumber(this.meta_final) || null,
         p_medio_verifica: this.medio_verifica || null,
         p_id_estado: this.id_estado || null,
         p_inst_categoria_1: parseInt(this.inst_categoria_1, 10) || null,
         p_inst_categoria_2: parseInt(this.inst_categoria_2, 10) || null,
         p_inst_categoria_3: parseInt(this.inst_categoria_3, 10) || null,
         p_id_persona_reg: this.idPersonaReg  || null,
-        p_es_estrategico: this.es_estrategico
+        p_es_estrategico: this.es_estrategico ?? false
       };
       this.servIndicador.addIndicador(objIndicador).subscribe(
-        (data) => {
+        (data) => {          
           //alert('Indicador añadido correctamente.');
           Notify.success('Indicador añadido correctamente.');
           this.getPlanifEstrategica();
           this.loadData()
           this.cargarIndicadoresAvance();
+          this.planifEstrategicaSelected = null;
           this.closeModal();
         },
-        (error) => {
+        (error) => {         
           //alert('Error al añadir el indicador.');
-          Notify.failure('Error al añadir el indicador.');
+          Notify.failure('Error al añadir el indicador.');          
           console.error('Error al guardar los datos:', error);
         }
       );
@@ -632,6 +631,7 @@ export class PlanifEstrategicaComponent implements OnInit {
           this.getPlanifEstrategica();
           this.loadData();
           this.getIndicadorAvance();
+          this.planifEstrategicaSelected = null;
           this.cargarIndicadoresAvance();
         },
         (error) => {
@@ -681,6 +681,7 @@ export class PlanifEstrategicaComponent implements OnInit {
             form.resetForm();
             this.closeModal();
             this.loadData();
+            this.planifEstrategicaSelected = null;
             this.getPlanifEstrategica();
           },
           (error) => {
@@ -1715,45 +1716,176 @@ export class PlanifEstrategicaComponent implements OnInit {
     }
 
     // ======= ======= DOWNLOAD EXCEL ======= ======= 
-      downloadExcel() {
+    downloadExcel() {
+      // Primero cargaremos todas las categorías y luego exportaremos
+      this.cargarCategoriasCompletas().then(() => {
+        // Definir columnas que se mostrarán en el Excel
         const columnas = [ 
-            'sigla',            // Sigla
-            'codigo',           // Código        
-            'planificacion',   // Nombre de la planificación
-            'id_inst_categoria_1', // Categoría 1
-            'id_inst_categoria_2', // Categoría 2
-            'id_inst_categoria_3', // Categoría 3 
-            'linea_base',       // Línea base
-            'medida',           // Medida
-            'meta_final',       // Meta final
-            'descripcion',      // Descripción
-            'medio_verifica',   // Medio de verificación
-            'comentario',       // Comentario 
-            'es_estrategico',   // Es estratégico             
+          'Tipo',             
+          'Código',           
+          'Planificación',    
+          'Categoría',        
+          'Subcategoría',     
+          'Tipo Categoría',   
+          'Línea Base',       
+          'Unidad de Medida', 
+          'Meta Final',       
+          'Descripción',      
+          'Medio de Verificación', 
+          'Comentario',       
+          'Es Estratégico'            
         ]; 
+        
+        // Obtener la fecha actual formateada
         const today = new Date();
         const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
-        const indicadorObj = this.combinedData.map((item: any) => ({      
-          sigla: item.sigla, // Sigla
-          codigo: item.codigo, // Código
-          planificacion: item.tipo === 'Elemento' ? item.elemento : item.indicador, 
-          id_inst_categoria_1: item.id_inst_categoria_1,
-          id_inst_categoria_2: item.id_inst_categoria_2,
-          id_inst_categoria_3: item.id_inst_categoria_3,
-          linea_base: item.linea_base, // Línea base
-          medida: item.medida, // Medida
-          meta_final: item.meta_final, // Meta final
-          descripcion: item.descripcion, // Descripción
-          medio_verifica: item.medio_verifica, // Medio de verificación
-          comentario: item.comentario, // Comentario
-          es_estrategico: item.es_estrategico, // Es estratégico
-      }));
-
+        
+        // Preparar los datos para exportar
+        const datosExcel = this.combinedData.map((item: any) => {
+          // Obtener nombres de categorías
+          const categoriaNombre = this.obtenerNombreCategoria(item.id_inst_categoria_1);
+          const subcategoriaNombre = this.obtenerNombreSubcategoria(item.id_inst_categoria_2);
+          const tipocategoriaNombre = this.obtenerNombreTipoCategoria(item.id_inst_categoria_3);
+          
+          // Obtener el tipo de elemento en texto
+          const tipoElemento = this.obtenerTipoElemento(item.sigla);
+          
+          // Formatear es_estrategico como "Sí" o "No"
+          const esEstrategico = item.es_estrategico === true ? 'Sí' : 'No';
+          
+          return {
+            'Tipo': tipoElemento, 
+            'Código': item.codigo,
+            'Planificación': item.tipo === 'Elemento' ? item.elemento : item.indicador,
+            'Categoría': categoriaNombre,
+            'Subcategoría': subcategoriaNombre,
+            'Tipo Categoría': tipocategoriaNombre,
+            'Línea Base': item.linea_base,
+            'Unidad de Medida': item.medida,
+            'Meta Final': item.meta_final,
+            'Descripción': item.descripcion,
+            'Medio de Verificación': item.medio_verifica,
+            'Comentario': item.comentario,
+            'Es Estratégico': esEstrategico
+          };
+        });
+      
+        // Exportar a Excel
         ExcelExportService.exportToExcel(
-          indicadorObj,
+          datosExcel,
           'Reporte_PlanificacionEstrategica_' + formattedDate,
           columnas      
-        )
-      } 
+        );
+      });
+    }
+    // Función para cargar todas las categorías de forma asíncrona
+cargarCategoriasCompletas(): Promise<void> {
+  return new Promise((resolve) => {
+    // Primero cargamos las categorías de nivel 1
+    this.servInstCategorias.getCategoriaById(1).subscribe(
+      (data: any) => {
+        this.planifCategoria = data[0]?.dato || [];
+        
+        // Creamos un array para almacenar todas las promesas de subcategorías
+        const promesasSubcategorias = [];
+        
+        // Por cada elemento en combinedData, verificamos si necesitamos cargar subcategorías
+        for (const item of this.combinedData) {
+          if (item.id_inst_categoria_1) {
+            // Añadimos la promesa para cargar subcategorías de este nivel 1
+            const promesaSubcategoria = new Promise<void>((resolveSubcat) => {
+              this.servInstCategorias.getCategoriasByNivelYPadre(2, item.id_inst_categoria_1).subscribe(
+                (subData: any) => {
+                  // Agregamos estos datos a planifSubCategoria sin eliminar los existentes
+                  const nuevasSubcategorias = subData[0]?.dato || [];
+                  
+                  // Filtrar para evitar duplicados
+                  for (const nuevaSubcat of nuevasSubcategorias) {
+                    if (!this.planifSubCategoria.some(subcat => 
+                      subcat.id_inst_categoria === nuevaSubcat.id_inst_categoria)) {
+                      this.planifSubCategoria.push(nuevaSubcat);
+                    }
+                  }
+                  
+                  // Si también tiene categoría nivel 2, cargamos el nivel 3
+                  if (item.id_inst_categoria_2) {
+                    this.servInstCategorias.getCategoriasByNivelYPadre(3, item.id_inst_categoria_1).subscribe(
+                      (tipoData: any) => {
+                        // Agregamos estos datos a planifTipoCategoria sin eliminar los existentes
+                        const nuevosTipos = tipoData[0]?.dato || [];
+                        
+                        // Filtrar para evitar duplicados
+                        for (const nuevoTipo of nuevosTipos) {
+                          if (!this.planifTipoCategoria.some(tipo => 
+                            tipo.id_inst_categoria === nuevoTipo.id_inst_categoria)) {
+                            this.planifTipoCategoria.push(nuevoTipo);
+                          }
+                        }
+                        resolveSubcat();
+                      },
+                      (error) => {
+                        console.error("Error al cargar tipos:", error);
+                        resolveSubcat(); // Resolvemos aunque haya error para continuar
+                      }
+                    );
+                  } else {
+                    resolveSubcat();
+                  }
+                },
+                (error) => {
+                  console.error("Error al cargar subcategorías:", error);
+                  resolveSubcat(); // Resolvemos aunque haya error para continuar
+                }
+              );
+            });
+            
+            promesasSubcategorias.push(promesaSubcategoria);
+          }
+        }
+        
+        // Esperar a que todas las promesas de subcategorías se resuelvan
+        Promise.all(promesasSubcategorias).then(() => {
+          resolve();
+        });
+      },
+      (error) => {
+        console.error("Error al cargar categorías:", error);
+        resolve(); // Resolvemos aunque haya error para continuar
+      }
+    );
+  });
+}
+    
+    // Función para obtener el nombre de la categoría desde el ID
+    obtenerNombreCategoria(idCategoria: any): string {
+      if (!idCategoria) return '';
+      const categoria = this.planifCategoria.find(cat => cat.id_inst_categoria == idCategoria);
+      return categoria ? categoria.nombre : '';
+    }
+    
+    // Función para obtener el nombre de la subcategoría desde el ID
+    obtenerNombreSubcategoria(idSubcategoria: any): string {
+      if (!idSubcategoria) return '-';
+      const subcategoria = this.planifSubCategoria.find(cat => cat.id_inst_categoria == idSubcategoria);
+      return subcategoria ? subcategoria.nombre : '';
+    }
+    
+    // Función para obtener el nombre del tipo de categoría desde el ID
+    obtenerNombreTipoCategoria(idTipoCategoria: any): string {
+      if (!idTipoCategoria) return '';
+      const tipoCategoria = this.planifTipoCategoria.find(cat => cat.id_inst_categoria == idTipoCategoria);
+      return tipoCategoria ? tipoCategoria.nombre : '';
+    }
+    
+    // Función para obtener el nombre del tipo de elemento basado en la sigla
+    obtenerTipoElemento(sigla: string): string {
+      switch (sigla) {
+        case 'OG': return 'Objetivo General';
+        case 'OE': return 'Objetivo Específico';
+        case 'RE': return 'Resultado Estratégico';
+        case 'IN': return 'Indicador';
+        default: return sigla || '';
+      }
+    }
   
   }

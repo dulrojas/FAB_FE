@@ -675,14 +675,23 @@ export class BeneficiariosComponent implements OnInit {
       deleteBeneficiario() {
         this.servBeneficiarios.deleteBeneficiario(this.beneficiariosSelected.id_proy_beneficiario, this.idPersonaReg).subscribe(
           (data) => {
-            Notify.success('Evento Para Beneficiario eliminado exitosamente');
+            Notify.success('Beneficiario eliminado exitosamente');
             this.closeModalBeneficiario();
             this.beneficiariosSelected = null;
             this.getBeneficiarios();
           },
           (error) => {
-            Notify.failure('Error al eliminar Evento Para Beneficiario');
             console.error(error);
+      
+            if (error.status === 409) {
+              Notify.failure('No se puede eliminar el beneficiario porque está vinculado a otros datos.');
+            } else if (error.status === 404) {
+              Notify.failure('Beneficiario no encontrado, es posible que ya haya sido eliminado.');
+            } else if (error.status === 500) {
+              Notify.failure('No se puede eliminar el beneficiario porque está vinculado a otros datos.');
+            } else {
+              Notify.failure(error.error?.message || 'Error desconocido al eliminar el beneficiario.');
+            }
           }
         );
       }
@@ -1159,14 +1168,14 @@ export class BeneficiariosComponent implements OnInit {
     };
     this.servListBenef.addListBene(objBeneficiarioLista).subscribe(
       (data) => {
-        this.beneficiariosListaSelected = null;
-        this.getBeneficiariosLista();        
         Notify.success('Participante agregado exitosamente');
+        this.beneficiariosListaSelected = null;
+        this.getBeneficiariosLista();     
         this.closeModalBeneficiarioLista();
         this.initEditBeneficiario(this.id_proy_beneficiario);
       },
       (error) => {
-        Notify.failure('Error al guardar beneficiario');
+        Notify.failure('Error al guardar participante');
         console.error(error);
       }
     );
@@ -1258,8 +1267,8 @@ export class BeneficiariosComponent implements OnInit {
         Notify.success('Participante editado exitosamente');
         this.beneficiariosListaSelected = null;
         this.getBeneficiariosLista();
-        this.initEditBeneficiario(this.id_proy_beneficiario);
         this.closeModalBeneficiarioLista();
+        this.initEditBeneficiario(this.id_proy_beneficiario);       
       },
       (error) => {
         Notify.failure('Error al editar beneficiario');
@@ -1372,15 +1381,15 @@ export class BeneficiariosComponent implements OnInit {
       p_id_proy_bene_lista: 0,
       p_id_proy_beneficiario: this.id_proy_beneficiario,
       p_num_doc_identidad: beneficiario.num_doc_identidad,
-      p_nombre: beneficiario.nombre,
+      p_nombre: beneficiario.nombre || null,
       p_es_hombre: beneficiario.genero === "M",
-      p_idp_organizacion_tipo: beneficiario.idp_organizacion_tipo,
+      p_idp_organizacion_tipo: beneficiario.idp_organizacion_tipo || null,
       p_idp_organizacion_subtipo: beneficiario.idp_organizacion_subtipo || null,
       p_id_ubica_geo_depto: beneficiario.id_ubica_geo_depto || null,
       p_id_ubica_geo_muni: beneficiario.id_ubica_geo_muni || null,
       p_id_ubica_geo_comu: beneficiario.id_ubica_geo_comu || null,
       p_comunidad_no_registrada: beneficiario.comunidad_no_registrada || null,
-      p_idp_rango_edad: beneficiario.idp_rango_edad
+      p_idp_rango_edad: beneficiario.idp_rango_edad || null
     }));
 
     let errores = 0;

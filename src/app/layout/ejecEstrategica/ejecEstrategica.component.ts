@@ -901,12 +901,14 @@ getProximaFechaReporte(avances: any[]): string {
           const url = window.URL.createObjectURL(new Blob([response], { type: response.type }));
           return url;
         } else {
-          console.warn('La respuesta no es un Blob');
+          //console.warn('La respuesta no es un Blob');
+          Notify.failure('La respuesta no es un Blob');
           return null;
         }
       } catch (error) {
         if (error.status === 404) {
-          console.warn('Archivo no encontrado');
+          //console.warn('Archivo no encontrado');
+          Notify.failure('Archivo no encontrado');
           return null;
         }
         console.error('Error al descargar el archivo:', error);
@@ -955,32 +957,56 @@ countHeaderData() {
 }
 
 // ======= ======= DOWNLOAD EXCEL ======= ======= 
-    downloadExcel() {
+    downloadExcelAvance() {
+      // Definir las columnas que se mostrarán en el Excel
       const columnas = [        
-            'codigo',           // Código 
-            'categoria1', // Categoría 1
-            'subcategoria2', // Categoría 2
-            'tipo3', // Categoría 3        
-            'indicador',   // Nombre de la planificación           
-            'descripcion',      // Descripción
-            'medio_verifica',   // Medio de verificación
-            'linea_base',       // Línea base
-            'medida',           // Medida
-            'meta_final',       // Meta final
-            'comentario',       // Comentario
-            //'fecha_reportar', // Fecha de reporte
-            //'valor_esperado',
-            //'valor_reportado',
-            //'comentarios'
+        'codigo',            // Código del indicador
+        'indicador',         // Nombre del indicador
+        'fechaReporte',      // Reporte a (fecha)
+        'valorReportado',    // Progreso
+        'medida_descripcion',// Medida
+        'comentarios',       // Notas
+        'valorEsperado',     // Meta del periodo
+        'avancePorcentual',  // Avance porcentual
+        'meta_final',        // Meta final
+        'avanceTotal',       // Avance total
+        'descripcion'        // Descripción
       ]; 
+      
+      // Obtener la fecha actual para nombrar el archivo
       const today = new Date();
       const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
-      let ejecucionObj = [...this.ejecEstrategicaTable];
+      
+      // Preparar los datos para exportar
+      const datosExcel = this.ejecEstrategicaTable.map(item => {
+        // Obtener el último avance válido
+        const avance = item.avance || {};
+        // Obtener la próxima fecha de reporte formateada
+        const fechaReporte = this.getProximaFechaReporte(item.avances);
+        const fechaFormateada = fechaReporte ? 
+          new Date(fechaReporte).toLocaleDateString('es-ES') : 'Sin fecha';
+        
+        return {
+          codigo: item.codigo || '',
+          indicador: item.indicador || '',
+          fechaReporte: fechaFormateada,
+          valorReportado: this.convertToNumber(avance.valor_reportado || 0),
+          medida_descripcion: item.medida_descripcion || '',
+          comentarios: avance.comentarios || '',
+          valorEsperado: this.convertToNumber(avance.valor_esperado || 0),
+          avancePorcentual: this.calculateAvancePer(item) + '%',
+          meta_final: this.convertToNumber(item.meta_final || 0),
+          avanceTotal: this.calculateAvanceTotal(item) + '%',
+          descripcion: item.descripcion || ''
+        };
+      });
+      
+      // Exportar a Excel
       ExcelExportService.exportToExcel(
-        ejecucionObj,
-        'Reporte_EjecucionEstrategica_' + formattedDate,
+        datosExcel,
+        'Reporte_IndicadoresAvance_' + formattedDate,
         columnas      
-      )
-    } 
+      );
+    }
 
 }
