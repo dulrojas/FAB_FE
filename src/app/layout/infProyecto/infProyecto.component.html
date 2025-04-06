@@ -597,6 +597,14 @@
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let obligacion of obligaciones; let i = index">
+                                        <td class="custom-fit-col">
+                                            <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
+                                                [(ngModel)]="obligacion.selected" 
+                                                (change)="obligaCheckboxChanged(obligacion)" 
+                                                [disabled]="(!buttonValidations.editMode)||
+                                                    ((currentPerProRol.includes('ESC'))&&
+                                                    (proyectoScope.idp_estado_proy == 1))"/>
+                                        </td>
                                         <td>{{ obligacion.obligacion }}</td>
                                         <td>{{ obligacion.descripcion }}</td>
                                         <td>{{ obligacion.fecha_obligacion }}</td>
