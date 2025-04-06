@@ -170,7 +170,7 @@ export class servIndicador {
   // ======= ======= ======= ======= ======= ======= =======
   // ======= =======  DELETE INDICADOR  ======= =======
   // ======= ======= ======= ======= ======= ======= =======
-      deleteIndicador(id: any): Observable<any> {
+      deleteIndicador(id: any, idPersonaReg: number): Observable<any> {
         const params = {
           "procedure_name": "sp_indicador",
           "body": {
@@ -192,7 +192,7 @@ export class servIndicador {
               { "name": "p_id_inst_categoria_1", "value": null, "type": "int" },
               { "name": "p_id_inst_categoria_2", "value": null, "type": "int" },
               { "name": "p_id_inst_categoria_3", "value": null, "type": "int" },
-              { "name": "p_id_persona_reg", "value": null, "type": "int" },
+              { "name": "p_id_persona_reg", "value": idPersonaReg, "type": "int" },
               { "name": "p_es_estrategico", "value": null, "type": "boolean" }
             ]
           }
