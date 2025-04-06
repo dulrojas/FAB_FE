@@ -725,29 +725,38 @@ export class BeneficiariosComponent implements OnInit {
         }
       }
     // ======= ======= DOWNLOAD EXCEL ======= ======= 
-      downloadExcel() {
-        const columnas = [ 
-          'tipo_evento', 
-          'fecha',
-          'departamento',
-          'municipio',
-          'comunidad',        
-          'titulo_evento',
-          'evento_detalle',          
-          'mujeres',
-          'hombres',
-          'total', 
-          'actividad'        
-        ]; 
-        const today = new Date();
-        const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
-        let beneficiariosObj = [...this.beneficiarios];
-        ExcelExportService.exportToExcel(
-          beneficiariosObj,
-          'Reporte_Beneficiarios_' + formattedDate,
-          columnas      
-        )
-      }  
+        downloadExcel() {
+          const columnas = [ 
+            'tipo_evento', 
+            'fecha',
+            'departamento',
+            'municipio',
+            'comunidad',        
+            'titulo_evento',
+            'evento_detalle',          
+            'mujeres',
+            'hombres',
+            'total', 
+            'actividad'        
+          ]; 
+          
+          const today = new Date();
+          const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');
+          
+          // Crear una copia con el total calculado para cada beneficiario
+          let beneficiariosObj = this.beneficiarios.map(beneficiario => {
+            return {
+              ...beneficiario,
+              total: (beneficiario.mujeres || 0) + (beneficiario.hombres || 0)
+            };
+          });
+          
+          ExcelExportService.exportToExcel(
+            beneficiariosObj,
+            'Reporte_Beneficiarios_' + formattedDate,
+            columnas      
+          );
+        } 
 
   // ======= ======= ======= ======= ======= ======= =======  ======= =======
   // ======= ======= LISTA DE BENEFICIARIOS - PROY_BENE_LISTA ======= =======

@@ -29,7 +29,8 @@ addElemento(elemento: any): Observable<any> {
           { "name": "p_nivel", "value": elemento.nivel || null, "type": "int" },
           { "name": "p_orden", "value": elemento.orden || null, "type": "int" },
           { "name": "p_idp_estado", "value": elemento.idp_estado || null, "type": "int" },
-          { "name": "p_peso", "value": elemento.peso || null, "type": "int" }
+          { "name": "p_peso", "value": elemento.peso || null, "type": "int" },
+          { "name": "p_id_persona_reg", "value":  elemento.p_id_persona_reg, "type": "int" }
         ]
       }
     };
@@ -61,7 +62,8 @@ addElemento(elemento: any): Observable<any> {
           { "name": "p_nivel", "value": elemento.nivel || null, "type": "int" },
           { "name": "p_orden", "value": elemento.orden || null, "type": "int" },
           { "name": "p_idp_estado", "value": elemento.idp_estado || null, "type": "int" },
-          { "name": "p_peso", "value": elemento.peso || null, "type": "int" }
+          { "name": "p_peso", "value": elemento.peso || null, "type": "int" },
+          { "name": "p_id_persona_reg", "value":  elemento.p_id_persona_reg, "type": "int" }
         ]
       }
     };
@@ -89,7 +91,8 @@ addElemento(elemento: any): Observable<any> {
             { "name": "p_nivel", "value": null, "type": "int" },
             { "name": "p_orden", "value": null, "type": "int" },
             { "name": "p_idp_estado", "value": null, "type": "int" },
-            { "name": "p_peso", "value": null, "type": "int" }
+            { "name": "p_peso", "value": null, "type": "int" },
+            { "name": "p_id_persona_reg", "value": null, "type": "int" }
           ]
         }
       };
@@ -117,7 +120,8 @@ addElemento(elemento: any): Observable<any> {
           { "name": "p_nivel", "value": null, "type": "int" },
           { "name": "p_orden", "value": null, "type": "int" },
           { "name": "p_idp_estado", "value": null, "type": "int" },
-          { "name": "p_peso", "value": null, "type": "int" }
+          { "name": "p_peso", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": null, "type": "int" }
         ]
       }
     };
@@ -167,7 +171,8 @@ addElemento(elemento: any): Observable<any> {
           { "name": "p_nivel", "value": null, "type": "int" },
           { "name": "p_orden", "value": null, "type": "int" },
           { "name": "p_idp_estado", "value": null, "type": "int" },
-          { "name": "p_peso", "value": null, "type": "int" }
+          { "name": "p_peso", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": null, "type": "int" }
         ]
       }
     };
@@ -198,7 +203,8 @@ addElemento(elemento: any): Observable<any> {
           { "name": "p_nivel", "value": null, "type": "int" },
           { "name": "p_orden", "value": null, "type": "int" },
           { "name": "p_idp_estado", "value": null, "type": "int" },
-          { "name": "p_peso", "value": null, "type": "int" }
+          { "name": "p_peso", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": null, "type": "int" }
         ]
       }
     };
@@ -212,7 +218,7 @@ addElemento(elemento: any): Observable<any> {
 
  // ======= ======= ======= ======= ======= ======= =======
   // ======= =======  DELETE ELEMENTO  ======= =======
-  deleteElemento(id: any): Observable<any> {
+  deleteElemento(id: any, idPersonaReg: number): Observable<any> {
     const params = {
       "procedure_name": "sp_proy_elementos",
       "body": {
@@ -229,7 +235,8 @@ addElemento(elemento: any): Observable<any> {
           { "name": "p_nivel", "value": null, "type": "int" },
           { "name": "p_orden", "value": null, "type": "int" },
           { "name": "p_idp_estado", "value": null, "type": "int" },
-          { "name": "p_peso", "value": null, "type": "int" }
+          { "name": "p_peso", "value": null, "type": "int" },
+          { "name": "p_id_persona_reg", "value": idPersonaReg, "type": "int" }
         ]
       }
     };

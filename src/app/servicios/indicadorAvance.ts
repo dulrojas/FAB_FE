@@ -133,7 +133,7 @@ export class servIndicadorAvance {
   // ======= ======= ======= ======= ======= ======= =======
   // ======= =======  DELETE INDICADOR_AVANCE  ======= =======
   // ======= ======= ======= ======= ======= ======= =======
-  deleteIndicadorAvance(idAvance: number): Observable<any> {
+  deleteIndicadorAvance(idAvance: number, idPersonaReg: number): Observable<any> {
     const params = {
       "procedure_name": "sp_indicador_avance",
       "body": {
@@ -144,7 +144,7 @@ export class servIndicadorAvance {
           { "name": "p_fecha_reportar", "value": null, "type": "string" },
           { "name": "p_valor_esperado", "value": null, "type": "numeric" },
           { "name": "p_fecha_hora_reporte", "value": null, "type": "string" },
-          { "name": "p_id_persona_reporte", "value": null, "type": "int" },
+          { "name": "p_id_persona_reporte", "value": idPersonaReg, "type": "int" },
           { "name": "p_valor_reportado", "value": null, "type": "numeric" },
           { "name": "p_comentarios", "value": null, "type": "string" },
           { "name": "p_ruta_evidencia", "value": null, "type": "string" }

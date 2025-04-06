@@ -662,7 +662,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         nivel: this.tipo === 'OG' ? 1 : this.tipo === 'OE' ? 2 : this.tipo === 'RE' ? 3 : 4,
         orden: this.orden || 1,
         idp_estado: 1, // Estado activo por defecto
-        peso: 0 // Valor por defecto si es necesario
+        peso: 0, // Valor por defecto si es necesario
+        p_id_persona_reg: this.idPersonaReg  || null
       };
 
       if (this.modalAction === "add") {
@@ -973,17 +974,16 @@ export class PlanifEstrategicaComponent implements OnInit {
       }
   
       // Proceder con la eliminación
-      this.proyElementosService.deleteElemento(elemento.id_proy_elemento).subscribe(
+      this.proyElementosService.deleteElemento(elemento.id_proy_elemento, this.idPersonaReg).subscribe(
         (data) => {
+          console.log("Respuesta del servidor:", data);
           this.combinedData = this.combinedData.filter(el => el !== elemento);
-         //alert('Elemento eliminado con éxito.');
           Notify.success('Elemento eliminado con éxito.');
           this.getPlanifEstrategica();
           this.loadData();
         },
         (error) => {
-          console.error('Error al eliminar el elemento:', error);
-          //alert('Error al eliminar el elemento.');
+          console.error('Error en la solicitud:', error);
           Notify.failure('Error al eliminar el elemento.');
         }
       );
@@ -1002,7 +1002,7 @@ export class PlanifEstrategicaComponent implements OnInit {
       }
   
       // Proceder con la eliminación
-      this.servIndicador.deleteIndicador(indicador.id_proy_indicador).subscribe(
+      this.servIndicador.deleteIndicador(indicador.id_proy_indicador, this.idPersonaReg).subscribe(
         (data) => {
           this.combinedData = this.combinedData.filter(el => el !== indicador);
           Notify.success('Indicador eliminado con éxito.');
@@ -1032,7 +1032,7 @@ export class PlanifEstrategicaComponent implements OnInit {
   
       // Proceder con la eliminación según el tipo de elemento
       if (this.planifEstrategicaSelected.id_proy_indicador) {
-        this.servIndicador.deleteIndicador(this.planifEstrategicaSelected.id_proy_indicador).subscribe(
+        this.servIndicador.deleteIndicador(this.planifEstrategicaSelected.id_proy_indicador, this.idPersonaReg).subscribe(
           (data) => {
             this.resetSelection();
             this.getPlanifEstrategica();
@@ -1046,7 +1046,7 @@ export class PlanifEstrategicaComponent implements OnInit {
         );
       this.servIndicadorAvance.deleteIndicadorAvanceByIndicador(this.planifEstrategicaSelected.id_proy_indicador).subscribe();
       } else if (this.planifEstrategicaSelected.id_proy_elemento) {
-        this.proyElementosService.deleteElemento(this.planifEstrategicaSelected.id_proy_elemento).subscribe(
+        this.proyElementosService.deleteElemento(this.planifEstrategicaSelected.id_proy_elemento, this.idPersonaReg).subscribe(
           (data) => {
             this.resetSelection();
             this.ngOnInit();
@@ -1470,7 +1470,6 @@ export class PlanifEstrategicaComponent implements OnInit {
         this.idAvanceToDelete = id;
         this.modalService.open(content, { backdrop: 'static' });
       } else {
-        //console.warn('No se encontraron datos para el ID especificado:', id);
         Notify.failure('No se encontraron datos para el ID especificado:' + id);
       }
     }
@@ -1478,7 +1477,7 @@ export class PlanifEstrategicaComponent implements OnInit {
     // Método para eliminar el avance
     onDeleteAvanceSubmit() {
       if (this.idAvanceToDelete) {
-        this.servIndicadorAvance.deleteIndicadorAvance(this.idAvanceToDelete).subscribe(
+        this.servIndicadorAvance.deleteIndicadorAvance(this.idAvanceToDelete, this.idPersonaReg).subscribe(
           (response) => {
             // Recargar los datos después de eliminar
             this.cargarIndicadoresAvance();
@@ -1572,7 +1571,7 @@ export class PlanifEstrategicaComponent implements OnInit {
           this.fecha_reportar = "";
           this.valor_esperado = "";
           this.fecha_hora_reporte = null;
-          this.id_persona_reporte = "";
+          this.id_persona_reporte = this.namePersonaReg;
           this.valor_reportado = 0;
           this.comentarios = "";
           this.ruta_evidencia = null;
