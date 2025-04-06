@@ -537,7 +537,6 @@ export class InfProyectoComponent implements OnInit {
             })
           ).subscribe(
             (responses) => {
-              //console.log('Todas las operaciones se completaron:', responses);
               this.disableEditMode();
             },
             (error) => {
@@ -686,12 +685,12 @@ export class InfProyectoComponent implements OnInit {
         this.getInstitucionName(id_institucion_fin),  
         this.getTipoFinanParam(idp_tipo_finan),  
         porcentaje,  
-        monto  
+        this.parseAmountFloatToStr(this.parseAmountStrToFloat(this.proyectoScope.presupuesto_mn) * ( porcentaje / 100 ))  
       ]));
 
       projectObj.presupuestos = this.presupuestos.map(({ anio, presup_adicional }) => ([  
         anio,  
-        presup_adicional
+        (((presup_adicional).toString()).replace('$',''))
       ]));
       // ======= ======= =======
       // ======= ALCANCE GEO SECTION =======

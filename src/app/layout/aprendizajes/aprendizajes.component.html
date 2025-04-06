@@ -62,7 +62,6 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>ID</th>
                                 <th>FECHA APRENDIZAJE</th>
                                 <th>AREA DE APRENDIZAJE</th>
                                 <th>TIPO</th>
@@ -75,7 +74,6 @@
                                     <input type="checkbox" [(ngModel)]="aprendizaje.selected"
                                         (change)="checkboxChanged(aprendizaje)" id="checkbox-{{ i }}" name="checkbox-{{ i }}"/>
                                 </td>
-                                <td>{{ aprendizaje.id_proy_aprende }}</td>
                                 <td>{{ aprendizaje.fecha }}</td>
                                 <td>{{ getDescripcionSubtipo(aprendizaje.idp_aprendizaje_area, areasAprendizaje) }}</td>
                                 <td>{{ getDescripcionSubtipo(aprendizaje.idp_aprendizaje_tipo, tiposAprendizaje) }}</td>

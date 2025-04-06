@@ -157,7 +157,7 @@
         </div>
         <div class="custom-buttons-section">
             <div class="card">
-                <div class="card-body custom-card py-1">
+                <div class="card-body custom-card px-3 py-1">
                     <div class="row">
                         <!-- ======= ======= ======= TITLE DATE ======= ======= ======= -->
                         <h2 class="custom-info-proy-title">Estado de proyecto:</h2>
@@ -376,7 +376,9 @@
                                     <input class="form-control custom-info-proy-input text-end" type="text" 
                                         id="presupuesto_mn" name="presupuesto_mn" 
                                         [(ngModel)]="proyectoScope.presupuesto_mn" 
-                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol == 'ESC')&&(proyectoScope.idp_estado_proy == 1))"/>
+                                        [disabled]="(!buttonValidations.editMode)||
+                                            ((currentPerProRol == 'ESC')&&
+                                            (proyectoScope.idp_estado_proy == 1))"/>
                                 </div>
                                 <!-- ======= ======= ======= -->
                                 <!-- ======= TABLE PRESUPUESTOS SECTION ======= -->
@@ -406,7 +408,6 @@
                                         <thead>
                                             <tr>
                                                 <th></th>
-                                                <th>ID</th>
                                                 <th>Financiador</th>
                                                 <th>Tipo</th>
                                                 <th>%</th>
@@ -421,7 +422,6 @@
                                                         (change)="finanCheckboxChanged(financiador)" 
                                                         [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
                                                 </td>
-                                                <td>{{ financiador.id_proy_finan }}</td>
                                                 <td>{{ getInstitucionName(financiador.id_institucion_fin) }}</td>
                                                 <td>{{ getTipoFinanParam(financiador.idp_tipo_finan) }}</td>
                                                 <td>{{ financiador.porcentaje }}</td>
@@ -589,22 +589,14 @@
                                 <thead>
                                     <tr>
                                         <th class="custom-fit-head"></th>
-                                        <th class="custom-fit-head">ID</th>
                                         <th>Compromiso</th>
                                         <th>Requisitos y/o documentos</th>
                                         <th>Fecha obligacion</th>
-                                        <!--th>Avance Fecha</th>
-                                        <th>Fecha entrega</th-->
                                         <th>Estado entrega</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let obligacion of obligaciones; let i = index">
-                                        <td class="custom-fit-col">
-                                            <input type="checkbox" [(ngModel)]="obligacion.selected"
-                                                id="checkbox-{{ i }}" name="checkbox-{{ i }}"
-                                                (change)="obligaCheckboxChanged(obligacion)" [disabled]="!buttonValidations.editMode"/>
-                                        </td>
                                         <td class="custom-fit-col">{{ obligacion.id_proy_obliga }}</td>
                                         <td>{{ obligacion.obligacion }}</td>
                                         <td>{{ obligacion.descripcion }}</td>
