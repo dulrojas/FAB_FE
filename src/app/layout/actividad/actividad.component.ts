@@ -139,6 +139,7 @@ export class ActividadComponent implements OnInit {
       porcentajeGrafico = parseFloat((100*(ejecutadoProy / presupuestoFormated)).toFixed(2));
     }
     porcentajeGrafico = (porcentajeGrafico>100)?(100):(porcentajeGrafico);
+    porcentajeGrafico = parseInt(porcentajeGrafico.toFixed(0));
 
     this.doughnutChartProy = new Chart(ctx, {
       type: 'doughnut',
@@ -215,6 +216,7 @@ export class ActividadComponent implements OnInit {
       porcentajeGrafico = parseFloat((100*(ejecutadoGest / presupuestoFormated)).toFixed(2));
     }
     porcentajeGrafico = (porcentajeGrafico>100)?(100):(porcentajeGrafico);
+    porcentajeGrafico = parseInt(porcentajeGrafico.toFixed(0));
   
     this.doughnutChartGest = new Chart(ctx, {
       type: 'doughnut',
@@ -310,6 +312,21 @@ export class ActividadComponent implements OnInit {
     this.ElementosService.getElementosMetoEleNivel3ByIdProy(this.idProyecto).subscribe(
       (data) => {
         this.elementos = (data[0].dato)?(data[0].dato):([]);
+        
+        // ======= ORDER PROVISIONAL =======
+        this.elementos.sort((a, b) => {
+          const partesA = a.codigo.split('.').map(Number)
+          const partesB = b.codigo.split('.').map(Number)
+        
+          for (let i = 0; i < Math.max(partesA.length, partesB.length); i++) {
+            const valA = partesA[i] ?? 0
+            const valB = partesB[i] ?? 0
+            if (valA !== valB) return valA - valB
+          }
+        
+          return 0
+        })
+
         this.getActividades();
       },
       (error) => {
@@ -840,6 +857,13 @@ export class ActividadComponent implements OnInit {
       (actividad.fecha_fin.slice(0,4) >= this.gestion) 
     ));
 
+    // ======= ORDER PROVISIONAL =======
+    this.actividadesGest.sort((a, b) => {
+      const subA = a.actividad.slice(0, 5)
+      const subB = b.actividad.slice(0, 5)
+      return subA.localeCompare(subB)
+    })
+
     this.elementosGant = [];
     this.elementos.forEach((elemento)=>{
       let elementoToAdd = {...elemento};
@@ -860,10 +884,18 @@ export class ActividadComponent implements OnInit {
     this.elementosGant.forEach((elementoGant)=>{
       elementoGant.childrens.forEach((actividadGant)=>{
 
-        actividadGant.init_date_gap = this.getDateDaysGap(actividadGant.fecha_inicio, (this.gestion+"-01-01"));
+        let fechaInicioAux = actividadGant.fecha_inicio;
+        if ((new Date(fechaInicioAux)).getFullYear() < this.gestion) {
+          fechaInicioAux = (this.gestion+"-01-01");
+        }
+        actividadGant.init_date_gap = this.getDateDaysGap(fechaInicioAux, (this.gestion+"-01-01"));
         actividadGant.init_date_gap_por = 100*(actividadGant.init_date_gap / 365);
 
-        actividadGant.date_gap = this.getDateDaysGap(actividadGant.fecha_fin, actividadGant.fecha_inicio);
+        let fechaFinAux = actividadGant.fecha_fin;
+        if ((new Date(fechaFinAux)).getFullYear() > this.gestion) {
+          fechaFinAux = (this.gestion+"-12-31")
+        }
+        actividadGant.date_gap = this.getDateDaysGap(fechaFinAux, fechaInicioAux);
         actividadGant.date_gap_por = 100*(actividadGant.date_gap / 365);
 
         actividadGant.porcentajeAvance = 0;
