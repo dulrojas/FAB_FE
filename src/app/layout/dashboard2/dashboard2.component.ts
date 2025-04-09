@@ -335,19 +335,19 @@ export class Dashboard2Component implements OnInit {
     try {
       // 1. Establecer el año actual
       this.gestionActual = data.gestion_actual || new Date().getFullYear().toString();
-
-      // 2. Procesar el presupuesto del periodo
-      const presupuestoGestion = this.limpiarValorMonetario(data.pro_act_presupuesto_gestion);
-      
+  
+      // 2. Usar pro_pre_adicional_gestion en lugar de pro_act_presupuesto_gestion
+      const presupuestoGestion = this.limpiarValorMonetario(data.pro_pre_adicional_gestion);
+  
       // 3. Procesar valores ejecutados
       const ejecutadoActividad = this.limpiarValorMonetario(data.pro_act_ava_ejecutado_gestion);
       const ejecutadoPre = this.limpiarValorMonetario(data.pro_pre_ava_ejecutado_gestion);
       const ejecutadoTotal = ejecutadoActividad + ejecutadoPre;
-
+  
       // 4. Calcular porcentaje
       const porcentajeEjecutado = presupuestoGestion > 0 ? 
         Math.min((ejecutadoTotal / presupuestoGestion) * 100, 100) : 0;
-
+  
       // 5. Actualizar el objeto presupuestoGestion
       this.presupuestoGestion = {
         ejecutado: ejecutadoTotal,
@@ -356,7 +356,7 @@ export class Dashboard2Component implements OnInit {
         ejecutado_formateado: this.formatearMoneda(ejecutadoTotal),
         presupuesto_formateado: this.formatearMoneda(presupuestoGestion)
       };
-
+  
       // 6. Forzar actualización de la vista y crear gráfico
       this.cdr.detectChanges();
       this.createGestionChart();
