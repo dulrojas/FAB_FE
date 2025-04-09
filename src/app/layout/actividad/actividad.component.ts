@@ -644,8 +644,7 @@ export class ActividadComponent implements OnInit {
   valActAvaAvanceEdit: any = true;
   validateActAvaAvanceEdit() {
 
-    let auxAva = (this.actividadAvances.length > 1)?(this.actividadAvances[1]):(this.actividadAvances[0]);
-    let auxAvaAvance = auxAva.avance;
+    let auxAvaAvance = (this.actividadAvances.length > 1)?(this.actividadAvances[0].avance):(0);
 
     if( this.actAvaAvance ) {
       this.valActAvaAvanceEdit = true;
@@ -784,6 +783,8 @@ export class ActividadComponent implements OnInit {
         p_id_proyecto: 0
       };
 
+      console.log(objPresuAvance);
+
       this.servPresuAvance.editPresuAvance(objPresuAvance).subscribe(
         (data) => {
           this.presuAvanceSelected = null;
@@ -833,6 +834,7 @@ export class ActividadComponent implements OnInit {
   // ======= ======= ======= ======= =======
   // ======= ======= ON GESTION CHANGED ======= =======
   onGestionChanged(gestionChange: number){
+    this.presuAvanceSelected = null;
     this.gestion = parseInt(this.gestion) + gestionChange;
     this.groupActividadesGant();
 
@@ -920,11 +922,33 @@ export class ActividadComponent implements OnInit {
         actividadGant.date_gap = this.getDateDaysGap(fechaFinAux, fechaInicioAux);
         actividadGant.date_gap_por = 100*(actividadGant.date_gap / 365);
 
-        actividadGant.porcentajeAvance = 0;
-        actividadGant.avances.forEach(actAva => {
-          actividadGant.porcentajeAvance += parseInt(actAva.avance);
-        });
-      
+        const fullActividadDateDaysGap = this.getDateDaysGap(actividadGant.fecha_fin, actividadGant.fecha_inicio);
+        const anioInicio = parseInt(actividadGant.fecha_inicio.slice(0, 4));
+        const anioFin = parseInt(actividadGant.fecha_fin.slice(0, 4));
+        const anioGestion = parseInt(this.gestion);
+
+        let daysLeft = parseInt((fullActividadDateDaysGap*(this.getLastAvance(actividadGant)/100)).toFixed(0));
+
+        for (let y = anioInicio; y <= anioGestion; y++) {
+          const inicioAnio = (y === anioInicio)?(actividadGant.fecha_inicio):(`${y}-01-01`);
+          const finAnio = (y === anioFin)?(actividadGant.fecha_fin):(`${y}-12-31`);
+
+          let gestionDateDaysGap = this.getDateDaysGap(finAnio, inicioAnio);
+
+          if( y == anioGestion ){
+            actividadGant.avance_gestion = (daysLeft / gestionDateDaysGap)*100;
+            break;
+          }
+
+          if( daysLeft > gestionDateDaysGap ){
+            daysLeft = daysLeft - gestionDateDaysGap;
+          }
+          else{
+            daysLeft = 0;
+          }
+
+        }
+
         actividadGant.esActividadReprog = this.esActividadReprog(actividadGant.id_proy_actividad);
 
       });
@@ -1134,6 +1158,7 @@ export class ActividadComponent implements OnInit {
 
     this.servActAvance.addActAvance(objActAvance).subscribe(
       (data) => {
+        this.actividadSelected = null;
         this.getActividades();
         this.closeModal();
       },
@@ -1154,11 +1179,10 @@ export class ActividadComponent implements OnInit {
       p_monto_ejecutado: 0,
       p_id_persona_reg: this.idPersonaReg
     };
-    console.log(this.actividadAvances[0]);
-    console.log(objActAvance);
 
     this.servActAvance.editActAvance(objActAvance).subscribe(
       (data) => {
+        this.actividadSelected = null;
         this.getActividades();
         this.closeModal();
       },
