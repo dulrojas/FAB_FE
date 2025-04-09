@@ -302,13 +302,6 @@ export class BeneficiariosComponent implements OnInit {
           this.valMunicipio = false;
         }
       }
-      valComunidad: any = true;
-      ValidateComunidad() {
-        this.valComunidad = true;
-        if (!this.id_ubica_geo_comu) {
-          this.valComunidad = false;
-        }
-      }
   // ======= ======= OPEN MODALS FUN ======= =======
       private modalRef: NgbModalRef | null = null;
       openModalBeneficiario(content: TemplateRef<any>) {
@@ -461,7 +454,6 @@ export class BeneficiariosComponent implements OnInit {
         this.valTituloEvento = true;
         this.valDepartamento = true;
         this.valMunicipio = true;
-        this.valComunidad = true;
       }
   // ======= ======= GET BENEFICIARIOS ======= =======
       getBeneficiarios() {
@@ -507,7 +499,7 @@ export class BeneficiariosComponent implements OnInit {
           p_evento_detalle: this.evento_detalle,
           p_id_ubica_geo_depto: this.id_ubica_geo_depto,
           p_id_ubica_geo_muni: this.id_ubica_geo_muni,
-          p_id_ubica_geo_comu: this.id_ubica_geo_comu,
+          p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
           p_id_proy_actividad: this.id_proy_actividad || null,
           p_idp_tipo_evento: this.idp_tipo_evento,
           p_ruta_documento: null,
@@ -626,7 +618,7 @@ export class BeneficiariosComponent implements OnInit {
           p_evento_detalle: this.evento_detalle,
           p_id_ubica_geo_depto: this.id_ubica_geo_depto,
           p_id_ubica_geo_muni: this.id_ubica_geo_muni,
-          p_id_ubica_geo_comu: this.id_ubica_geo_comu,
+          p_id_ubica_geo_comu: this.id_ubica_geo_comu || null,
           p_id_proy_actividad: this.id_proy_actividad || null,
           p_idp_tipo_evento: this.idp_tipo_evento,
           p_ruta_documento: this.ruta_documento || null,
@@ -704,15 +696,14 @@ export class BeneficiariosComponent implements OnInit {
         this.ValidateTituloEvento();
         this.ValidateDepartamento();
         this.ValidateMunicipio();
-        this.ValidateComunidad();
+        
 
         valForm =
           this.valtipoEvento &&
           this.valFecha &&
           this.valTituloEvento &&
           this.valDepartamento &&
-          this.valMunicipio &&
-          this.valComunidad;
+          this.valMunicipio;
 
         // ======= ACTION SECTION =======
         if (valForm) {
@@ -959,13 +950,6 @@ export class BeneficiariosComponent implements OnInit {
           this.valMuniLista = false;
         }
       }
-      valComuLista: any = true;
-      ValidateComuLista() {
-        this.valComuLista = true;
-        if (!this.id_ubica_geo_comu) {
-          this.valComuLista = false;
-        }
-      }
       valRangoEdad: any = true;
       ValidateRangoEdad() {
         this.valRangoEdad = true;
@@ -1052,7 +1036,7 @@ export class BeneficiariosComponent implements OnInit {
     this.nombre = '';
     this.es_hombre = '';
     this.idp_organizacion_tipo = '';
-    this.idp_organizacion_subtipo = '';
+    this.idp_organizacion_subtipo =  null;
     this.id_ubica_geo_depto = null;
     this.id_ubica_geo_muni = null;
     this.id_ubica_geo_comu = null;
@@ -1069,7 +1053,6 @@ export class BeneficiariosComponent implements OnInit {
     this.valOrganizacionTipo = true;
     this.valDeptoLista = true;
     this.valMuniLista = true;
-    this.valComuLista = true;
     this.valRangoEdad = true;
   }
   // ======= ======= GET BENEFICIARIOS LISTA ======= =======
@@ -1336,7 +1319,6 @@ export class BeneficiariosComponent implements OnInit {
     this.ValidateOrganizacionTipo();
     this.ValidateDeptoLista();
     this.ValidateMuniLista();
-    this.ValidateComuLista();
     this.ValidateRangoEdad();
 
     valForm =
@@ -1346,7 +1328,6 @@ export class BeneficiariosComponent implements OnInit {
       this.valOrganizacionTipo &&
       this.valDeptoLista &&
       this.valMuniLista &&
-      this.valComuLista &&
       this.valRangoEdad;
 
     // ======= ACTION SECTION =======

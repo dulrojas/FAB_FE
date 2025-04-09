@@ -219,13 +219,12 @@
                                             <div class="col col-xl-4 col-lg-4 mb-auto">
                                                 <label for="id_ubica_geo_comu">Comunidad</label>
                                                 <select class="form-control" id="id_ubica_geo_comu" name="id_ubica_geo_comu"
-                                                    [(ngModel)]="id_ubica_geo_comu" (change)="ValidateComunidad()">
+                                                    [(ngModel)]="id_ubica_geo_comu">
                                                     <option value="" disabled selected>Seleccione una comunidad</option>
                                                     <option *ngFor="let mun of beneficiariosUbicaComu" [value]="mun.id_ubica_geo">
                                                         {{ mun.nombre }}
                                                     </option>
-                                                </select> 
-                                                <span class="custom-alert-message" *ngIf="!valComunidad">Debe seleccionar la Comunidad</span>
+                                                </select>                                                 
                                             </div>                                            
                                         <!-- Cuarta Fila: DETALLE DE EVENTO -->
                                             <!-- ======= ======= DETALLE DE EVENTO ======= ======= -->
@@ -323,7 +322,7 @@
                                         <div class="modal-footer mt-2">
                                             <div class="d-flex justify-content-center" style="width: 100%">
                                                 <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
-                                                    <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                                    <i class="fa fa-times" aria-hidden="true"></i> Cerrar
                                                 </button>
                                                 <button type="button" class="btn btn-bg-1" 
                                                 [disabled]="beneficiariosForm.invalid" (click)="onSubmitBeneficiario()">
@@ -587,7 +586,7 @@
                                             <label for="idp_organizacion_subtipo">Institución</label>
                                             <select class="form-control" id="idp_organizacion_subtipo" name="idp_organizacion_subtipo"
                                                 [(ngModel)]="idp_organizacion_subtipo">
-                                                <option value="" disabled selected>Seleccione un Tipo de Institución</option>
+                                                <option value="null" selected>Seleccione un Tipo de Institución</option>
                                                 <option *ngFor="let tipo of  beneficiariosListaOrganizacionSubTipoFilter" [value]="tipo.id_subtipo">
                                                 {{ tipo.descripcion_subtipo }}
                                                 </option>
@@ -622,13 +621,12 @@
                                         <div class="col col-xl-4 col-lg-4 mb-auto">
                                             <label for="id_ubica_geo_comu">Comunidad</label>
                                             <select class="form-control" id="id_ubica_geo_comu" name="id_ubica_geo_comu"
-                                                [(ngModel)]="id_ubica_geo_comu" (change)="ValidateComuLista()">
-                                                <option value="" disabled selected>Seleccione una comunidad</option>
+                                                [(ngModel)]="id_ubica_geo_comu">
+                                                <option value="null" selected>Seleccione una comunidad</option>                                                                                              
                                                 <option *ngFor="let mun of  beneficiariosListaUbicaComu" [value]="mun.id_ubica_geo">
                                                     {{ mun.nombre }}
                                                 </option>
                                             </select>
-                                            <span class="custom-alert-message" *ngIf="!valComuLista">Debe seleccionar la Comunidad</span> 
                                         </div>                                                                                                                   
                                     <!-- Cuarta Fila: OTRO"COMUNIDAD NO REGISTRADA", RANGO DE EDAD -->
                                         <!-- ======= ======= OTRO ======= ======= -->
