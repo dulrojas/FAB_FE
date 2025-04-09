@@ -396,7 +396,7 @@ export class ActividadComponent implements OnInit {
     }
 
     if (actividadGant.avances.length > 0) {
-      let avance = actividadGant.avances[actividadGant.avances.length - 1].avance;
+      let avance = actividadGant.avances[0].avance;
       return avance;
     }
 
@@ -421,6 +421,8 @@ export class ActividadComponent implements OnInit {
     this.resultado = "";
     this.idp_actividad_estado = "";
 
+    this.actividadAvances = [];
+
     this.actAvaAvance = "";
 
     this.valMontoNuevoEjecutado = true;
@@ -438,6 +440,7 @@ export class ActividadComponent implements OnInit {
     this.valResultado = true;
 
     this.valActAvaAvance = true;
+    this.valActAvaAvanceEdit = true;
 
   }
   // ======= ======= ======= ======= =======
@@ -623,7 +626,7 @@ export class ActividadComponent implements OnInit {
   valActAvaAvance: any = true;
   validateActAvaAvance() {
 
-    let lastAvance = (this.actividadAvances.length > 0)?((this.actividadAvances[this.actividadAvances.length - 1 ]).avance):(0);
+    let lastAvance = (this.actividadAvances.length > 0)?((this.actividadAvances[0]).avance):(0);
 
     if( this.actAvaAvance ) {
       this.valActAvaAvance = true;
@@ -636,6 +639,25 @@ export class ActividadComponent implements OnInit {
     } 
     else {
       this.valActAvaAvance = false;
+    }
+  }
+  valActAvaAvanceEdit: any = true;
+  validateActAvaAvanceEdit() {
+
+    let auxAva = (this.actividadAvances.length > 1)?(this.actividadAvances[1]):(this.actividadAvances[0]);
+    let auxAvaAvance = auxAva.avance;
+
+    if( this.actAvaAvance ) {
+      this.valActAvaAvanceEdit = true;
+      if( ( parseFloat(this.actAvaAvance) > auxAvaAvance ) && ( parseFloat(this.actAvaAvance) <= 100 ) ){
+        this.valActAvaAvanceEdit = true;
+      }
+      else{
+        this.valActAvaAvanceEdit = false;
+      }
+    } 
+    else {
+      this.valActAvaAvanceEdit = false;
     }
   }
 
@@ -1122,6 +1144,31 @@ export class ActividadComponent implements OnInit {
 
   }
   // ======= ======= ======= ======= =======
+  // ======= ======= ADD ACTIVIDAD AVANCE ======= =======
+  editAvanceActividad(){
+    const objActAvance = {
+      p_id_proy_actividad_avance: this.actividadAvances[0].id_proy_acti_avance,
+      p_id_proy_actividad: this.actividadSelected.id_proy_actividad,
+      p_fecha_hora: null,
+      p_avance: parseInt(this.actAvaAvance),
+      p_monto_ejecutado: 0,
+      p_id_persona_reg: this.idPersonaReg
+    };
+    console.log(this.actividadAvances[0]);
+    console.log(objActAvance);
+
+    this.servActAvance.editActAvance(objActAvance).subscribe(
+      (data) => {
+        this.getActividades();
+        this.closeModal();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+
+  }
+  // ======= ======= ======= ======= =======
   // ======= ======= INIT EDIT AVANCE ACTIVIDAD ======= =======
   initDeleteActividad(modalScope: TemplateRef<any>){
     this.initActividadModel();
@@ -1201,6 +1248,16 @@ export class ActividadComponent implements OnInit {
 
     if(valForm){
       this.avanceActividad();
+    }
+  }
+
+  onSubmitEditAvance(): void {
+    this.validateActAvaAvanceEdit();
+
+    let valForm = this.valActAvaAvanceEdit;
+
+    if(valForm){
+      this.editAvanceActividad();
     }
   }
   // ======= ======= ======= ======= =======

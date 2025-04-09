@@ -602,24 +602,38 @@
                                         
                                     <div class="row">
                                         <!-- ======= PORCENTAJE SECTION ======= -->
-                                        <div class="col col-md-10 col-lg-10">
+                                        <div class="col col-md-8 col-lg-8">
                                             <label for="actAvaAvance">% Avance</label>
                                             <input class="form-control" type="text" 
                                                 id="actAvaAvance" name="actAvaAvance" 
                                                 placeholder="Ingresa el porcentaje"
                                                 [(ngModel)]="actAvaAvance" 
-                                                [disabled]="(modalAction == 'add')||(gestion < initGestion)"
-                                                (change)="validateActAvaAvance()">
+                                                [disabled]="(modalAction == 'add')||
+                                                    (gestion < initGestion)">
                                             <span class="custom-alert-message" *ngIf="!valActAvaAvance">
+                                                Debe ingresar un valor válido.
+                                            </span>
+                                            <span class="custom-alert-message" *ngIf="!valActAvaAvanceEdit">
                                                 Debe ingresar un valor válido.
                                             </span>
                                         </div>
                                         <!-- ======= ADD AVANCE SECTION ======= -->
                                         <div class="col col-md-2 col-lg-2 mt-auto">
                                             <button class="btn btn-bg-1" type="button" 
-                                                [disabled]="(modalAction == 'add')||(gestion < initGestion)"
+                                                [disabled]="(modalAction == 'add')||
+                                                    (gestion < initGestion)"
                                                 (click)="onSubmitAvance()">
-                                                <i aria-hidden="true"></i> +
+                                                +
+                                            </button>
+                                        </div>
+                                        <!-- ======= EDIT AVANCE SECTION ======= -->
+                                        <div class="col col-md-2 col-lg-2 mt-auto">
+                                            <button class="btn btn-bg-1" type="button" 
+                                                [disabled]="(modalAction == 'add')||
+                                                    (gestion < initGestion)||
+                                                    (actividadAvances.length == 0)"
+                                                (click)="onSubmitEditAvance()">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -682,7 +696,8 @@
                 <i aria-hidden="true"></i> Reprogramar
             </button>
             <button type="button" class="btn btn-bg-1" 
-                [disabled]="((gestion < initGestion)||(modalAction == 'avance'))"
+                [disabled]="((gestion < initGestion)||
+                    (modalAction == 'avance'))"
                 (click)="onSubmit()">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
             </button>

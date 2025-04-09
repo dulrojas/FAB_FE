@@ -62,7 +62,7 @@ export class servActAvance{
   }
   // ======= ======= ======= ======= ======= ======= =======
   // ======= ======= ======= GET ACTIVIDADES ======= ======= =======
-  editActividad(obj: any): Observable<any> {
+  editActAvance(obj: any): Observable<any> {
     const params = {
         "procedure_name": "sp_proy_actividad_avance",
         "body": {
