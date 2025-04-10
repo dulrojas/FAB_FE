@@ -364,12 +364,13 @@
                                     <div class="col col-xl-4 col-lg-4 mt-auto">
                                         <label for="inst_categoria_1">Categoría</label>
                                         <select class="form-control" id="inst_categoria_1" name="inst_categoria_1"
-                                            [(ngModel)]="inst_categoria_1" (change)="onCategoriaChange()">
+                                            [(ngModel)]="inst_categoria_1" (change)="onCategoriaChange()" (change)="ValidateCategoria1()">
                                             <option value="" disabled selected>Seleccione una categoría</option>
                                             <option *ngFor="let categoria of planifCategoria" [value]="categoria.id_inst_categoria">
                                                 {{ categoria.nombre }}
                                             </option>
                                         </select>
+                                        <span class="custom-alert-message" *ngIf="!valCategoria1">Debe elegir una Categoría</span>
                                     </div>
                                     <!-- SubCategoría -->
                                     <div class="col col-xl-4 col-lg-4 mt-auto">
@@ -403,6 +404,7 @@
                                         placeholder="Ingresa el Nombre de elemento"
                                         [(ngModel)]="indicador" maxlength="100"
                                         (change)="ValidateIndicador()"/>
+                                        <span class="custom-alert-message" *ngIf="!valIndicador">Debe ingresar el nombre del Indicador</span>
                                 </div>
                                 <div class="col col-xl-12 col-lg-12 mt-auto">
                                     <label for="descripcion">Descripción</label>

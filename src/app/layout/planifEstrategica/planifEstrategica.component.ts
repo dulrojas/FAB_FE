@@ -198,23 +198,6 @@ export class PlanifEstrategicaComponent implements OnInit {
       );
     }
   
-    // == ====== section validator  =====
-    valComponente: any = false;
-    ValidateComponente() {
-      if (this.id_proy_elem_padre) {
-        this.valComponente = true;
-      } else {
-        this.valComponente = false;
-      }
-    }
-    valIndicador: any = true;
-    ValidateIndicador() {
-      this.valIndicador = true;
-      if (!this.indicador || this.indicador.length > 100) {
-        this.valIndicador = false;
-      }
-    }   
-  
     // ======= ======= INIT VIEW FUN ======= =======
     editPlanifEstrategica(planifEstrategicaOGOERE: any, planifEstrategicaIN: any): void {
       this.initEditPlanifEstrategica(planifEstrategicaOGOERE, planifEstrategicaIN);
@@ -468,6 +451,8 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.color = null;
   
       this.valComponente = true;
+      this.valIndicador = true;
+      this.valCategoria1 = true;
     }
 
     // ======= ======= GET INDICADORES ======= =======
@@ -661,8 +646,8 @@ export class PlanifEstrategicaComponent implements OnInit {
         comentario: this.comentario || null,
         nivel: this.tipo === 'OG' ? 1 : this.tipo === 'OE' ? 2 : this.tipo === 'RE' ? 3 : 4,
         orden: this.orden || 1,
-        idp_estado: 1, // Estado activo por defecto
-        peso: 0, // Valor por defecto si es necesario
+        idp_estado: 1,
+        peso: 0, 
         p_id_persona_reg: this.idPersonaReg  || null
       };
 
@@ -1054,11 +1039,42 @@ export class PlanifEstrategicaComponent implements OnInit {
       this.getPlanifEstrategica();
       this.loadData();
     }
+    valCategoria1: any = false;
+    ValidateCategoria1() {
+      this.valCategoria1 = true;
+      if(!this.inst_categoria_1){
+        this.valCategoria1 = false;
+      }
+    }
+    // == ====== section validator  =====
+    valComponente: any = false;
+    ValidateComponente() {
+      if (this.id_proy_elem_padre) {
+        this.valComponente = true;
+      } else {
+        this.valComponente = false;
+      }
+    }
+    valIndicador: any = true;
+    ValidateIndicador() {
+      this.valIndicador = true;
+      if (!this.indicador || this.indicador.trim().length === 0 || this.indicador.trim().length > 100) {
+        this.valIndicador = false;
+      }
+    }   
+
   
     // ======= ======= SUBMIT FORM ======= =======
     onSubmit(): void {
       // ======= VALIDATION SECTION =======
       this.ValidateComponente();
+      this.ValidateIndicador();
+      this.ValidateCategoria1();
+
+      if (!this.valIndicador || !this.valCategoria1) {
+        Notify.failure('Debe completar todos los campos obligatorios categoria y nombre del Indicador.');
+        return; // Detiene la ejecución de la función
+      }
 
       if (this.modalAction === "add") {
         this.addIndicador();
