@@ -644,7 +644,7 @@ export class ActividadComponent implements OnInit {
   valActAvaAvanceEdit: any = true;
   validateActAvaAvanceEdit() {
 
-    let auxAvaAvance = (this.actividadAvances.length > 1)?(this.actividadAvances[0].avance):(0);
+    let auxAvaAvance = (this.actividadAvances.length > 1)?(this.actividadAvances[1].avance):(0);
 
     if( this.actAvaAvance ) {
       this.valActAvaAvanceEdit = true;
@@ -783,8 +783,6 @@ export class ActividadComponent implements OnInit {
         p_id_proyecto: 0
       };
 
-      console.log(objPresuAvance);
-
       this.servPresuAvance.editPresuAvance(objPresuAvance).subscribe(
         (data) => {
           this.presuAvanceSelected = null;
@@ -823,6 +821,7 @@ export class ActividadComponent implements OnInit {
         this.fechaNuevoEjecutado = null;
         this.motivoNuevoEjecutado = null;
 
+        this.getPresupuestoEjecutado();
         this.getPresuAvance();
         this.closeModal();
       },

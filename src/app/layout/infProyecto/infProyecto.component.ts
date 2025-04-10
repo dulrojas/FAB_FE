@@ -1607,6 +1607,7 @@ export class InfProyectoComponent implements OnInit {
       this.obligacionesModel.idp_estado_entrega = 1;
       this.obligacionesModel.fecha_hora_entrega = null;
       this.obligacionesModel.persona_entrega = this.namePersonaReg;
+      this.obligacionesModel.fecha_registro = null;
 
       this.obligacionesModel.datos_documentos = [{titulo:"",url:""}];
 
@@ -1697,6 +1698,7 @@ export class InfProyectoComponent implements OnInit {
         ((this.obligacionesSelected.apellido_2)?(this.obligacionesSelected.apellido_2):(""))
       );
       this.obligacionesModel.datos_documentos = (this.obligacionesSelected.datos_documentos)?(this.stringToJsonList(this.obligacionesSelected.datos_documentos)):([{titulo:"",url:""}]);
+      this.obligacionesModel.fecha_registro = this.obligacionesSelected.fecha_registro;
 
       this.openModal(modalScope);
     }
