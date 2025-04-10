@@ -12,7 +12,6 @@ export class ElementosService {
   constructor(private http: HttpClient) {}
 // Añadir elementos
 addElemento(elemento: any): Observable<any> {
-  console.log( ' elemento reciido en el form corto : ', elemento);
   const params =  {
       "procedure_name": "sp_proy_elementos",
       "body": {
@@ -35,8 +34,6 @@ addElemento(elemento: any): Observable<any> {
       }
     };
   
-  
-    console.log('params mucho ante de enviar  : ', params);
     const headers = new HttpHeaders({
       'ip': "127.0.0.1"
     });
@@ -67,7 +64,6 @@ addElemento(elemento: any): Observable<any> {
         ]
       }
     };
-    console.log('params mucho ante de enviar  : ', params);
     const headers = new HttpHeaders({
       'ip': "127.0.0.1"
     });
