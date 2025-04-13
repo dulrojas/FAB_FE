@@ -1018,9 +1018,9 @@
                                 </div>
                                 <!-- ======= ======= FECHA REGISTRO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <label for="fecha_registro">Fecha registro</label>
+                                    <!--label for="fecha_registro">Fecha registro</label>
                                     <input class="form-control" type="date" id="fecha_registro" name="fecha_registro" 
-                                        [(ngModel)]="obligacionesModel.fecha_registro" disabled/>
+                                        [(ngModel)]="obligacionesModel.fecha_registro" disabled/-->
                                 </div>
 
                                 <!-- ======= ======= OBLIGACION SECTION ======= ======= -->
@@ -1058,13 +1058,17 @@
                                     </select>
                                     <span class="custom-alert-message" *ngIf="!valIdInstitucionExige">Debe seleccionar una institución.</span>
                                 </div>
+                            
+                                <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"> 
+                                </div>
 
                                 <!-- ======= ======= FECHA HORA ENTREGA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
                                     <label for="fecha_hora_entrega">Fecha entrega</label>
                                     <input class="form-control" type="date" 
                                         id="fecha_hora_entrega" name="fecha_hora_entrega" 
-                                        [(ngModel)]="obligacionesModel.fecha_hora_entrega" disabled/>
+                                        [disabled]="(obligacionesModel.idp_estado_entrega_init==2)"
+                                        [(ngModel)]="obligacionesModel.fecha_hora_entrega"/>
                                 </div>
                                 <!-- ======= ======= ESTADO ENTREGA SECTION ======= ======= -->
                                 <div class="col col-xl-4 col-lg-4 mb-auto">
