@@ -1125,3 +1125,130 @@ canvas {
         border-radius: 15px; 
         overflow-wrap: break-word; 
     }
+// ======= ======= ======= ======= ======= ======= ======= ======= =======
+// ======= ======= =========   CUSTOM DASHBOARD  ========= ======= ======= 
+// ======= ======= ======= ======= ======= ======= ======= ======= =======
+    h6.card-title {
+        background-color: #4E8646; 
+        color: #ffffff; 
+        text-align: center; 
+        padding: 0.5rem;
+        margin: 0;
+        display: block; 
+        font-size: 100%; 
+        font-weight: bold; 
+        box-sizing: border-box; 
+    }
+    h5.presupuesto {
+        background-color: #d67600; 
+        color: #ffffff; 
+        border: 1px solid #000000; 
+        border-radius: 10px; 
+        text-align: center; 
+        padding: 0.5rem; 
+        margin: 0; 
+        display: block; 
+        font-size: 60%; 
+        font-weight: bold; 
+        box-sizing: border-box; 
+    }
+
+    .card {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0; 
+        border-radius: 10px; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        overflow: hidden; 
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; 
+        
+        &:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
+        }
+
+        .card-img-top {
+            width: 100%; 
+            height: auto; 
+        }
+
+        .card-body {
+            padding: 1.5rem; 
+            text-align: center; 
+            color: #333; 
+        }
+
+        .card-text {
+            font-size: 0.9rem; 
+            line-height: 1.5; 
+            color: #000; 
+            background-color: rgba(112, 167, 105, 0.682); 
+            padding: 0.75rem; 
+            margin: 0; 
+            text-align: center; 
+        }
+
+        .same-size-img {
+            width: 100px;
+            height: 100px; 
+            object-fit: contain; 
+            border-radius: 8px; 
+        }
+
+    }
+
+        .bg-danger {
+            background-color: #dc3545 !important;
+        }
+        .bg-darwar{
+            background-color: #e87b0e !important;
+        }
+        
+        .bg-warning {
+            background-color: #ffc107 !important;
+        }
+
+        .bg-warsuc{
+            background-color: #60993ccf !important;
+        }
+        
+        .bg-success {
+            background-color: #28a745 !important;
+        }
+
+        canvas {
+        display: block;
+        margin: 0 auto;
+        }
+        .text-center {
+        font-size: 1.2rem;
+        color: #4e8646;
+        font-weight: bold;
+        }
+
+        .legend-box {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin: 0 auto;
+        }
+        .chart-wrapper {
+            display: flex;
+            justify-content: center;
+            flex: 1; 
+        }
+        .legend-wrapper {
+            flex: 1; 
+            font-size: 12px;
+            margin-left: 16px; 
+        }
+        
+        
+        

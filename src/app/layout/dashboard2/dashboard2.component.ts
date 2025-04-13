@@ -12,7 +12,7 @@ import { Chart } from 'chart.js/auto';
 @Component({
     selector: 'app-dashboard2',
     templateUrl: './dashboard2.component.html',
-    styleUrls: ['../dashboard2/dashboard2.component.scss'],
+    styleUrls: ['../../../styles/styles.scss'],
     animations: [routerTransition()]
     })
 
@@ -39,7 +39,8 @@ export class Dashboard2Component implements OnInit {
       this.idProyecto = selectedPro.id_proyecto;
       localStorage.setItem('currentIdProy', (this.idProyecto).toString());
       this.proyectoService.seleccionarProyecto(this.idProyecto);
-      this.currentPerProRol = selectedPro.rol; 
+      this.currentPerProRol = selectedPro.rol;
+      this.ngOnInit();
 
       this.getDashboardData();
       this.selectionChange.emit(selectedPro);
@@ -103,10 +104,11 @@ export class Dashboard2Component implements OnInit {
             this.processAprendizajesData(data[0].dato[0].aprendizajes);
           }
         // TARJETA 8: ACTIVIDADES
-          if (data[0].dato[0].actividades) {
-            this.actividades = data[0].dato[0].actividades;
-            this.processActivityStatus(this.actividades);
-          }
+          this.actividadesConteo = {
+            vigentes: data[0].dato[0].pro_act_vigentes || 0,
+            porVencer: data[0].dato[0].pro_act_por_vencer || 0,
+            vencidas: data[0].dato[0].pro_act_vencidas || 0
+          };
         // TARJETA 9: LOGROS
           this.numeroLogros = data[0].dato[0].logros?.length || 0;
         // TARJETA 10: BENEFICIARIOS
@@ -783,56 +785,12 @@ export class Dashboard2Component implements OnInit {
   }
 
   // ====== ======= ====== ====== OCTAVA TARJETA ACTIVIDADES ====== ======= ====== ======
-  actividades: {
-    id_proy_actividad: number;
-    idp_actividad_estado: number | null;
-    fecha_inicio: string;
-    fecha_fin: string;
-  }[] = [];
-  
-  actividadesConteo = {
-    vencidas: 0,
-    porVencer: 0,
-    vigentes: 0
-  };
-  
-  processActivityStatus(actividades: any[]) {
-    // Reiniciar contadores
-    this.actividadesConteo = {
+    // Variables para la octava tarjeta
+    actividadesConteo = {
       vencidas: 0,
       porVencer: 0,
       vigentes: 0
     };
-  
-    // Obtener la fecha actual
-    const today = new Date();
-    const fechaActual = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    ); // Sin horas para evitar problemas de comparación
-  
-    actividades.forEach(actividad => {
-      const { idp_actividad_estado, fecha_fin } = actividad;
-  
-      // Validar que el estado y la fecha fin sean válidos
-      if (idp_actividad_estado === 1 && fecha_fin) {
-        const fechaFin = new Date(fecha_fin);
-        const diferenciaDias = Math.floor((fechaFin.getTime() - fechaActual.getTime()) / (1000 * 60 * 60 * 24));
-  
-        if (fechaActual > fechaFin) {
-          // Actividad vencida
-          this.actividadesConteo.vencidas++;
-        } else if (diferenciaDias > 0 && diferenciaDias <= 7) {
-          // Por vencer
-          this.actividadesConteo.porVencer++;
-        } else if (diferenciaDias > 7) {
-          // Vigente
-          this.actividadesConteo.vigentes++;
-        }
-      }
-    });
-  }
   
   // ====== ======= ====== ====== NOVENA TARJETA LOGROS ====== ======= ====== ======
     // Variables para la novena tarjeta
