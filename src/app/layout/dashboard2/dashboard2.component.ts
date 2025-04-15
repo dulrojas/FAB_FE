@@ -821,7 +821,9 @@ export class Dashboard2Component implements OnInit {
       this.headerDataNro03 = data.indicadores?.length || 0;
     
       // Actividades Planificadas (actividades en estado planificado)
-      this.headerDataNro04 = data.actividades?.filter((act: any) => 
-        act.idp_actividad_estado === 1).length || 0;
+      this.headerDataNro04 =
+        (data.pro_act_vigentes || 0) +
+        (data.pro_act_por_vencer || 0) +
+        (data.pro_act_vencidas || 0);
     }
 }
