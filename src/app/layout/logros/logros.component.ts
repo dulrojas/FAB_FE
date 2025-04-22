@@ -41,6 +41,7 @@ export class LogrosComponent implements OnInit {
       this.proyectoService.seleccionarProyecto(this.idProyecto);
       this.currentPerProRol = selectedPro.rol;
       
+      this.getParametricas();
       this.getLogros();
     }
 
