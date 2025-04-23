@@ -576,7 +576,6 @@ export class Dashboard2Component implements OnInit {
           }
         });
       }
-  
 
   // ====== ======= ====== ====== SEPTIMA TARJETA APRENDIZAJES ====== ======= ====== ======
   chartAprendizajes: any;

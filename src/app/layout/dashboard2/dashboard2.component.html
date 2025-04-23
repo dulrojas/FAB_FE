@@ -33,56 +33,55 @@
       <!-- ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ====== ======= ====== ======= ====== -->
         <div class="col-xl-3 col-lg-3 mt-3">          
             <!-- PRIMERA TARGETA DE INFIORMACION Y IMAGEN -->
-            <div class="card">
-                <img class="col col-lg-12 col-md-12 custom_logro_img" 
-                [src]="imageSrc || defaultImageSrc" 
-                [alt]="projectInfo.proyecto">                
-                <h6 class="card-title">{{projectInfo.proyecto | uppercase}}</h6>
-                <p class="card-text">{{projectInfo.descripcion}}</p>
+            <div class="custom-dashboard-card">
+              <img class="col col-lg-12 col-md-12 custom_logro_img" 
+              [src]="imageSrc || defaultImageSrc" 
+              [alt]="projectInfo.proyecto">                
+              <h6 class="custom-dashboard-card-title">{{projectInfo.proyecto | uppercase}}</h6>
+              <p class="card-text">{{projectInfo.descripcion}}</p>
             </div>
-                <!-- LINEA DE SEPARACION-->
-                <div class="custom-form-separator my-3" style="border-color: #4E8646;border-width: 3px;"></div>
-                    <!-- SEGUNDA TARJETA DE FECHA DE INICIO-FIN Y FIN AMPLIADO DEL PROYECTO -->
-                    <div class="card">
-                        <div class="card-body p-3">
-                          <div class="row g-2">
-                            <!-- Inicio Proyecto -->
-                            <div class="col col-xl-4 col-lg-4 mt-auto text-center">
-                              <label class="custom-info-proy-sub-title" for="fecha_inicio">Inicio Proyecto</label>
-                              <!-- Mostrar fecha inicio en lugar de input -->
-                              <div class="form-control custom-info-proy-input" id="fecha_inicio" name="fecha_inicio">
-                                {{ proyectoScope.fecha_inicio | date:'dd/MM/yyyy' }}
-                              </div>
-                            </div>
-                            <!-- Fin de Proyecto -->
-                            <div class="col col-xl-4 col-lg-4 mt-auto text-center">
-                              <label class="custom-info-proy-sub-title" for="fecha_fin">Fin de Proyecto</label>
-                              <div class="form-control custom-info-proy-input" id="fecha_fin" name="fecha_fin">
-                                {{ proyectoScope.fecha_fin | date:'dd/MM/yyyy' }}
-                              </div>
-                            </div>
-                            <!-- Fin Ampliado del Proyecto -->
-                            <div class="col col-xl-4 col-lg-4 mt-auto text-center">
-                              <label class="custom-info-proy-sub-title" for="fecha_fin_ampliada">Fecha Fin Ampliada</label>
-                              <div class="form-control custom-info-proy-input" style="background-color: #d67600; color: #ffffff;" id="fecha_fin_ampliada">
-                                {{ proyectoScope.fecha_fin_ampliada | date:'dd/MM/yyyy' }}
-                              </div>                                  
-                            </div>
-                          </div>
-                        </div>
+            <div class="custom-form-separator my-3" style="border-color: #4E8646;border-width: 3px;"></div>
+            <!-- SEGUNDA TARJETA DE FECHA DE INICIO-FIN Y FIN AMPLIADO DEL PROYECTO -->
+            <div class="custom-dashboard-card">
+                <div class="card-body p-3">
+                  <div class="row g-2">
+                    <!-- Inicio Proyecto -->
+                    <div class="col col-xl-4 col-lg-4 mt-auto text-center">
+                      <label class="custom-info-proy-sub-title" for="fecha_inicio">Inicio Proyecto</label>
+                      <!-- Mostrar fecha inicio en lugar de input -->
+                      <div class="form-control custom-info-proy-input" id="fecha_inicio" name="fecha_inicio">
+                        {{ proyectoScope.fecha_inicio | date:'dd/MM/yyyy' }}
                       </div>
-                    <!-- LINEA DE SEPARACION-->
-                    <div class="custom-form-separator my-3" style="border-color: #4E8646;border-width: 3px;"></div> 
+                    </div>
+                    <!-- Fin de Proyecto -->
+                    <div class="col col-xl-4 col-lg-4 mt-auto text-center">
+                      <label class="custom-info-proy-sub-title" for="fecha_fin">Fin de Proyecto</label>
+                      <div class="form-control custom-info-proy-input" id="fecha_fin" name="fecha_fin">
+                        {{ proyectoScope.fecha_fin | date:'dd/MM/yyyy' }}
+                      </div>
+                    </div>
+                    <!-- Fin Ampliado del Proyecto -->
+                    <div class="col col-xl-4 col-lg-4 mt-auto text-center">
+                      <label class="custom-info-proy-sub-title" for="fecha_fin_ampliada">Fecha Fin Ampliada</label>
+                      <div class="form-control custom-info-proy-input" style="background-color: #d67600; color: #ffffff;" id="fecha_fin_ampliada">
+                        {{ proyectoScope.fecha_fin_ampliada | date:'dd/MM/yyyy' }}
+                      </div>                                  
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <!-- LINEA DE SEPARACION-->
+            <div class="custom-form-separator my-3" style="border-color: #4E8646;border-width: 3px;"></div> 
                     <!-- TERCERA TARJETA DONA DE PRESUPUESTO DEL PROYECTO -->
-                    <div class="card">
-                      <h6 class="card-title">PRESUPUESTO DEL PROYECTO</h6>
+                    <div class="custom-dashboard-card">
+                      <h6 class="custom-dashboard-card-title">PRESUPUESTO DEL PROYECTO</h6>
                       <div class="card-body" style="display: flex; justify-content: center;">
                         <div class="text-center">
                           <h6>Presupuesto del Proyecto</h6>
-                          <h5 class="presupuesto">{{moneda_presupuesto}} {{formatearMoneda(presupuesto_mn)}}</h5>
+                          <h5 class="custom-dashboard-presupuesto">{{moneda_presupuesto}} {{formatearMoneda(presupuesto_mn)}}</h5>
                         </div>
                         <div class="col-md-6">
-                          <div class="chart-container" style="position: relative; height: 140px;">
+                          <div class="custom-dashboard-chart-container" style="position: relative; height: 140px;">
                             <canvas id="presupuestoChart"></canvas>
                           </div>
                         </div>
@@ -101,24 +100,24 @@
           <div class="row" style="display: flex; justify-content: center;">
             <!-- CUARTA TARJETA DE PRESUPUESTOS DE LA GESTION -->
             <div class="col-xl-4 col-lg-4 mt-3">
-              <div class="card">
-                <h6 class="card-title">PRESUPUESTO DE LA GESTIÓN ACTUAL</h6>
+              <div class="custom-dashboard-card">
+                <h6 class="custom-dashboard-card-title">PRESUPUESTO DE LA GESTIÓN ACTUAL</h6>
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-6">
                       <div class="text-center">
                         <h6>Presupuesto del Periodo</h6>
-                        <h5 class="presupuesto mb-3">
+                        <h5 class="custom-dashboard-presupuesto mb-3">
                           {{moneda_presupuesto}} {{presupuestoGestion.presupuesto_formateado}}
                         </h5>
                         <h6>Ejecutado</h6>
-                        <h5 class="presupuesto">
+                        <h5 class="custom-dashboard-presupuesto">
                           {{moneda_presupuesto}} {{presupuestoGestion.ejecutado_formateado}}
                         </h5>
                       </div>
                     </div>
                     <div class="col-md-6">
-                      <div class="chart-container" style="position: relative; height: 140px;">
+                      <div class="custom-dashboard-chart-container" style="position: relative; height: 140px;">
                         <canvas id="doughnutChart2024"></canvas>
                       </div>
                     </div>
@@ -127,166 +126,167 @@
               </div>
             </div>
             <!-- QUINTA TARJETA INDICADORES -->
-                <div class="col-xl-4 col-lg-4 my-auto mt-3">
-                  <div class="card">
-                    <h6 class="card-title">INDICADORES</h6>
-                    <div class="card-body" style="display: flex; justify-content: center;">
-                      <div style="position:relative; height: 200px; width: 250px;">
-                        <canvas id="radarChart"></canvas>
-                      </div>
-                    </div>
+            <div class="col-xl-4 col-lg-4 my-auto mt-3">
+              <div class="custom-dashboard-card">
+                <h6 class="custom-dashboard-card-title">INDICADORES</h6>
+                <div class="card-body" style="display: flex; justify-content: center;">
+                  <div style="position:relative; height: 200px; width: 250px;">
+                    <canvas id="radarChart"></canvas>
                   </div>
                 </div>
+              </div>
+            </div>
             <!-- SEXTA TARJETA DE RIESGOS -->
-                <div class="col-xl-4 col-lg-4 my-auto mt-3">
-                    <div class="card">
-                        <h6 class="card-title">RIESGOS</h6>
-                        <div class="card-body" style="display: flex; align-items:center; justify-content: center;">
-                            <!-- Impacto-->
-                            <div>
-                                <h6 class="card-title mb-0" style="transform: rotate(270deg);">Impacto</h6>
-                            </div>
-                            <div>
-                                <div class="d-flex justify-content-center">
-                                  <table class="table table-bordered">
-                                    <tbody>
-                                        <tr>
-                                            <td class="bg-warning text-center">{{riskMatrix[0][0]}}</td>
-                                            <td class="bg-darwar text-center">{{riskMatrix[0][1]}}</td>
-                                            <td class="bg-danger text-center">{{riskMatrix[0][2]}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="bg-warsuc text-white text-center">{{riskMatrix[1][0]}}</td>
-                                            <td class="bg-warning text-center">{{riskMatrix[1][1]}}</td>
-                                            <td class="bg-darwar text-center">{{riskMatrix[1][2]}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="bg-success text-white text-center">{{riskMatrix[2][0]}}</td>
-                                            <td class="bg-warsuc text-white text-center">{{riskMatrix[2][1]}}</td>
-                                            <td class="bg-warning text-center">{{riskMatrix[2][2]}}</td>
-                                        </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                                <h6 class="card-title">Probabilidad</h6>
-                            </div>
-                        </div>
+            <div class="col-xl-4 col-lg-4 my-auto mt-3">
+              <div class="custom-dashboard-card">
+                <h6 class="custom-dashboard-card-title">RIESGOS</h6>
+                <div class="card-body" style="display: flex; align-items:center; justify-content: center;">
+                  <!-- Impacto-->
+                  <div>
+                    <h6 class="card-title mb-0" style="transform: rotate(270deg);">Impacto</h6>
+                  </div>
+                  <div>
+                    <div class="d-flex justify-content-center">
+                      <table class="table table-bordered">
+                        <tbody>
+                          <tr>
+                            <td class="custom-dashboard-bg-warning text-center">{{riskMatrix[0][0]}}</td>
+                            <td class="custom-dashboard-bg-darwar text-center">{{riskMatrix[0][1]}}</td>
+                            <td class="custom-dashboard-bg-danger text-center">{{riskMatrix[0][2]}}</td>
+                          </tr>
+                          <tr>
+                            <td class="custom-dashboard-bg-warsuc text-white text-center">{{riskMatrix[1][0]}}</td>
+                            <td class="custom-dashboard-bg-warning text-center">{{riskMatrix[1][1]}}</td>
+                            <td class="custom-dashboard-bg-darwar text-center">{{riskMatrix[1][2]}}</td>
+                          </tr>
+                          <tr>
+                            <td class="custom-dashboard-bg-success text-white text-center">{{riskMatrix[2][0]}}</td>
+                            <td class="custom-dashboard-bg-warsuc text-white text-center">{{riskMatrix[2][1]}}</td>
+                            <td class="custom-dashboard-bg-warning text-center">{{riskMatrix[2][2]}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
+                    <h6 class="card-title">Probabilidad</h6>
+                  </div>
                 </div>
+              </div>
+            </div>
             <!-- SEPTIMA TARJETA APRENDIZAJES -->
-                <div class="col-xl-5 col-lg-5 mt-3">
-                  <div class="card">
-                    <h6 class="card-title">APRENDIZAJES</h6>
-                    <div class="card-body d-flex flex-row align-items-center p-3">
-                      <!-- Columna del gráfico -->
-                      <div class="chart-wrapper" style="width: 50%; min-width: 140px;">
-                        <canvas id="learnDoughnutChart"></canvas>
+            <div class="col-xl-5 col-lg-5 mt-3">
+              <div class="custom-dashboard-card">
+                <h6 class="custom-dashboard-card-title">APRENDIZAJES</h6>
+                <div class="card-body d-flex flex-row align-items-center p-3">
+                  <!-- Columna del gráfico -->
+                  <div class="custom-dashboard-chart-wrapper" style="width: 50%; min-width: 140px;">
+                    <canvas id="learnDoughnutChart"></canvas>
+                  </div>
+                  
+                  <!-- Columna de la leyenda -->
+                  <div class="custom-dashboard-legend-wrapper ms-3" style="width: 50%;">
+                    <div class="legend-item d-flex align-items-center" *ngFor="let item of aprendizajesData | keyvalue">
+                      <ng-container *ngIf="item.value > 0">
+                        <span class="custom-dashboard-legend-box" [style.background-color]="getColor(item.key)"></span>
+                        <span class="legend-text">{{getLabelName(item.key)}} <!--({{item.value}})--></span>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>                        
+            <!-- OCTAVA TARJETA ACTIVIDADES -->
+            <div class="col-xl-4 col-lg-4 mt-3">
+              <div class="custom-dashboard-card">
+                <h6 class="custom-dashboard-card-title">ACTIVIDADES</h6>
+                <div class="card-body" style="display: flex; align-items: center; justify-content: center;">
+                  <div class="col-6">
+                    <img class="img-fluid" [src]="assetsPath+'images/Actividades.jpg'" alt="Actividades">
+                  </div>
+                  <div class="col-xl-6 col-lg-6">
+                    <div class="d-flex flex-column">
+                      <div class="d-flex align-items-center">                            
+                        <span class="text-danger">{{actividadesConteo.vencidas}} Vencidas</span>
                       </div>
-                      
-                      <!-- Columna de la leyenda -->
-                      <div class="legend-wrapper ms-3" style="width: 50%;">
-                        <div class="legend-item d-flex align-items-center" *ngFor="let item of aprendizajesData | keyvalue">
-                          <ng-container *ngIf="item.value > 0">
-                            <span class="legend-box" [style.background-color]="getColor(item.key)"></span>
-                            <span class="legend-text">{{getLabelName(item.key)}} <!--({{item.value}})--></span>
-                          </ng-container>
-                        </div>
+                      <div class="d-flex align-items-center">                            
+                        <span class="text-warning">{{actividadesConteo.porVencer}} Por Vencer</span>
+                      </div>
+                      <div class="d-flex align-items-center">                            
+                        <span class="text-success">{{actividadesConteo.vigentes}} Vigentes</span>
                       </div>
                     </div>
                   </div>
-                </div>                    
-            <!-- OCTAVA TARJETA ACTIVIDADES -->
-                <div class="col-xl-4 col-lg-4 mt-3">
-                  <div class="card">
-                    <h6 class="card-title">ACTIVIDADES</h6>
-                    <div class="card-body" style="display: flex; align-items: center; justify-content: center;">
-                      <div class="col-6">
-                        <img class="img-fluid" [src]="assetsPath+'images/Actividades.jpg'" alt="Actividades">
-                      </div>
-                      <div class="col-xl-6 col-lg-6">
-                        <div class="d-flex flex-column">
-                          <div class="d-flex align-items-center">                            
-                            <span class="text-danger">{{actividadesConteo.vencidas}} Vencidas</span>
-                          </div>
-                          <div class="d-flex align-items-center">                            
-                            <span class="text-warning">{{actividadesConteo.porVencer}} Por Vencer</span>
-                          </div>
-                          <div class="d-flex align-items-center">                            
-                            <span class="text-success">{{actividadesConteo.vigentes}} Vigentes</span>
-                          </div>
+                </div> 
+              </div>
+            </div>
+            <!-- NOVENA TARJETA LOGROS -->
+            <div class="col-xl-3 col-lg-3 mt-3">
+              <div class="custom-dashboard-card">
+                <h6 class="custom-dashboard-card-title">LOGROS</h6>
+                <div class="card-body">
+                  <img class="img-fluid" [src]="assetsPath+'images/Logros.jpg'" alt="Logros">
+                  <h4 class="custom-dashboard-text-center">
+                    <strong>{{ numeroLogros }}</strong>
+                  </h4>
+                </div>
+              </div>
+            </div>
+            <!-- DECIMA TARJETA BENEFICIARIOS -->
+            <div class="col-xl-5 col-lg-5 my-auto mt-3">
+              <div class="custom-dashboard-card">
+                <h6 class="custom-dashboard-card-title">BENEFICIARIOS</h6>
+                <div class="card-body" style="display: flex;">
+                    <!-- Beneficiarios Alcanzados -->
+                    <div class="col-md-7">
+                      <h3 class="text-center">BENEFICIARIOS ALCANZADOS</h3>
+                      <div class="row">
+                        <!-- Hombres -->                                
+                        <div class="col-md-6 beneficiario-container">
+                          <img class="same-size-img" [src]="assetsPath+'images/Hombre.png'" alt="Hombre">                                  
+                          <h3 class="text-center">{{ numeroHombres }}</h3>
+                        </div>                                
+                        <!-- Mujeres -->
+                        <div class="col-md-6 beneficiario-container">
+                          <img class="same-size-img" [src]="assetsPath+'images/Mujer.png'" alt="Mujer">
+                          <h3 class="text-center">{{ numeroMujeres }}</h3>
                         </div>
                       </div>
-                    </div> 
-                  </div>
-                </div>
-            <!-- NOVENA TARJETA LOGROS -->
-                <div class="col-xl-3 col-lg-3 mt-3">
-                  <div class="card">
-                      <h6 class="card-title">LOGROS</h6>
-                      <div class="card-body">
-                          <img class="img-fluid" [src]="assetsPath+'images/Logros.jpg'" alt="Logros">
-                          <h4 class="text-center">
-                            <strong>{{ numeroLogros }}</strong>
-                          </h4>
+                    </div>
+                    <!-- Aliados clave -->
+                    <div class="col-md-5">
+                      <h3 class="text-center" style="color: #f67d04;">ALIADOS CLAVE</h3>
+                      <div class="text-center">
+                        <div class="beneficiario-container">
+                          <img class="same-size-img" [src]="assetsPath+'images/ActoresClave.jpg'" alt="ActoresClave">
+                          <h3 class="text-center" style="color: #f67d04;">{{ totalAliado }}</h3>
+                        </div>
                       </div>
-                  </div>
+                    </div>                          
                 </div>
-            <!-- DECIMA TARJETA BENEFICIARIOS -->
-                <div class="col-xl-5 col-lg-5 my-auto mt-3">
-                  <div class="card">
-                      <h6 class="card-title">BENEFICIARIOS</h6>
-                      <div class="card-body" style="display: flex;">
-                         <!-- Beneficiarios Alcanzados -->
-                          <div class="col-md-7">
-                            <h3 class="text-center">BENEFICIARIOS ALCANZADOS</h3>
-                            <div class="row">
-                                <!-- Hombres -->                                
-                                    <div class="col-md-6 beneficiario-container">
-                                      <img class="same-size-img" [src]="assetsPath+'images/Hombre.png'" alt="Hombre">                                  
-                                      <h3 class="text-center">{{ numeroHombres }}</h3>
-                                    </div>                                
-                                <!-- Mujeres -->
-                                    <div class="col-md-6 beneficiario-container">
-                                      <img class="same-size-img" [src]="assetsPath+'images/Mujer.png'" alt="Mujer">
-                                      <h3 class="text-center">{{ numeroMujeres }}</h3>
-                                    </div>
-                            </div>
-                          </div>
-                          <!-- Aliados clave -->
-                          <div class="col-md-5">
-                            <h3 class="text-center" style="color: #f67d04;">ALIADOS CLAVE</h3>
-                            <div class="text-center">
-                                <div class="beneficiario-container">
-                                  <img class="same-size-img" [src]="assetsPath+'images/ActoresClave.jpg'" alt="ActoresClave">
-                                  <h3 class="text-center" style="color: #f67d04;">{{ totalAliado }}</h3>
-                                </div>
-                            </div>
-                          </div>                          
-                      </div>
-                  </div>
-                </div>
+              </div>
+            </div>
             <!-- UNDECIMA TARJETA DE SIGUIENTES OBLIGACIONES -->
-                <div class="col-xl-7 col-lg-7 my-auto mt-3">
-                  <div class="card">
-                      <h6 class="card-title">SIGUIENTES OBLIGACIONES</h6>
-                      <!-- Contenedor blanco para la tabla -->
-                      <div class="card">                       
-                              <!-- Tabla Obligaciones -->
-                              <table class="table custom-table table-striped table-bordered">
-                                  <thead>
-                                    <tr>
-                                      <th>Documentos o Informes</th>
-                                      <th>Compromiso</th>
-                                      <th style="text-align: center;">Fecha Obligacion</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                      <tr *ngFor="let obligacion of obligaciones">
-                                          <td>{{ obligacion.obligacion}}</td>
-                                          <td>{{obligacion.institucion_exige}}</td>
-                                          <td style="text-align: center;">{{ obligacion.fecha_obligacion | date: 'dd-MM-yyyy' }}</td>
-                                  </tbody>
-                              </table>
+            <div class="col-xl-7 col-lg-7 my-auto mt-3">
+              <div class="custom-dashboard-card">
+                <h6 class="custom-dashboard-card-title">SIGUIENTES OBLIGACIONES</h6>
+                <!-- Contenedor blanco para la tabla -->
+                <div class="custom-dashboard-card">                       
+                  <!-- Tabla Obligaciones -->
+                  <table class="table custom-table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Documentos o Informes</th>
+                        <th>Compromiso</th>
+                        <th style="text-align: center;">Fecha Obligacion</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let obligacion of obligaciones">
+                        <td>{{ obligacion.obligacion}}</td>
+                        <td>{{obligacion.institucion_exige}}</td>
+                        <td style="text-align: center;">{{ obligacion.fecha_obligacion | date: 'dd-MM-yyyy' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                       </div>
                   </div>
                 </div>
