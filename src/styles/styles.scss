@@ -912,219 +912,219 @@ canvas {
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
 // ======= ======= =======      CUSTOM RIESGOS     ======= ======= ======= 
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
-    /* Impacto formas y colores */
-        .impacto-button {
-            display: flex;
-            justify-content: center;  
-            align-items: center;      
-            width: 80px;            
-            height: 30px;
-            margin: 0 auto;
-            border-radius: 40px;
-            color: white;
-            font-weight: bold;
-        }
-        .impacto-alto {
-            background-color: #c64d27;
-        }
-        .impacto-medio {
-            background-color: #fdc82f;
-        }
-        .impacto-bajo {
-            background-color: #4E8646;
-        }
+/* Impacto formas y colores */
+.impacto-button {
+    display: flex;
+    justify-content: center;  
+    align-items: center;      
+    width: 80px;            
+    height: 30px;
+    margin: 0 auto;
+    border-radius: 40px;
+    color: white;
+    font-weight: bold;
+}
+.impacto-alto {
+    background-color: #c64d27;
+}
+.impacto-medio {
+    background-color: #fdc82f;
+}
+.impacto-bajo {
+    background-color: #4E8646;
+}
 
-    /* Probabilidad formas y colores */
-        .probabilidad-shape {
-            display: flex;
-            justify-content: center;  
-            align-items: center;      
-            width: 80px;            
-            height: 30px;
-            margin: 0 auto;
-            border-radius: 40px;
-            color: white;
-            font-weight: bold;
-        }
-        .probabilidad-alto {
-            background-color: #c64d27;
-        }        
-        .probabilidad-medio {
-            background-color: #fdc82f;
-        }        
-        .probabilidad-bajo {
-            background-color: #4E8646;
-        }
+/* Probabilidad formas y colores */
+.probabilidad-shape {
+    display: flex;
+    justify-content: center;  
+    align-items: center;      
+    width: 80px;            
+    height: 30px;
+    margin: 0 auto;
+    border-radius: 40px;
+    color: white;
+    font-weight: bold;
+}
+.probabilidad-alto {
+    background-color: #c64d27;
+}        
+.probabilidad-medio {
+    background-color: #fdc82f;
+}        
+.probabilidad-bajo {
+    background-color: #4E8646;
+}
 
-    /* Nivel de Riesgo formas y colores */
-        .riesgo-circle {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            margin: 0 auto;
-            position: relative;
-        }
-        .riesgo-alto {
-            background-color: #c64d27;
-        }
-        .riesgo-medio {
-            background-color: #fdc82f;
-        }
-        .riesgo-bajo {
-            background-color: #4E8646;
-        }
-        .symbol {
-            position: absolute;
-            text-align: center;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px; 
-            color: white; 
-        }
+/* Nivel de Riesgo formas y colores */
+.riesgo-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 0 auto;
+    position: relative;
+}
+.riesgo-alto {
+    background-color: #c64d27;
+}
+.riesgo-medio {
+    background-color: #fdc82f;
+}
+.riesgo-bajo {
+    background-color: #4E8646;
+}
+.symbol {
+    position: absolute;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px; 
+    color: white; 
+}
 
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
 // ======= ======= ====  CUSTOM EJECUCION ESTRATEGICA ==== ======= ======= 
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
-        .custom-table-planifEstrategica{
-            font-size: 12px;
-            background-color: #ffffff;
-            
-            th, td {
-                padding: 10px;
-                text-align: left;
-                vertical-align: middle;
-            }
-            th {
-                background-color: $bg-3-color;
-                font-weight: bold;
-                border: 1px solid black;
-            }
-            tr:hover {
-                background-color: #f9f9f9;
-            }
-            .table-responsive {
-                overflow-x: auto;
-            }
-        }  
-        
-        .card-body {
-            padding: 1.5rem; 
-            color:#4E8646; 
-        }
-
-        .progress-container {
-        width: 100%;
-        background-color: #f0f0f0;
-        border-radius: 4px;
-        position: relative;
-        height: 24px;
-        }
-
-        .progress-bar {
-        height: 100%;
-        border-radius: 4px;
-        transition: width 0.3s ease-in-out;
-        position: relative;
-        }
-
-        .progress-bar.per {
-        background-color: #4CAF50;  
-        }
-
-        .progress-bar.total {
-        background-color: #FFC107;  
-        }
-
-        .progress-text {
-        position: absolute;
-        width: 100%;
-        text-align: center;
-        line-height: 24px;
-        color: #000;
+.custom-table-planifEstrategica{
+    font-size: 12px;
+    background-color: #ffffff;
+    
+    th, td {
+        padding: 10px;
+        text-align: left;
+        vertical-align: middle;
+    }
+    th {
+        background-color: $bg-3-color;
         font-weight: bold;
-        z-index: 1;
-        }
+        border: 1px solid black;
+    }
+    tr:hover {
+        background-color: #f9f9f9;
+    }
+    .table-responsive {
+        overflow-x: auto;
+    }
+}  
+
+.card-body {
+    padding: 1.5rem; 
+    color:#4E8646; 
+}
+
+.progress-container {
+width: 100%;
+background-color: #f0f0f0;
+border-radius: 4px;
+position: relative;
+height: 24px;
+}
+
+.progress-bar {
+height: 100%;
+border-radius: 4px;
+transition: width 0.3s ease-in-out;
+position: relative;
+}
+
+.progress-bar.per {
+background-color: #4CAF50;  
+}
+
+.progress-bar.total {
+background-color: #FFC107;  
+}
+
+.progress-text {
+position: absolute;
+width: 100%;
+text-align: center;
+line-height: 24px;
+color: #000;
+font-weight: bold;
+z-index: 1;
+}
 
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
 // ======= ======= =   CUSTOM PLANIFICACION ESTRATEGICA  = ======= ======= 
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
-    .btn-añadirElemento {
-        width: 200px;
-        height: 30px;
-        -webkit-border-radius: 15px;
-        border-radius: 12px;
-        color: $txt-2-color;
-        background: $primary-color;
-        border: 1px solid $txt-2-color;
-        padding: 0 10px;
-        margin: 0 4px;
-        font-size: 12px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+.btn-añadirElemento {
+    width: 200px;
+    height: 30px;
+    -webkit-border-radius: 15px;
+    border-radius: 12px;
+    color: $txt-2-color;
+    background: $primary-color;
+    border: 1px solid $txt-2-color;
+    padding: 0 10px;
+    margin: 0 4px;
+    font-size: 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.btn-Editdelete{
+    width: 100px;
+    height: 30px;
+    -webkit-border-radius: 50px;
+    border-radius: 12px;
+    color: $txt-2-color;
+    background: $primary-color;
+    border: 1px solid $txt-2-color;
+    margin: 0 4px;
+    font-size: 12px;
+    padding: 0 15px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.btn-SubirBajar{
+    width: 30px;
+    height: 30px;
+    -webkit-border-radius: 15px;
+    border-radius: 12px;
+    color: $txt-2-color;
+    background: $primary-color;
+    border: 1px solid $txt-2-color;
+    margin: 0 4px;
+    font-size: 13px;
+}
+
+.custom-table-planifEstrategica{
+    font-size: 12px;
+    background-color: #ffffff;
+    
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        vertical-align: middle;
     }
-    
-    .btn-Editdelete{
-        width: 100px;
-        height: 30px;
-        -webkit-border-radius: 50px;
-        border-radius: 12px;
-        color: $txt-2-color;
-        background: $primary-color;
-        border: 1px solid $txt-2-color;
-        margin: 0 4px;
-        font-size: 12px;
-        padding: 0 15px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+    th {
+        background-color: $bg-3-color;
+        font-weight: bold;
+        border: 1px solid black;
     }
-    
-    .btn-SubirBajar{
-        width: 30px;
-        height: 30px;
-        -webkit-border-radius: 15px;
-        border-radius: 12px;
-        color: $txt-2-color;
-        background: $primary-color;
-        border: 1px solid $txt-2-color;
-        margin: 0 4px;
-        font-size: 13px;
+    tr:hover {
+        background-color: #f9f9f9;
     }
-    
-    .custom-table-planifEstrategica{
-        font-size: 12px;
-        background-color: #ffffff;
-        
-    
-        th, td {
-            padding: 10px;
-            text-align: left;
-            vertical-align: middle;
-        }
-        th {
-            background-color: $bg-3-color;
-            font-weight: bold;
-            border: 1px solid black;
-        }
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-        .table-responsive {
-            overflow-x: auto;
-        }
-    }  
-    
-    .dynamic-button {
-        width: auto; 
-        max-width: 100%; 
-        text-align: center; 
-        padding: 5px 10px; 
-        border: none; 
-        border-radius: 15px; 
-        overflow-wrap: break-word; 
+    .table-responsive {
+        overflow-x: auto;
     }
+}  
+
+.dynamic-button {
+    width: auto; 
+    max-width: 100%; 
+    text-align: center; 
+    padding: 5px 10px; 
+    border: none; 
+    border-radius: 15px; 
+    overflow-wrap: break-word; 
+}
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
 // ======= ======= =========   CUSTOM DASHBOARD  ========= ======= ======= 
 // ======= ======= ======= ======= ======= ======= ======= ======= =======
