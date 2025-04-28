@@ -1,6 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Input, Output } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-sidebar',
@@ -12,10 +13,14 @@ export class SidebarComponent implements OnInit {
     collapsed: boolean;
     showMenu: string;
     pushRightClass: string;
+    logoImg: any;
+
+    @Input() currentProyName!: any;
+    @Input() currentPerProRol!: any;
 
     @Output() collapsedEvent = new EventEmitter<boolean>();
 
-    constructor(private translate: TranslateService, public router: Router) {
+    constructor(public router: Router) {
         this.router.events.subscribe((val) => {
             if (val instanceof NavigationEnd && window.innerWidth <= 992 && this.isToggled()) {
                 this.toggleSidebar();
@@ -28,6 +33,7 @@ export class SidebarComponent implements OnInit {
         this.collapsed = false;
         this.showMenu = '';
         this.pushRightClass = 'push-right';
+        this.logoImg = (!this.collapsed)?(`${environment.assetsPath}images/FANFullLogo.png`):(`${environment.assetsPath}images/FANLogo.png`);
     }
 
     eventCalled() {
@@ -45,6 +51,7 @@ export class SidebarComponent implements OnInit {
     toggleCollapsed() {
         this.collapsed = !this.collapsed;
         this.collapsedEvent.emit(this.collapsed);
+        this.logoImg = (!this.collapsed)?(`${environment.assetsPath}images/FANFullLogo.png`):(`${environment.assetsPath}images/FANLogo.png`);
     }
 
     isToggled(): boolean {
@@ -62,11 +69,16 @@ export class SidebarComponent implements OnInit {
         dom.classList.toggle('rtl');
     }
 
-    changeLang(language: string) {
-        this.translate.use(language);
+    onLoggedout() {
+        localStorage.clear();
     }
 
-    onLoggedout() {
-        localStorage.removeItem('isLoggedin');
+    getRolMenu(){
+        if( (this.currentPerProRol.includes("ADM"))||(this.currentPerProRol.includes("CON")) ){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

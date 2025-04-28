@@ -1,0 +1,21 @@
+<div class="row">
+    <div class="col col-md-3 my-auto">
+        <img class="custom-body-header-image row mx-auto" [src]="(userImg)||(defaultImageSrc)" alt="Sin imagen" />
+    </div>
+    <div class="col col-md-6">
+        <span class="pt-4 titulo">Bienvenido(a): {{fullUserName}}</span>
+        <span>
+            <select class="form-control" id="proyecto" name="proyecto" 
+                [(ngModel)]="currentIdProy" (change)="onSelectionChange()">
+                <option value="" disabled selected>Selecciona un elemento</option>
+                <option *ngFor="let proyecto of proyectos" [value]="proyecto.id_proyecto">
+                    {{ proyecto.proyecto }}
+                </option>
+            </select>
+        </span>
+        <span class="pt-4 titulo">Rol: {{currentPerProRol}}</span>
+    </div>
+    <div class="col col-md-3 my-auto">
+        <img class="custom-body-header-image row mx-auto" [src]="(projectImg)||(defaultImageSrc)" alt="Sin imagen" />
+    </div>
+</div>

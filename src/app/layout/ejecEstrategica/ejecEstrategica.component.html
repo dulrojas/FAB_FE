@@ -1,0 +1,539 @@
+<div [@routerTransition]>
+  <!-- Sección del Encabezado -->
+  <div class="row col-md-12">
+    <!-- Bloque de Encabezado -->
+    <div class="col col-md-6 align-items-center custom-body-header">
+      <!-- Componente personalizado para el encabezado -->
+        <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+        </app-bodyHeader>
+    </div>
+    <!-- Bloque de Tarjetas de Estadísticas -->
+    <div class="col col-md-6 text-center">
+      <!-- Fila para organizar las tarjetas -->
+      <div class="row">
+        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+          {{ headerDataNro01 }} Indicadores
+        </div>
+        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+          {{ headerDataNro02 }} Meta Periodo Cumplida
+        </div>
+        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+          {{ headerDataNro03 }} Sin Avance
+        </div>
+        <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+          {{ headerDataNro04 }} Meta Final Cumplida
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= -->
+  <!-- Sección de botones para Reportar Indicador -->
+  <div class="card mt-3 mt-2">
+    <div class="card-body custom-card table-responsive">
+      <!-- TITULO DE LA TABLA Y BOTON DE REPORTAR -->
+      <div class="d-flex justify-content-between align-items-center">
+        <!-- Titulo de la Tabla -->
+        <h2 class="title" style="color: #4e8646">Ejecución Estratégica</h2>
+        <!-- Botone Reportar -->
+        <div class="row">
+          <div class="col col-xl-12 col-lg-12 text-end">
+            <button type="button" class="btn btn-view-bg-1" (click)="initEditEjecEstrategica(ejecEstrategicaFormModal)"
+              [disabled]="(!ejecEstrategicaSelected)||(currentPerProRol.includes('LEC'))">
+              <i aria-hidden="true"></i> Reportar
+            </button>
+            <!-- EXPORTAR -->
+            <button type="button" class="btn btn-view-bg-1"
+            (click)="downloadExcelAvance()">
+            <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= -->
+      <!-- TABLA EJECUCION ESTRATEGICA -->
+      <div class="row">
+        <div class="container mt-2">
+          <table class="table custom-table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th></th>
+                <th colspan="2" style="text-align: center"></th>
+                <th colspan="6" style="background-color: #699762; text-align: center">
+                  PERIODO VIGENTE
+                </th>
+                <th colspan="3" style="text-align: center">META FINAL</th>
+              </tr>
+              <tr>
+                <th></th>
+                <th>Cod</th>
+                <th>Nombre</th>
+                <th style="background-color: #699762; text-align: center">Reporte a</th>
+                <th style="background-color: #88a117; text-align: center">Progreso</th>
+                <th style="background-color: #699762; text-align: center">Medida</th>
+                <th style="background-color: #88a117; text-align: center">Notas</th>
+                <th style="background-color: #699762; text-align: center">MetaPer</th>
+                <th style="background-color: #699762; text-align: center">Avance Per.</th>
+                <th>Meta Final</th>
+                <th>Avance</th>
+                <th>Descripción</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let ejecEstrategica of ejecEstrategicaTablePaginada; let i = index">
+                <td>
+                  <input type="checkbox" [(ngModel)]="ejecEstrategica.selected"
+                    (change)="checkboxChanged(ejecEstrategica)" id="checkbox-{{ i }}" name="checkbox-{{ i }}" />
+                </td>
+                <!-- CODIGO DEL INDICADOR -->
+                <td>{{ ejecEstrategica.codigo }}</td>
+                <!-- NOMBRE DEL INDICADOR -->
+                <td>{{ ejecEstrategica.indicador }}</td>
+                <!-- FECHA A REPORTAR -->                
+                <td>
+                  {{ getProximaFechaReporte(ejecEstrategica.avances) ? (getProximaFechaReporte(ejecEstrategica.avances) | date:'dd/MM/yyyy') : 'Sin fecha' }}
+                </td>                
+                <!-- PROGRESO SE CONECTA A VALOR REPORTADO-->
+                <td>{{ convertToNumber(ejecEstrategica.avance?.valor_reportado || '-') }}</td>
+                <!-- MEDIDA -->
+                <td>{{ ejecEstrategica.medida_descripcion }}</td>
+                <!-- NOTAS SE CONECTA A COMENTARIOS DE IND.AVANCE -->
+                <td>{{ ejecEstrategica.avance?.comentarios || '-' }}</td>
+                <!-- META PER SE CONECTA A VALOR ESPERADO -->
+                <td>{{ convertToNumber(ejecEstrategica.avance?.valor_esperado || '-') }}</td>
+                <!-- AVANCE PORCENTUAL -->
+                <td>
+                  <div class="progress-container">
+                    <div class="progress-text">{{ calculateAvancePer(ejecEstrategica) }}%</div>
+                    <div class="progress-bar per" 
+                        [style.width]="calculateAvancePer(ejecEstrategica) + '%'">
+                    </div>
+                  </div>
+                </td>
+                <!-- META FINAL -->
+                <td>{{ convertToNumber(ejecEstrategica.meta_final) }}</td>
+                <!-- AVANCE TOTAL -->
+                <td>
+                  <div class="progress-container">
+                    <div class="progress-text">{{ calculateAvanceTotal(ejecEstrategica) }}%</div>
+                    <div class="progress-bar total" 
+                        [style.width]="calculateAvanceTotal(ejecEstrategica) + '%'">
+                    </div>
+                  </div>
+                </td>
+                <!-- DESCRIPCION -->
+                <td>{{ ejecEstrategica.descripcion }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- Botones de tabla -->
+          <div class="d-flex justify-content-center">
+            <ngb-pagination 
+              [(page)]="mainPage" 
+              [pageSize]="mainPageSize" 
+              [collectionSize]="totalLength"
+              [maxSize]="3"
+              [rotate]="true"
+              [boundaryLinks]="true">
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= -->
+<ng-template #ejecEstrategicaFormModal let-modal class="custom-modal">
+  <div class="modal-header">
+    <h4 class="modal-title">Indicador</h4>
+  </div>
+  <div class="modal-body">
+    <form #ejecEstrategicaForm="ngForm" (ngSubmit)="onSubmit(ejecEstrategicaForm)">
+      <div class="row">
+        <div class="col col-xl-12 col-lg-12">
+          <div class="card">
+            <div class="card-body custom-card">
+              <div class="row">
+                <!-- CONECTA CON PROY_INDICADOR -->
+                <!-- ======= ======= TIPO - SUBTIPO - CODIGO ======= ======= -->
+                <div class="row col col-xl-12 col-lg-12 mt-auto">
+                  <!-- ======= ======= TIPO DE ELEMENTO PARA INDICADOR EN ESTE CASO SOLO LLAMA A INDICADOR ======= ======= -->
+                  <div class="col col-xl-3 col-lg-3 mt-auto">
+                    <label for="elemento_indicador">Tipo</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="elemento_indicador"
+                           value="Indicador" 
+                           disabled />
+                 </div>                    
+                  <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                  <div class="col col-xl-1 col-lg-1 mt-auto">
+                    <label class="btn-view-bg-3" 
+                           [style.backgroundColor]="'#FDC82F'">
+                        IN
+                    </label>
+                  </div>
+                  <!-- ======= ======= Espacio ======= ======= -->
+                  <div class="col col-xl-6 col-lg-6"></div>
+                  <!-- ======= ======= CODIGO ======= ======= -->
+                  <div class="col col-xl-2 col-lg-2">
+                    <label for="codigo">Código</label>
+                    <input class="form-control" type="text" id="codigo" name="codigo" [(ngModel)]="codigo"
+                      [disabled]="!editMode" [readonly]="true" required />
+                  </div>
+                </div>
+                <!-- ======= ======= CATEGORIA - SUBCATEGORIA - TIPO ======= ======= -->
+                <div class="row col col-xl-12 col-lg-12 mt-2">
+                  <!-- ======= ======= CATEGORIA ======= ======= -->
+                  <!-- CATEGORÍA -->
+                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                      <label for="inst_categoria_1">Categoría</label>
+                      <select
+                        class="form-control"
+                        id="inst_categoria_1"
+                        name="inst_categoria_1"
+                        [(ngModel)]="inst_categoria_1"
+                        (change)="onCategoria1Change()"
+                        [disabled]="!editMode">
+                        <option value="" disabled selected>Seleccione una categoría</option>
+                        <option
+                            *ngFor="let categoria of ejecCategoria"
+                            [value]="categoria.id_inst_categoria">
+                            {{ categoria.nombre }}
+                        </option>
+                    </select>
+                    </div>                  
+
+                  <!-- SUBCATEGORÍA -->
+                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                      <label for="inst_categoria_2">SubCategoría</label>
+                      <select
+                        class="form-control"
+                        id="inst_categoria_2"
+                        name="inst_categoria_2"
+                        [(ngModel)]="inst_categoria_2"
+                        (change)="onCategoria2Change()"
+                        [disabled]="!editMode">
+                        <option value="" disabled selected>Seleccione una SubCategoría</option>
+                        <option
+                            *ngFor="let categoria of ejecSubCategoria"
+                            [value]="categoria.id_inst_categoria">
+                            {{ categoria.nombre }}
+                        </option>
+                    </select>               
+                    </div>
+
+                  <!-- TIPO -->
+                  <div class="col col-xl-4 col-lg-4 mt-auto">
+                    <label for="tipoIndicador">Tipo</label>
+                    <select
+                        class="form-control"
+                        id="inst_categoria_3"
+                        name="inst_categoria_3"
+                        [(ngModel)]="inst_categoria_3"                     
+                        [disabled]="!editMode">
+                        <option value="" disabled selected>Seleccione un Tipo</option>
+                        <option
+                            *ngFor="let categoria of ejecTipoCategoria"
+                            [value]="categoria.id_inst_categoria">
+                            {{ categoria.nombre }}
+                        </option>
+                    </select>              
+                  </div>                  
+                </div>
+                <!-- ======= ======= NOMBRE-"INDICADOR" - DESCRIPCION ======= ======= -->
+                <div class="row col col-xl-12 col-lg-12 mt-2">
+                  <!-- INDICADOR -->
+                  <div class="col col-xl-12 col-lg-12 mt-auto">
+                    <label for="indicador">Indicador</label>
+                    <input class="form-control" type="text" id="indicador" name="indicador" [(ngModel)]="indicador"
+                      [disabled]="!editMode" />
+                  </div>
+                  <!-- DESCRIPCION -->
+                  <div class="col col-xl-12 col-lg-12 mt-auto">
+                    <label for="descripcion">Descripción</label>
+                    <input class="form-control" type="text" id="descripcion" name="descripcion"
+                      [(ngModel)]="descripcion" [disabled]="!editMode" />
+                  </div>
+                </div>
+                <!-- CONECTA CON PROY_ELEMENTOS -->
+                <div class="row col col-xl-12 col-lg-12 mt-2">
+                  Padre
+                  <!-- Padre -->
+                  <div class="col-12 mt-2 mb-2 p-2" style="border: 1px solid white">
+                    <div class="row">
+                      <!-- CODIGO ESTE LLAMA AL CODIGO DEL PADRE DEL INDICADOR -->
+                      <div class="col col-xl-3 col-lg-3">
+                        <label for="codigoPadre">Código Padre</label>
+                        <input class="form-control" type="text" id="codigoPadre" 
+                               name="codigoPadre" [(ngModel)]="codigoPadre"
+                               [disabled]="true" disabled />
+                      </div>
+                      <!-- TIPO ESTE LLAMARA AL ELEMENTO QUE ES EL PADRE DEL INDICADOR-->
+                      <div class="col col-xl-3 col-lg-3 mt-auto">
+                        <label for="elemento_padre">Elemento</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="elemento_padre"
+                               [value]="id_proy_elem_padre ? getElementoPadre(id_proy_elem_padre) : 'No asignado'" 
+                               disabled />
+                      </div>
+                      <!-- Componente -->
+                      <div class="col col-xl-1 col-lg-1 mt-auto">
+                        <label class="btn-view-bg-3" 
+                               [style.backgroundColor]="id_proy_elem_padre ? getComponentePadre(id_proy_elem_padre).color : '#FDC82F'">
+                          {{ id_proy_elem_padre ? getComponentePadre(id_proy_elem_padre).sigla : 'IN' }}
+                        </label>
+                      </div>
+                      <!-- ABUELO ESTE LLAMARA AL OBJETIVO GENERAL DEL QUE FORME PARTE EL INDICADOR YA QUE ES DE EL QUE PARTEN LOS HIJOS POR ESO EL ES EL ABUELO SE PUEDE DECIR  -->
+                      <div class="col col-xl-3 col-lg-3">
+                        <label for="codigoAbuelo">Abuelo</label>
+                        <input class="form-control" 
+                               type="text" 
+                               id="codigoAbuelo" 
+                               name="codigoAbuelo" 
+                               [(ngModel)]="codigoAbuelo"
+                               [disabled]="true" 
+                               readonly />
+                      </div>
+                      <!-- Descripción -->
+                      <div class="col col-xl-12 col-lg-12">
+                        <label for="descripcionPadre">Descripción del Padre</label>
+                        <input class="form-control" type="text" id="descripcionPadre" 
+                               name="descripcionPadre" [(ngModel)]="descripcionPadre"
+                               [disabled]="true" readonly />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- CONECTA CON PROY_INDICADOR -->
+                <!-- ======= ======= LINEA BASE - MEDIDA - META FINAL - MEDIO VERIFICA ======= ======= -->
+                <div class="row col col-xl-12 col-lg-12 mt-2">
+                  <!-- Linea base -->
+                  <div class="col col-xl-2 col-lg-2">
+                    <label for="linea_base">Línea base</label>
+                    <input class="form-control" type="text" id="linea_base" name="linea_base" [(ngModel)]="linea_base"
+                      [disabled]="!editMode" />
+                  </div>
+                  <!-- Medida -->
+                  <div class="col col-xl-2 col-lg-2">
+                    <label for="medida">Medida</label>
+                    <input class="form-control" type="text" id="medida" name="medida" [(ngModel)]="medida"
+                      [disabled]="!editMode" />
+                  </div>
+                  <!-- Meta Final -->
+                  <div class="col col-xl-2 col-lg-2">
+                    <label for="meta_final">Meta Final</label>
+                    <input class="form-control" type="text" id="meta_final" name="meta_final" [(ngModel)]="meta_final"
+                      [disabled]="!editMode" />
+                  </div>
+                  <!-- Medio de verificación -->
+                  <div class="col col-xl-6 col-lg-6">
+                    <label for="medio_verifica">Medio de verificación</label>
+                    <input class="form-control" type="text" id="medio_verifica" name="medio_verifica"
+                      [(ngModel)]="medio_verifica" [disabled]="!editMode" />
+                  </div>
+                  <!-- Supuestos/Comentario -->
+                  <div class="col col-xl-12 col-lg-12">
+                    <label for="comentario">Supuestos/Comentario</label>
+                    <input class="form-control" type="text" id="comentario" name="comentario" [(ngModel)]="comentario"
+                      [disabled]="!editMode" />
+                  </div>
+                </div>
+                <!-- ======= ======= REPORTE ======= ======= -->
+                <div class="row col col-xl-12 col-lg-12 mt-2">
+                  <label for="comentario">Reporte</label>
+                  <div class="col-12 mt-2 mb-2 p-2" style="border: 1px solid white">
+                    <div class="table-responsive">
+                      <!-- Tabla Reporte -->
+                      <table class="table custom-table-planifEstrategica table-striped table-bordered">
+                        <thead>
+                          <tr>
+                            <th style="text-align: center">#</th>
+                            <th style="text-align: center">Periodo</th>
+                            <th style="text-align: center">Valor Esperado</th>
+                            <th style="text-align: center">Progreso</th>
+                            <th style="text-align: center">Notas</th>
+                            <th style="text-align: center">Evidencia</th>
+                            <th style="text-align: center"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let item of indicadoresAvance; let i = index">
+                            <!-- Índice -->
+                            <td style="text-align: center">{{ i + 1 }}</td>
+
+                            <!-- Periodo   this.indicadoresAvance[] -->
+                            <td style="text-align: center">
+                              {{ item.fecha_reportar | date:'dd/MM/yyyy' }}
+                            </td>
+
+                            <!-- Valor esperado -->
+                            <td style="text-align: center">
+                              {{convertToNumber(this.indicadoresAvance[i]?.valor_esperado)
+                              | number : '1.0-0'}}
+                            </td>
+
+                            <!-- Progreso -->
+                            <td style="text-align: center">
+                              {{ convertToNumber(this.indicadoresAvance[i]?.valor_reportado)
+                              | number:'1.0-2' }}
+                            </td>
+
+                            <!-- Notas -->
+                            <td style="text-align: center">
+                              {{ this.indicadoresAvance[i]?.comentarios || '-' }}
+                            </td>
+                            
+                            <!-- Evidencia -->
+                            <td style="text-align: center">
+                              <div *ngIf="item.ruta_evidencia; else sinEvidencia">
+                                <div class="d-flex align-items-center gap-2">
+                                  <i class="fas fa-file-alt"></i>
+                                  <a href="javascript:void(0);" 
+                                     (click)="avancesDownload('ruta_evidencia', item)" 
+                                     title="Descargar evidencia">
+                                    {{ getFileName(item.ruta_evidencia) }}
+                                  </a>
+                                </div>
+                              </div>
+                              <ng-template #sinEvidencia>
+                                <span>Sin evidencia</span>
+                              </ng-template>
+                            </td>
+
+                            <!-- Botón de edición -->
+                            <td style="text-align: center">                            
+                              <button 
+                                class="btn btn-link" 
+                                (click)="openEditAvanceModal(editAvanceModal, item)">
+                                <i class="fa fa-ellipsis-h"></i>
+                              </button>                            
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="d-flex justify-content-end" style="width: 100%">
+                      <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+                      <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                        <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+                      </button>                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>               
+  </div>
+</ng-template>
+          
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+ <!-- Formulario de Edición para reporte llama a los datos de proy:indicador_avance-->
+ <ng-template #editAvanceModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Editar Meta</h4>
+  </div>
+  <div class="modal-body" [ngStyle]="{'background-color': !puedeEditar ? '#f5f5f5' : 'white'}">
+    <form #editAvanceForm="ngForm" (ngSubmit)="onEditSubmit()">
+          
+          <!-- Valor Reportado -->
+          <div class="form-group">
+            <label for="editValorReportado">Progreso:</label>
+            <input
+              type="number"
+              step="0.01"
+              id="editValorReportado"
+              class="form-control"
+              [(ngModel)]="editAvance.valor_reportado"
+              name="valor_reportado"
+              [readonly]="!puedeEditar"
+              [ngStyle]="{'background-color': !puedeEditar ? '#e9ecef' : 'white'}"
+              required
+            />
+          </div>
+          
+          <!-- Comentarios -->
+          <div class="form-group">
+            <label for="editComentarios">Comentarios:</label>
+            <textarea
+              id="editComentarios"
+              class="form-control"
+              [(ngModel)]="editAvance.comentarios"
+              name="comentarios"
+              maxlength="255"
+              [readonly]="!puedeEditar"
+              [ngStyle]="{'background-color': !puedeEditar ? '#e9ecef' : 'white'}"
+            ></textarea>
+          </div>
+          <!-- ======= ======= UPLOAD FILE SECTION ======= ======= -->
+          <!-- Evidencia -->
+          <div class="form-group mb-3">
+            <label for="evidencia" class="form-label">Evidencia</label>
+            <input 
+              class="form-control" 
+              type="file" 
+              id="evidencia" 
+              name="evidencia" 
+              (change)="onFileChange($event)" 
+              accept=".pdf,.jpg,.jpeg,.png"
+            />
+            <small class="form-text text-muted">
+              Tamaño máximo: 5MB  | Formatos permitidos: .pdf, .jpg, .jpeg, .png
+            </small>
+          
+            <!-- Mostrar archivo actual y opción de descarga -->
+            <div *ngIf="editAvance.ruta_evidencia" class="mt-2">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-file-alt"></i>
+                <span>{{ getFileName(editAvance.ruta_evidencia) }}</span>
+                <button 
+                  type="button" 
+                  class="btn btn-bg-2 mx-auto" 
+                  (click)="avancesDownload('ruta_evidencia')"
+                  title="Descargar evidencia">
+                  <i class="fa fa-floppy-o"></i> Descargar
+                </button>
+              </div>
+            </div>
+          
+            <!-- Mostrar archivo seleccionado -->
+            <div *ngIf="selectedFile" class="mt-2">
+              <div class="custom-no-data-container d-flex align-items-center gap-2" style="background-color: #d67600; color: white; border-color:#ffffff; border-width: 1px;">
+                <i class="fa fa-floppy-o"></i>
+                <span>Nuevo archivo seleccionado: {{ selectedFile.name }}</span>
+              </div>
+            </div>
+          </div>
+          <!-- ======= ======= BUTTONS SECTION ======= ======= -->         
+          <div class="d-flex justify-content-center mt-4">
+            <button
+              type="button"
+              class="btn"
+              [ngClass]="{'btn-bg-1': puedeEditar, 'btn-secondary': !puedeEditar}"
+              [disabled]="!puedeEditar"
+              (click)="onEditAvanceSubmit(); modal.dismiss('Cerrar')"
+              style="width:20%; margin-right: 10px;"
+            >
+              <i class="fa fa-floppy-o"></i> Grabar
+            </button>
+            <button
+              type="button"
+              class="btn btn-bg-3"
+              (click)="modal.close('Cerrar')"
+              style="width: 20%"
+            >
+              <i class="fa fa-times"></i> Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </ng-template>
+
+<!-- ======= ======= ======= ======= ======= ======= ======= -->

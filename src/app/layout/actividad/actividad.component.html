@@ -1,0 +1,875 @@
+<div [@routerTransition]>
+    <div class="row col-md-12">
+        <div class="col col-md-6 align-items-center custom-body-header">
+            <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader>
+        </div>
+        <div class="col col-md-6 text-center">
+            <div class="row">
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                    {{headerDataNro01}} Ejecución Presupuestaria
+                </div>
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                    {{headerDataNro02}} Ejecución Periodo
+                </div>
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                    {{headerDataNro03}} Actividades Pendientes
+                </div>
+                <div class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1">
+                    {{headerDataNro04}} Actividades Retrasadas
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======= ======= ======= EJECUCION SECTION ======= ======= ======= -->
+    <div class="row mb-3 mt-4">
+        <div class="col col-xl-12 col-lg-12">
+            <div class="card card-body custom-card">
+                <div class="row">
+                    <div class="col col-md-7 col-lg-7 custom-actividad-right-sep">
+                        <div class="row">
+                            <div class="col col-md-12 col-lg-12">
+                                <h2 class="custom-view-title">Ejecución Financiera</h2>
+                            </div>
+                            <!-- ======= ======= PROYECTO SECTION ======= ======= -->
+                            <div class="col col-md-3 col-lg-3">
+                                <label class="custom-actividad-sub-title">Presupuesto del proyecto</label>
+                                <input class="form-control" type="text" 
+                                    id="presupuestoActProy" name="presupuestoActProy" 
+                                    [(ngModel)]="presupuestoActProy" disabled/>
+                                <label class="custom-actividad-sub-title">Ejecutado</label>
+                                <input class="form-control custom-actividad-input-bg-3" type="text" 
+                                    id="ejecutadoProy" name="ejecutadoProy" 
+                                    [(ngModel)]="ejecutadoProy" disabled/>
+                            </div>
+                            <div class="col col-md-3 col-lg-3">
+                                <canvas id="doughnutChartProyecto"></canvas>
+                            </div>
+                            <!-- ======= ======= ======= ======= ======= -->
+                            <!-- ======= ======= GESTION SECTION ======= ======= -->
+                            <div class="col col-md-3 col-lg-3">
+                                <label class="custom-actividad-sub-title">Presupuesto de la Gestión {{ gestion }}</label>
+                                <input class="form-control" type="text" 
+                                    id="presupuestoGest" name="presupuestoGest" 
+                                    [(ngModel)]="presupuestoGest" disabled/>
+                                <label class="custom-actividad-sub-title">Ejecutado</label>
+                                <input class="form-control custom-actividad-input-bg-3" type="text" 
+                                    id="ejecutadoGest" name="ejecutadoGest" 
+                                    [(ngModel)]="ejecutadoGest" disabled/>
+                            </div>
+                            <div class="col col-md-3 col-lg-3">
+                                <canvas id="doughnutChartGestion"></canvas>
+                            </div>
+                            <!-- ======= ======= ======= ======= ======= -->
+                        </div>
+                    </div>
+                    <div class="col col-md-5 col-lg-5">
+                        <div class="row">
+                            <!-- ======= ======= DECLARACION SECTION ======= ======= -->
+                            <div class="col col-md-6 col-lg-6 custom-actividad-right-sep">
+                                <label class="custom-actividad-sub-title">
+                                    Declaraciones de Ejecución
+                                </label>
+                                <div class=" table-responsive custom-actividad-presu-avance-table">                                 
+                                    <table class="table custom-table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th style="text-align: center;">Descripción</th>
+                                                <th style="text-align: center;">Declaración</th>
+                                                <th style="text-align: center;">Ejecución</th>                                            
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let presuAvance of presuAvances; let i = index">
+                                                <td>
+                                                    <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
+                                                        [(ngModel)]="presuAvance.selected"
+                                                        (change)="onPresuAvanceClick(presuAvance)" 
+                                                        [disabled]="(currentPerProRol.includes('ESC'))
+                                                            ||(gestion != initGestion)"/>
+                                                </td>
+                                                <td>
+                                                    {{ presuAvance.motivo }}
+                                                </td>
+                                                <td>
+                                                    {{ ((presuAvance.fecha_hora).slice(0,10)) }}
+                                                </td>
+                                                <td>
+                                                    {{ presuAvance.monto_avance.slice(1)}}
+                                                </td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= ======= ======= -->
+                            <!-- ======= ======= EJECUTADO SECTION ======= ======= -->
+                            <div class="col col-md-6 col-lg-6">
+                                <label class="custom-actividad-sub-title">Descripción</label>
+                                <textarea class="form-control" type="text" 
+                                    id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
+                                    placeholder="Ingrese el periodo de ejecución" 
+                                    [disabled]="(this.idPresupuestoGest == 0)
+                                        ||(currentPerProRol.includes('LEC'))
+                                        ||(currentPerProRol.includes('ESC'))
+                                        ||(gestion != initGestion)
+                                        ||(presuAvanceSelected)"
+                                    [(ngModel)]="motivoNuevoEjecutado">
+                                </textarea>
+                                <span class="custom-alert-message" *ngIf="!valMotivoNuevoEjecutado">
+                                    Debe ingresar un motivo válido, con menos de 100 caracteres.
+                                </span>
+                                <div></div>
+                                <label class="custom-actividad-sub-title">Fecha ejecución</label>
+                                <input class="form-control" type="date" 
+                                    id="fechaNuevoEjecutado" name="fechaNuevoEjecutado" 
+                                    [disabled]="(idPresupuestoGest == 0)
+                                        ||(currentPerProRol.includes('LEC'))
+                                        ||(currentPerProRol.includes('ESC'))
+                                        ||(gestion != initGestion)
+                                        ||(presuAvanceSelected)"
+                                    (change)="validateFechaNuevoEjecutado()"
+                                    [(ngModel)]="fechaNuevoEjecutado"/>
+                                <span class="custom-alert-message" *ngIf="!valFechaNuevoEjecutado">
+                                    Debe ingresar una fecha válida, en la gestion.
+                                </span>
+                                <div></div>
+                                <label class="custom-actividad-sub-title">Monto ejecutado</label>
+                                <input class="form-control" type="text" 
+                                    id="montoNuevoEjecutado" name="montoNuevoEjecutado" 
+                                    placeholder="Ingrese el monto ejecutado" 
+                                    [disabled]="(idPresupuestoGest == 0)
+                                        ||(currentPerProRol.includes('LEC'))
+                                        ||(currentPerProRol.includes('ESC'))
+                                        ||(gestion != initGestion)
+                                        ||(presuAvanceSelected)"
+                                    (change)="onChangedMontoNuevoEjecutado()"
+                                    [(ngModel)]="montoNuevoEjecutado"/>
+                                <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">
+                                    Debe ingresar un monto válido.
+                                </span>
+                                <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado2">
+                                    El monto ingresado supera el presupuesto de la gestión.
+                                </span>
+                                <div class="row">
+                                    <div class="col col-md-4 col-lg-4 px-1">
+                                        <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
+                                            [disabled]="(this.idPresupuestoGest == 0)
+                                                ||(currentPerProRol.includes('LEC'))
+                                                ||(currentPerProRol.includes('ESC'))
+                                                ||(gestion != initGestion)
+                                                ||(presuAvanceSelected)"
+                                            (click)="addPresuAvance()">
+                                            <i aria-hidden="true"></i> Añadir
+                                        </button>
+                                    </div>
+                                    <div class="col col-md-4 col-lg-4 px-1">
+                                        <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
+                                            [disabled]="(idPresupuestoGest == 0)
+                                                ||(currentPerProRol.includes('LEC'))
+                                                ||(currentPerProRol.includes('ESC'))
+                                                ||(gestion != initGestion)
+                                                ||(!presuAvanceSelected)"
+                                            (click)="initEditPresupuestoEjecutado(editEjecutadoModal)">
+                                            <i aria-hidden="true"></i> Editar
+                                        </button>
+                                    </div>
+                                    <div class="col col-md-4 col-lg-4 px-1">
+                                        <button type="button" class="btn btn-view-bg-1 w-100 mt-2"
+                                            [disabled]="(idPresupuestoGest == 0)
+                                                ||(currentPerProRol.includes('LEC'))
+                                                ||(currentPerProRol.includes('ESC'))
+                                                ||(gestion != initGestion)
+                                                ||(!presuAvanceSelected)"
+                                            (click)="initDeletePresupuestoEjecutado(deleteEjecutadoModal)">
+                                            <i aria-hidden="true"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                                <span class="custom-alert-message" style="font-weight: bold;"
+                                    *ngIf="(idPresupuestoGest == 0)">
+                                    No existe presupuesto para esta gestion, agrega un presupuesto en Inf. Proyecto.
+                                </span>
+                            </div>
+                            <!-- ======= ======= ======= ======= ======= -->
+                        </div>
+                    </div>
+
+                    <div class="col col-md-12 col-lg-12 mt-2" 
+                            *ngIf="parseAmountStrToFloat(presupuestoActProy) > parseAmountStrToFloat(presupuestoProy)">
+                        <div class="row">
+                            <div class="custom-no-data-container">
+                                <span class="custom-no-data-message">
+                                    El presupuesto definido en actividades supera el definido en el proyecto.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+    <!-- ======= ======= ======= GANT CHART SECTION ======= ======= ======= -->
+    <div class="card mt-2">
+        <div class="card-body custom-card">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="custom-actividad-sub-title">
+                    Actividades del Proyecto
+                </h2>
+                <div class="row">
+                    <div class="col col-xl-12 col-lg-12 text-end">
+                        <input class="form-check-input custom-form-actividades-checkbox" type="checkbox" 
+                            id="showReprogramados" name="showReprogramados" 
+                            [(ngModel)]="showReprogramados">
+                        <label class="custom-form-lable-checkbox" for="showReprogramados">
+                            Ver reprogramados
+                        </label>
+                        <button type="button" class="btn btn-view-bg-1 mx-2"
+                            (click)="initAddActividad(actividadModal)"
+                            [disabled]="(actividadSelected)
+                                ||(gestion < initGestion)
+                                ||(currentPerProRol.includes('LEC'))">
+                            <i aria-hidden="true"></i> Añadir
+                        </button>
+                        <button type="button" class="btn btn-view-bg-1"
+                            (click)="initEditActividad(actividadModal)"
+                            [disabled]="(!actividadSelected)
+                                ||(actividadSelected.esActividadReprog)
+                                ||(currentPerProRol.includes('LEC'))
+                                ||(currentPerProRol.includes('ESC'))">
+                            <i aria-hidden="true"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-view-bg-1"
+                            (click)="initDeleteActividad(deleteActividadModal)"
+                            [disabled]="(!actividadSelected)
+                                ||(actividadSelected.esActividadReprog)
+                                ||(currentPerProRol.includes('LEC'))
+                                ||(currentPerProRol.includes('ESC'))">
+                            <i aria-hidden="true"></i> Eliminar
+                        </button>
+                        <button type="button" class="btn btn-view-bg-1"
+                            (click)="initAvanceActividad(actividadModal)"
+                            [disabled]="(!actividadSelected)
+                                ||(actividadSelected.esActividadReprog)
+                                ||(currentPerProRol.includes('LEC'))">
+                            <i aria-hidden="true"></i> Avance
+                        </button>
+                        <button type="button" class="btn btn-view-bg-1"
+                            (click)="downloadExcel()">
+                            <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- ======= ======= ======= ======= ======= -->
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <div class="row">
+                <div class="col col-md-1 col-lg-1">
+                    <div class="row custom-actividad-header">
+                        <div class="col col-md-12 col-lg-12">
+                            RES
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-11 col-lg-11">
+                    <div class="row">
+                        <div class="col col-md-5 col-lg-5">
+                            <!-- ======= HEADER SECTION ======= -->
+                            <div class="row custom-actividad-header">
+                                <div class="col col-md-8 col-lg-8">
+                                    ACTIVIDADES
+                                </div>
+                                <div class="col col-md-4 col-lg-4">
+                                    AVANCE
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col col-md-7 col-lg-7">
+
+                            <div class="custom-gant-header">
+                                <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
+                                    [disabled]="gestionIsStartYear()"
+                                    (click)="onGestionChanged(-1)">
+                                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                </button>
+
+                                <label class="custom-gant-header-label">
+                                    {{ gestion }}
+                                </label>
+
+                                <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
+                                    [disabled]="gestionIsEndYear()"
+                                    (click)="onGestionChanged(1)">
+                                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col col-md-12 col-lg-12 custom-row-relative">
+                    <div class="row custom-gant-chart-background">
+                        <div class="col col-md-1 col-lg-1">
+                        </div>
+
+                        <div class="col col-md-11 col-lg-11">
+                            <div class="row">
+                                <div class="col col-md-5 col-lg-5">
+                                </div>
+                                <div class="col col-md-7 col-lg-7">
+                                    <div class="row">
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Ene
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Feb
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Mar
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Abr
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                May
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Jun
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Jul
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Ago
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Sep
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Oct
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Nov
+                                            </span>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 custom-month-col">
+                                            <span class="custom-month-span">
+                                                Dic
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col col-md-12 col-lg-12 pt-4">
+                    <!-- ======= ACTIVIDADES SECTION ======= -->
+                    <div class="row my-1" *ngFor="let elementoGant of elementosGant">
+                        <div class="col col-md-1 col-lg-1 custom-elemento-container">
+                            <span class="custom-vertical-text custom-elemento-span">
+                                Res {{ elementoGant.codigo }}
+                            </span>
+                        </div>
+                        <div class="col col-md-11 col-lg-11">
+                            <div class="row mb-1 custom-actividad-gant-container" 
+                                *ngFor="let actividadGant of elementoGant.childrens" 
+                                [hidden]="(( actividadGant.esActividadReprog )&&( !showReprogramados ))"
+                                [ngClass]="{'custom-actividad-gant-container-selected': actividadGant.selected}"
+                                (click)="onActividadClick(actividadGant)">
+                                <div class="col col-md-5 col-lg-5">
+                                    <div class="row">
+                                        <div class="col col-md-8 col-lg-8 px-1">
+                                            <div class="col custom-elemento-actividad"
+                                                [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
+                                                {{ actividadGant.actividad }}
+                                            </div>
+                                        </div>
+                                        <div class="col col-md-4 col-lg-4 px-1">
+                                            <div class="col custom-elemento-actividad justify-content-end"
+                                                [ngClass]="{'custom-elemento-actividad-reprog': (actividadGant.esActividadReprog)}">
+                                                {{ getLastAvance(actividadGant) }}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col col-md-7 col-lg-7">
+                                            
+                                    <div class="row" style="height: 100%;">
+                                        <div class="col col-md-12 col-lg-12 d-flex align-items-center">
+                                            <div [style.width.%]="actividadGant.init_date_gap_por">
+                                            </div>
+        
+                                            <div class="custom-actividad-progress-bar px-0"
+                                                [style.width.%]="actividadGant.date_gap_por">
+                                                <div 
+                                                    class="custom-actividad-progress-fill" 
+                                                    [style.width.%]="actividadGant.avance_gestion"
+                                                    [ngClass]="{'custom-elemento-actividad-reprog-fill': (actividadGant.esActividadReprog)}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ======= ======= ======= -->
+                </div>
+                <!-- ======= ======= ======= ======= ======= -->
+
+                <div class="col col-md-12 col-lg-12" *ngIf="elementosGant.length == 0">
+                    <div class="row">
+                        <div class="custom-no-data-container">
+                            <span class="custom-no-data-message">
+                                No existen registros para este modulo del proyecto.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+</div>
+
+<!-- ======= ======= ======= ACTIVIDAD MODAL ======= ======= ======= -->
+<ng-template #actividadModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')">
+        </button>
+    </div>
+    
+    <div class="modal-body">
+        <form #actividadForm="ngForm" (ngSubmit)="onSubmit(actividadForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- ======= COSIGO SECTION ======= -->
+                                <div class="col col-md-3">
+                                    <label for="codigo">Código</label>
+                                    <input class="form-control" type="text" 
+                                        id="codigo" name="codigo" 
+                                        [(ngModel)]="codigo" disabled>
+                                </div>
+                                <!-- ======= ACTIVIDAD SECTION ======= -->
+                                <div class="col col-md-9">
+                                    <label for="actividadText">Actividad</label>
+                                    <input class="form-control" type="text" 
+                                        id="actividadText" name="actividadText" 
+                                        [(ngModel)]="actividadText" 
+                                        [disabled]="(modalAction == 'avance')"
+                                        (change)="validateActividadText()"
+                                        placeholder="Ingrese un titulo para la actividad">
+                                <span class="custom-alert-message" *ngIf="!valActividadText">
+                                    Debe ingresar un titulo valido, con menos de 100 caracteres.
+                                </span>
+                            </div>
+
+                                <!-- ======= REPROGRAMADO SECTION ======= -->
+                                <div class="col col-md-5">
+                                    <label for="proy_acti_repro">Reprogramado de:</label>
+                                    <input class="form-control" type="text" 
+                                        id="proy_acti_repro" name="proy_acti_repro" 
+                                        [(ngModel)]="proy_acti_repro" placeholder="No es reprogramado" disabled>
+                                </div>
+                                <!-- ======= PADRE SECTION ======= -->
+                                <div class="col col-md-3">
+                                    <label for="id_proy_elemento_padre">Padre</label>
+                                    <select class="form-control" id="id_proy_elemento_padre" 
+                                        name="id_proy_elemento_padre" 
+                                        (change)="onPadreChanged()"
+                                        [(ngModel)]="id_proy_elemento_padre" 
+                                        [disabled]="(modalAction == 'avance')">
+                                        <option value="" disabled>Seleccionar padre</option>
+                                        <option *ngFor="let elemento of elementos" 
+                                                [value]="elemento.id_proy_elemento">
+                                            {{elemento.codigo}}
+                                        </option>
+                                    </select>
+                                    <span class="custom-alert-message" *ngIf="!valIdProyElementoPadre">
+                                        Debe seleccionar un elemento padre.
+                                    </span>
+                                </div>
+                                <!-- ======= RESULTADO OUTPUT SECTION ======= -->
+                                <div class="col col-md-4">
+                                    <label for="proy_elemento_padre">Actividad Resultado/Output</label>
+                                    <input class="form-control" type="text" 
+                                        id="proy_elemento_padre" name="proy_elemento_padre" 
+                                        [(ngModel)]="proy_elemento_padre" placeholder="Seleccione un elemento padre" disabled>
+                                </div>
+                    
+                                <!-- ======= DESCRIPCION SECTION ======= -->
+                                <div class="col col-md-12 col-lg-12">
+                                    <label for="descripcion">Descripción</label>
+                                    <textarea class="form-control" 
+                                        id="descripcion" name="descripcion" 
+                                        [(ngModel)]="descripcion" 
+                                        [disabled]="(modalAction == 'avance')"
+                                        (change)="validateDescripcion()"
+                                        placeholder="Ingrese una descipción de la actividad">
+                                    </textarea>
+                                    <span class="custom-alert-message" *ngIf="!valDescripcion">
+                                        Debe ingresar una descripción valida, con menos de 255 caracteres.
+                                    </span>
+                                </div>
+
+
+                                <!-- ======= LABEL SECTION ======= -->
+                                <div class="col col-md-12 col-lg-12">
+                                    <label>Planificación</label>
+                                </div>
+                                <!-- ======= FECHA INICIO SECTION ======= -->
+                                <div class="col col-md-6 col-lg-6">
+                                    <label for="fecha_inicio">Inicio</label>
+                                    <input class="form-control" type="date" 
+                                        id="fecha_inicio" name="fecha_inicio" 
+                                        [(ngModel)]="fecha_inicio" 
+                                        [disabled]="(modalAction == 'avance')"
+                                        (change)="validateFechaInicio()">
+                                    <span class="custom-alert-message" *ngIf="!valFechaInicio1">
+                                        Debe ingresar una fecha válida dentro de la gestion actual.
+                                    </span>
+                                    <span class="custom-alert-message" *ngIf="!valFechaInicio2">
+                                        Debe ingresar una fecha en el rango del proyecto.
+                                    </span>
+                                </div>
+                                <!-- ======= FECHA FIN SECTION ======= -->
+                                <div class="col col-md-6 col-lg-6">
+                                    <label for="fecha_fin">Fin</label>
+                                    <input class="form-control" type="date" 
+                                        id="fecha_fin" name="fecha_fin" 
+                                        [(ngModel)]="fecha_fin" 
+                                        [disabled]="(modalAction == 'avance')"
+                                        (change)="validateFechaFin()">
+                                    <span class="custom-alert-message" *ngIf="!valFechaFin">
+                                        Debe ingresar una fecha válida dentro de la gestion actual.
+                                    </span>
+                                    <span class="custom-alert-message" *ngIf="!valFechaFin2">
+                                        La fecha de finalizacion debe ser mayor a la de inicio.
+                                    </span>
+                                    <span class="custom-alert-message" *ngIf="!valFechaFin3">
+                                        Debe ingresar una fecha en el rango del proyecto.
+                                    </span>
+                                </div>
+                            
+                                <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"> 
+                                </div>
+
+                                <div class="row">
+                                    <span class="text-green-700 relative z-10 pl-2">
+                                        Avance
+                                    </span>
+                                </div>
+                            
+                                <!-- ======= AVANCE SECTION ======= -->
+                                <div class="col col-md-6 col-lg-6 mb-3 custom-actividad-right-sep">
+                                        
+                                    <div class="row">
+                                        <!-- ======= PORCENTAJE SECTION ======= -->
+                                        <div class="col col-md-8 col-lg-8">
+                                            <label for="actAvaAvance">% Avance</label>
+                                            <input class="form-control" type="text" 
+                                                id="actAvaAvance" name="actAvaAvance" 
+                                                placeholder="Ingresa el porcentaje"
+                                                [(ngModel)]="actAvaAvance" 
+                                                [disabled]="(modalAction == 'add')||
+                                                    (gestion < initGestion)">
+                                            <span class="custom-alert-message" *ngIf="!valActAvaAvance">
+                                                Debe ingresar un valor válido.
+                                            </span>
+                                            <span class="custom-alert-message" *ngIf="!valActAvaAvanceEdit">
+                                                Debe ingresar un valor válido.
+                                            </span>
+                                        </div>
+                                        <!-- ======= ADD AVANCE SECTION ======= -->
+                                        <div class="col col-md-2 col-lg-2 mt-auto">
+                                            <button class="btn btn-bg-1" type="button" 
+                                                [disabled]="(modalAction == 'add')||
+                                                    (gestion < initGestion)"
+                                                (click)="onSubmitAvance()">
+                                                +
+                                            </button>
+                                        </div>
+                                        <!-- ======= EDIT AVANCE SECTION ======= -->
+                                        <div class="col col-md-2 col-lg-2 mt-auto">
+                                            <button class="btn btn-bg-1" type="button" 
+                                                [disabled]="(modalAction == 'add')||
+                                                    (gestion < initGestion)||
+                                                    (actividadAvances.length == 0)"
+                                                (click)="onSubmitEditAvance()">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col col-md-12 col-lg-12">
+                                        </div>
+                                        <!-- ======= ADD AVANCE SECTION ======= -->
+                                        <div class="col col-md-12 col-lg-12">
+                                            <table class="table custom-table table-striped table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Declaración</th>
+                                                        <th>Avance</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let actividadAvance of actividadAvances">
+                                                        <td>{{ ((actividadAvance.fecha_hora).slice(0,10)) }}</td>
+                                                        <td>{{ actividadAvance.avance }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- ======= FACTORES SECTION ======= -->
+                                <div class="col col-md-6 col-lg-6 mb-3">
+                                    <label for="resultado">Factores que impidieron el cumplimiento</label>
+                                    <textarea class="form-control" type="text" 
+                                        id="resultado" name="resultado" 
+                                        placeholder="Si sera reprogramado ingrese el motivo de incumplimiento"
+                                        [(ngModel)]="resultado" 
+                                        (change)="validateResultado()"
+                                        [disabled]="modalAction == 'add'">
+                                    </textarea>
+                                    <span class="custom-alert-message" *ngIf="!valResultado">
+                                        Debe ingresar un factor válido.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <button type="button" class="btn btn-bg-3" 
+                (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+            </button>
+            <button type="button" class="btn btn-bg-2" 
+                [disabled]="modalAction == 'add'" 
+                (click)="initReprogramarActividad(reprogramarActividadModal)">
+                <i aria-hidden="true"></i> Reprogramar
+            </button>
+            <button type="button" class="btn btn-bg-1" 
+                [disabled]="((gestion < initGestion)||
+                    (modalAction == 'avance'))"
+                (click)="onSubmit()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+            </button>
+        </div>
+    </div>
+    
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= REPROGRAMAR ACTIV MODAL ======= ======= ======= -->
+<ng-template #reprogramarActividadModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Reprogramar Actividad</h4>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer reprogramar esta actividad?</p>
+            <p>Porfavor ingrese las nuevas fechas.</p>
+        </div>
+        <div class="row">
+            <!-- ======= FECHA INICIO SECTION ======= -->
+            <div class="col col-md-6 col-lg-6">
+                <label for="fecha_inicio">Inicio</label>
+                <input class="form-control" type="date" 
+                    id="fecha_inicio" name="fecha_inicio" 
+                    [(ngModel)]="fecha_inicio"
+                    (change)="validateFechaInicio()">
+                <span class="custom-alert-message" *ngIf="!valFechaInicio">
+                    Debe ingresar una fecha valida.
+                </span>
+            </div>
+            <!-- ======= FECHA FIN SECTION ======= -->
+            <div class="col col-md-6 col-lg-6">
+                <label for="fecha_fin">Fin</label>
+                <input class="form-control" type="date" 
+                    id="fecha_fin" name="fecha_fin" 
+                    [(ngModel)]="fecha_fin"
+                    (change)="validateFechaFin()">
+                <span class="custom-alert-message" *ngIf="!valFechaFin">
+                    Debe ingresar una fecha valida.
+                </span>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="reprogramarActividad()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Reprogramar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE ACTIV MODAL ======= ======= ======= -->
+<ng-template #deleteActividadModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Actividad</h4>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar esta actividad?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="deleteActividad()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= EDIT EJECUTADO MODAL ======= ======= ======= -->
+<ng-template #editEjecutadoModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Editar ejecutado</h4>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col col-md-6 col-lg-6">
+                <label class="custom-actividad-sub-title">ID</label>
+                <input class="form-control" type="text" 
+                    id="idPresuAvance" name="idPresuAvance"
+                    [(ngModel)]="idPresuAvance" disabled/>
+            </div>
+
+            <div class="col col-md-6 col-lg-6">
+                <label class="custom-actividad-sub-title">Fecha registro</label>
+                <input class="form-control" type="date" 
+                    id="fechaNuevoEjecutado" name="fechaNuevoEjecutado" 
+                    [(ngModel)]="fechaNuevoEjecutado" disabled/>
+            </div>
+
+            <div class="col col-md-6 col-lg-6">
+                <label class="custom-actividad-sub-title">Periodo informado</label>
+                <textarea class="form-control" type="text" 
+                    id="motivoNuevoEjecutado" name="motivoNuevoEjecutado" 
+                    placeholder="Ingrese el periodo de ejecución" 
+                    [(ngModel)]="motivoNuevoEjecutado">
+                </textarea>
+                <span class="custom-alert-message" *ngIf="!valMotivoNuevoEjecutado">
+                    Debe ingresar un motivo válido, con menos de 100 caracteres.
+                </span>
+            </div>
+
+            <div class="col col-md-6 col-lg-6">
+                <label class="custom-actividad-sub-title">Monto ejecutado</label>
+                <input class="form-control" type="text" 
+                    id="montoNuevoEjecutado" name="montoNuevoEjecutado" 
+                    placeholder="Ingrese el monto ejecutado" 
+                    (change)="onChangedMontoNuevoEjecutado()"
+                    [(ngModel)]="montoNuevoEjecutado"/>
+                <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado">
+                    Debe ingresar un monto válido.
+                </span>
+                <span class="custom-alert-message" *ngIf="!valMontoNuevoEjecutado2">
+                    El monto ingresado supera el presupuesto de la gestion.
+                </span>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="editPresuAvance()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Editar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE EJEC MODAL ======= ======= ======= -->
+<ng-template #deleteEjecutadoModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Ejecutado</h4>
+        <button type="button" class="btn-close" aria-label="Close" 
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar este ejecutado?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="deletePresuAvance()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->

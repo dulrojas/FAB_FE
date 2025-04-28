@@ -1,0 +1,759 @@
+<div [@routerTransition]>
+    <!-- Sección del Encabezado -->
+    <div class="row col-md-12">
+        <!-- Bloque de Encabezado -->
+        <div class="col col-md-6 align-items-center custom-body-header">
+            <!-- Componente personalizado para el encabezado -->
+            <app-bodyHeader (selectionChange)="onChildSelectionChange($event)"> </app-bodyHeader>
+        </div>
+        <!-- Bloque de Tarjetas de Estadísticas -->
+        <div class="col col-md-6 text-center">
+            <!-- Fila para organizar las tarjetas -->
+            <div class="row">
+                <div
+                    class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1"
+                >
+                    {{ headerDataNro01 }} Objetivo General
+                </div>
+                <div
+                    class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1"
+                >
+                    {{ headerDataNro02 }} Objetivo Específico
+                </div>
+                <div
+                    class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1"
+                >
+                    {{ headerDataNro03 }} Resultado
+                </div>
+                <div
+                    class="col col-md-2 m-1 d-flex justify-content-center align-items-center custom-info-cards flex-grow-1"
+                >
+                    {{ headerDataNro04 }} Indicadores
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de botones para añadir editar y eliminar elementos -->
+    <div class="card mb-3 mt-2">
+        <div class="card-body custom-card table-responsive">
+            <div class="row col-md-12">
+                <!-- Botones para añadir elementos según su tipo -->
+                <div class="custom-sectiontable col-md-8">
+                    <h5 class="text-sm mb-2 custom-body-header">Añadir elemento</h5>
+                    <div class="flex flex-wrap gap-2">
+                        <!-- Botón: Añadir Objetivo General -->
+                        <button
+                            class="btn-añadirElemento"
+                            style="background-color: #d45b49"
+                            (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 1)"                           
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
+                        >
+                            Objetivo General / Impact
+                        </button>
+                        <!-- Botón: Añadir Objetivo Específico -->
+                        <button
+                            class="btn-añadirElemento"
+                            style="background-color: #f58634"
+                            (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 2)"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
+                        >
+                            Objetivo Específico / Outcome
+                        </button>
+                        <!-- Botón: Añadir Resultado -->
+                        <button
+                            class="btn-añadirElemento"
+                            style="background-color: #f7b529"
+                            (click)="initAddPlanifEstrategica(planifEstrategicaOGOERE, 3)"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
+                        >
+                            Resultado / Output
+                        </button>
+                        <!-- Botón: Añadir Indicador -->
+                        <button
+                            class="btn-añadirElemento"
+                            style="background-color: #fbd468"
+                            (click)="initAddPlanifEstrategica(planifEstrategicaIN, 4)"
+                            [disabled]="(planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
+                        >
+                            Indicador
+                        </button>
+                    </div>
+                </div>
+                <!-- Botones de acciones sobre elementos seleccionados Editar-Eliminar-Arriba-Abajo -->
+                <div class="custom-sectiontable col-md-4">
+                    <h5 class="text-sm mb-2 custom-body-header">Seleccionado</h5>
+                    <div class="flex justify-end gap-2">
+                        <!-- Botón: Editar elemento seleccionado -->
+                        <button
+                            class="btn-Editdelete"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"                            
+                            (click)="editPlanifEstrategica(planifEstrategicaOGOERE, planifEstrategicaIN)"                            
+                        >
+                            Editar
+                        </button>
+                        <!-- Botón: Eliminar elemento seleccionado -->
+                        <button
+                            class="btn-Editdelete"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
+                            (click)="initDeletePlanifEstrategica(deleteIndicadorModal)"
+                        >
+                            Eliminar
+                        </button>
+                        <!-- Botón: Mover elemento hacia arriba -->
+                        <button
+                            class="btn-SubirBajar"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
+                            (click)="moverElemento(planifEstrategicaSelected, 'arriba')"
+                        >
+                            ↑
+                        </button>
+                        <!-- Botón: Mover elemento hacia abajo -->
+                        <button
+                            class="btn-SubirBajar"
+                            [disabled]="(!planifEstrategicaSelected)||(currentPerProRol.includes('LEC'))"
+                            (click)="moverElemento(planifEstrategicaSelected, 'abajo')"
+                        >
+                            ↓
+                        </button>
+                        <!-- EXPORTAR -->
+                        <button type="button" class="btn btn-view-bg-1"
+                            (click)="downloadExcel()">
+                            <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card mb-3">
+        <div class="card-body custom-card table-responsive">
+            <!-- Encabezado -->
+            <h2 class="title" style="color: #4e8646">Planificación Estratégica</h2>
+
+            <!-- Tabla de Riesgo -->
+            <table class="table custom-table-planifEstrategica table-striped table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Tipo</th>
+                        <th style="text-align: center;">Código</th>
+                        <th>Nombre</th>
+                        <th style="text-align: center;">Línea Base</th>
+                        <th style="text-align: center;">Medida</th>
+                        <th style="text-align: center;">Meta</th>
+                        <th>Descripción</th>
+                        <th>Medio de Verificación</th>
+                        <th>Supuesto / Comentario</th>
+                    </tr>
+                </thead>
+
+                <!-- Contenido de la Tabla -->
+                <tbody>
+                    <tr *ngFor="let planifEstrategica of combinedDataPaginated; let i = index">
+                        <td>
+                            <input
+                                type="checkbox"
+                                [(ngModel)]="planifEstrategica.selected"
+                                (change)="checkboxChanged(planifEstrategica)"
+                            />
+                        </td>
+                        <td>
+                            <button
+                                class="dynamic-button mb-auto"
+                                [style.backgroundColor]="getColorElemento(planifEstrategica.id_meto_elemento)"
+                                [style.color]="'#ffffff'"
+                                [style.marginLeft]="getMargin(planifEstrategica)"
+                            >
+                                {{ getSiglaElemento(planifEstrategica.id_meto_elemento) }}
+                            </button>
+                        </td>
+                        <td style="text-align: center;">{{ planifEstrategica.codigo }}</td>
+                        <td>{{ planifEstrategica.indicador }} {{planifEstrategica.elemento}}</td>
+                        <td style="text-align: center;">{{ convertToNumber(planifEstrategica.linea_base) }}</td>
+                        <td style="text-align: center;">{{ planifEstrategica.medida }}</td>
+                        <td style="text-align: center;">{{ convertToNumber(planifEstrategica.meta_final) }}</td>
+                        <td>{{ planifEstrategica.descripcion }}</td>
+                        <td>{{ planifEstrategica.medio_verifica }}</td>
+                        <td>{{ planifEstrategica.comentario }}</td>
+                    </tr>
+                </tbody>
+            </table>            
+            <!--<div class="d-flex justify-content-center">
+                <ngb-pagination
+                    [(page)]="mainPage"
+                    [pageSize]="mainPageSize"
+                    [collectionSize]="totalLength"
+                    [maxSize]="3"
+                    [rotate]="true"
+                    [boundaryLinks]="true">
+                </ngb-pagination>
+            </div>-->
+        </div>
+    </div>
+</div>
+
+<!-- nodal para OG OE RE   -->
+<ng-template #planifEstrategicaOGOERE let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+    </div>
+    <div class="modal-body">
+        <form #planifEstrategicaForm="ngForm" (ngSubmit)="onSubmitElemento(planifEstrategicaForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- Elemento padre -->
+                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <label for="id_proy_elem_padre">Elemento</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="id_proy_elem_padre"
+                                        [value]="getElementoNombre(sigla)"
+                                        disabled/>
+                                </div>                                
+                                <div class="col col-xl-1 col-lg-1 mt-auto">
+                                    <label class="btn-view-bg-3" [style.backgroundColor]="color">{{
+                                        sigla
+                                    }}</label>
+                                </div>
+                                <!-- Padre y Código -->
+                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <label for="padre">Padre</label>
+                                    <select
+                                        class="form-control"
+                                        id="padre"
+                                        name="padre"
+                                        [(ngModel)]="selectedParentCodigo"
+                                        [disabled]="tipo === 'OG'"
+                                        (change)="onParentChange()">
+                                        <option value="">Seleccionar padre</option>
+                                        <option *ngFor="let parent of validParents" [value]="parent.codigo">
+                                            ({{ parent.codigo }})
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- Código -->
+                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <label for="codigo">Código</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="codigo"
+                                        name="codigo"
+                                        [(ngModel)]="codigo"
+                                        [readonly]="true"
+                                        placeholder="Ingresa el Código"
+                                        disabled />
+                                </div>
+                                <!-- Nombre -->
+                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                    <label for="indicador">Nombre de elemento</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="indicador"
+                                        name="indicador"
+                                        placeholder="Ingresa el nombre"
+                                        [(ngModel)]="indicador" maxlength="100"
+                                        required/>                             
+                                </div>
+                                <!-- Descripción -->
+                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                    <label for="descripcion">Descripción</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="descripcion"
+                                        name="descripcion"
+                                        placeholder="Ingresa una descripción"
+                                        [(ngModel)]="descripcion" maxlength="500"
+                                        required/>                             
+                                </div>
+                                <!-- Comentario -->
+                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                    <label for="comentario">Supuestos/Hipótesis</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="comentario"
+                                        name="comentario"
+                                        placeholder="Ingresa un comentario"
+                                        [(ngModel)]="comentario" maxlength="255"/>                                 
+                                </div>
+                                <!-- Botones -->
+                                <div class="modal-footer mt-2">
+                                    <button type="button" class="btn btn-bg-3" (click)="modal.close('Cancelar')">
+                                        <i class="fa fa-times"></i> Cancelar
+                                    </button>
+                                    <button type="submit" class="btn btn-bg-1" [disabled]="planifEstrategicaForm.invalid">
+                                        <i class="fa fa-floppy-o"></i> Grabar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </form>
+    </div>
+</ng-template>
+
+<!-- Modal Indicadores para Añadir Elementos de IN -->
+<ng-template #planifEstrategicaIN let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+    </div>
+    <div class="modal-body">
+        <form #planifEstrategicaForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- Elemento y Tipo -->
+                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <label for="id_proy_elem_padre">Elemento</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="id_proy_elem_padre"
+                                        [value]="getElementoNombre(id_proy_elem_padre)"
+                                        disabled/>
+                                </div>
+                                  <div class="col col-xl-1 col-lg-1 mt-auto">
+                                  <label class="btn-view-bg-3" [style.backgroundColor]="'#FDC82F'"> IN </label>
+                                </div>
+
+                                <div class="col col-xl-2 col-lg-2 mt-auto"></div>
+                                <!-- Padre y Código -->
+                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <label for="padre">Padre</label>
+                                    <select
+                                        class="form-control"
+                                        id="padre"
+                                        name="padre"
+                                        [(ngModel)]="selectedParentCodigo"
+                                        [disabled]="tipo === 'OG'"
+                                        (change)="onParentChange()">
+                                        <option value="">Seleccionar padre</option>
+                                        <option *ngFor="let parent of validParents" [value]="parent.codigo">
+                                            ({{ parent.codigo }})
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- Código -->
+                                <div class="col col-xl-3 col-lg-3 mt-auto">
+                                    <label for="codigo">Código</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="codigo"
+                                        name="codigo"
+                                        [(ngModel)]="codigo"
+                                        [readonly]="true"
+                                        placeholder="Ingresa el Código"
+                                        disabled/>
+                                </div>
+                                <!-- Categoría -->
+                                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                                        <label for="inst_categoria_1">Categoría</label>
+                                        <select class="form-control" id="inst_categoria_1" name="inst_categoria_1"
+                                            [(ngModel)]="inst_categoria_1" (change)="onCategoriaChange()" (change)="ValidateCategoria1()">
+                                            <option value="" disabled selected>Seleccione una categoría</option>
+                                            <option *ngFor="let categoria of planifCategoria" [value]="categoria.id_inst_categoria">
+                                                {{ categoria.nombre }}
+                                            </option>
+                                        </select>
+                                        <span class="custom-alert-message" *ngIf="!valCategoria1">Debe elegir una Categoría</span>
+                                    </div>
+                                    
+                                    <!-- SubCategoría -->
+                                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                                        <label for="inst_categoria_2">SubCategoría</label>
+                                        <select class="form-control" id="inst_categoria_2" name="inst_categoria_2"
+                                            [(ngModel)]="inst_categoria_2" (change)="onSubCategoriaChange()">
+                                            <option value="" disabled selected>Seleccione una SubCategoría</option>
+                                            <option *ngFor="let categoria of planifSubCategoria" [value]="categoria.id_inst_categoria">
+                                                {{ categoria.nombre }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <!-- Tipo -->
+                                    <div class="col col-xl-4 col-lg-4 mt-auto">
+                                        <label for="tipoIndicador">Tipo</label>
+                                        <select class="form-control" id="inst_categoria_3" name="inst_categoria_3" [(ngModel)]="inst_categoria_3">
+                                            <option value="" disabled selected>Seleccione un Tipo</option>
+                                            <option *ngFor="let categoria of planifTipoCategoria" [value]="categoria.id_inst_categoria">
+                                                {{ categoria.nombre }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                <!-- Nombre -->
+                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                    <label for="indicador">Nombre de elemento</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="indicador"
+                                        name="indicador"
+                                        placeholder="Ingresa el Nombre de elemento"
+                                        [(ngModel)]="indicador" maxlength="100"
+                                        (change)="ValidateIndicador()"/>
+                                        <span class="custom-alert-message" *ngIf="!valIndicador">Debe ingresar el nombre del Indicador</span>
+                                </div>
+                                <div class="col col-xl-12 col-lg-12 mt-auto">
+                                    <label for="descripcion">Descripción</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="descripcion"
+                                        name="descripcion"
+                                        placeholder="Ingresa una Descripción"
+                                        [(ngModel)]="descripcion" maxlength="300"/>                                 
+                                </div>
+                                <!-- Línea base, Medida y Meta Final -->
+                                <div class="col col-xl-2 col-lg-2 mt-auto">
+                                    <label for="linea_base">Línea base</label>
+                                    <input
+                                        class="form-control text-end" type="text" id="linea_base" 
+                                        name="linea_base" placeholder="Ingresa una Línea base"
+                                        [(ngModel)]="linea_base"
+                                        (ngModelChange)="linea_base = convertToNumber($event)"/>                                  
+                                </div>
+                                <div class="col col-xl-2 col-lg-2 mt-auto">
+                                    <label for="medida">Medida</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="medida"
+                                        name="medida"
+                                        placeholder="Ingresa un Medida"
+                                        [(ngModel)]="medida" maxlength="20"/>                                 
+                                </div>
+                                 <!-- Meta Final -->
+                                <div class="col col-xl-2 col-lg-2 mt-auto">
+                                    <label for="meta_final">Meta Final</label>
+                                    <input
+                                        class="form-control text-end" type="text" id="meta_final"
+                                        name="meta_final" placeholder="Ingresa una Meta Final"
+                                        [(ngModel)]="meta_final"
+                                        (ngModelChange)="meta_final = convertToNumber($event)"/>                              
+                                </div>
+                                <!-- Medio de verificación -->
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="medio_verifica">Medio de verificación</label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        id="medio_verifica"
+                                        name="medio_verifica"
+                                        placeholder="Ingresa un Medio de verificación"
+                                        [(ngModel)]="medio_verifica" maxlength="300"/>                               
+                                </div>
+                                <!-- Supuestos/Comentario -->
+                                <div class="row">
+                                    <div class="row">
+                                        <!-- Supuestos/Comentario -->
+                                        <div class="col col-xl-7 col-lg-7 mt-auto">
+                                            <label for="comentario">Supuestos/Hipótesis</label>
+                                            <input
+                                                class="form-control"
+                                                type="text"
+                                                id="comentario"
+                                                name="comentario"
+                                                placeholder="Ingresa un comentario"
+                                                [(ngModel)]="comentario" maxlength="255"/>
+                                        </div>
+                                        <!-- Es estrategico -->
+                                        <div class="col col-xl-3 col-lg-3 mt-4">
+                                            <div class="form-check d-flex align-items-center">
+                                                <label class="form-check-label" for="es_estrategico" 
+                                                       style="font-size: 1.2rem; margin-right: 30px;">
+                                                    Es Estratégico
+                                                </label>
+                                                <input class="form-check-input" type="checkbox" id="es_estrategico" 
+                                                       [(ngModel)]="es_estrategico" name="es_estrategico"
+                                                       style="width: 25px; height: 25px; padding-left: 15px;"/>
+                                            </div>
+                                        </div>                                          
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-7 col-lg-7 mt-auto">
+                                            <label for="comentario">Periodos de Evaluación</label>                                            
+                                            <!-- Tabla Periodos de Evaluacion -->
+                                            <table
+                                                class="table custom-table-planifEstrategica table-striped table-bordered table-responsive"
+                                            >
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align: center">#</th>
+                                                        <th style="text-align: center;">Periodo</th>
+                                                        <th style="text-align: end">Valor Esperado</th>
+                                                        <th>Acción</th>                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let id of planifIDindAvance; let i = index">
+                                                        <!-- Índice -->
+                                                        <td style="text-align: center">{{ i + 1 }}</td>
+                                                        <!-- Fecha -->
+                                                        <td style="text-align: center;">{{ planifPeriodofecha[i] || 'N/A' | date:'dd/MM/yyyy' }}</td>
+                                                        <!-- Meta esperada-->
+                                                        <td style="text-align: end">{{ convertToNumber(planifMetaEsperada[i]) || 'N/A' }}</td>
+                                                        
+                                                        <td>
+                                                            <!-- Botón Editar -->
+                                                            <button type="button" class="btn btn-link"
+                                                                (click)="openEditPeriodoModal(editAvanceModal, id)">
+                                                                Editar
+                                                            </button>
+                                                            <!-- Botón Eliminar -->
+                                                            <button type="button" class="btn btn-link text-danger"
+                                                                (click)="openDeletePeriodoModal(deleteAvance, id)">
+                                                                Eliminar
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">
+                                                            <button type="button" class="btn btn-bg-1" 
+                                                                    (click)="openModalIndicadorAvance(indicadorAvance)"
+                                                                    [disabled]="!planifEstrategicaSelected?.id_proy_indicador">
+                                                                <i class="fa fa-floppy-o" aria-hidden="true"></i> 
+                                                                Añadir Nueva Meta
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                        <div class="col-xl-5 col-lg-5 mt-auto">
+                                            <div
+                                                class="d-flex justify-content-end"
+                                                style="width: 100%; flex-direction: column; align-items: end"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-bg-1"
+                                                    [disabled]="planifEstrategicaForm.invalid"
+                                                    (click)="onSubmit(); modal.close('Añadir')"
+                                                    style="width: 40%"
+                                                >
+                                                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-bg-3"
+                                                    (click)="modal.close('Cerrar')"
+                                                    style="width: 40%"
+                                                >
+                                                    <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<!-- Formulario de Edición -->
+<ng-template #editAvanceModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Editar Meta</h4>        
+    </div>
+    <div class="modal-body">
+        <form #editAvanceForm="ngForm" (ngSubmit)="onEditSubmit()">
+            <div class="form-group">
+                <label for="editFechaReportar">Fecha a Reportar:</label>
+                <input
+                    type="date"
+                    id="editFechaReportar"
+                    class="form-control text-center"
+                    [(ngModel)]="editAvance.fecha_reportar"
+                    name="fecha_reportar"
+                    required
+                />
+            </div>
+            <div class="form-group">
+                <label for="editValorEsperado">Valor Esperado:</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    id="editValorEsperado"
+                    class="form-control text-center"
+                    [(ngModel)]="editAvance.valor_esperado"
+                    (ngModelChange)="editAvance.valor_esperado = convertToNumber($event)"
+                    name="valor_esperado"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="editComentarios">Comentarios:</label>
+                <textarea
+                    id="editComentarios"
+                    class="form-control"
+                    [(ngModel)]="editAvance.comentarios"
+                    name="comentarios"
+                    maxlength="255"
+                ></textarea>
+            </div>
+                <div
+                    class="d-flex justify-content-center"
+                    style="width: 100%; flex-direction: row; align-items: center; margin-top:20px"
+                >
+                    <button
+                        type="button"
+                        class="btn btn-bg-1"
+                     
+                        (click)="onEditAvanceSubmit(); modal.dismiss('Cerrar')"
+                        style="width:20%"
+                    >
+                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-bg-3"
+                        (click)="modal.close('Cerrar')"
+                        style="width: 20%"
+                    >
+                        <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                    </button>
+                </div>
+            
+            
+        </form>
+    </div>
+</ng-template>
+<!-- //////////////////////////////////////// MODAL PARA ELIMINAR UN AVANCE  //////////////////////////////////////// -->
+<ng-template #deleteAvance let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Meta</h4>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <p>¿Está seguro de querer eliminar esta Meta?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <!-- ======= Botones ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="onDeleteAvanceSubmit(); modal.close()">
+                <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template> 
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE PLANIFICACION ESTRATEGICA ======= ======= ======= -->
+<ng-template #deleteIndicadorModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            {{ planifEstrategicaSelected?.id_proy_indicador ? 'Eliminar Indicador' : 'Eliminar Elemento' }}
+        </h4>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <p>
+                ¿Está seguro de que desea eliminar
+                {{ planifEstrategicaSelected?.id_proy_indicador ? 'el Indicador' : 'el Elemento' }} seleccionado?
+            </p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%">
+            <!-- ======= BUTTONS ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="deletePlanificacionEstrategica()">
+                <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+ <!-- ======= ======= ======= ======= ======= ======= ======= -->
+<ng-template #indicadorAvance let-modal class="custom-modal">
+    <!-- Encabezado del Modal-->
+    <div class="modal-header">
+        <h4 class="modal-title">Añadir Nueva Meta</h4>
+    </div>
+    <!-- Cuerpo del Modal-->
+    <div class="modal-body">
+        <form #inAvanceForm="ngForm" (ngSubmit)="onSudmidIndicadorAvance(inAvanceForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- Primera Fila: FECHA REPORTAR, VALOR ESPERADO-->
+                                <!-- ======= ======= FECHA ======= ======= --> 
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="fecha_reportar">Fecha reportar <span class="text-danger">*</span></label>
+                                    <input class="form-control text-center" type="date" 
+                                           id="fecha_reportar" name="fecha_reportar" 
+                                           [(ngModel)]="fecha_reportar"
+                                           required/>
+                                  </div>
+                                <!-- ======= ======= VALOR ESPERADO ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="valor_esperado">Valor Esperado</label>
+                                    <input class="form-control text-center" type="number" 
+                                           id="valor_esperado" name="valor_esperado"  
+                                           placeholder="Ingresa el valor esperado"
+                                           [(ngModel)]="valor_esperado"
+                                           (ngModelChange)="valor_esperado = convertToNumber($event)"
+                                           (change)="ValidateValorEsperado()"/> 
+                                    <span class="custom-alert-message" *ngIf="!valValorEsperado">
+                                        El valor esperado debe ser mayor o igual a 0
+                                    </span>
+                                </div>
+                                <!-- Segunda Fila: COMENTARIOS-->                            
+                                <!-- ======= ======= COMENTARIOS ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <label for="comentarios">Comentarios</label>
+                                    <input  class="form-control" type="text" 
+                                        id="comentarios" name="comentarios"  
+                                        placeholder="Ingresa un comentario"
+                                        [(ngModel)]="comentarios" maxlength="255" (change)="ValidateComentarios()"/> 
+                                    <span class="custom-alert-message" *ngIf="!valComentarios">Debe ingresar un comentario</span>       
+                                </div>
+                                <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+                                <div class="modal-footer mt-2 d-flex justify-content-center"> 
+                                    <button type="button" class="btn btn-bg-3" (click)="closeModalIndicadorAvance()">
+                                    <i class="fa fa-times"></i> Cancelar
+                                    </button>
+                                    <button type="submit" class="btn btn-bg-1" 
+                                            [disabled]="!valValorEsperado || !valComentarios">
+                                        <i class="fa fa-floppy-o"></i> Grabar
+                                    </button>                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+        </form>
+        
+    </div>
+</ng-template>
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// --> 

@@ -1,0 +1,154 @@
+<div [@routerTransition]>
+    <!-- ======= ======= ======= LOGROS HEADER SECTION ======= ======= ======= -->
+    <div class="row">
+        <div class="col col-md-6 custom-body-header">
+            <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader>
+        </div>
+        <div class="col col-md-6">
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+    <!-- ======= ======= ======= LOGROS MODAL ======= ======= ======= -->
+    <div class="card mt-4">
+        <div class="card-body custom-card table-responsive">
+            <div class="row">
+                <div class="col col-md-12">
+                    <h2 class="custom-view-title">Auditoría</h2>
+                </div>
+            </div>
+            <div class="row">
+                <!-- ======= ======= ======= FORMULARIOS SECTION ======= ======= ======= -->
+                <div class="col col-lg-8 col-md-8">
+                    <div class="row">
+                        <!-- ======= ======= SELECT SECTION ======= ======= -->
+                        <label class="custom-actividad-sub-title">
+                            Formulario
+                        </label>
+                        <div class="col col-lg-12 col-md-12">
+                            <select class="form-control" id="id_formulario" 
+                                name="id_formulario" (change)="onFormularioChange()"
+                                [(ngModel)]="id_formulario">
+                                <option value="" disabled>Seleccionar un formulario</option>
+                                <option *ngFor="let formulario of formularios" 
+                                        [value]="formulario.id_subtipo">
+                                    {{formulario.descripcion_subtipo}}
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <!-- ======= ======= ======= ======= ======= -->
+                        <!-- ======= ======= TABLE SECTION ======= ======= -->
+                        <label class="custom-actividad-sub-title">
+                            Registro de Actualizaciones
+                        </label>
+                        <div class="col col-lg-12 col-md-12">
+                            <div class="table-responsive">                                 
+                                
+                                <table class="table custom-table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Tabla</th>
+                                            <th>Acción</th>
+                                            <th>Fecha/Hora</th>                                            
+                                            <th>Persona</th>                                            
+                                            <th>Usuario</th>                                            
+                                            <th></th>                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let registro of registrosAuditoriaFormTable;">
+                                            <td>
+                                                {{ registro.id_auditoria }}
+                                            </td>
+                                            <td>
+                                                {{ getDescripcionTabla(registro.id_tabla_origen) }}
+                                            </td>
+                                            <td>
+                                                {{ getDescripcionAccion(registro.id_accion) }}
+                                            </td>
+                                            <td>
+                                                {{ registro.fecha_hora }}
+                                            </td>
+                                            <td>
+                                                {{ registro.nombres+" "+registro.apellido_1+((registro.apellido_2)?(" "+registro.apellido_2):('')) }}
+                                            </td>
+                                            <td>
+                                                {{ registro.usuario }}
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-view-bg-1"
+                                                    (click)="showRegistro(registro)">
+                                                    <i class="fa fa-eye" aria-hidden="true"></i> Ver
+                                                </button>
+                                            </td>
+                                    </tbody>
+                                </table>
+                  
+                                <div class="d-flex justify-content-center">
+                                    <ngb-pagination 
+                                        [(page)]="mainPage" 
+                                        [pageSize]="mainPageSize" 
+                                        [collectionSize]="totalLength"
+                                        [maxSize]="3"
+                                        [rotate]="true"
+                                        [boundaryLinks]="true">
+                                    </ngb-pagination>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- ======= ======= ======= ======= ======= -->
+                    </div>
+                </div>
+                <!-- ======= ======= ======= ======= ======= ======= ======= -->
+                <!-- ======= ======= ======= SHOW REGISTRO SECTION ======= ======= ======= -->
+                <div class="col col-lg-4 col-md-4 mt-4">
+                    <div class="row">
+                                
+                        <label class="custom-actividad-sub-title">
+                            Registro de Actualizaciones
+                        </label>
+                        <div class="col col-lg-12 col-md-12">
+                            <div class="table-responsive">                                 
+                                <table class="table custom-table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Campo</th>
+                                            <th>Valor</th>                                    
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let entry of registroSelected;">
+                                            <td>{{ entry.key }}</td>
+                                            <td>{{ entry.value }}</td>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- ======= ======= ======= ======= ======= ======= ======= -->
+
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+</div>
+<!-- ======= ======= ======= WAIT MESSAGE MODAL MODAL ======= ======= ======= -->
+<ng-template #waitMessageModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Cargando Datos de la Pantalla</h4>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Espere porfavor.</p>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+
+ 

@@ -1,0 +1,301 @@
+<div [@routerTransition]>
+    <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+    <div class="row">
+        <div class="col col-md-6 custom-body-header">
+            <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader>
+        </div>
+        <div class="col col-md-6">
+            <div class="row">
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro01}} Aprendizajes
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro02}} Buenas prácticas
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro03}} Lecciones
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro04}} Otros
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+    <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+    <div class="card mb-3">
+        <div class="card-body custom-card table-responsive">
+            <div class="row">
+                <div class="col col-md-12">
+                    <h2 class="custom-view-title">Aprendizajes</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12 text-end">
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initAddAprendizajes(aprendizajesFormModal)"
+                        [disabled]="(aprendizajesSelected)||(currentPerProRol.includes('LEC'))">
+                        <i class="fa fa-plus" aria-hidden="true"></i> Añadir
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initEditAprendizajes(aprendizajesFormModal)"
+                        [disabled]="(!aprendizajesSelected)||(currentPerProRol.includes('LEC'))">
+                        <i class="fa fa-pencil" aria-hidden="true"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initDeleteAprendizajes(deleteAprendizajesModal)"
+                        [disabled]="(!aprendizajesSelected)||(currentPerProRol.includes('LEC'))">
+                        <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1"
+                        (click)="downloadExcel()">
+                        <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="container mt-4">
+                    <table class="table custom-table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>FECHA APRENDIZAJE</th>
+                                <th>AREA DE APRENDIZAJE</th>
+                                <th>TIPO</th>
+                                <th>APRENDIZAJE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let aprendizaje of aprendizajesTable; let i = index">
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="aprendizaje.selected"
+                                        (change)="checkboxChanged(aprendizaje)" id="checkbox-{{ i }}" name="checkbox-{{ i }}"/>
+                                </td>
+                                <td>{{ aprendizaje.fecha }}</td>
+                                <td>{{ getDescripcionSubtipo(aprendizaje.idp_aprendizaje_area, areasAprendizaje) }}</td>
+                                <td>{{ getDescripcionSubtipo(aprendizaje.idp_aprendizaje_tipo, tiposAprendizaje) }}</td>
+                                <td>{{ aprendizaje.aprendizaje }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                  
+                    <div class="d-flex justify-content-center">
+                        <ngb-pagination 
+                            [(page)]="mainPage" 
+                            [pageSize]="mainPageSize" 
+                            [collectionSize]="totalLength"
+                            [maxSize]="3"
+                            [rotate]="true"
+                            [boundaryLinks]="true">
+                        </ngb-pagination>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row" *ngIf="aprendizajesTable.length == 0">
+                <div class="custom-no-data-container">
+                    <span class="custom-no-data-message">
+                        No existen registros para este modulo del proyecto.
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+</div>
+
+<!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
+<ng-template #aprendizajesFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #aprendizajesForm="ngForm" (ngSubmit)="onSubmit(aprendizajesForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-2 col-lg-2 mb-auto">
+                                    <label for="id_proy_aprende">Id</label>
+                                    <input class="form-control" type="text" id="id_proy_aprende" name="id_proy_aprende" 
+                                        [(ngModel)]="id_proy_aprende" disabled/>
+                                </div>
+                                <!-- ======= ======= FECHA SECTION ======= ======= -->
+                                <div class="col col-xl-3 col-lg-3 mb-auto">
+                                    <label for="fecha_registro">Fecha de resgistro</label>
+                                    <input class="form-control" type="text" id="fecha_registro" name="fecha_registro" 
+                                        [(ngModel)]="fecha_registro" disabled/>
+                                </div>
+                                <!-- ======= ======= PERSONA SECTION ======= ======= -->
+                                <div class="col col-xl-3 col-lg-3 mb-auto">
+                                    <label for="persona_registro">Persona registro</label>
+                                    <input class="form-control" type="text" id="persona_registro" name="persona_registro" 
+                                        [(ngModel)]="persona_registro" disabled/>
+                                </div>
+                                <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                                <div class="col col-xl-3 col-lg-3 mb-auto">
+                                    <label for="id_proy_elemento">Componente</label>
+                                    <select class="form-control" id="id_proy_elemento" name="id_proy_elemento" 
+                                        [(ngModel)]="id_proy_elemento" (change)="onSelectionChange()">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let componente of componentes" [value]="componente.id_proy_elemento">
+                                            {{ componente.elemento }}
+                                        </option>
+                                    </select>
+                                    <span class="custom-alert-message" *ngIf="!valComponente">Debe elegir un componente</span>
+                                </div>
+                                <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                                <div class="col col-xl-1 col-lg-1 mb-auto">
+                                    <label class="btn-view-bg-3"  [ngStyle]="{'background-color': '#'+color}">{{ sigla }}</label>
+                                </div>
+        
+                                <!-- ======= ======= AREA DE APRENDIZAJE SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="idp_aprendizaje_area">Área de aprendizaje</label>
+                                    <select class="form-control" id="idp_aprendizaje_area" name="idp_aprendizaje_area" 
+                                        [(ngModel)]="idp_aprendizaje_area" (change)="ValidateArea()">
+                                        <option value="" disabled selected>Selecciona un área</option>
+                                        <option *ngFor="let area of areasAprendizaje" [value]="area.id_subtipo">{{ area.descripcion_subtipo }}</option>
+                                    </select>
+                                    <span class="custom-alert-message" *ngIf="!valArea">Debe elegir un área</span>
+                                </div>
+                                <!-- ======= ======= TIPO APRENDIZAJE SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="idp_aprendizaje_tipo">Tipo de aprendizaje</label>
+                                    <select class="form-control" id="idp_aprendizaje_tipo" name="idp_aprendizaje_tipo" 
+                                        [(ngModel)]="idp_aprendizaje_tipo" (change)="ValidateTipo()">
+                                        <option value="" disabled selected>Selecciona un tipo</option>
+                                        <option *ngFor="let tipo of tiposAprendizaje" [value]="tipo.id_subtipo">{{ tipo.descripcion_subtipo }}</option>
+                                    </select>
+                                    <span class="custom-alert-message" *ngIf="!valTipo">Debe elegir un tipo</span>
+                                </div>
+        
+                                <!-- ======= ======= TITULO APRE SECTION ======= ======= -->
+                                <div class="col col-xl-8 col-lg-8 mb-auto">
+                                    <label for="aprendizaje">Titulo de aprendizaje</label>
+                                    <input class="form-control" type="text" id="aprendizaje" name="aprendizaje" 
+                                        placeholder="Ingresa el titulo del aprendizaje" [(ngModel)]="aprendizaje" 
+                                        (change)="ValidateAprendizaje()"/>
+                                    <span class="custom-alert-message" *ngIf="!valAprendizaje">
+                                        Debe ingresar un título válido, con menos de 50 caracteres
+                                    </span>
+                                </div>
+                                <!-- ======= ======= FECHA APREN SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mb-auto">
+                                    <label for="correo">Fecha de aprendizaje</label>
+                                    <input class="form-control" type="date" id="fecha" name="fecha" 
+                                        [(ngModel)]="fecha"/>
+                                </div>
+
+                                <!-- ======= ======= PROBLEMA SECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <label for="problema">Problema</label>
+                                    <textarea class="form-control" id="problema" name="problema" 
+                                        placeholder="¿Cual fue el problema enfrentado?" 
+                                        [(ngModel)]="problema" 
+                                        (change)="ValidateProblema()">
+                                    </textarea>
+                                    <span class="custom-alert-message" *ngIf="!valProblema">
+                                        Debe ingresar un problema válido, con menos de 500 caracteres
+                                    </span>
+                                </div>
+
+                                <!-- ======= ======= ACCION DESARROLLADA SECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <label for="accion">Acción desarrollada</label>
+                                    <textarea class="form-control" id="accion" name="accion" 
+                                        placeholder="¿Que se hizo para ayudar al problema?" 
+                                        [(ngModel)]="accion" (change)="ValidateAccion()">
+                                    </textarea>
+                                    <span class="custom-alert-message" *ngIf="!valAccion">
+                                        Debe ingresar una acción válida, con menos de 500 caracteres
+                                    </span>
+                                </div>
+
+                                <div class="custom-form-separator mx-auto my-3" style="border-color: #ffffff;"></div>
+
+                                <!-- ======= ======= PREGUNTAS SECTIONS ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <div class="row">
+                                        <div class="col col-xl-12 col-lg-12 text-center">
+                                            <label>Resultados</label>
+                                            <br>
+                                            <label [hidden]="(idp_aprendizaje_tipo != '')">
+                                                Selecciona un tipo de aprendizaje.
+                                            </label>
+                                        </div>
+                                        <div class="col col-xl-12 col-lg-12"
+                                            [hidden]="(idp_aprendizaje_tipo != 1)">
+                                            <div class="row">
+                                                <div class="col col-xl-12 col-lg-12" *ngFor="let pregunta of preguntas1; let i = index">
+                                                    <label class="text-left">{{ pregunta }}</label>
+                                                    <input class="form-control" type="text" id="pregunta1-{{ i }}" name="pregunta1-{{ i }}" 
+                                                        placeholder="Ingresa tu respuesta" [(ngModel)]="respuestas1[i]"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col col-xl-12 col-lg-12"
+                                            [hidden]="(idp_aprendizaje_tipo != 2)">
+                                            <div class="row">
+                                                <div class="col col-xl-12 col-lg-12" *ngFor="let pregunta of preguntas2; let i = index">
+                                                    <label class="text-left">{{ pregunta }}</label>
+                                                    <input class="form-control" type="text" id="pregunta2-{{ i }}" name="pregunta2-{{ i }}" 
+                                                        placeholder="Ingresa tu respuesta" [(ngModel)]="respuestas2[i]"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="aprendizajesForm.invalid" (click)="onSubmit()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE APRENDIZAJES ======= ======= ======= -->
+<ng-template #deleteAprendizajesModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar Aprendizaje</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de este aprendizaje?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="deleteAprendizajes()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->

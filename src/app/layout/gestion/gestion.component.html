@@ -1,0 +1,93 @@
+<div [@routerTransition]>
+    <!-- ======= ======= ======= LOGROS HEADER SECTION ======= ======= ======= -->
+    <div class="row">
+        <div class="col col-md-6 custom-body-header">
+            <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader>
+        </div>
+        <div class="col col-md-6">
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+    <!-- ======= ======= ======= LOGROS MODAL ======= ======= ======= -->
+    <div class="card mt-4">
+        <div class="card-body custom-card table-responsive">
+            <div class="row">
+                <div class="col col-md-12">
+                    <h2 class="custom-view-title">Gestión del Sistema</h2>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col col-xl-4 col-lg-4 mt-auto">
+                </div>
+                <!-- ======= ======= COMPONENTE SECTION ======= ======= -->
+                <div class="col col-xl-4 col-lg-4 mt-auto">
+                    <span class="custom-gestion-title">Gestión Actual</span>
+                    <select class="form-control" id="gestionActual" name="gestionActual" 
+                        [(ngModel)]="gestionActual">
+                        <option value="" disabled selected>Selecciona una gestion</option>
+                        <option *ngFor="let gestion of gestionesList" 
+                            [value]="gestion">
+                            {{ gestion }}
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="row mt-2">
+
+                <div class="col col-xl-3 col-lg-3 mt-auto">
+                </div>
+                <!-- ======= ======= CANCEL SECTION ======= ======= -->
+                <div class="col col-xl-6 col-lg-6">
+                    <div class="d-flex justify-content-center" style="width: 100%;">
+                        <button type="button" class="btn btn-bg-3" 
+                            [disabled]="gestionActual == initGestionActual" 
+                            (click)="getGestion()">
+                            <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                        </button>
+
+                        <button type="button" class="btn btn-bg-1" 
+                            [disabled]="gestionActual == initGestionActual" 
+                            (click)="initEditGestion(changeGestionModal)">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Cambiar
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+</div>
+<!-- ======= ======= ======= CHANGE GESTION MODAL ======= ======= ======= -->
+<ng-template #changeGestionModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Cambio de Gestión</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-column align-items-center" style="width: 100%;">
+            <p>¿Está seguro de querer cambiar la gestión vigente del sistema?</p>
+            <p>Esta acción afectará a todos los proyectos.</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" 
+                (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" 
+                (click)="editGestion()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Cambiar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+
+ 

@@ -1,0 +1,1236 @@
+<div [@routerTransition]>
+    <!-- ======= ======= ======= LOGROS HEADER SECTION ======= ======= ======= -->
+    <div class="row">
+        <div class="col col-md-6 custom-body-header">
+            <app-bodyHeader 
+                (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader>
+        </div>
+        <div class="col col-md-6">
+            <div class="row">
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro01}} Municipios impactados
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro02}} Comunidades
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro03}} Dias para concluir
+                </div>
+                <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
+                    {{headerDataNro04}}% Porcentaje ejecutado
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+    <!-- ======= ======= ======= INF PROYECTOS SCREEN ======= ======= ======= -->
+    <div class="container-grid">
+        <div class="data-project-section">
+            <div class="card">
+                <div class="card-body custom-card py-1">
+                    <div class="row">
+                        <div class="col col-md-12">
+                            <h2 class="custom-info-proy-title my-0">Datos del proyecto</h2>
+                        </div>
+                        <div class="col col-md-6 custom-info-section-separator">
+                            <div class="row">
+                                <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                <div class="col col-lg-12 col-md-12 my-auto">
+                                    <h2 class="custom-info-proy-sub-title">Nombre corto del proyecto</h2>
+                                    <input class="form-control custom-info-proy-input" type="text" 
+                                        id="proyecto" name="proyecto" 
+                                        [(ngModel)]="proyectoScope.proyecto" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
+                                </div>
+                                <div class="col col-lg-12 col-md-12">
+                                    <!-- ======= ======= ======= NOMBRE COMPLETO PROYECTO ======= ======= ======= -->
+                                    <h2 class="custom-info-proy-sub-title">Nombre completo del proyecto</h2>
+                                    <textarea class="form-control custom-info-proy-input" id="descripcion" name="descripcion" 
+                                        [(ngModel)]="proyectoScope.descrpcion" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))">
+                                    </textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!-- ======= ======= ======= RESPONSABLE PROYECTO ======= ======= ======= -->
+                                <div class="col col-lg-6 col-md-6 my-auto pr-0">
+                                    <h2 class="custom-info-proy-sub-title">Responsable de registro</h2>
+                                    <select class="form-control custom-info-proy-input" id="id_person_resp" name="id_person_resp" 
+                                        [(ngModel)]="proyectoScope.id_person_resp" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))">
+                                        <option value="" disabled selected>Selecciona un responsable</option>
+                                        <option *ngFor="let persona of personas" [value]="persona.id_persona">
+                                            {{ persona.nombres +" "+ persona.apellido_1 +" "+((persona.apellido_2)?(persona.apellido_2):("")) }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- ======= ======= ======= UNIDAD PROYECTO ======= ======= ======= -->
+                                <div class="col col-lg-6 col-md-6 my-auto pr-0">
+                                    <h2 class="custom-info-proy-sub-title">Unidad ejecutora</h2>
+                                    <select class="form-control custom-info-proy-input" id="id_inst_unidad" name="id_inst_unidad" 
+                                        [(ngModel)]="proyectoScope.id_inst_unidad" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))">
+                                        <option value="" disabled selected>Selecciona una unidad</option>
+                                        <option *ngFor="let unidad of unidades" [value]="unidad.id_inst_unidad">
+                                            {{ unidad.unidad }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- ======= ======= ======= NOTAS PROYECTO ======= ======= ======= -->
+                                <div class="col col-md-12"> 
+                                    <h2 class="custom-info-proy-sub-title">Notas adicionales</h2>
+                                    <textarea class="form-control custom-info-proy-input" id="notas" name="notas" 
+                                        [(ngModel)]="proyectoScope.notas" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-md-6">
+                            <div class="row">
+                                <div class="col col-md-4">
+                                    <h2 class="custom-info-proy-sub-title my-0">Objetivos FAN a los que contribuye</h2>
+                                </div>
+                                <div class="col col-md-8">
+                                    <h2 class="custom-info-proy-sub-title my-0">Objetivos ODS a los que contribuye</h2>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col col-md-4 custom-obj-pool px-0">
+                                    <div class=""
+                                        *ngFor="let objetivo of objetivosFAN"
+                                        [ngClass]="[
+                                            getObjOptCSSClass(objetivo),
+                                            getObjOptCSSClassPointer()
+                                        ]"
+                                        (click)="onObjetivoClick(objetivo)">
+                                        <div class="row mt-auto">
+                                            <img class="col col-lg-12 col-md-12 custom_logro_img" 
+                                                [src]="(objetivo.objetivo_imagen)||(defaultImageSrc)" 
+                                                alt="Imagen del objetivo">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col col-md-8 custom-obj-pool">
+                                    <div class="row">
+
+                                        <div class="col col-md-2 px-0"
+                                            *ngFor="let objetivo of objetivosODS"
+                                            [ngClass]="[
+                                                getObjOptCSSClass(objetivo),
+                                                getObjOptCSSClassPointer()
+                                            ]"
+                                            (click)="onObjetivoClick(objetivo)">
+                                            <div class="row mt-auto">
+                                                <img class="col col-lg-12 col-md-12 custom_logro_img" 
+                                                    [src]="(objetivo.objetivo_imagen)||(defaultImageSrc)" 
+                                                    alt="Imagen del objetivo">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col col-md-12">
+                                    <span class="custom-info-proy-sub-title my-0">Guia</span>
+                                    <!-- ======= ======= ======= PRINCIPAL ======= ======= ======= -->
+                                    <button type="button" class="btn" 
+                                        [class]="getObjBttnCSSClass(1)" 
+                                        (click)="onObjetivoButtonChange(1)" 
+                                        [disabled]="!buttonValidations.editMode">
+                                        PRINCIPAL
+                                    </button>
+                                    <!-- ======= ======= ======= SIGNIFICATIVO ======= ======= ======= -->
+                                    <button type="button" class="btn" 
+                                        [class]="getObjBttnCSSClass(2)" 
+                                        (click)="onObjetivoButtonChange(2)" 
+                                        [disabled]="!buttonValidations.editMode">
+                                        SIGNIFICATIVO
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="custom-buttons-section">
+            <div class="card">
+                <div class="card-body custom-card px-3 py-1">
+                    <div class="row">
+                        <!-- ======= ======= ======= TITLE DATE ======= ======= ======= -->
+                        <h2 class="custom-info-proy-title">Estado de proyecto:</h2>
+                        <h2 class="custom-estado-proy">{{ proyectoScope.estado_proy }}</h2>
+
+                        <!-- ======= ======= ======= GRABAR ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-1" 
+                            [disabled]="!buttonValidations.grabarCancelar" 
+                            (click)="editInfProyecto()">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+                        </button>
+                        <!-- ======= ======= ======= CANCELAR ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-3" 
+                            [disabled]="!buttonValidations.grabarCancelar" 
+                            (click)="disableEditMode()">
+                            <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+                        </button>
+                        <!-- ======= ======= ======= EDITAR ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-1" 
+                            [disabled]="!buttonValidations.editar" 
+                            (click)="enableEditMode()">
+                            Editar
+                        </button>
+                        <!-- ======= ======= ======= REPORTE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="openModal(activarProyectoModal)"
+                            [disabled]="(!buttonValidations.activar)||(buttonValidations.editMode)">
+                            Activar
+                        </button>
+                        <!-- ======= ======= ======= EVALUACION ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="openModal(evaluarProyectoModal)"
+                            [disabled]="(!buttonValidations.evaluacion)||(buttonValidations.editMode)">
+                            Evaluación
+                        </button>
+                        <!-- ======= ======= ======= CONCLUIR CANCELAR ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="openModal(concluirCancelarProyectoModal)"
+                            [disabled]="(!buttonValidations.concluirCancelar)||(buttonValidations.editMode)">
+                            Concluir/Cancelar
+                        </button>
+                        <!-- ======= ======= ======= ANADIR ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="initAddProyecto(addProyectoModal)"
+                            [disabled]="(!buttonValidations.aniadir)||(buttonValidations.editMode)">
+                            Añadir
+                        </button>
+                        <!-- ======= ======= ======= ELIMINAR ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="initDeleteProyecto(deleteProyectoModal)"
+                            [disabled]="(!buttonValidations.eliminar)||(buttonValidations.editMode)">
+                            Eliminar
+                        </button>
+                        <!-- ======= ======= ======= REPORTE ======= ======= ======= -->
+                        <button type="button" class="btn btn-bg-2" 
+                            (click)="generatePdf()"
+                            [disabled]="(!buttonValidations.reporte)||(buttonValidations.editMode)">
+                            Descargar Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="custom-date-section">
+            <div class="card">
+                <div class="card-body custom-card  py-1">
+                    <div class="row">
+                        <div class="col col-md-12">
+                            <h2 class="custom-info-proy-title m-0">Fechas</h2>
+                        </div>
+                        <div class="col col-md-6 custom-date-section-col custom-date-section-y-separator">
+                            <!-- ======= ======= ======= FIRMA CONVENIO DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Firma convenio</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_convenio" name="fecha_convenio" 
+                                        [(ngModel)]="proyectoScope.fecha_convenio" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= DESEMBOLSO DATE ======= ======= ======= -->
+                            <div class="row py-0 custom-date-section-x-separator">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">1er desembolso</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_desembolso_1" name="fecha_desembolso_1" 
+                                        [(ngModel)]="proyectoScope.fecha_desembolso_1" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= INICIO REAL DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Inicio real de proyecto</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_inicio" name="fecha_inicio" 
+                                        [(ngModel)]="proyectoScope.fecha_inicio" 
+                                        (change)="getProyectDateGaps()" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= FIN PLANIFICADO DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Fin planificado de proyecto</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_fin" name="fecha_fin" 
+                                        [(ngModel)]="proyectoScope.fecha_fin" 
+                                        (change)="getProyectDateGaps()" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-md-6 custom-date-section-col">
+                            <!-- ======= ======= ======= REPORTE INDICADORES DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Reporte indicadores</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <select class="form-control custom-info-proy-input" id="idp_periodo_evaluacion" name="idp_periodo_evaluacion" 
+                                        [(ngModel)]="proyectoScope.idp_periodo_evaluacion" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let periodo of periodos" [value]="periodo.id_subtipo">
+                                            {{ periodo.descripcion_subtipo }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= PRIMER REPORTE INDICADORES DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title" for="">Primer reporte</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_evaluacion_1" name="fecha_evaluacion_1" 
+                                        [(ngModel)]="proyectoScope.fecha_evaluacion_1" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-6 pr-0">
+                                    <label class="custom-info-proy-sub-title custom-text-color-3" for="">Fin ampliado de proyecto</label>
+                                </div>
+                                <div class="col col-md-6 my-auto px-0">
+                                    <input class="form-control custom-info-proy-input" type="date" 
+                                        id="fecha_fin_ampliada" name="fecha_fin_ampliada" 
+                                        [(ngModel)]="proyectoScope.fecha_fin_ampliada" 
+                                        (change)="getProyectDateGaps()" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
+                                </div>
+                            </div>
+                            <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
+                            <div class="row py-0">
+                                <div class="col col-md-12 custom-date-diference">
+                                    <div class="row">
+                                        <div class="col col-md-4 pr-0">
+                                            <label class="custom-info-proy-sub-title custom-text-color-3">Tiempo avanzado</label>
+                                        </div>
+                                        <div class="col col-md-8 px-0 my-auto">
+                                            <label class="custom-info-proy-sub-title custom-text-color-3">
+                                                <span class="custom-info-text-box">
+                                                    {{ currentDateGap }}
+                                                </span>
+                                                <span class="mx-1">
+                                                    de
+                                                </span>
+                                                <span class="custom-info-text-box">
+                                                    {{ finalDateGap }}
+                                                </span>
+                                                <span class="mx-1">
+                                                    dias.
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="b">
+            <div class="card">
+                <div class="card-body custom-card  py-1">
+                    <div class="row">
+                        <div class="col col-md-12 pl-2 pr-0">
+                            <h2 class="custom-info-proy-title my-0">Presupuesto</h2>
+                        </div>
+                        <!-- ======= ======= FINANCIADORES SECTION ======= ======= -->
+                        <div class="col col-md-6 pl-2 pr-0">
+                            <div class="row">
+                                <!-- ======= INPUT PRESUPUESTOS SECTION ======= -->
+                                <div class="col col-md-4 pe-0">
+                                    <label class="custom-info-proy-sub-title" for="">Moneda</label>
+                                    <input class="form-control custom-info-proy-input" type="text" 
+                                        id="moneda_presupuesto" name="moneda_presupuesto" 
+                                        [(ngModel)]="proyectoScope.moneda_presupuesto" 
+                                        disabled/>
+                                </div>
+                                <div class="col col-md-8 ps-0 text-end">
+                                    <label class="custom-info-proy-sub-title" for="">Total (Bs)</label>
+                                    <input class="form-control custom-info-proy-input text-end" type="text" 
+                                        id="presupuesto_mn" name="presupuesto_mn" 
+                                        [(ngModel)]="proyectoScope.presupuesto_mn" 
+                                        [disabled]="(!buttonValidations.editMode)||
+                                            ((currentPerProRol == 'ESC')&&
+                                            (proyectoScope.idp_estado_proy == 1))"/>
+                                </div>
+                                <!-- ======= ======= ======= -->
+                                <!-- ======= TABLE PRESUPUESTOS SECTION ======= -->
+                                <div class="col col-md-7">
+                                    <label class="custom-info-proy-sub-title" for="">Composición del Presupuesto</label>
+                                </div>
+                                <div class="col col-md-5 text-end">
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
+                                        (click)="initAddFinanciadores(presupuestoFormModal)"
+                                        [disabled]="((financiadoresSelected)||((!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))))">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
+                                        (click)="initEditFinanciadores(presupuestoFormModal)"
+                                        [disabled]="((!financiadoresSelected)||((!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))))">
+                                        <i class="fa fa-caret-up" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
+                                        (click)="initDeleteFinanciadores(deletePresupuestoModal)"
+                                        [disabled]="((!financiadoresSelected)||((!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))))">
+                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div class="col col-md-12 custom-table-info-proy-4-container">
+
+                                    <table class="table custom-table table-striped table-bordered custom-table-info-proy-3" style="max-height: 200px;">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Financiador</th>
+                                                <th>Tipo</th>
+                                                <th>%</th>
+                                                <th>Monto Bs</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let financiador of financiadores; let i = index">
+                                                <td>
+                                                    <input type="checkbox" [(ngModel)]="financiador.selected"
+                                                        id="checkbox-{{ i }}" name="checkbox-{{ i }}"
+                                                        (change)="finanCheckboxChanged(financiador)" 
+                                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
+                                                </td>
+                                                <td>{{ getInstitucionName(financiador.id_institucion_fin) }}</td>
+                                                <td>{{ getTipoFinanParam(financiador.idp_tipo_finan) }}</td>
+                                                <td>{{ financiador.porcentaje }}</td>
+                                                <td>{{ parseAmountFloatToStr(parseAmountStrToFloat(proyectoScope.presupuesto_mn) * ( financiador.porcentaje / 100 )) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <!-- ======= ======= ======= -->
+                            </div>
+                        </div>
+                        <!-- ======= ======= ======= ======= ======= -->
+                        <!-- ======= ======= PRESUPUETOS SECTION ======= ======= -->
+                        <div class="col col-md-6 pl-2 pr-0">
+
+                            <div class="col col-md-12 text-end">
+                                <button type="button" class="btn btn-bg-1 custom-btn-info" style="font-size: 10px;"
+                                    (click)="initPresuAdicionalForm(presuAdicionalFormModal)"
+                                    [disabled]="(!buttonValidations.editMode)||
+                                        ((currentPerProRol.includes('ESC'))&&
+                                        (proyectoScope.idp_estado_proy.includes([1])))">
+                                    Editar Presupuesto de Gestión
+                                </button>
+                            </div>
+                            <div class="col col-md-12 custom-table-info-proy-4-container">
+
+                                <table class="table custom-table table-striped table-bordered custom-table-info-proy-3" style="max-height: 200px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Año</th>
+                                            <th>Presupuesto Bs</th>
+                                            <th>% sobre el presupuesto total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let presupuesto of presupuestos; let i = index">
+                                            <td>{{ presupuesto.anio }}</td>
+                                            <td class="text-end">{{ presupuesto.presup_adicional.replace('$', '') }}</td>
+                                            <td>{{ (presupuesto.porcentaje+"%") }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                        <!-- ======= ======= ======= ======= ======= -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="custom-location-section">
+            <div class="card">
+                <div class="card-body custom-card  py-1">
+                    <div class="row">
+                        <div class="col col-md-12">
+                            <h2 class="custom-info-proy-title m-0">Alcance Geográfico</h2>
+                        </div>
+
+                        <div class="col col-md-6">
+                            <div class="row">
+                                <div class="col col-md-12 text-end">
+                                    <button type="button" class="btn btn-bg-2 custom-btn-info" style="font-size: 10px;"
+                                        (click)="initUbicaGeo(geograficoFormModal)" 
+                                        [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))">
+                                        <i class="fa fa-tree" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div class="col col-md-12 custom-table-info-proy-4-container">
+                                    
+                                    <table class="table custom-table table-striped table-bordered custom-table-info-proy-4">
+                                        <thead>
+                                            <tr>
+                                                <th>Tipo</th>
+                                                <th>Lugar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let ubicacion of ubicacionesSel; let i = index">
+                                                <td>{{ ubicacion.idp_tipo_ubica_geo }}</td>
+                                                <td>{{ ubicacion.nombre }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="col col-md-12">
+                                    <!-- ======= ======= ======= NOMBRE PROYECTO ======= ======= ======= -->
+                                    <h2 class="custom-info-proy-sub-title">Otras</h2>
+                                    <textarea class="form-control custom-info-proy-input" id="ubica_geo_otros" name="ubica_geo_otros" 
+                                        [(ngModel)]="proyectoScope.ubica_geo_otros" [disabled]="!buttonValidations.editMode"></textarea>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="col col-md-6">
+
+                            <table class="table custom-table table-striped table-bordered custom-table-info-proy custom-table-info-proy-2">
+                                <thead>
+                                  <tr>
+                                    <th>Tipo</th>
+                                    <th></th>
+                                    <th>Lugar</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <ng-container *ngFor="let group of ubicacionesBranch">
+                                    <ng-container *ngFor="let item of group.items; let i = index">
+                                      <tr>
+                                        <td *ngIf="i == 0" [attr.rowspan]="group.rowspan">
+                                          {{ group.tipo }}
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
+                                                [(ngModel)]="item.selected" 
+                                                (change)="ubiInfCheckboxChanged(item)" 
+                                                [disabled]="(!buttonValidations.editMode)||((currentPerProRol.includes('ESC'))&&(proyectoScope.idp_estado_proy == 1))"/>
+                                        </td>
+                                        <td>
+                                            {{ item.nombre }}
+                                        </td>
+                                      </tr>
+                                    </ng-container>
+                                  </ng-container>
+                                </tbody>
+                            </table>
+                              
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c">
+            <div class="card">
+                <div class="card-body custom-card  py-1">
+                    <div class="row">
+                        
+                        <div class="col col-md-12">
+                            <label class="custom-info-proy-sub-title" for="">Obligaciones</label>
+                        </div>
+                        <div class="col col-md-12 text-end">
+                            
+                            <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                (click)="initAddObligaciones(obligacionesFormModal)"
+                                [disabled]="((obligacionesSelected)||(!buttonValidations.editMode))">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                            
+                            <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                (click)="initEditObligaciones(obligacionesFormModal)"
+                                [disabled]="((!obligacionesSelected)||(!buttonValidations.editMode))">
+                                <i class="fa fa-caret-up" aria-hidden="true"></i>
+                            </button>
+                            
+                            <button type="button" class="btn btn-bg-2 custom-btn-info"  style="font-size: 10px;"
+                                (click)="initDeleteObligacion(deleteObligacionModal)"
+                                [disabled]="((!obligacionesSelected)||(!buttonValidations.editMode))">
+                                <i class="fa fa-minus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="col col-md-12">
+                            <table class="table custom-table table-striped table-bordered custom-table-info-proy-3">
+                                <thead>
+                                    <tr>
+                                        <th class="custom-fit-head"></th>
+                                        <th>Compromiso</th>
+                                        <th>Requisitos y/o documentos</th>
+                                        <th>Fecha obligacion</th>
+                                        <th>Estado entrega</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let obligacion of obligaciones; let i = index">
+                                        <td class="custom-fit-col">
+                                            <input type="checkbox" id="checkbox-{{ i }}" name="checkbox-{{ i }}"
+                                                [(ngModel)]="obligacion.selected" 
+                                                (change)="obligaCheckboxChanged(obligacion)" 
+                                                [disabled]="(!buttonValidations.editMode)||
+                                                    ((currentPerProRol.includes('ESC'))&&
+                                                    (proyectoScope.idp_estado_proy == 1))"/>
+                                        </td>
+                                        <td>{{ obligacion.obligacion }}</td>
+                                        <td>{{ obligacion.descripcion }}</td>
+                                        <td>{{ obligacion.fecha_obligacion }}</td>
+                                        <td>
+                                            <ng-container *ngIf="obligacion.idp_estado_entrega == 1">
+                                                <span class="btn-bg-2">
+                                                    Pendiente
+                                                </span>
+                                            </ng-container>
+                                            <ng-container *ngIf="obligacion.idp_estado_entrega == 2">
+                                                <span class="btn-bg-1">
+                                                    Entregado
+                                                </span>
+                                            </ng-container>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+</div>
+
+<!-- ======= ======= ======= ACTIVATE PROJECT MODAL ======= ======= ======= -->
+<ng-template #activarProyectoModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Activar proyecto</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer activar el proyecto?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="setEstadoProyecto(1)">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Activar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= EVALUAR PROJECT MODAL ======= ======= ======= -->
+<ng-template #evaluarProyectoModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Evaluar proyecto</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer evaluar el proyecto?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="setEstadoProyecto(5)">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Evaluar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= CONCLUIR CANCELAR PROJECT MODAL ======= ======= ======= -->
+<ng-template #concluirCancelarProyectoModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Concluir/Cancelar proyecto</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer cambiar el estado del proyecto?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-2" (click)="setEstadoProyecto(3)">
+                Cancelar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="setEstadoProyecto(2)">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Concluir
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= ADD PROYECTO MODAL ======= ======= ======= -->
+<ng-template #addProyectoModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Agregar nuevo Proyecto</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col col-xl-3 col-lg-3">
+            </div>
+            <!-- ======= ======= PROYECTO NAME SECTION ======= ======= -->
+            <div class="col col-xl-6 col-lg-6">
+                <label for="addProyectoName">Ingrese el nombre del nuevo Proyecto.</label>
+                <input class="form-control" type="text" 
+                    id="addProyectoName" name="addProyectoName" 
+                    placeholder="Ingrese un nombre de proyecto" 
+                    [(ngModel)]="addProyectoName"
+                    (change)="validateAddProyectoName()"/>
+                <span class="custom-alert-message" 
+                    *ngIf="!valAddProyectoName">
+                    Debe ingresar un nombre de proyecto válido, con menos de 150 caracteres.
+                </span>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" 
+                (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" 
+                (click)="addProyecto()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Agregar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE OBLIGACON MODAL ======= ======= ======= -->
+<ng-template #deleteProyectoModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar proyecto</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de este Proyecto?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" 
+                (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" 
+                (click)="deleteProyecto()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= ADD PRESUPUESTO MODAL ======= ======= ======= -->
+<ng-template #presupuestoFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #presupuestoForm="ngForm" (ngSubmit)="onSubmit(presupuestoForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="id_proy_finan">Id</label>
+                                    <input class="form-control" type="text" id="id_proy_finan" name="id_proy_finan" 
+                                        [(ngModel)]="financiadores.id_proy_finan" disabled/>
+                                </div>
+                                <!-- ======= ======= INSTITUCION FIN SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="id_institucion_fin">Institución Financiadora</label>
+                                    <select class="form-control" id="id_institucion_fin" name="id_institucion_fin" 
+                                        [(ngModel)]="financiadores.id_institucion_fin" (change)="ValidateIdInstitucionFin()">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let institucion of instituciones" [value]="institucion.id_institucion">
+                                            {{ institucion.institucion }}
+                                        </option>
+                                    </select>
+                                    <span class="custom-alert-message" *ngIf="!valIdInstitucionFin">Debe seleccionar una institución financiadora.</span>
+                                </div>
+
+                                <!-- ======= ======= PORCENTAJE SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="porcentaje">Porcentaje</label>
+                                    <input class="form-control" type="number" min="0" max="100" placeholder="Ingrese un porcentaje" 
+                                        id="porcentaje" name="porcentaje" [(ngModel)]="financiadores.porcentaje"
+                                        (change)="onPocentajeChange()"/>
+                                    <span class="custom-alert-message" *ngIf="!valPorcentaje">Debe ingresar un porcentaje válido.</span>
+                                </div>
+                                <!-- ======= ======= MONTO SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="monto">Monto</label>
+                                    <input class="form-control" type="text" id="monto" name="monto" 
+                                        [(ngModel)]="financiadores.monto" disabled/>
+                                </div>
+                                
+                                <!-- ======= ======= TIPO FINAN SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="idp_tipo_finan">Tipo Financiador</label>
+                                    <select class="form-control" id="idp_tipo_finan" name="idp_tipo_finan" 
+                                        [(ngModel)]="financiadores.idp_tipo_finan" (change)="ValidateIdTipoFinan()">
+                                        <option value="" disabled selected>Selecciona un elemento</option>
+                                        <option *ngFor="let tipoFinanciador of tipoFinanciadores" [value]="tipoFinanciador.id_subtipo">
+                                            {{ tipoFinanciador.descripcion_subtipo }}
+                                        </option>
+                                    </select>
+                                    <span class="custom-alert-message" *ngIf="!valIdTipoFinan">Debe seleccionar un tipo de financiador.</span>
+                                </div>
+                                
+                                <!-- ======= ======= ORDEN SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="orden">Orden</label>
+                                    <input class="form-control" type="number" min="1" placeholder="Ingrese un orden"
+                                        id="orden" name="orden" [(ngModel)]="financiadores.orden" (change)="ValidateOrden()"/>
+                                    <span class="custom-alert-message" *ngIf="!valOrden">Debe ingresar un orden válido.</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="presupuestoForm.invalid" 
+                (click)="financiadoresOnSubmit()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE PRESUPUESTO MODAL ======= ======= ======= -->
+<ng-template #deletePresupuestoModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar financiador</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de este financiador?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="deleteFinanciadores();">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= EDIT PRESU ADICIONAL MODAL ======= ======= ======= -->
+<ng-template #presuAdicionalFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #presuAdicionalForm="ngForm" (ngSubmit)="onSubmit(presuAdicionalForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="id_proy_presupuesto">Id</label>
+                                    <input class="form-control" type="text" id="id_proy_presupuesto" name="id_proy_presupuesto" 
+                                        [(ngModel)]="presupuestoActual.id_proy_presupuesto" disabled/>
+                                </div>
+                                <!-- ======= ======= ANIO SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="anio">Año</label>
+                                    <input class="form-control" type="text" id="anio" name="anio" 
+                                        [(ngModel)]="presupuestoActual.anio" disabled/>
+                                </div>
+                                <!-- ======= ======= PRESU ADICIONAL SECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <label for="presup_adicional">Presupuesto</label>
+                                    <input class="form-control text-end" type="text" 
+                                        id="presup_adicional" name="presup_adicional" 
+                                        [(ngModel)]="presuPresupuestoAux" 
+                                        (change)="onPresuAdicionalChange()" />
+                                    <span class="custom-alert-message" *ngIf="!valPresupAdicional1">
+                                        Debe ingresar un presupuesto válido.
+                                    </span>
+                                    <span class="custom-alert-message" *ngIf="!valPresupAdicional2">
+                                        El presupuesto por gestiones supera al presupuesto de proyecto.
+                                    </span>
+                                </div>
+                                <!-- ======= ======= PORCENTAJESECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <label for="presup_adicional">Porcentaje</label>
+                                    <input class="form-control" type="text" 
+                                        id="presup_porcentaje" name="presup_porcentaje" 
+                                        [(ngModel)]="presuPorcentajeAux" disabled/>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" 
+                (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" 
+                [disabled]="presuAdicionalForm.invalid" 
+                (click)="presuAdicionalOnSubmit()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+
+<!-- ======= ======= ======= UBICA GEOGRAFICA MDOAL ======= ======= ======= -->
+<ng-template #geograficoFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #geograficoForm="ngForm" (ngSubmit)="onSubmit(geograficoForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+
+                                <app-navigationDropdown [items]="ubicaciones"></app-navigationDropdown>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" [disabled]="geograficoFormModal.invalid" (click)="onUbicaGeoSubmit()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Elegir
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= OBLIGACIONES MODAL ======= ======= ======= -->
+<ng-template #obligacionesFormModal let-modal class="custom-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form #obligacionesForm="ngForm" (ngSubmit)="onSubmit(obligacionesForm)">
+            <div class="row">
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+                            <div class="row">
+
+                                <!-- ======= ======= ID SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="id_proy_obliga">Id</label>
+                                    <input class="form-control" type="text" id="id_proy_obliga" name="id_proy_obliga" 
+                                        [(ngModel)]="obligacionesModel.id_proy_obliga" disabled/>
+                                </div>
+                                <!-- ======= ======= FECHA REGISTRO SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <!--label for="fecha_registro">Fecha registro</label>
+                                    <input class="form-control" type="date" id="fecha_registro" name="fecha_registro" 
+                                        [(ngModel)]="obligacionesModel.fecha_registro" disabled/-->
+                                </div>
+
+                                <!-- ======= ======= OBLIGACION SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="obligacion">Obligación</label>
+                                    <input class="form-control" type="text" id="obligacion" name="obligacion" placeholder="Ingresa el requisito"
+                                        [(ngModel)]="obligacionesModel.obligacion" (change)="ValidateObligacion()"/>
+                                    <span class="custom-alert-message" *ngIf="!valObligacion">Debe ingresar una obligacion valida, con menos de 100 caracteres.</span>
+                                </div>
+                                <!-- ======= ======= DESCRIPCION SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="descripcion">Descripción</label>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Ingresa una descipción"
+                                        [(ngModel)]="obligacionesModel.descripcion" (change)="ValidateDescripcion()"></textarea>
+                                    <span class="custom-alert-message" *ngIf="!valDescripcion">Debe ingresar una descripcion valida, con menos de 250 caracteres.</span>
+                                </div>
+                                
+                                <!-- ======= ======= FECHA SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="fecha_obligacion">Fecha obligación</label>
+                                    <input class="form-control" type="date" 
+                                        id="fecha_obligacion" name="fecha_obligacion" 
+                                        [(ngModel)]="obligacionesModel.fecha_obligacion" (change)="ValidateFechaObligacion()"/>
+                                    <span class="custom-alert-message" *ngIf="!valFechaObligacion">Debe seleccionar una fecha de obligación.</span>
+                                </div>
+                                <!-- ======= ======= INSTITUCION EXIGE SECTION ======= ======= -->
+                                <div class="col col-xl-6 col-lg-6 mb-auto">
+                                    <label for="id_institucion_exige">Institución exige</label>
+                                    <select class="form-control" id="id_institucion_exige" name="id_institucion_exige" 
+                                        [(ngModel)]="obligacionesModel.id_institucion_exige" (change)="ValidateIdInstitucionExige()">
+                                        <option value="" disabled selected>Selecciona una institución</option>
+                                        <option *ngFor="let institucion of instituciones" [value]="institucion.id_institucion">
+                                            {{ institucion.institucion }}
+                                        </option>
+                                    </select>
+                                    <span class="custom-alert-message" *ngIf="!valIdInstitucionExige">Debe seleccionar una institución.</span>
+                                </div>
+                            
+                                <div class="custom-form-separator mx-auto my-3" style="border-color: #4E8646;"> 
+                                </div>
+
+                                <!-- ======= ======= FECHA HORA ENTREGA SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mb-auto">
+                                    <label for="fecha_hora_entrega">Fecha entrega</label>
+                                    <input class="form-control" type="date" 
+                                        id="fecha_hora_entrega" name="fecha_hora_entrega" 
+                                        [disabled]="(obligacionesModel.idp_estado_entrega_init==2)"
+                                        [(ngModel)]="obligacionesModel.fecha_hora_entrega"/>
+                                </div>
+                                <!-- ======= ======= ESTADO ENTREGA SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mb-auto">
+                                    <label for="idp_estado_entrega">Estado entrega</label>
+                                    <select class="form-control" id="idp_estado_entrega" name="idp_estado_entrega" 
+                                        [(ngModel)]="obligacionesModel.idp_estado_entrega" disabled>
+                                        <option value="" disabled selected>Selecciona un estado</option>
+                                        <option *ngFor="let estadoEntrega of estadosEntrega" [value]="estadoEntrega.id_subtipo">
+                                            {{ estadoEntrega.descripcion_subtipo }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <!-- ======= ======= ID PERSONA ENTREGA SECTION ======= ======= -->
+                                <div class="col col-xl-4 col-lg-4 mb-auto">
+                                    <label for="id_persona_entrega">Persona entrega</label>
+                                    <input class="form-control" type="text" 
+                                        id="persona_entrega" name="persona_entrega" 
+                                        [(ngModel)]="obligacionesModel.persona_entrega" disabled>
+                                </div>
+
+                                <!-- ======= ======= OBLIGACIONES DATA SECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <label for="datos_documentos">Documentos de Obligacion</label>
+                                    <div class="row"
+                                        *ngFor="let datoObligacion of obligacionesModel.datos_documentos; let i = index">
+                                        <div class="col col-md-1 col-lg-1 my-auto">
+                                            {{ i+1 }}
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 my-auto text-end">
+                                            <label for="datos_documentos">Titulo:</label>
+                                        </div>
+                                        <div class="col col-md-3 col-lg-3">
+                                            <input class="form-control" type="text" 
+                                                [id]="'datos_documentos_titulo_' + i"
+                                                [name]="'datos_documentos_titulo_' + i"
+                                                [disabled]="(obligacionesModel.idp_estado_entrega_init==2)"
+                                                [(ngModel)]="datoObligacion.titulo">
+                                        </div>
+                                        <div class="col col-md-2 col-lg-2 my-auto text-end">
+                                            <label for="datos_documentos">Ruta Documento:</label>
+                                        </div>
+                                        <div class="col col-md-4 col-lg-4">
+                                            <input class="form-control" type="text" 
+                                                [id]="'datos_documentos_url_' + i"
+                                                [name]="'datos_documentos_url_' + i"
+                                                [disabled]="(obligacionesModel.idp_estado_entrega_init==2)"
+                                                [(ngModel)]="datoObligacion.url">
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1 d-flex align-items-center justify-content-center">
+                                            <button type="button" class="btn btn-bg-1" 
+                                                [disabled]="(!datoObligacion.url)"
+                                                (click)="openUrl(datoObligacion.url)">
+                                                <i class="fa fa-external-link" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <span class="custom-alert-message" *ngIf="!valDatosDocumentos">La carga de documentos sobre carga la base de datos.</span>
+                                </div>
+                                <!-- ======= ======= OBLIGACIONES DATA SECTION ======= ======= -->
+                                <div class="col col-xl-12 col-lg-12 mb-auto">
+                                    <div class="row">
+                                        <div class="col col-md-5 col-lg-5">
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1">
+                                            <button type="button" class="btn btn-bg-1" 
+                                                [disabled]="(obligacionesModel.datos_documentos.length == 1)"
+                                                (click)="changeObligacionesDocumentosLength(-1)">
+                                                <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col col-md-1 col-lg-1">
+                                            <button type="button" class="btn btn-bg-1" 
+                                                (click)="changeObligacionesDocumentosLength(1)">
+                                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-2" 
+                [disabled]="(obligacionesModel.idp_estado_entrega_init==2)"
+                (click)="initEntregaObligaciones(entregarObligacionModal)">
+                <i class="fa fa-check" aria-hidden="true"></i> Entregar
+            </button>
+            <button type="button" class="btn btn-bg-1" 
+                (click)="obligacionesOnSubmit()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Grabar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= ENTREGAR OBLIGACON MODAL ======= ======= ======= -->
+<ng-template #entregarObligacionModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Entregar obligación</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer entregar esta obligación?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="entregaObligaciones()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Entregar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE OBLIGACON MODAL ======= ======= ======= -->
+<ng-template #deleteObligacionModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Eliminar obligación</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de esta obligación?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="deleteObligacion()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= WAIT MESSAGE MODAL MODAL ======= ======= ======= -->
+<ng-template #waitMessageModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Cargando Datos de la Pantalla</h4>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Espere porfavor.</p>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->

@@ -1,41 +1,61 @@
 <div [@routerTransition]>
+    <!-- ======= ======= ======= PERSONA ROLES HEADER ======= ======= ======= -->
     <div class="row">
         <div class="col col-md-6 custom-body-header">
-            <app-bodyHeader></app-bodyHeader>
+            <app-bodyHeader
+                (selectionChange)="onChildSelectionChange($event)">
+            </app-bodyHeader>
         </div>
         <div class="col col-md-6">
             <div class="row">
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    8 Personas
+                    {{headerDataNro01}} Personas
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    7 Administrador de Sistema
+                    {{headerDataNro02}} Proyectos
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    6 Controladores
+                    {{headerDataNro03}} Administrador de Sistema
                 </div>
                 <div class="col col-md-3 m-1 d-flex justify-content-center align-items-center custom-info-cards">
-                    5 Responsables de Proyecto
+                    {{headerDataNro04}} Responsables de Proyecto
                 </div>
             </div>
         </div>
     </div>
-    <app-page-header [heading]="'Persona y Roles'" [icon]="'fa-table'"></app-page-header>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
+    <!-- ======= ======= ======= PERSONA ROLES TABLE SECTION ======= ======= ======= -->
     <div class="card mb-3">
         <div class="card-body custom-card table-responsive">
             <div class="row">
+                <div class="col col-md-12">
+                    <h2 class="custom-view-title">Persona y Roles</h2>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col col-xl-12 col-lg-12 text-end">
-                    <button type="button" class="btn btn-view-bg-1" (click)="openModal(personaRolesFormModal)">
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initAddPersonaRoles(personaRolesFormModal)"
+                        [disabled]="(personaRolesSelected)||(currentPerProRol.includes('LEC'))">
                         <i class="fa fa-plus" aria-hidden="true"></i> Añadir
                     </button>
-                    <button type="button" class="btn btn-view-bg-1" (click)="openModal(personaRolesFormModal)">
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initEditPersonaRoles(personaRolesFormModal)"
+                        [disabled]="(!personaRolesSelected)||(currentPerProRol.includes('LEC'))">
                         <i class="fa fa-pencil" aria-hidden="true"></i> Editar
                     </button>
-                    <button type="button" class="btn btn-view-bg-1" (click)="openModal(deletePersonaRolesModal)">
+                    <button type="button" class="btn btn-view-bg-1" 
+                        (click)="initDeletePersonaRoles(deletePersonaRolesModal)"
+                        [disabled]="(!personaRolesSelected)||(currentPerProRol.includes('LEC'))">
                         <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                    </button>
+                    <button type="button" class="btn btn-view-bg-1"
+                        (click)="downloadExcel()">
+                        <i class="fa fa-file-text" aria-hidden="true"></i> Descargar reporte
                     </button>
                 </div>
             </div>
+            
             <div class="row">
                 <div class="container mt-4">
                     <table class="table custom-table table-striped table-bordered">
@@ -58,35 +78,60 @@
                             <tr *ngFor="let personaRol of personasRolesTable; let i = index">
                                 <td>
                                     <input type="checkbox" [(ngModel)]="personaRol.selected"
-                                        (change)="checkboxChanged(personaRol)" id="checkbox-{{ i }}"/>
+                                        (change)="checkboxChanged(personaRol)" id="checkbox-{{ i }}" name="checkbox-{{ i }}"/>
                                 </td>
-                                <td>{{ (page - 1) * pageSize + i + 1 }}</td>
-                                <td>{{ personaRol.name }}</td>
-                                <td>{{ personaRol.job }}</td>
+                                <td>{{ personaRol.id_persona }}</td>
+                                <td>{{ personaRol.nombres }}</td>
+                                <td>{{ personaRol.apellido_1 }}</td>
+                                <td>{{ personaRol.apellido_2 }}</td>
+                                <td>{{ personaRol.telefono }}</td>
+                                <td>{{ personaRol.correo }}</td>
+                                <td>{{ personaRol.usuario }}</td>
+                                <td>{{ personaRol.unidad }}</td>
+                                <td>
+                                    <ng-container *ngIf="isRespOfUnit(personaRol.id_persona); else notEqual">
+                                      <i class="fa fa-check-circle-o mx-auto custom-checker-checked" aria-hidden="true"></i>
+                                    </ng-container>
+                                    <ng-template #notEqual>
+                                      <i class="fa fa-circle-o mx-auto custom-checker" aria-hidden="true"></i>
+                                    </ng-template>
+                                  </td>
+                                <td>{{ personaRol.cargo }}</td>
                             </tr>
                         </tbody>
                     </table>
                   
                     <div class="d-flex justify-content-center">
                         <ngb-pagination 
-                            [(page)]="page" 
-                            [pageSize]="pageSize" 
+                            [(page)]="mainPage" 
+                            [pageSize]="mainPageSize" 
                             [collectionSize]="totalLength"
                             [maxSize]="3"
                             [rotate]="true"
                             [boundaryLinks]="true">
                         </ngb-pagination>
                     </div>
+                    
                 </div>
             </div>
+
+            <div class="row" *ngIf="personasRolesTable.length == 0">
+                <div class="custom-no-data-container">
+                    <span class="custom-no-data-message">
+                        No existen registros para este modulo del proyecto.
+                    </span>
+                </div>
+            </div>
+
         </div>
     </div>
+    <!-- ======= ======= ======= ======= ======= ======= ======= -->
 </div>
 
 <!-- ======= ======= ======= ADD PERSONA ROLES MDOAL ======= ======= ======= -->
 <ng-template #personaRolesFormModal let-modal class="custom-modal">
     <div class="modal-header">
-        <h4 class="modal-title">Añadir Persona</h4>
+        <h4 class="modal-title">{{ modalTitle }}</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
@@ -97,113 +142,222 @@
                         <div class="card-body custom-card">
                             <div class="row">
                                 <!-- ======= ======= NOMBRE SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4">
-                                    <label for="nombre">Nombre</label>
-                                    <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="nombres">Nombre</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el nombre"
+                                        id="nombres" name="nombres" 
+                                        [(ngModel)]="nombres" (change)="ValidateNombres()" />
+                                    <span class="custom-alert-message" *ngIf="!valNombres">
+                                        Debe ingresar un nombre valido, con menos de 50 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= APELLIDO 1 SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4">
-                                    <label for="email">Primer Apellido</label>
-                                    <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="apellido_1">Primer Apellido</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el primer apellido"
+                                        id="apellido_1" name="apellido_1" 
+                                        [(ngModel)]="apellido_1" (change)="ValidateApellido1()" />
+                                    <span class="custom-alert-message" *ngIf="!valApellido1">
+                                        Debe ingresar un apellido valido, con menos de 50 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= APELLIDO 2 SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4">
-                                    <label for="email">Segundo Apellido</label>
-                                    <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="apellido_2">Segundo Apellido</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el segundo apellido"
+                                        id="apellido_2" name="apellido_2" 
+                                        [(ngModel)]="apellido_2" (change)="ValidateApellido2()" />
+                                    <span class="custom-alert-message" *ngIf="!valApellido2">
+                                        Debe ingresar un apellido valido, con menos de 50 caracteres
+                                    </span>
                                 </div>
         
                                 <!-- ======= ======= NRO DOCUMENTO SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6">
-                                    <label for="email">Numero de documento de identificacion</label>
-                                    <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="nro_documento">Numero de documento de identificación</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el numero de documento"
+                                        id="nro_documento" name="nro_documento" 
+                                        [(ngModel)]="nro_documento" (change)="ValidateNroDocumento()" />
+                                    <span class="custom-alert-message" *ngIf="!valNroDocumento">
+                                        Debe ingresar un numero de documento valido, con menos de 20 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= TIPO DOCUMENTO SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6">
-                                    <label for="email">Tipo de Documento</label>
-                                    <select class="form-control" id="role" name="nombre" [(ngModel)]="role">
-                                        <option value="" disabled selected>Selecciona un rol</option>
-                                        <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.name }}</option>
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="idp_tipo_documento">Tipo de Documento</label>
+                                    <select class="form-control" id="idp_tipo_documento" name="idp_tipo_documento" 
+                                        [(ngModel)]="idp_tipo_documento" (change)="ValidateTipoDocumento()">
+                                        <option value="" disabled selected>Selecciona un tipo de documento.</option>
+                                        <option *ngFor="let tipo of tipoDoc" [value]="tipo.id_subtipo">{{ tipo.descripcion_subtipo }}</option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valTipoDocumento">
+                                        Debe seleccionar un tipo de documento.
+                                    </span>
                                 </div>
         
                                 <!-- ======= ======= NRO TELEFONO SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6">
-                                    <label for="email">Numero de telefono</label>
-                                    <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="telefono">Número de teléfono</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el número de teléfono"
+                                        id="telefono" name="telefono" 
+                                        [(ngModel)]="telefono" (change)="ValidateTelefono()" />
+                                    <span class="custom-alert-message" *ngIf="!valTelefono">
+                                        Debe ingresar un telefono valido, con menos de 15 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= CORREO ELECTRONICO SECTION ======= ======= -->
-                                <div class="col col-xl-6 col-lg-6">
-                                    <label for="email">Correo electronico</label>
-                                    <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                <div class="col col-xl-6 col-lg-6 mt-auto">
+                                    <label for="correo">Correo electrónico</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el correo electrónico"
+                                        id="correo" name="correo" 
+                                        [(ngModel)]="correo" (change)="ValidateCorreo()" />
+                                    <span class="custom-alert-message" *ngIf="!valCorreo">
+                                        Debe ingresar un correo valido, con menos de 100 caracteres
+                                    </span>
                                 </div>
         
+                                <div class="custom-form-separator mx-auto my-3"></div>
+                                
                                 <!-- ======= ======= UNIDAD SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4">
-                                    <label for="email">Unidad</label>
-                                    <select class="form-control" id="role" name="nombre" [(ngModel)]="role">
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="unidad">Unidad</label>
+                                    <select class="form-control" id="id_inst_unidad" name="id_inst_unidad" 
+                                        [(ngModel)]="id_inst_unidad" 
+                                        (change)="ValidateUnidad()">
                                         <option value="" disabled selected>Selecciona una unidad</option>
-                                        <option *ngFor="let unidad of unidades" [value]="unidad.id">{{ unidad.name }}</option>
+                                        <option *ngFor="let unidad of unidades" [value]="unidad.id_inst_unidad">{{ unidad.unidad }}</option>
                                     </select>
+                                    <span class="custom-alert-message" *ngIf="!valUnidad">
+                                        Debe seleccionar una unidad.
+                                    </span>
                                 </div>
                                 <!-- ======= ======= CARGO SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4">
-                                    <label for="email">Cargo</label>
-                                    <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="cargo">Cargo</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el cargo del usuario"
+                                        id="cargo" name="cargo" 
+                                        [(ngModel)]="cargo" 
+                                        (change)="ValidateCargo()" />
+                                    <span class="custom-alert-message" *ngIf="!valCargo">
+                                        Debe ingresar un cargo valido, con menos de 100 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= RESPONSABLE SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4">
-                                    <input class="form-check-input custom-form-checkbox" type="checkbox" id="responsable" name="nombre" [(ngModel)]="responsable">
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <input class="form-check-input custom-form-checkbox" type="checkbox" 
+                                        id="responsable" name="responsable"
+                                        [(ngModel)]="responsable" 
+                                        (change)="onResponsableChanged(messagePersonaRolesModal)">
                                     <label class="form-check-label custom-form-lable-checkbox" for="responsable">Es responsable de unidad</label>
                                 </div>
         
+                                <div class="custom-form-separator mx-auto my-3"></div>
+                                
                                 <!-- ======= ======= USUARIO SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4">
-                                    <label for="email">Usuario</label>
-                                    <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="usuario">Usuario</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese el nombre de usuario"
+                                        id="usuario" name="usuario" 
+                                        [(ngModel)]="usuario" 
+                                        (change)="ValidateUsuario()" />
+                                    <span class="custom-alert-message" *ngIf="!valUsuario">
+                                        Debe ingresar un usuario valido, con menos de 15 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= CONTRASENIA SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4">
-                                    <label for="email">Contraseña</label>
-                                    <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="contrasenia">Contraseña</label>
+                                    <input class="form-control" type="text" placeholder="Ingrese la contraseña del usuario"
+                                        id="contrasenia" name="contrasenia" 
+                                        [(ngModel)]="contrasenia" 
+                                        (change)="ValidateContrasenia()" />
+                                    <span class="custom-alert-message" *ngIf="!valContrasenia">
+                                        Debe ingresar una contraseña valida, con menos de 200 caracteres
+                                    </span>
                                 </div>
                                 <!-- ======= ======= LOGEADO SECTION ======= ======= -->
-                                <div class="col col-xl-4 col-lg-4">
-                                    <label for="email">Logeo por</label>
+                                <div class="col col-xl-4 col-lg-4 mt-auto">
+                                    <label for="logedBy">Logeo por</label>
                                     <input class="form-control" type="text" 
-                                        id="nombre" name="nombre" [(ngModel)]="nombre" />
+                                        id="logedBy" name="logedBy" [(ngModel)]="logedBy" disabled/>
                                 </div>
+
+                                <!--div class="custom-form-separator mx-auto my-3"></div-->
+
                             </div>
                         </div>
                     </div>
                 </div>
+                
                 <div class="col col-xl-5 col-lg-5">
+                    <!-- ======= IMAGE SECTION ======= -->
                     <div class="card mb-3">
-                        <!-- ======= ======= IMAGE SECTION ======= ======= -->
                         <div class="card-body custom-card">
-                            <img src="" alt="formImg">
-                            <input id="fileInput" type="file" (change)="onFileSelected($event)" class="form-control" />
+                            <img [src]="imageSrc || defaultImageSrc" alt="formImg" style="width: 100%;">
+                            <input class="form-control" 
+                                type="file" id="fileImg" 
+                                (change)="onFileSelected($event)" />
+                        </div>
+                    </div>
+                    <!-- ======= ADMINISTRA SECTION ======= -->
+                    <div class="col col-xl-4 col-lg-4 mx-auto">
+                        <input class="form-check-input custom-form-checkbox" type="checkbox" 
+                            id="admi_sistema" name="admi_sistema"
+                            [(ngModel)]="admi_sistema" 
+                            (change)="onAdmiSistemaChanged(messagePersonaRolesModal)">
+                        <label class="form-check-label custom-form-lable-checkbox" for="admi_sistema">Administra Sistema</label>
+                    </div>
+                </div>
+
+                <!-- ======= ======= PROYECTO ROL SECTION ======= ======= -->
+                <div class="col col-xl-12 col-lg-12">
+                    <div class="card mb-3">
+                        <div class="card-body custom-card">
+
+                            <div class="row">
+                                <table class="table custom-table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Proyecto</th>
+                                            <th>Estado proyecto</th>
+                                            <th>Rol</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let proyecto of proyectosTable; let i = index">
+                                            <td>{{ proyecto.id_proyecto }}</td>
+                                            <td>{{ proyecto.proyecto }}</td>
+                                            <td>{{ getProyectoEstado(proyecto.idp_estado_proy) }}</td>
+                                            <td>
+                                                <select class="form-control" id="rol-{{ i }}" name="rol-{{ i }}" [(ngModel)]="proyecto.rol" 
+                                                    (change)="personaProyectoRolChange($event, proyecto)">
+                                                    <option value="" selected>...</option>
+                                                    <option *ngFor="let rol of roles" [value]="rol.descripcion_subtipo">
+                                                        {{ rol.descripcion_subtipo }}
+                                                    </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                
             </div>
         </form>
     </div>
     <div class="modal-footer">
         <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
             <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
                 <i class="fa fa-times" aria-hidden="true"></i> Cerrar
             </button>
-            <button type="button" class="btn btn-bg-1" [disabled]="personaRolesForm.invalid" (click)="onSubmit(); modal.close('Añadir')">
-                <i class="fa fa-floppy-o" aria-hidden="true"></i> Añadir
+            <button type="button" class="btn btn-bg-1" [disabled]="personaRolesForm.invalid" (click)="onSubmit()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
             </button>
         </div>
     </div>
@@ -216,10 +370,41 @@
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
-        <p>Contenido del Modal 3.</p>
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>Esta seguro de querer eliminar el registro de esta persona?</p>
+        </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">Cerrar</button>
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+            <button type="button" class="btn btn-bg-1" (click)="editPersona(); modal.close('Añadir')">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!-- ======= ======= ======= ======= ======= ======= ======= -->
+<!-- ======= ======= ======= DELETE PERSONA MODAL ======= ======= ======= -->
+<ng-template #messagePersonaRolesModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">{{ messageModalTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <p>{{ messageModalMessage }}</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-center" style="width: 100%;">
+            <!-- ======= ======= BUTTONS SECTION ======= ======= -->
+            <button type="button" class="btn btn-bg-3" (click)="modal.close('Cerrar')">
+                <i class="fa fa-times" aria-hidden="true"></i> Cerrar
+            </button>
+        </div>
     </div>
 </ng-template>
 <!-- ======= ======= ======= ======= ======= ======= ======= -->

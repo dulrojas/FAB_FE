@@ -2,13 +2,16 @@
     <div class="row justify-content-md-center align-items-center h-100">
         <div class="col-md-4">
             <img class="user-avatar" src="assets/images/logo.png" [style.width.px]="100" alt="logo"/>
-            <h1>Fundacion Amigos de la Naturaleza</h1>
+            <h1>Fundación Amigos de la Naturaleza</h1>
             <h5>Porfavor ingresa tu cuenta</h5>
             <form role="form">
                 <div class="form-content">
                     <div class="form-group">
                         <input
-                            [placeholder]="'Email' | translate"
+                            (keydown.enter)="passwordInput.focus()" 
+                            [placeholder]="'Usuario'"
+                            [(ngModel)]="user"
+                            name="user"
                             class="form-control input-underline input-lg"
                             type="text"
                         />
@@ -16,17 +19,25 @@
 
                     <div class="form-group">
                         <input
-                            [placeholder]="'Password' | translate"
+                            #passwordInput 
+                            (keydown.enter)="onLoggedin()" 
+                            [placeholder]="'Contraseña'"
+                            [(ngModel)]="password"
+                            name="password"
                             class="form-control input-underline input-lg"
                             type="password"
                         />
                     </div>
+
+                    <div class="form-group" *ngIf="messageShow">
+                        <label for="">
+                            <span class="custom-login-error-message">{{ message }}</span>
+                        </label>
+                    </div>
                 </div>
-                <a (click)="onLoggedin()" [routerLink]="['/dashboard']" class="btn rounded-btn">
-                    {{'Log in' | translate}}
+                <a (click)="onLoggedin()" class="btn rounded-btn">
+                    {{'Ingresar'}}
                 </a>
-                &nbsp;
-                <a [routerLink]="['/signup']" class="btn rounded-btn">{{ 'Register' | translate }}</a>
             </form>
         </div>
     </div>
