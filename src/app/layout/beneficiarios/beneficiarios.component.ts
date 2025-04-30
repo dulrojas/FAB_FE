@@ -5,7 +5,8 @@ import { ProyectoService } from '../../services/proyectoData.service';
 
 import { servicios } from "../../servicios/servicios";
 //Beneficiarios
-import { servBeneficiarios } from "../../servicios/beneficiarios";
+//import { servBeneficiarios } from "../../servicios/beneficiarios";
+import { servBeneficiarios } from "../../servicios/Beneficiarios";
 import { servUbicaGeografica } from "../../servicios/ubicaGeografica";
 import { servListBenef } from "../../servicios/beneficiariosLista";
 import { servActividad } from "../../servicios/actividad";
