@@ -10,6 +10,8 @@ import { servLogin } from "../servicios/login";
 import { servProyectos } from "../servicios/proyectos";
 import { servPersonaRoles } from "../servicios/personaRoles";
 
+import { AuthService } from '../services/auth.service';
+
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
@@ -23,6 +25,7 @@ export class LoginComponent implements OnInit {
         private servLogin: servLogin,
         private servProyectos: servProyectos,
         private servPersonaRoles: servPersonaRoles,
+        private authService: AuthService,
         private http: HttpClient
     ) {}
     
@@ -75,6 +78,7 @@ export class LoginComponent implements OnInit {
                 delete userData.usuario;
                 delete userData.contrasenia;
     
+                this.authService.login(userData);
                 localStorage.setItem('isLoggedin', 'true');
                 localStorage.setItem('currentIdPer', userData.id_persona.toString());
                 localStorage.setItem(

@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule, NgbPaginationModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { BodyHeaderComponent } from '../components/bodyHeader/bodyHeader.component';
+
 import { BodyHeaderModule } from '../../shared/modules/bodyHeader/bodyHeader.module';
 import { EjecEstrategicaRoutingModule } from './ejecEstrategica-routing.module';
 import { EjecEstrategicaComponent } from './ejecEstrategica.component';
