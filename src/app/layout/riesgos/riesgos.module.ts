@@ -5,7 +5,7 @@ import { PageHeaderModule } from './../../shared';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { BodyHeaderComponent } from '../components/bodyHeader/bodyHeader.component';
+
 import { BodyHeaderModule } from '../../shared/modules/bodyHeader/bodyHeader.module';
 
 //llamado a los componentes de Riesgos
