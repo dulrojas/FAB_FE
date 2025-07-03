@@ -534,6 +534,9 @@ export class AprendizajesComponent implements OnInit {
 
     });
 
+    preguntasPos = (preguntasPos)?(preguntasPos):([]);
+    preguntasNeg = (preguntasNeg)?(preguntasNeg):([]);
+
     ExcelExportService.exportToExcel(
       aprendizajesObj, 
       'Reporte_Aprendizajes_'+formattedDate, 

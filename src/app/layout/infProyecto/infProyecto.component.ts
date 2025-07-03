@@ -474,6 +474,11 @@ export class InfProyectoComponent implements OnInit {
     // ======= ======= ======= ======= =======
     // ======= ======= EDIT PROYECTO ======= =======
     editInfProyecto(){
+
+      if( this.currentDateGap <= 1 ){
+        return;
+      }
+      
       // ======= PROJECT SECTION =======
       this.proyectoScope.id_persona_reg = this.idPersonaReg;
       this.proyectoScope.presupuesto_me = this.parseAmountStrToFloat(this.proyectoScope.presupuesto_me);
@@ -731,13 +736,12 @@ export class InfProyectoComponent implements OnInit {
       let projectData: any = await this.getAllProjectData(this.idProyecto);
       // ======= ======= =======
       // ======= PLAN EST =======
-      projectObj.planEstrategica = projectData.pro_pla_est.map(({ sigla, codigo, indicador, linea_base, medida, meta_final, medio_verifica }) => [
-        sigla, 
+      projectObj.planEstrategica = projectData.pro_pla_est.map(({ codigo, indicador, linea_base, medida, meta_final, medio_verifica }) => [
         codigo, 
         indicador, 
-        linea_base, 
+        linea_base.replace("$",""), 
         medida,
-        meta_final, 
+        meta_final.replace("$",""), 
         medio_verifica
       ]);
       // ======= ======= =======
@@ -1329,7 +1333,7 @@ export class InfProyectoComponent implements OnInit {
       this.initFinanciadoresModel();
 
       this.modalAction = "add";
-      this.modalTitle = "Presupuesto de la Gestion";
+      this.modalTitle = "Presupuesto de la Gestión";
 
       this.presupuestoAuxiliar = this.presupuestoActual.presup_adicional;
       this.presuPresupuestoAux = this.presupuestoActual.presup_adicional;
