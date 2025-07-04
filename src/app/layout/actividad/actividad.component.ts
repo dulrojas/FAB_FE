@@ -1386,9 +1386,7 @@ export class ActividadComponent implements OnInit {
       'codigo', 
       'fecha_inicio', 
       'fecha_fin', 
-      'descripcion', 
-      'id_proy_elem_padre', 
-      'id_proy_acti_repro'
+      'descripcion'
     ];
     const today = new Date();
     const formattedDate = today.toLocaleDateString('es-ES').replace(/\//g, '_');

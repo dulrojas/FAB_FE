@@ -172,10 +172,10 @@ export class PdfExportService {
     // ======= ======= ======= ======= ======= ======= =======
     // ======= ======= ======= PLANIF OPERATIVA SECTION ======= ======= =======
     doc.setFont('helvetica', 'bold');
-    doc.text("Planificacion Operativa Anual", horizontalPadding, verticalPadding);
+    doc.text("Planificación Operativa Anual", horizontalPadding, verticalPadding);
     verticalPadding += commondVerticalGap;
     
-    tableHeader = [["AÑO", "PRESUPUESTO DE LA GESTION"]];
+    tableHeader = [["AÑO", "PRESUPUESTO DE LA GESTIÓN"]];
     autoTable(doc, {
       startY: verticalPadding,
       headStyles: {

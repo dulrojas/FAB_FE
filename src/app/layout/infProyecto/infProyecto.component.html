@@ -324,6 +324,10 @@
                             </div>
                             <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
                             <div class="row py-0">
+                                <span class="custom-alert-message" *ngIf="currentDateGap <= 1">Debe seleccionar fechas validas.</span>
+                            </div>
+                            <!-- ======= ======= ======= FIN AMPLIADO DATE ======= ======= ======= -->
+                            <div class="row py-0">
                                 <div class="col col-md-12 custom-date-diference">
                                     <div class="row">
                                         <div class="col col-md-4 pr-0">
@@ -1018,9 +1022,6 @@
                                 </div>
                                 <!-- ======= ======= FECHA REGISTRO SECTION ======= ======= -->
                                 <div class="col col-xl-6 col-lg-6 mb-auto">
-                                    <!--label for="fecha_registro">Fecha registro</label>
-                                    <input class="form-control" type="date" id="fecha_registro" name="fecha_registro" 
-                                        [(ngModel)]="obligacionesModel.fecha_registro" disabled/-->
                                 </div>
 
                                 <!-- ======= ======= OBLIGACION SECTION ======= ======= -->
@@ -1091,7 +1092,7 @@
 
                                 <!-- ======= ======= OBLIGACIONES DATA SECTION ======= ======= -->
                                 <div class="col col-xl-12 col-lg-12 mb-auto">
-                                    <label for="datos_documentos">Documentos de Obligacion</label>
+                                    <label for="datos_documentos">Documentos de Obligación</label>
                                     <div class="row"
                                         *ngFor="let datoObligacion of obligacionesModel.datos_documentos; let i = index">
                                         <div class="col col-md-1 col-lg-1 my-auto">
